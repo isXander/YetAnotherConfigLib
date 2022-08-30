@@ -7,5 +7,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = "FabricModTemplate"
+rootProject.name = "YetAnotherConfigLib"
 
