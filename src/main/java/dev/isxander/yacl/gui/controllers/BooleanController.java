@@ -42,7 +42,7 @@ public class BooleanController implements Controller<Boolean> {
      * @param option bound option
      */
     public BooleanController(Option<Boolean> option) {
-        this(option, ON_OFF_FORMATTER, true);
+        this(option, ON_OFF_FORMATTER, false);
     }
 
     /**

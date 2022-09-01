@@ -1,10 +1,9 @@
 package dev.isxander.yacl.api;
 
 import com.google.common.collect.ImmutableList;
-import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.impl.ConfigCategoryImpl;
 import dev.isxander.yacl.impl.OptionGroupImpl;
-import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +30,12 @@ public interface ConfigCategory {
     @NotNull ImmutableList<OptionGroup> groups();
 
     /**
+     * Tooltip (or description) of the category.
+     * Rendered on hover.
+     */
+    @NotNull Text tooltip();
+
+    /**
      * Creates a builder to construct a {@link ConfigCategory}
      */
     static Builder createBuilder() {
@@ -39,9 +44,11 @@ public interface ConfigCategory {
 
     class Builder {
         private Text name;
-        private final List<Option<?>> rootOptions = new ArrayList<>();
 
+        private final List<Option<?>> rootOptions = new ArrayList<>();
         private final List<OptionGroup> groups = new ArrayList<>();
+
+        private final List<Text> tooltipLines = new ArrayList<>();
 
         private Builder() {
 
@@ -113,6 +120,20 @@ public interface ConfigCategory {
             return this;
         }
 
+        /**
+         * Sets the tooltip to be used by the category.
+         * Can be invoked twice to append more lines.
+         * No need to wrap the text yourself, the gui does this itself.
+         *
+         * @param tooltips text lines - merged with a new-line on {@link Builder#build()}.
+         */
+        public Builder tooltip(@NotNull Text... tooltips) {
+            Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
+
+            tooltipLines.addAll(List.of(tooltips));
+            return this;
+        }
+
         public ConfigCategory build() {
             Validate.notNull(name, "`name` must not be null to build `ConfigCategory`");
             Validate.notEmpty(rootOptions, "`at least one option must be added to build `ConfigCategory`");
@@ -121,7 +142,16 @@ public interface ConfigCategory {
             combinedGroups.add(new OptionGroupImpl(Text.empty(), ImmutableList.copyOf(rootOptions), true));
             combinedGroups.addAll(groups);
 
-            return new ConfigCategoryImpl(name, ImmutableList.copyOf(combinedGroups));
+            MutableText concatenatedTooltip = Text.empty();
+            boolean first = true;
+            for (Text line : tooltipLines) {
+                if (!first) concatenatedTooltip.append("\n");
+                first = false;
+
+                concatenatedTooltip.append(line);
+            }
+
+            return new ConfigCategoryImpl(name, ImmutableList.copyOf(combinedGroups), concatenatedTooltip);
         }
     }
 }

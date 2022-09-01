@@ -21,7 +21,7 @@ public class YACLScreen extends Screen {
     private final Screen parent;
 
     public OptionListWidget optionList;
-    public final List<ButtonWidget> categoryButtons;
+    public final List<CategoryWidget> categoryButtons;
     public ButtonWidget finishedSaveButton, cancelResetButton, undoButton;
 
     public YACLScreen(YetAnotherConfigLib config, Screen parent) {
@@ -40,11 +40,11 @@ public class YACLScreen extends Screen {
         Dimension<Integer> categoryDim = Dimension.ofInt(padding, padding, columnWidth - padding * 2, 20);
         int idx = 0;
         for (ConfigCategory category : config.categories()) {
-            ButtonWidget categoryWidget = new ButtonWidget(
+            CategoryWidget categoryWidget = new CategoryWidget(
+                    this,
+                    category,
                     categoryDim.x(), categoryDim.y(),
-                    categoryDim.width(), categoryDim.height(),
-                    category.name(),
-                    (btn) -> changeCategory(categoryButtons.indexOf(btn))
+                    categoryDim.width(), categoryDim.height()
             );
             if (idx == currentCategoryIdx)
                 categoryWidget.active = false;
@@ -96,6 +96,12 @@ public class YACLScreen extends Screen {
         super.render(matrices, mouseX, mouseY, delta);
 
         optionList.render(matrices, mouseX, mouseY, delta);
+
+        for (CategoryWidget categoryWidget : categoryButtons) {
+            if (categoryWidget.hoveredTicks > 30) {
+                renderOrderedTooltip(matrices, categoryWidget.wrappedDescription, mouseX, mouseY);
+            }
+        }
     }
 
     @Override
@@ -103,7 +109,7 @@ public class YACLScreen extends Screen {
         updateActionAvailability();
     }
 
-    private void changeCategory(int idx) {
+    public void changeCategory(int idx) {
         int currentIndex = 0;
         for (ButtonWidget categoryWidget : categoryButtons) {
             categoryWidget.active = currentIndex != idx;

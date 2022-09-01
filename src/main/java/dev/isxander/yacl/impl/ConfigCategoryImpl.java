@@ -7,6 +7,6 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public record ConfigCategoryImpl(Text name, ImmutableList<OptionGroup> groups) implements ConfigCategory {
+public record ConfigCategoryImpl(Text name, ImmutableList<OptionGroup> groups, Text tooltip) implements ConfigCategory {
 
 }

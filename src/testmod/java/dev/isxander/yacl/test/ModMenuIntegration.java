@@ -22,6 +22,7 @@ public class ModMenuIntegration implements ModMenuApi {
                 .title(Text.of("Test GUI"))
                 .category(ConfigCategory.createBuilder()
                         .name(Text.of("Control Examples"))
+                        .tooltip(Text.of("Example Category Description"))
                         .option(Option.createBuilder(boolean.class)
                                 .name(Text.of("Boolean Toggle"))
                                 .binding(
@@ -139,6 +140,15 @@ public class ModMenuIntegration implements ModMenuApi {
                         .build())
                 .category(ConfigCategory.createBuilder()
                         .name(Text.of("Scroll Test"))
+                        .option(Option.createBuilder(int.class)
+                                .name(Text.of("Int Slider that is cut off because the slider"))
+                                .binding(
+                                        0,
+                                        () -> TestSettings.scrollingSlider,
+                                        (value) -> TestSettings.scrollingSlider = value
+                                )
+                                .controller(opt -> new IntegerSliderController(opt, 0, 10, 1))
+                                .build())
                         .option(ButtonOption.createBuilder()
                                 .name(Text.of("Option"))
                                 .action(() -> {})
@@ -221,6 +231,8 @@ public class ModMenuIntegration implements ModMenuApi {
         private static boolean groupTestFirstGroup = false;
         private static boolean groupTestFirstGroup2 = false;
         private static boolean groupTestSecondGroup = false;
+
+        private static int scrollingSlider = 0;
 
         public enum Alphabet {
             A, B, C

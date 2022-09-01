@@ -29,8 +29,6 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         super.render(matrices, mouseX, mouseY, delta);
 
-        if (sliderBounds == null)
-            sliderBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - getThumbWidth() / 2 - dim.width() / 3, dim.centerY() - 4, dim.width() / 3, 8);
         calculateInterpolation();
     }
 
@@ -109,6 +107,12 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
 
     private void calculateInterpolation() {
         interpolation = (float) ((control.pendingValue() - control.min()) * 1 / control.range());
+    }
+
+    @Override
+    public void setDimension(Dimension<Integer> dim) {
+        super.setDimension(dim);
+        sliderBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - getThumbWidth() / 2 - dim.width() / 3, dim.centerY() - 4, dim.width() / 3, 8);
     }
 
     private int getThumbX() {

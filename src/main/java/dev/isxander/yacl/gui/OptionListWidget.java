@@ -31,6 +31,16 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
     }
 
     @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+        for (Entry child : children()) {
+            if (child.mouseScrolled(mouseX, mouseY, amount))
+                return true;
+        }
+
+        return super.mouseScrolled(mouseX, mouseY, amount);
+    }
+
+    @Override
     protected int getScrollbarPositionX() {
         return left + super.getScrollbarPositionX();
     }
@@ -48,9 +58,14 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         @Override
         public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            widget.dim = Dimension.ofInt(x, y, entryWidth, 20);
+            widget.setDimension(Dimension.ofInt(x, y, entryWidth, 20));
 
             widget.render(matrices, mouseX, mouseY, tickDelta);
+        }
+
+        @Override
+        public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+            return widget.mouseScrolled(mouseX, mouseY, amount);
         }
 
         @Override

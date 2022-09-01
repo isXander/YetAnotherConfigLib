@@ -16,11 +16,13 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     protected final T control;
     protected final List<OrderedText> wrappedTooltip;
 
-    public Dimension<Integer> dim;
+    protected Dimension<Integer> dim;
     protected final Screen screen;
 
     protected boolean hovered = false;
     protected float hoveredTicks = 0;
+
+    private int prevMouseX, prevMouseY;
 
     public ControllerWidget(T control, Screen screen, Dimension<Integer> dim) {
         this.control = control;
@@ -32,7 +34,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         hovered = isMouseOver(mouseX, mouseY);
-        if (hovered) {
+        if (hovered && mouseX == prevMouseX && mouseY == prevMouseY) {
             hoveredTicks += delta;
         } else {
             hoveredTicks = 0;
@@ -62,9 +64,12 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
             drawHoveredControl(matrices, mouseX, mouseY, delta);
         }
 
-        if (hoveredTicks > 40) {
+        if (hoveredTicks > 30) {
             screen.renderOrderedTooltip(matrices, wrappedTooltip, mouseX, mouseY);
         }
+
+        prevMouseX = mouseX;
+        prevMouseY = mouseY;
     }
 
     protected void drawHoveredControl(MatrixStack matrices, int mouseX, int mouseY, float delta) {
@@ -115,6 +120,10 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
 
     protected float getTextY() {
         return dim.y() + dim.height() / 2f - textRenderer.fontHeight / 2f;
+    }
+
+    public void setDimension(Dimension<Integer> dim) {
+        this.dim = dim;
     }
 
     @Override
