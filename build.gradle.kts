@@ -88,14 +88,6 @@ tasks {
             )
         }
     }
-    
-    remapJar {
-        archiveClassifier.set("fabric-$minecraftVersion")   
-    }
-    
-    remapSourcesJar {
-        archiveClassifier.set("fabric-$minecraftVersion-sources")   
-    }
 
     register("releaseMod") {
         group = "mod"

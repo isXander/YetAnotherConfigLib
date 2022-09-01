@@ -1,4 +1,4 @@
-name: Gradle CI
+name: Publish Snapshot
 
 on:
   push:
