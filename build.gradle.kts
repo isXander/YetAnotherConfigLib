@@ -7,12 +7,19 @@ plugins {
     id("com.modrinth.minotaur") version "2.4.+"
     id("me.hypherionmc.cursegradle") version "2.+"
     id("com.github.breadmoirai.github-release") version "2.+"
-    id("io.github.p03w.machete") version "1.+"
     `maven-publish`
+
+    id("io.github.p03w.machete") version "1.+"
+    id("org.ajoberstar.grgit") version "5.0.0"
 }
 
+val ciRun = System.getenv().containsKey("GITHUB_ACTIONS")
+
 group = "dev.isxander"
-version = "1.0.0"
+version = "0.1.0"
+
+if (ciRun)
+    version = grgit.head().abbreviatedId
 
 val testmod by sourceSets.registering {
     compileClasspath += sourceSets.main.get().compileClasspath
@@ -96,7 +103,7 @@ tasks {
         dependsOn("modrinth")
         dependsOn("modrinthSyncBody")
         dependsOn("curseforge")
-        dependsOn("publish")
+        dependsOn("publishModPublicationToReleasesRepository")
         dependsOn("githubRelease")
     }
 }
@@ -157,7 +164,7 @@ githubRelease {
     owner(split[0])
     repo(split[1])
     tagName("${project.version}")
-    targetCommitish("1.19")
+    targetCommitish(grgit.branch.toString())
     body(changelogText)
     releaseAssets(tasks["remapJar"].outputs.files)
 }
@@ -173,11 +180,21 @@ publishing {
     }
 
     repositories {
-        if (hasProperty("xander-repo.username") && hasProperty("xander-repo.password")) {
+        val username = "xander-repo.username".let { System.getenv(it) ?: findProperty(it) }?.toString()
+        val password = "xander-repo.password".let { System.getenv(it) ?: findProperty(it) }?.toString()
+        if (username != null && password != null) {
             maven(url = "https://maven.isxander.dev/releases") {
+                name = "Releases"
                 credentials {
-                    username = property("xander-repo.username")?.toString()
-                    password = property("xander-repo.password")?.toString()
+                    this.username = username
+                    this.password = password
+                }
+            }
+            maven(url = "https://maven.isxander.dev/snapshots") {
+                name = "Snapshots"
+                credentials {
+                    this.username = username
+                    this.password = password
                 }
             }
         } else {

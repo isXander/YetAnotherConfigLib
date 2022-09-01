@@ -1,7 +1,6 @@
 package dev.isxander.yacl.gui.controllers.slider;
 
 import dev.isxander.yacl.api.Option;
-import dev.isxander.yacl.impl.utils.NumberFormatHelper;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.Validate;
 
@@ -11,7 +10,7 @@ import java.util.function.Function;
  * {@link ISliderController} for longs.
  */
 public class LongSliderController implements ISliderController<Long> {
-    public static final Function<Long, Text> DEFAULT_FORMATTER = value -> Text.of(NumberFormatHelper.formatSmaller(value));
+    public static final Function<Long, Text> DEFAULT_FORMATTER = value -> Text.of(String.format("%,d", value));
 
     private final Option<Long> option;
 

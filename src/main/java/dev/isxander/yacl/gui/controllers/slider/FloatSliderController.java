@@ -13,7 +13,7 @@ public class FloatSliderController implements ISliderController<Float> {
     /**
      * Formats floats to one decimal place
      */
-    public static final Function<Float, Text> DEFAULT_FORMATTER = value -> Text.of(String.format("%.1f", value));
+    public static final Function<Float, Text> DEFAULT_FORMATTER = value -> Text.of(String.format("%,.1f", value));
 
     private final Option<Float> option;
 

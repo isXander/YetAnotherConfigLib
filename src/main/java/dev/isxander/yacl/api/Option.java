@@ -147,7 +147,7 @@ public interface Option<T> {
 
         /**
          * Sets the binding for the option.
-         * Shorthand of {@link Binding#of(Object, Supplier, Consumer)}
+         * Shorthand of {@link Binding#generic(Object, Supplier, Consumer)}
          *
          * @param def default value of the option, used to reset
          * @param getter should return the current value of the option
@@ -159,7 +159,7 @@ public interface Option<T> {
             Validate.notNull(getter, "`getter` must not be null");
             Validate.notNull(setter, "`setter` must not be null");
 
-            this.binding = Binding.of(def, getter, setter);
+            this.binding = Binding.generic(def, getter, setter);
             return this;
         }
 

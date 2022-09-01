@@ -1,0 +1,40 @@
+name: Gradle CI
+
+on:
+  push:
+    branches:
+      - '1.19'
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'changelogs/**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Publish with gradle
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: temurin
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ./.gradle/loom-cache
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew publishAllPublicationsToSnapshotsRepository --no-daemon
+        env:
+          "xander-repo.username": ${{secrets.REPO_USERNAME}}
+          "xander-repo.password": ${{secrets.REPO_PASSWORD}}

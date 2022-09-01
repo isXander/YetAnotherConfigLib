@@ -26,7 +26,7 @@ public interface Binding<T> {
      * @param getter should return the current value of the option
      * @param setter should set the option to the supplied value
      */
-    static <T> Binding<T> of(T def, Supplier<T> getter, Consumer<T> setter) {
+    static <T> Binding<T> generic(T def, Supplier<T> getter, Consumer<T> setter) {
         Validate.notNull(def, "`def` must not be null");
         Validate.notNull(getter, "`getter` must not be null");
         Validate.notNull(setter, "`setter` must not be null");
@@ -37,7 +37,7 @@ public interface Binding<T> {
     /**
      * Creates a {@link Binding} for Minecraft's {@link SimpleOption}
      */
-    static <T> Binding<T> of(SimpleOption<T> minecraftOption) {
+    static <T> Binding<T> minecraft(SimpleOption<T> minecraftOption) {
         Validate.notNull(minecraftOption, "`minecraftOption` must not be null");
 
         return new GenericBindingImpl<>(
