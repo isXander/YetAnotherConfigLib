@@ -14,8 +14,27 @@ plugins {
 group = "dev.isxander"
 version = "1.0.0"
 
+val testmod by sourceSets.registering {
+    compileClasspath += sourceSets.main.get().compileClasspath
+    runtimeClasspath += sourceSets.main.get().runtimeClasspath
+}
+
+loom {
+    runs {
+        register("testmod") {
+            client()
+            ideConfigGenerated(true)
+            name("Test Mod")
+            source(testmod.get())
+        }
+    }
+
+    createRemapConfigurations(testmod.get())
+}
+
 repositories {
     mavenCentral()
+    maven("https://maven.terraformersmc.com")
 }
 
 val minecraftVersion: String by project
@@ -24,8 +43,12 @@ val fabricLoaderVersion: String by project
 dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
     mappings("net.fabricmc:yarn:$minecraftVersion+build.+:v2")
-
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
+
+    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.60.0+1.19.2"))
+
+    "testmodImplementation"(sourceSets.main.get().output)
+    "modTestmodImplementation"("com.terraformersmc:modmenu:4.0.6")
 }
 
 tasks {

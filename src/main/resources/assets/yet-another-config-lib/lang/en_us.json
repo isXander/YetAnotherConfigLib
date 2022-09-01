@@ -1,0 +1,16 @@
+{
+  "yacl.control.tickbox.on": "ON",
+  "yacl.control.tickbox.off": "OFF",
+  "yacl.control.tickbox.true": "True",
+  "yacl.control.tickbox.false": "False",
+  "yacl.control.tickbox.yes": "Yes",
+  "yacl.control.tickbox.no": "No",
+
+  "yacl.control.action.execute": "EXECUTE",
+
+  "yacl.gui.save": "Save Changes",
+  "yacl.gui.finished": "Finished",
+  "yacl.gui.cancel": "Cancel",
+  "yacl.gui.reset": "Reset",
+  "yacl.gui.undo": "Undo"
+}

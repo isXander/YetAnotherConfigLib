@@ -10,7 +10,7 @@ public interface Binding<T> {
 
     T getValue();
 
-    void resetValue();
+    T defaultValue();
 
     static <T> Binding<T> of(T def, Supplier<T> getter, Consumer<T> setter) {
         return new GenericBindingImpl<>(def, getter, setter);

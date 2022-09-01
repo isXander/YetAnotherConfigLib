@@ -30,7 +30,8 @@ public class GenericBindingImpl<T> implements Binding<T> {
     }
 
     @Override
-    public void resetValue() {
-        setValue(def);
+    public T defaultValue() {
+        return def;
     }
+
 }

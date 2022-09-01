@@ -8,6 +8,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Function;
+
 @ApiStatus.Internal
 public class OptionImpl<T> implements Option<T> {
     private final Text name;
@@ -15,16 +17,19 @@ public class OptionImpl<T> implements Option<T> {
     private final Control<T> control;
     private final Binding<T> binding;
 
-    private @Nullable T changedValue = null;
+    private T pendingValue;
 
-    public OptionImpl(@NotNull Text name,
-                      @Nullable Text tooltip,
-                      @NotNull Control<T> control,
-                      @NotNull Binding<T> binding) {
+    public OptionImpl(
+            @NotNull Text name,
+            @Nullable Text tooltip,
+            @NotNull Function<Option<T>, Control<T>> controlGetter,
+            @NotNull Binding<T> binding
+    ) {
         this.name = name;
         this.tooltip = tooltip;
-        this.control = control;
+        this.control = controlGetter.apply(this);
         this.binding = binding;
+        this.pendingValue = binding().getValue();
     }
 
     @Override
@@ -49,17 +54,31 @@ public class OptionImpl<T> implements Option<T> {
 
     @Override
     public boolean changed() {
-        return !binding().getValue().equals(changedValue);
+        return !binding().getValue().equals(pendingValue);
+    }
+
+    @Override
+    public T pendingValue() {
+        return pendingValue;
     }
 
     @Override
     public void requestSet(T value) {
-        this.changedValue = value;
+        pendingValue = value;
     }
 
     @Override
     public void applyValue() {
-        if (changedValue != null)
-            binding().setValue(changedValue);
+        binding().setValue(pendingValue);
+    }
+
+    @Override
+    public void forgetPendingValue() {
+        pendingValue = binding().getValue();
+    }
+
+    @Override
+    public void requestSetDefault() {
+        pendingValue = binding().defaultValue();
     }
 }

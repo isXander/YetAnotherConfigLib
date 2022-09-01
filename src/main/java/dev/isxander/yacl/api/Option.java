@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface Option<T> {
@@ -23,11 +24,17 @@ public interface Option<T> {
 
     boolean changed();
 
+    T pendingValue();
+
     void requestSet(T value);
 
     void applyValue();
 
-    static <T> Builder<T> createBuilder() {
+    void forgetPendingValue();
+
+    void requestSetDefault();
+
+    static <T> Builder<T> createBuilder(Class<T> clazz) {
         return new Builder<>();
     }
 
@@ -36,7 +43,7 @@ public interface Option<T> {
 
         private final List<Text> tooltipLines = new ArrayList<>();
 
-        private Control<T> control;
+        private Function<Option<T>, Control<T>> controlGetter;
 
         private Binding<T> binding;
 
@@ -58,10 +65,10 @@ public interface Option<T> {
             return this;
         }
 
-        public Builder<T> controller(@NotNull Control<T> control) {
+        public Builder<T> controller(@NotNull Function<Option<T>, Control<T>> control) {
             Validate.notNull(control, "`control` cannot be null");
 
-            this.control = control;
+            this.controlGetter = control;
             return this;
         }
 
@@ -73,7 +80,7 @@ public interface Option<T> {
         }
 
         public Builder<T> binding(@NotNull T def, @NotNull Supplier<@NotNull T> getter, @NotNull Consumer<@NotNull T> setter) {
-            Validate.notNull(def, "`default` must not be null");
+            Validate.notNull(def, "`def` must not be null");
             Validate.notNull(getter, "`getter` must not be null");
             Validate.notNull(setter, "`setter` must not be null");
 
@@ -83,7 +90,7 @@ public interface Option<T> {
 
         public Option<T> build() {
             Validate.notNull(name, "`name` must not be null when building `Option`");
-            Validate.notNull(control, "`control` must not be null when building `Option`");
+            Validate.notNull(controlGetter, "`control` must not be null when building `Option`");
             Validate.notNull(binding, "`binding` must not be null when building `Option`");
 
             MutableText concatenatedTooltip = Text.empty();
@@ -95,7 +102,7 @@ public interface Option<T> {
                 concatenatedTooltip.append(line);
             }
 
-            return new OptionImpl<>(name, concatenatedTooltip, control, binding);
+            return new OptionImpl<>(name, concatenatedTooltip, controlGetter, binding);
         }
     }
 }
