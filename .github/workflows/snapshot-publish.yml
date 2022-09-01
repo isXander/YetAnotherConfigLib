@@ -36,5 +36,5 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew publishAllPublicationsToSnapshotsRepository --no-daemon
         env:
-          "xander-repo.username": ${{secrets.REPO_USERNAME}}
-          "xander-repo.password": ${{secrets.REPO_PASSWORD}}
+          "[xander-repo.username]": ${{ secrets.REPO_USERNAME }}
+          "[xander-repo.password]": ${{ secrets.REPO_PASSWORD }}
