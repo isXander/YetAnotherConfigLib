@@ -15,7 +15,8 @@ import net.minecraft.text.Text;
 public class ModMenuIntegration implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return (parent) -> YetAnotherConfigLib.createBuilder(Text.of("Test GUI"))
+        return (parent) -> YetAnotherConfigLib.createBuilder()
+                .title(Text.of("Test GUI"))
                 .category(ConfigCategory.createBuilder()
                         .name(Text.of("Control Examples"))
                         .option(Option.createBuilder(boolean.class)

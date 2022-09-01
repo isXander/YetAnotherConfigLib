@@ -25,8 +25,8 @@ public interface YetAnotherConfigLib {
 
     Screen generateScreen(@Nullable Screen parent);
 
-    static Builder createBuilder(Text title) {
-        return new Builder(title);
+    static Builder createBuilder() {
+        return new Builder();
     }
 
     class Builder {
@@ -35,9 +35,8 @@ public interface YetAnotherConfigLib {
         private Runnable saveFunction = () -> {};
         private Consumer<YACLScreen> initConsumer = screen -> {};
 
-        private Builder(@NotNull Text title) {
-            Validate.notNull(title, "`title` cannot be null");
-            this.title = title;
+        private Builder() {
+
         }
 
         public Builder title(@NotNull Text title) {
