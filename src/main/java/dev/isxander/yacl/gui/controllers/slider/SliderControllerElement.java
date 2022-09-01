@@ -95,7 +95,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
 
     private void setValueFromMouse(double mouseX) {
         double value = (mouseX - sliderBounds.x()) / sliderBounds.width() * control.range();
-        double roundedValue = min + (interval * Math.round(value / interval));
+        double roundedValue = MathHelper.clamp(min + (interval * Math.round(value / interval)), min, max); // extremely imprecise, requires clamping
         control.setPendingValue(roundedValue);
         calculateInterpolation();
     }
