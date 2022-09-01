@@ -1,6 +1,6 @@
 package dev.isxander.yacl.gui.controllers;
 
-import dev.isxander.yacl.api.Control;
+import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.utils.Dimension;
 import net.minecraft.client.gui.DrawableHelper;
@@ -8,10 +8,14 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Function;
 
-public class TickBoxControl implements Control<Boolean> {
+/**
+ * On hover, this controller renders a tickbox, otherwise, formatted {@link Text}
+ */
+public class TickBoxController implements Controller<Boolean> {
 
     public static final Function<Boolean, Text> ON_OFF_FORMATTER = (state) ->
             state
@@ -31,33 +35,55 @@ public class TickBoxControl implements Control<Boolean> {
     private final Option<Boolean> option;
     private final Function<Boolean, Text> valueFormatter;
 
-    public TickBoxControl(Option<Boolean> option) {
+    /**
+     * Constructs a tickbox controller
+     * with the default value formatter of {@link TickBoxController#ON_OFF_FORMATTER}
+     *
+     * @param option bound option
+     */
+    public TickBoxController(Option<Boolean> option) {
         this(option, ON_OFF_FORMATTER);
     }
 
-    public TickBoxControl(Option<Boolean> option, Function<Boolean, Text> valueFormatter) {
+    /**
+     * Constructs a tickbox controller
+     *
+     * @param option bound option
+     * @param valueFormatter format value into any {@link Text}
+     */
+    public TickBoxController(Option<Boolean> option, Function<Boolean, Text> valueFormatter) {
         this.option = option;
         this.valueFormatter = valueFormatter;
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Option<Boolean> option() {
         return option;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Text formatValue() {
         return valueFormatter.apply(option().pendingValue());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public ControlWidget<TickBoxControl> provideWidget(Screen screen, Dimension<Integer> widgetDimension) {
-        return new TickBoxControlElement(this, screen, widgetDimension);
+    public ControllerWidget<TickBoxController> provideWidget(Screen screen, Dimension<Integer> widgetDimension) {
+        return new TickBoxControllerElement(this, screen, widgetDimension);
     }
 
-    public static class TickBoxControlElement extends ControlWidget<TickBoxControl> {
-        private TickBoxControlElement(TickBoxControl control, Screen screen, Dimension<Integer> dim) {
+    @ApiStatus.Internal
+    public static class TickBoxControllerElement extends ControllerWidget<TickBoxController> {
+        private TickBoxControllerElement(TickBoxController control, Screen screen, Dimension<Integer> dim) {
             super(control, screen, dim);
         }
 

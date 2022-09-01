@@ -1,14 +1,15 @@
 package dev.isxander.yacl.gui.controllers.slider;
 
 import dev.isxander.yacl.api.utils.Dimension;
-import dev.isxander.yacl.gui.controllers.ControlWidget;
+import dev.isxander.yacl.gui.controllers.ControllerWidget;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.ApiStatus;
 
-public class SliderControlElement extends ControlWidget<ISliderControl<?>> {
+@ApiStatus.Internal
+public class SliderControllerElement extends ControllerWidget<ISliderController<?>> {
     private final double min, max, interval;
 
     private float interpolation;
@@ -17,7 +18,7 @@ public class SliderControlElement extends ControlWidget<ISliderControl<?>> {
 
     private boolean mouseDown = false;
 
-    public SliderControlElement(ISliderControl<?> option, Screen screen, Dimension<Integer> dim, double min, double max, double interval) {
+    public SliderControllerElement(ISliderController<?> option, Screen screen, Dimension<Integer> dim, double min, double max, double interval) {
         super(option, screen, dim);
         this.min = min;
         this.max = max;
@@ -103,16 +104,11 @@ public class SliderControlElement extends ControlWidget<ISliderControl<?>> {
 
     @Override
     protected int getHoveredControlWidth() {
-        int textWidth = textRenderer.getWidth(getValueText());
-        return hovered ? sliderBounds.width() + textWidth + 6 + getThumbWidth() / 2 : textWidth ;
+        return sliderBounds.width() + getUnhoveredControlWidth() + 6 + getThumbWidth() / 2;
     }
 
     private void calculateInterpolation() {
         interpolation = (float) ((control.pendingValue() - control.min()) * 1 / control.range());
-    }
-
-    private Text getValueText() {
-        return control.getValueText(control.pendingValue());
     }
 
     private int getThumbX() {

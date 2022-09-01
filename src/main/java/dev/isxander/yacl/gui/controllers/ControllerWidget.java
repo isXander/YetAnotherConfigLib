@@ -1,6 +1,6 @@
 package dev.isxander.yacl.gui.controllers;
 
-import dev.isxander.yacl.api.Control;
+import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import net.minecraft.client.gui.DrawableHelper;
@@ -12,9 +12,9 @@ import net.minecraft.text.Text;
 
 import java.util.List;
 
-public abstract class ControlWidget<T extends Control<?>> extends AbstractWidget {
+public abstract class ControllerWidget<T extends Controller<?>> extends AbstractWidget {
     protected final T control;
-    protected final List<OrderedText> wrappedDescription;
+    protected final List<OrderedText> wrappedTooltip;
 
     public Dimension<Integer> dim;
     protected final Screen screen;
@@ -22,11 +22,11 @@ public abstract class ControlWidget<T extends Control<?>> extends AbstractWidget
     protected boolean hovered = false;
     protected float hoveredTicks = 0;
 
-    public ControlWidget(T control, Screen screen, Dimension<Integer> dim) {
+    public ControllerWidget(T control, Screen screen, Dimension<Integer> dim) {
         this.control = control;
         this.dim = dim;
         this.screen = screen;
-        this.wrappedDescription = textRenderer.wrapLines(control.option().tooltip(), screen.width / 2);
+        this.wrappedTooltip = textRenderer.wrapLines(control.option().tooltip(), screen.width / 2);
     }
 
     @Override
@@ -63,7 +63,7 @@ public abstract class ControlWidget<T extends Control<?>> extends AbstractWidget
         }
 
         if (hoveredTicks > 40) {
-            screen.renderOrderedTooltip(matrices, wrappedDescription, mouseX, mouseY);
+            screen.renderOrderedTooltip(matrices, wrappedTooltip, mouseX, mouseY);
         }
     }
 

@@ -20,7 +20,7 @@ public interface ButtonOption extends Option<Runnable> {
     class Builder {
         private Text name;
         private final List<Text> tooltipLines = new ArrayList<>();
-        private Function<ButtonOption, Control<Runnable>> controlGetter;
+        private Function<ButtonOption, Controller<Runnable>> controlGetter;
         private Runnable action;
 
         private Builder() {
@@ -48,7 +48,7 @@ public interface ButtonOption extends Option<Runnable> {
             return this;
         }
 
-        public Builder controller(@NotNull Function<ButtonOption, Control<Runnable>> control) {
+        public Builder controller(@NotNull Function<ButtonOption, Controller<Runnable>> control) {
             Validate.notNull(control, "`control` cannot be null");
 
             this.controlGetter = control;

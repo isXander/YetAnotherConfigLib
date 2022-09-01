@@ -51,6 +51,11 @@ dependencies {
     "modTestmodImplementation"("com.terraformersmc:modmenu:4.0.6")
 }
 
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
 tasks {
     processResources {
         val modId: String by project
@@ -160,8 +165,8 @@ githubRelease {
 publishing {
     publications {
         create<MavenPublication>("mod") {
-            groupId = group.toString()
-            artifactId = base.archivesName.get()
+            groupId = "dev.isxander"
+            artifactId = "yet-another-config-lib"
 
             from(components["java"])
         }

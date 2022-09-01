@@ -118,9 +118,9 @@ public class YACLScreen extends Screen {
         OptionUtils.consumeOptions(config, (option) -> {
             if (option.changed()) {
                 pendingChanges.set(true);
-                return false;
+                return true;
             }
-            return true;
+            return false;
         });
 
         return pendingChanges.get();

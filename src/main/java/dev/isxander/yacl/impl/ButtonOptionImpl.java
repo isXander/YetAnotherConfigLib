@@ -2,7 +2,7 @@ package dev.isxander.yacl.impl;
 
 import dev.isxander.yacl.api.Binding;
 import dev.isxander.yacl.api.ButtonOption;
-import dev.isxander.yacl.api.Control;
+import dev.isxander.yacl.api.Controller;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -15,19 +15,19 @@ public class ButtonOptionImpl implements ButtonOption {
     private final Text name;
     private final Text tooltip;
     private final Runnable action;
-    private final Control<Runnable> control;
+    private final Controller<Runnable> controller;
     private final Binding<Runnable> binding;
 
     public ButtonOptionImpl(
             @NotNull Text name,
             @Nullable Text tooltip,
             @NotNull Runnable action,
-            @NotNull Function<ButtonOption, Control<Runnable>> controlGetter
+            @NotNull Function<ButtonOption, Controller<Runnable>> controlGetter
     ) {
         this.name = name;
         this.tooltip = tooltip;
         this.action = action;
-        this.control = controlGetter.apply(this);
+        this.controller = controlGetter.apply(this);
         this.binding = new EmptyBinderImpl();
     }
 
@@ -37,7 +37,7 @@ public class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
-    public @Nullable Text tooltip() {
+    public @NotNull Text tooltip() {
         return tooltip;
     }
 
@@ -47,8 +47,8 @@ public class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
-    public @NotNull Control<Runnable> control() {
-        return control;
+    public @NotNull Controller<Runnable> controller() {
+        return controller;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
-    public Runnable pendingValue() {
+    public @NotNull Runnable pendingValue() {
         throw new UnsupportedOperationException();
     }
 

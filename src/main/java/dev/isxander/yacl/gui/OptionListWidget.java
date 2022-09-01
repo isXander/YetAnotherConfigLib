@@ -4,7 +4,7 @@ import dev.isxander.yacl.api.ConfigCategory;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.OptionGroup;
 import dev.isxander.yacl.api.utils.Dimension;
-import dev.isxander.yacl.gui.controllers.ControlWidget;
+import dev.isxander.yacl.gui.controllers.ControllerWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Element;
@@ -25,7 +25,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
             if (!group.isRoot())
                 addEntry(new GroupSeparatorEntry(group));
             for (Option<?> option : group.options()) {
-                addEntry(new OptionEntry(option.control().provideWidget(screen, null)));
+                addEntry(new OptionEntry(option.controller().provideWidget(screen, null)));
             }
         }
     }
@@ -40,9 +40,9 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
     }
 
     private static class OptionEntry extends Entry {
-        private final ControlWidget<?> widget;
+        private final ControllerWidget<?> widget;
 
-        public OptionEntry(ControlWidget<?> widget) {
+        public OptionEntry(ControllerWidget<?> widget) {
             this.widget = widget;
         }
 

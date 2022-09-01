@@ -1,7 +1,7 @@
 package dev.isxander.yacl.impl;
 
 import dev.isxander.yacl.api.Binding;
-import dev.isxander.yacl.api.Control;
+import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.Option;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
@@ -14,7 +14,7 @@ import java.util.function.Function;
 public class OptionImpl<T> implements Option<T> {
     private final Text name;
     private final Text tooltip;
-    private final Control<T> control;
+    private final Controller<T> controller;
     private final Binding<T> binding;
 
     private T pendingValue;
@@ -22,12 +22,12 @@ public class OptionImpl<T> implements Option<T> {
     public OptionImpl(
             @NotNull Text name,
             @Nullable Text tooltip,
-            @NotNull Function<Option<T>, Control<T>> controlGetter,
+            @NotNull Function<Option<T>, Controller<T>> controlGetter,
             @NotNull Binding<T> binding
     ) {
         this.name = name;
         this.tooltip = tooltip;
-        this.control = controlGetter.apply(this);
+        this.controller = controlGetter.apply(this);
         this.binding = binding;
         this.pendingValue = binding().getValue();
     }
@@ -38,13 +38,13 @@ public class OptionImpl<T> implements Option<T> {
     }
 
     @Override
-    public @Nullable Text tooltip() {
+    public @NotNull Text tooltip() {
         return tooltip;
     }
 
     @Override
-    public @NotNull Control<T> control() {
-        return control;
+    public @NotNull Controller<T> controller() {
+        return controller;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class OptionImpl<T> implements Option<T> {
     }
 
     @Override
-    public T pendingValue() {
+    public @NotNull T pendingValue() {
         return pendingValue;
     }
 

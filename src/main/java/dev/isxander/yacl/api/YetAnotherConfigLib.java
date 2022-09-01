@@ -10,21 +10,45 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * Main class of the mod.
+ * Contains all data and used to provide a {@link Screen}
+ */
 public interface YetAnotherConfigLib {
-
+    /**
+     * Title of the GUI. Only used for Minecraft narration.
+     */
     Text title();
 
+    /**
+     * Gets all config categories.
+     */
     ImmutableList<ConfigCategory> categories();
 
+    /**
+     * Ran when changes are saved. Can be used to save config to a file etc.
+     */
     Runnable saveFunction();
 
+    /**
+     * Ran every time the YACL screen initialises. Can be paired with FAPI to add custom widgets.
+     */
     Consumer<YACLScreen> initConsumer();
 
+    /**
+     * Generates a Screen to display based on this instance.
+     *
+     * @param parent parent screen to open once closed
+     */
     Screen generateScreen(@Nullable Screen parent);
 
+    /**
+     * Creates a builder to construct YACL
+     */
     static Builder createBuilder() {
         return new Builder();
     }
@@ -39,6 +63,11 @@ public interface YetAnotherConfigLib {
 
         }
 
+        /**
+         * Sets title of GUI for Minecraft narration
+         *
+         * @see YetAnotherConfigLib#title()
+         */
         public Builder title(@NotNull Text title) {
             Validate.notNull(title, "`title` cannot be null");
 
@@ -46,6 +75,12 @@ public interface YetAnotherConfigLib {
             return this;
         }
 
+        /**
+         * Adds a new category.
+         * To create a category you need to use {@link ConfigCategory#createBuilder()}
+         *
+         * @see YetAnotherConfigLib#categories()
+         */
         public Builder category(@NotNull ConfigCategory category) {
             Validate.notNull(category, "`category` cannot be null");
 
@@ -53,6 +88,24 @@ public interface YetAnotherConfigLib {
             return this;
         }
 
+        /**
+         * Adds multiple categories at once.
+         * To create a category you need to use {@link ConfigCategory#createBuilder()}
+         *
+         * @see YetAnotherConfigLib#categories()
+         */
+        public Builder categories(@NotNull Collection<ConfigCategory> categories) {
+            Validate.notEmpty(categories, "`categories` cannot be empty");
+
+            this.categories.addAll(categories);
+            return this;
+        }
+
+        /**
+         * Used to define a save function for when user clicks the Save Changes button
+         *
+         * @see YetAnotherConfigLib#saveFunction()
+         */
         public Builder save(@NotNull Runnable saveFunction) {
             Validate.notNull(saveFunction, "`saveFunction` cannot be null");
 
@@ -60,6 +113,11 @@ public interface YetAnotherConfigLib {
             return this;
         }
 
+        /**
+         * Defines a consumer that is accepted every time the YACL screen initialises
+         *
+         * @see YetAnotherConfigLib#initConsumer()
+         */
         public Builder screenInit(@NotNull Consumer<YACLScreen> initConsumer) {
             Validate.notNull(initConsumer, "`initConsumer` cannot be null");
 
