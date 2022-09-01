@@ -4,6 +4,7 @@ import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.gui.controllers.ActionController;
+import dev.isxander.yacl.gui.controllers.BooleanController;
 import dev.isxander.yacl.gui.controllers.EnumController;
 import dev.isxander.yacl.gui.controllers.TickBoxController;
 import dev.isxander.yacl.gui.controllers.slider.DoubleSliderController;
@@ -21,6 +22,15 @@ public class ModMenuIntegration implements ModMenuApi {
                 .title(Text.of("Test GUI"))
                 .category(ConfigCategory.createBuilder()
                         .name(Text.of("Control Examples"))
+                        .option(Option.createBuilder(boolean.class)
+                                .name(Text.of("Boolean Toggle"))
+                                .binding(
+                                        false,
+                                        () -> TestSettings.booleanToggle,
+                                        (value) -> TestSettings.booleanToggle = value
+                                )
+                                .controller(BooleanController::new)
+                                .build())
                         .option(Option.createBuilder(boolean.class)
                                 .name(Text.of("Tick Box"))
                                 .tooltip(Text.of("Super long tooltip that is very descriptive to show off the text wrapping features of the thingy yes whwowwoow"))
@@ -127,10 +137,79 @@ public class ModMenuIntegration implements ModMenuApi {
                                         .build())
                                 .build())
                         .build())
+                .category(ConfigCategory.createBuilder()
+                        .name(Text.of("Scroll Test"))
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Option"))
+                                .action(() -> {})
+                                .controller(ActionController::new)
+                                .build())
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Option"))
+                                .action(() -> {})
+                                .controller(ActionController::new)
+                                .build())
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Option"))
+                                .action(() -> {})
+                                .controller(ActionController::new)
+                                .build())
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Option"))
+                                .action(() -> {})
+                                .controller(ActionController::new)
+                                .build())
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Option"))
+                                .action(() -> {})
+                                .controller(ActionController::new)
+                                .build())
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Option"))
+                                .action(() -> {})
+                                .controller(ActionController::new)
+                                .build())
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Option"))
+                                .action(() -> {})
+                                .controller(ActionController::new)
+                                .build())
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Option"))
+                                .action(() -> {})
+                                .controller(ActionController::new)
+                                .build())
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Option"))
+                                .action(() -> {})
+                                .controller(ActionController::new)
+                                .build())
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Option"))
+                                .action(() -> {})
+                                .controller(ActionController::new)
+                                .build())
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Option"))
+                                .action(() -> {})
+                                .controller(ActionController::new)
+                                .build())
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Option"))
+                                .action(() -> {})
+                                .controller(ActionController::new)
+                                .build())
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Option"))
+                                .action(() -> {})
+                                .controller(ActionController::new)
+                                .build())
+                        .build())
                 .build().generateScreen(parent);
     }
 
     private static class TestSettings {
+        private static boolean booleanToggle = false;
         private static boolean tickbox = false;
         private static int intSlider = 0;
         private static double doubleSlider = 0;

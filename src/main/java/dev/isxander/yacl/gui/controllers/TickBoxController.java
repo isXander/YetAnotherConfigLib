@@ -7,54 +7,23 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Function;
 
 /**
- * On hover, this controller renders a tickbox, otherwise, formatted {@link Text}
+ * This controller renders a tickbox
  */
 public class TickBoxController implements Controller<Boolean> {
-
-    public static final Function<Boolean, Text> ON_OFF_FORMATTER = (state) ->
-            state
-                    ? Text.translatable("yacl.control.tickbox.on").formatted(Formatting.GREEN)
-                    : Text.translatable("yacl.control.tickbox.off").formatted(Formatting.RED);
-
-    public static final Function<Boolean, Text> TRUE_FALSE_FORMATTER = (state) ->
-            state
-                    ? Text.translatable("yacl.control.tickbox.true").formatted(Formatting.GREEN)
-                    : Text.translatable("yacl.control.tickbox.false").formatted(Formatting.RED);
-
-    public static final Function<Boolean, Text> YES_NO_FORMATTER = (state) ->
-            state
-                    ? Text.translatable("yacl.control.tickbox.yes").formatted(Formatting.GREEN)
-                    : Text.translatable("yacl.control.tickbox.no").formatted(Formatting.RED);
-
     private final Option<Boolean> option;
-    private final Function<Boolean, Text> valueFormatter;
 
     /**
      * Constructs a tickbox controller
-     * with the default value formatter of {@link TickBoxController#ON_OFF_FORMATTER}
      *
      * @param option bound option
      */
     public TickBoxController(Option<Boolean> option) {
-        this(option, ON_OFF_FORMATTER);
-    }
-
-    /**
-     * Constructs a tickbox controller
-     *
-     * @param option bound option
-     * @param valueFormatter format value into any {@link Text}
-     */
-    public TickBoxController(Option<Boolean> option, Function<Boolean, Text> valueFormatter) {
         this.option = option;
-        this.valueFormatter = valueFormatter;
-
     }
 
     /**
@@ -70,7 +39,7 @@ public class TickBoxController implements Controller<Boolean> {
      */
     @Override
     public Text formatValue() {
-        return valueFormatter.apply(option().pendingValue());
+        return Text.empty();
     }
 
     /**
@@ -103,9 +72,9 @@ public class TickBoxController implements Controller<Boolean> {
         }
 
         @Override
-        protected void drawValueText(MatrixStack matrices) {
+        protected void drawValueText(MatrixStack matrices, int mouseX, int mouseY, float delta) {
             if (!hovered)
-                super.drawValueText(matrices);
+                drawHoveredControl(matrices, mouseX, mouseY, delta);
         }
 
         @Override

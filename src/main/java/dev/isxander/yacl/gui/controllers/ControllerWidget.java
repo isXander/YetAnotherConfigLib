@@ -57,7 +57,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         textRenderer.drawWithShadow(matrices, shortenedName, 0, 0, -1);
         matrices.pop();
 
-        drawValueText(matrices);
+        drawValueText(matrices, mouseX, mouseY, delta);
         if (hovered) {
             drawHoveredControl(matrices, mouseX, mouseY, delta);
         }
@@ -71,8 +71,8 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
 
     }
 
-    protected void drawValueText(MatrixStack matrices) {
-        Text valueText = control.formatValue();
+    protected void drawValueText(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        Text valueText = getValueText();
         matrices.push();
         matrices.translate(dim.xLimit() - textRenderer.getWidth(valueText) - getXPadding(), getTextY(), 0);
         textRenderer.drawWithShadow(matrices, valueText, 0, 0, -1);
@@ -91,7 +91,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     protected abstract int getHoveredControlWidth();
 
     protected int getUnhoveredControlWidth() {
-        return textRenderer.getWidth(control.formatValue());
+        return textRenderer.getWidth(getValueText());
     }
 
     protected int getXPadding() {
@@ -100,6 +100,10 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
 
     protected int getYPadding() {
         return 2;
+    }
+
+    protected Text getValueText() {
+        return control.formatValue();
     }
 
     protected void drawOutline(MatrixStack matrices, int x1, int y1, int x2, int y2, int width, int color) {

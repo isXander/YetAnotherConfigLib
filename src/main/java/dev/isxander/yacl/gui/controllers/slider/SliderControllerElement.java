@@ -48,11 +48,11 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     @Override
-    protected void drawValueText(MatrixStack matrices) {
+    protected void drawValueText(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         matrices.push();
         if (hovered)
             matrices.translate(-(sliderBounds.width() + 6 + getThumbWidth() / 2f), 0, 0);
-        super.drawValueText(matrices);
+        super.drawValueText(matrices, mouseX, mouseY, delta);
         matrices.pop();
     }
 
