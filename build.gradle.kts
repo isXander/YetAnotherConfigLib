@@ -180,8 +180,8 @@ publishing {
     }
 
     repositories {
-        val username = "xander-repo.username".let { System.getenv(it) ?: findProperty(it) }?.toString()
-        val password = "xander-repo.password".let { System.getenv(it) ?: findProperty(it) }?.toString()
+        val username = "XANDER_MAVEN_USER".let { System.getenv(it) ?: findProperty(it) }?.toString()
+        val password = "XANDER_MAVEN_PASS".let { System.getenv(it) ?: findProperty(it) }?.toString()
         if (username != null && password != null) {
             maven(url = "https://maven.isxander.dev/releases") {
                 name = "Releases"
