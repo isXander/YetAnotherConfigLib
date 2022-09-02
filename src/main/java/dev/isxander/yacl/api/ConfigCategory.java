@@ -136,11 +136,12 @@ public interface ConfigCategory {
 
         public ConfigCategory build() {
             Validate.notNull(name, "`name` must not be null to build `ConfigCategory`");
-            Validate.notEmpty(rootOptions, "`at least one option must be added to build `ConfigCategory`");
 
             List<OptionGroup> combinedGroups = new ArrayList<>();
             combinedGroups.add(new OptionGroupImpl(Text.empty(), ImmutableList.copyOf(rootOptions), true));
             combinedGroups.addAll(groups);
+
+            Validate.notEmpty(combinedGroups, "at least one option must be added to build `ConfigCategory`");
 
             MutableText concatenatedTooltip = Text.empty();
             boolean first = true;

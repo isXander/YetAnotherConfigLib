@@ -18,6 +18,10 @@ import net.minecraft.text.Text;
 public class ModMenuIntegration implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
+        return getWikiButton();
+    }
+
+    private ConfigScreenFactory<?> getFullTestSuite() {
         return (parent) -> YetAnotherConfigLib.createBuilder()
                 .title(Text.of("Test GUI"))
                 .category(ConfigCategory.createBuilder()
@@ -218,6 +222,71 @@ public class ModMenuIntegration implements ModMenuApi {
                 .build().generateScreen(parent);
     }
 
+    private ConfigScreenFactory<?> getWikiBasic() {
+        return (parent) -> YetAnotherConfigLib.createBuilder()
+                .title(Text.of("Mod Name"))
+                .category(ConfigCategory.createBuilder()
+                        .name(Text.of("My Category"))
+                        .tooltip(Text.of("This displays when you hover over a category button")) // optional
+                        .option(Option.createBuilder(boolean.class)
+                                .name(Text.of("My Boolean Option"))
+                                .tooltip(Text.of("This option displays the basic capabilities of YetAnotherConfigLib")) // optional
+                                .binding(
+                                        true, // default
+                                        () -> TestSettings.booleanToggle, // getter
+                                        newValue -> TestSettings.booleanToggle = newValue // setter
+                                )
+                                .controller(BooleanController::new)
+                                .build())
+                        .build())
+                .save(TestSettings::save)
+                .build()
+                .generateScreen(parent);
+    }
+
+    private ConfigScreenFactory<?> getWikiGroups() {
+        return (parent) -> YetAnotherConfigLib.createBuilder()
+                .title(Text.of("Mod Name"))
+                .category(ConfigCategory.createBuilder()
+                        .name(Text.of("My Category"))
+                        .tooltip(Text.of("This displays when you hover over a category button")) // optional
+                        .group(OptionGroup.createBuilder()
+                                .name(Text.of("Option Group"))
+                                .option(Option.createBuilder(boolean.class)
+                                        .name(Text.of("My Boolean Option"))
+                                        .tooltip(Text.of("This option displays the basic capabilities of YetAnotherConfigLib")) // optional
+                                        .binding(
+                                                true, // default
+                                                () -> TestSettings.booleanToggle, // getter
+                                                newValue -> TestSettings.booleanToggle = newValue // setter
+                                        )
+                                        .controller(BooleanController::new)
+                                        .build())
+                                .build())
+                        .build())
+                .save(TestSettings::save)
+                .build()
+                .generateScreen(parent);
+    }
+
+    private ConfigScreenFactory<?> getWikiButton() {
+        return (parent) -> YetAnotherConfigLib.createBuilder()
+                .title(Text.of("Mod Name"))
+                .category(ConfigCategory.createBuilder()
+                        .name(Text.of("My Category"))
+                        .tooltip(Text.of("This displays when you hover over a category button")) // optional
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Pressable Button"))
+                                .tooltip(Text.of("This is so easy!")) // optional
+                                .action(() -> {})
+                                .controller(ActionController::new)
+                                .build())
+                        .build())
+                .save(TestSettings::save)
+                .build()
+                .generateScreen(parent);
+    }
+
     private static class TestSettings {
         private static boolean booleanToggle = false;
         private static boolean tickbox = false;
@@ -236,6 +305,10 @@ public class ModMenuIntegration implements ModMenuApi {
 
         public enum Alphabet {
             A, B, C
+        }
+
+        public static void save() {
+
         }
     }
 }
