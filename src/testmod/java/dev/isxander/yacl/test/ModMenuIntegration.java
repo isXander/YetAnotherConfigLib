@@ -18,7 +18,7 @@ import net.minecraft.text.Text;
 public class ModMenuIntegration implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return getWikiButton();
+        return getFullTestSuite();
     }
 
     private ConfigScreenFactory<?> getFullTestSuite() {

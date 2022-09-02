@@ -67,7 +67,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        if (button != 0 || !sliderBounds.isPointInside((int) mouseX, (int) mouseY))
+        if (button != 0 || !mouseDown)
             return false;
 
         setValueFromMouse(mouseX);
@@ -93,6 +93,11 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
+    @Override
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        return super.isMouseOver(mouseX, mouseY) || mouseDown;
+    }
+
     private void setValueFromMouse(double mouseX) {
         double value = (mouseX - sliderBounds.x()) / sliderBounds.width() * control.range();
         double roundedValue = MathHelper.clamp(min + (interval * Math.round(value / interval)), min, max); // extremely imprecise, requires clamping
@@ -112,7 +117,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     @Override
     public void setDimension(Dimension<Integer> dim) {
         super.setDimension(dim);
-        sliderBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - getThumbWidth() / 2 - dim.width() / 3, dim.centerY() - 4, dim.width() / 3, 8);
+        sliderBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - getThumbWidth() / 2 - dim.width() / 3, dim.centerY() - 5, dim.width() / 3, 10);
     }
 
     private int getThumbX() {
