@@ -22,5 +22,10 @@
     "fabricloader": ">=0.14.0",
     "minecraft": "1.19.x",
     "java": ">=17"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["library"]
+    }
   }
 }
