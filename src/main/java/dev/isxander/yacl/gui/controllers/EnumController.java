@@ -8,6 +8,7 @@ import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Function;
 
@@ -85,21 +86,41 @@ public class EnumController<T extends Enum<T>> implements Controller<T> {
             this.values = values;
         }
 
-        @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (!isMouseOver(mouseX, mouseY) || (button != 0 && button != 1))
-                return false;
-
-            playDownSound();
-
-            int change = button == 1 || Screen.hasShiftDown() ? -1 : 1;
-            int targetIdx = control.option().pendingValue().ordinal() + change;
+        public void cycleValue(int increment) {
+            int targetIdx = control.option().pendingValue().ordinal() + increment;
             if (targetIdx >= values.length) {
                 targetIdx -= values.length;
             } else if (targetIdx < 0) {
                 targetIdx += values.length;
             }
             control.option().requestSet(values[targetIdx]);
+        }
+
+        @Override
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            if (!isMouseOver(mouseX, mouseY) || (button != 0 && button != 1))
+                return false;
+
+            playDownSound();
+            cycleValue(button == 1 || Screen.hasShiftDown() || Screen.hasControlDown() ? -1 : 1);
+
+            return true;
+        }
+
+        @Override
+        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+            switch (keyCode) {
+                case GLFW.GLFW_KEY_LEFT, GLFW.GLFW_KEY_DOWN ->
+                        cycleValue(-1);
+                case GLFW.GLFW_KEY_RIGHT, GLFW.GLFW_KEY_UP ->
+                        cycleValue(1);
+                case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_SPACE, GLFW.GLFW_KEY_KP_ENTER ->
+                        cycleValue(Screen.hasControlDown() || Screen.hasShiftDown() ? -1 : 1);
+                default -> {
+                    return false;
+                }
+            }
+
             return true;
         }
 

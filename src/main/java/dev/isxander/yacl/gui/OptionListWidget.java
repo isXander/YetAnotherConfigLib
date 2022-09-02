@@ -1,17 +1,24 @@
 package dev.isxander.yacl.gui;
 
+import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl.api.ConfigCategory;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.OptionGroup;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.controllers.ControllerWidget;
+import dev.isxander.yacl.impl.YACLConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.OrderedText;
 
+import java.util.Collections;
 import java.util.List;
 
 public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> {
@@ -23,7 +30,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         for (OptionGroup group : category.groups()) {
             if (!group.isRoot())
-                addEntry(new GroupSeparatorEntry(group));
+                addEntry(new GroupSeparatorEntry(group, screen));
             for (Option<?> option : group.options()) {
                 addEntry(new OptionEntry(option.controller().provideWidget(screen, null)));
             }
@@ -43,6 +50,13 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
     @Override
     protected int getScrollbarPositionX() {
         return left + super.getScrollbarPositionX();
+    }
+
+    @Override
+    protected void renderBackground(MatrixStack matrices) {
+        setRenderBackground(client.world == null);
+        if (client.world != null)
+            fill(matrices, left, top, right, bottom, 0x6B000000);
     }
 
     public static abstract class Entry extends ElementListWidget.Entry<Entry> {
@@ -70,36 +84,68 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         @Override
         public List<? extends Selectable> selectableChildren() {
-            return List.of(widget);
+            return ImmutableList.of(widget);
         }
 
         @Override
         public List<? extends Element> children() {
-            return List.of(widget);
+            return ImmutableList.of(widget);
         }
     }
 
     private static class GroupSeparatorEntry extends Entry {
         private final OptionGroup group;
+        private final List<OrderedText> wrappedTooltip;
 
-        public GroupSeparatorEntry(OptionGroup group) {
+        private float hoveredTicks = 0;
+        private int prevMouseX, prevMouseY;
+
+        private final Screen screen;
+        private final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+
+        public GroupSeparatorEntry(OptionGroup group, Screen screen) {
             this.group = group;
+            this.screen = screen;
+            this.wrappedTooltip = textRenderer.wrapLines(group.tooltip(), screen.width / 2);
         }
 
         @Override
         public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+            if (hovered && (!YACLConstants.HOVER_MOUSE_RESET || (mouseX == prevMouseX && mouseY == prevMouseY)))
+                hoveredTicks += tickDelta;
+            else
+                hoveredTicks = 0;
+
             drawCenteredText(matrices, textRenderer, group.name(), x + entryWidth / 2, y + entryHeight / 2 - textRenderer.fontHeight / 2, -1);
+
+            if (hoveredTicks >= YACLConstants.HOVER_TICKS) {
+                screen.renderOrderedTooltip(matrices, wrappedTooltip, x - 6, y + entryHeight);
+            }
+
+            prevMouseX = mouseX;
+            prevMouseY = mouseY;
         }
 
         @Override
         public List<? extends Selectable> selectableChildren() {
-            return List.of();
+            return ImmutableList.of(new Selectable() {
+                @Override
+                public Selectable.SelectionType getType() {
+                    return Selectable.SelectionType.HOVERED;
+                }
+
+                @Override
+                public void appendNarrations(NarrationMessageBuilder builder) {
+                    builder.put(NarrationPart.TITLE, group.name());
+                }
+            });
         }
 
         @Override
         public List<? extends Element> children() {
-            return List.of();
+            return Collections.emptyList();
         }
+
+
     }
 }

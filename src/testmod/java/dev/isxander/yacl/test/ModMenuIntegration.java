@@ -27,74 +27,98 @@ public class ModMenuIntegration implements ModMenuApi {
                 .category(ConfigCategory.createBuilder()
                         .name(Text.of("Control Examples"))
                         .tooltip(Text.of("Example Category Description"))
-                        .option(Option.createBuilder(boolean.class)
-                                .name(Text.of("Boolean Toggle"))
-                                .binding(
-                                        false,
-                                        () -> TestSettings.booleanToggle,
-                                        (value) -> TestSettings.booleanToggle = value
-                                )
-                                .controller(BooleanController::new)
+                        .group(OptionGroup.createBuilder()
+                                .name(Text.of("Boolean Controllers"))
+                                .tooltip(Text.of("Test!"))
+                                .option(Option.createBuilder(boolean.class)
+                                        .name(Text.of("Boolean Toggle"))
+                                        .tooltip(Text.of("A simple toggle button."))
+                                        .binding(
+                                                false,
+                                                () -> TestSettings.booleanToggle,
+                                                (value) -> TestSettings.booleanToggle = value
+                                        )
+                                        .controller(BooleanController::new)
+                                        .build())
+                                .option(Option.createBuilder(boolean.class)
+                                        .name(Text.of("Custom Boolean Toggle"))
+                                        .tooltip(Text.of("You can customize these controllers like this!"))
+                                        .binding(
+                                                false,
+                                                () -> TestSettings.customBooleanToggle,
+                                                (value) -> TestSettings.customBooleanToggle = value
+                                        )
+                                        .controller(opt -> new BooleanController(opt, state -> state ? Text.of("Amazing") : Text.of("Not Amazing"), true))
+                                        .build())
+                                .option(Option.createBuilder(boolean.class)
+                                        .name(Text.of("Tick Box"))
+                                        .tooltip(Text.of("There are even alternate methods of displaying the same data type!"))
+                                        .binding(
+                                                false,
+                                                () -> TestSettings.tickbox,
+                                                (value) -> TestSettings.tickbox = value
+                                        )
+                                        .controller(TickBoxController::new)
+                                        .build())
                                 .build())
-                        .option(Option.createBuilder(boolean.class)
-                                .name(Text.of("Tick Box"))
-                                .tooltip(Text.of("Super long tooltip that is very descriptive to show off the text wrapping features of the thingy yes whwowwoow"))
-                                .binding(
-                                        false,
-                                        () -> TestSettings.tickbox,
-                                        (value) -> TestSettings.tickbox = value
-                                )
-                                .controller(TickBoxController::new)
+                        .group(OptionGroup.createBuilder()
+                                .name(Text.of("Slider Controllers"))
+                                .option(Option.createBuilder(int.class)
+                                        .name(Text.of("Int Slider that is cut off because the slider"))
+                                        .binding(
+                                                0,
+                                                () -> TestSettings.intSlider,
+                                                (value) -> TestSettings.intSlider = value
+                                        )
+                                        .controller(opt -> new IntegerSliderController(opt, 0, 3, 1))
+                                        .build())
+                                .option(Option.createBuilder(double.class)
+                                        .name(Text.of("Double Slider"))
+                                        .binding(
+                                                0.0,
+                                                () -> TestSettings.doubleSlider,
+                                                (value) -> TestSettings.doubleSlider = value
+                                        )
+                                        .controller(opt -> new DoubleSliderController(opt, 0, 3, 0.05))
+                                        .build())
+                                .option(Option.createBuilder(float.class)
+                                        .name(Text.of("Float Slider"))
+                                        .binding(
+                                                0f,
+                                                () -> TestSettings.floatSlider,
+                                                (value) -> TestSettings.floatSlider = value
+                                        )
+                                        .controller(opt -> new FloatSliderController(opt, 0, 3, 0.1f))
+                                        .build())
+                                .option(Option.createBuilder(long.class)
+                                        .name(Text.of("Long Slider"))
+                                        .binding(
+                                                0L,
+                                                () -> TestSettings.longSlider,
+                                                (value) -> TestSettings.longSlider = value
+                                        )
+                                        .controller(opt -> new LongSliderController(opt, 0, 1_000_000, 100))
+                                        .build())
                                 .build())
-                        .option(Option.createBuilder(int.class)
-                                .name(Text.of("Int Slider that is cut off because the slider"))
-                                .binding(
-                                        0,
-                                        () -> TestSettings.intSlider,
-                                        (value) -> TestSettings.intSlider = value
-                                )
-                                .controller(opt -> new IntegerSliderController(opt, 0, 3, 1))
+                        .group(OptionGroup.createBuilder()
+                                .name(Text.of("Enum Controllers"))
+                                .option(Option.createBuilder(TestSettings.Alphabet.class)
+                                        .name(Text.of("Enum Cycler"))
+                                        .binding(
+                                                TestSettings.Alphabet.A,
+                                                () -> TestSettings.enumOption,
+                                                (value) -> TestSettings.enumOption = value
+                                        )
+                                        .controller(opt -> new EnumController<>(opt, TestSettings.Alphabet.class))
+                                        .build())
                                 .build())
-                        .option(Option.createBuilder(double.class)
-                                .name(Text.of("Double Slider"))
-                                .binding(
-                                        0.0,
-                                        () -> TestSettings.doubleSlider,
-                                        (value) -> TestSettings.doubleSlider = value
-                                )
-                                .controller(opt -> new DoubleSliderController(opt, 0, 3, 0.05))
-                                .build())
-                        .option(Option.createBuilder(float.class)
-                                .name(Text.of("Float Slider"))
-                                .binding(
-                                        0f,
-                                        () -> TestSettings.floatSlider,
-                                        (value) -> TestSettings.floatSlider = value
-                                )
-                                .controller(opt -> new FloatSliderController(opt, 0, 3, 0.1f))
-                                .build())
-                        .option(Option.createBuilder(long.class)
-                                .name(Text.of("Long Slider"))
-                                .binding(
-                                        0L,
-                                        () -> TestSettings.longSlider,
-                                        (value) -> TestSettings.longSlider = value
-                                )
-                                .controller(opt -> new LongSliderController(opt, 0, 1_000_000, 100))
-                                .build())
-                        .option(Option.createBuilder(TestSettings.Alphabet.class)
-                                .name(Text.of("Enum Cycler"))
-                                .binding(
-                                        TestSettings.Alphabet.A,
-                                        () -> TestSettings.enumOption,
-                                        (value) -> TestSettings.enumOption = value
-                                )
-                                .controller(opt -> new EnumController<>(opt, TestSettings.Alphabet.class))
-                                .build())
-                        .option(ButtonOption.createBuilder()
-                                .name(Text.of("Button \"Option\""))
-                                .action(screen -> SystemToast.add(MinecraftClient.getInstance().getToastManager(), SystemToast.Type.TUTORIAL_HINT, Text.of("Button Pressed"), Text.of("Button option was invoked!")))
-                                .controller(ActionController::new)
+                        .group(OptionGroup.createBuilder()
+                                .name(Text.of("Buttons!"))
+                                .option(ButtonOption.createBuilder()
+                                        .name(Text.of("Button \"Option\""))
+                                        .action(screen -> SystemToast.add(MinecraftClient.getInstance().getToastManager(), SystemToast.Type.TUTORIAL_HINT, Text.of("Button Pressed"), Text.of("Button option was invoked!")))
+                                        .controller(ActionController::new)
+                                        .build())
                                 .build())
                         .build())
                 .category(ConfigCategory.createBuilder()
@@ -289,6 +313,7 @@ public class ModMenuIntegration implements ModMenuApi {
 
     private static class TestSettings {
         private static boolean booleanToggle = false;
+        private static boolean customBooleanToggle = false;
         private static boolean tickbox = false;
         private static int intSlider = 0;
         private static double doubleSlider = 0;

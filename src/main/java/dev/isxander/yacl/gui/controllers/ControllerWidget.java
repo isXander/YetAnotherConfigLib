@@ -4,6 +4,7 @@ import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
+import dev.isxander.yacl.impl.YACLConstants;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.util.math.MatrixStack;
@@ -19,6 +20,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     protected Dimension<Integer> dim;
     protected final YACLScreen screen;
 
+    protected boolean focused = false;
     protected boolean hovered = false;
     protected float hoveredTicks = 0;
 
@@ -34,7 +36,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         hovered = isMouseOver(mouseX, mouseY);
-        if (hovered && mouseX == prevMouseX && mouseY == prevMouseY) {
+        if (hovered && (!YACLConstants.HOVER_MOUSE_RESET || (mouseX == prevMouseX && mouseY == prevMouseY))) {
             hoveredTicks += delta;
         } else {
             hoveredTicks = 0;
@@ -53,18 +55,18 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
 
         Text shortenedName = Text.literal(nameString).fillStyle(name.getStyle());
 
-        drawButtonRect(matrices, dim.x(), dim.y(), dim.xLimit(), dim.yLimit(), hovered);
+        drawButtonRect(matrices, dim.x(), dim.y(), dim.xLimit(), dim.yLimit(), hovered || focused);
         matrices.push();
         matrices.translate(dim.x() + getXPadding(), getTextY(), 0);
         textRenderer.drawWithShadow(matrices, shortenedName, 0, 0, -1);
         matrices.pop();
 
         drawValueText(matrices, mouseX, mouseY, delta);
-        if (hovered) {
+        if (hovered || focused) {
             drawHoveredControl(matrices, mouseX, mouseY, delta);
         }
 
-        if (hoveredTicks > 30) {
+        if (hoveredTicks > YACLConstants.HOVER_TICKS) {
             screen.renderOrderedTooltip(matrices, wrappedTooltip, mouseX, mouseY);
         }
 
@@ -90,7 +92,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     }
 
     protected int getControlWidth() {
-        return hovered ? getHoveredControlWidth() : getUnhoveredControlWidth();
+        return hovered || focused ? getHoveredControlWidth() : getUnhoveredControlWidth();
     }
 
     protected abstract int getHoveredControlWidth();
@@ -127,8 +129,14 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     }
 
     @Override
+    public boolean changeFocus(boolean lookForwards) {
+        this.focused = !this.focused;
+        return this.focused;
+    }
+
+    @Override
     public SelectionType getType() {
-        return hovered ? SelectionType.HOVERED : SelectionType.NONE;
+        return focused ? SelectionType.FOCUSED : hovered ? SelectionType.HOVERED : SelectionType.NONE;
     }
 
     @Override

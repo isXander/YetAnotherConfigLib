@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.OptionGroup;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
-public record OptionGroupImpl(@Nullable Text name, ImmutableList<Option<?>> options, boolean isRoot) implements OptionGroup {
+public record OptionGroupImpl(@NotNull Text name, @NotNull Text tooltip, ImmutableList<Option<?>> options, boolean isRoot) implements OptionGroup {
 }

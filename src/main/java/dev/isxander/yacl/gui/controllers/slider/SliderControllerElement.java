@@ -8,6 +8,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.ApiStatus;
+import org.lwjgl.glfw.GLFW;
 
 @ApiStatus.Internal
 public class SliderControllerElement extends ControllerWidget<ISliderController<?>> {
@@ -49,7 +50,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     @Override
     protected void drawValueText(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         matrices.push();
-        if (hovered)
+        if (hovered || focused)
             matrices.translate(-(sliderBounds.width() + 6 + getThumbWidth() / 2f), 0, 0);
         super.drawValueText(matrices, mouseX, mouseY, delta);
         matrices.pop();
@@ -75,13 +76,17 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
         return true;
     }
 
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        if (!isMouseOver(mouseX, mouseY) || !Screen.hasShiftDown())
-            return false;
-
+    public void incrementValue(double amount) {
         control.setPendingValue(MathHelper.clamp(control.pendingValue() + interval * amount, min, max));
         calculateInterpolation();
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+        if ((!isMouseOver(mouseX, mouseY)) || (!Screen.hasShiftDown() && !Screen.hasControlDown()))
+            return false;
+
+        incrementValue(amount);
         return true;
     }
 
@@ -92,6 +97,19 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
         mouseDown = false;
 
         return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        switch (keyCode) {
+            case GLFW.GLFW_KEY_LEFT, GLFW.GLFW_KEY_DOWN -> incrementValue(-1);
+            case GLFW.GLFW_KEY_RIGHT, GLFW.GLFW_KEY_UP -> incrementValue(1);
+            default -> {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override

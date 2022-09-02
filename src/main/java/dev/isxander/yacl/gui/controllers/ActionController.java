@@ -6,6 +6,7 @@ import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Consumer;
 
@@ -71,14 +72,29 @@ public class ActionController implements Controller<Consumer<YACLScreen>> {
             super(control, screen, dim);
         }
 
+        public void executeAction() {
+            playDownSound();
+            control.option().action().accept(screen);
+        }
+
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (isMouseOver(mouseX, mouseY)) {
-                playDownSound();
-                control.option().action().accept(screen);
+                executeAction();
                 return true;
             }
             return false;
+        }
+
+        @Override
+        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+            if (keyCode != GLFW.GLFW_KEY_ENTER && keyCode != GLFW.GLFW_KEY_SPACE && keyCode != GLFW.GLFW_KEY_KP_ENTER) {
+                return false;
+            }
+
+            executeAction();
+
+            return true;
         }
 
         @Override

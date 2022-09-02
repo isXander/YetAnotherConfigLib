@@ -5,10 +5,10 @@ import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
+import org.lwjgl.glfw.GLFW;
 
 /**
  * This controller renders a tickbox
@@ -81,14 +81,29 @@ public class TickBoxController implements Controller<Boolean> {
             if (!isMouseOver(mouseX, mouseY))
                 return false;
 
-            control.option().requestSet(!control.option().pendingValue());
-            playDownSound();
+            toggleSetting();
             return true;
         }
 
         @Override
         protected int getHoveredControlWidth() {
             return 10;
+        }
+
+        public void toggleSetting() {
+            control.option().requestSet(!control.option().pendingValue());
+            playDownSound();
+        }
+
+        @Override
+        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+            if (keyCode != GLFW.GLFW_KEY_ENTER && keyCode != GLFW.GLFW_KEY_SPACE && keyCode != GLFW.GLFW_KEY_KP_ENTER) {
+                return false;
+            }
+
+            toggleSetting();
+
+            return true;
         }
     }
 }
