@@ -3,8 +3,8 @@ package dev.isxander.yacl.gui.controllers;
 import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
+import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
@@ -17,14 +17,14 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     protected final List<OrderedText> wrappedTooltip;
 
     protected Dimension<Integer> dim;
-    protected final Screen screen;
+    protected final YACLScreen screen;
 
     protected boolean hovered = false;
     protected float hoveredTicks = 0;
 
     private int prevMouseX, prevMouseY;
 
-    public ControllerWidget(T control, Screen screen, Dimension<Integer> dim) {
+    public ControllerWidget(T control, YACLScreen screen, Dimension<Integer> dim) {
         this.control = control;
         this.dim = dim;
         this.screen = screen;

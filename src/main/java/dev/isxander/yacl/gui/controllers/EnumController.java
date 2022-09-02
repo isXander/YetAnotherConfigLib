@@ -4,6 +4,7 @@ import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.NameableEnum;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.utils.Dimension;
+import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
@@ -71,7 +72,7 @@ public class EnumController<T extends Enum<T>> implements Controller<T> {
      * {@inheritDoc}
      */
     @Override
-    public ControllerWidget<EnumController<T>> provideWidget(Screen screen, Dimension<Integer> widgetDimension) {
+    public ControllerWidget<EnumController<T>> provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
         return new EnumControllerElement<>(this, screen, widgetDimension, enumClass.getEnumConstants());
     }
 
@@ -79,7 +80,7 @@ public class EnumController<T extends Enum<T>> implements Controller<T> {
     public static class EnumControllerElement<T extends Enum<T>> extends ControllerWidget<EnumController<T>> {
         private final T[] values;
 
-        public EnumControllerElement(EnumController<T> control, Screen screen, Dimension<Integer> dim, T[] values) {
+        public EnumControllerElement(EnumController<T> control, YACLScreen screen, Dimension<Integer> dim, T[] values) {
             super(control, screen, dim);
             this.values = values;
         }

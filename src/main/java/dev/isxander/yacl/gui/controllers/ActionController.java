@@ -3,15 +3,17 @@ package dev.isxander.yacl.gui.controllers;
 import dev.isxander.yacl.api.ButtonOption;
 import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.utils.Dimension;
-import net.minecraft.client.gui.screen.Screen;
+import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
+
+import java.util.function.Consumer;
 
 /**
  * Simple controller that simply runs the button action on press
  * and renders a {@link} Text on the right.
  */
-public class ActionController implements Controller<Runnable> {
+public class ActionController implements Controller<Consumer<YACLScreen>> {
     public static final Text DEFAULT_TEXT = Text.translatable("yacl.control.action.execute");
 
     private final ButtonOption option;
@@ -59,13 +61,13 @@ public class ActionController implements Controller<Runnable> {
      * {@inheritDoc}
      */
     @Override
-    public ControllerWidget<ActionController> provideWidget(Screen screen, Dimension<Integer> widgetDimension) {
+    public ControllerWidget<ActionController> provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
         return new ActionControllerElement(this, screen, widgetDimension);
     }
 
     @ApiStatus.Internal
     public static class ActionControllerElement extends ControllerWidget<ActionController> {
-        public ActionControllerElement(ActionController control, Screen screen, Dimension<Integer> dim) {
+        public ActionControllerElement(ActionController control, YACLScreen screen, Dimension<Integer> dim) {
             super(control, screen, dim);
         }
 
@@ -73,7 +75,7 @@ public class ActionController implements Controller<Runnable> {
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (isMouseOver(mouseX, mouseY)) {
                 playDownSound();
-                control.option().action().run();
+                control.option().action().accept(screen);
                 return true;
             }
             return false;

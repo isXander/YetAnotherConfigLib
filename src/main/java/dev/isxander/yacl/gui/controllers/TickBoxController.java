@@ -3,13 +3,12 @@ package dev.isxander.yacl.gui.controllers;
 import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.utils.Dimension;
+import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.function.Function;
 
 /**
  * This controller renders a tickbox
@@ -46,13 +45,13 @@ public class TickBoxController implements Controller<Boolean> {
      * {@inheritDoc}
      */
     @Override
-    public ControllerWidget<TickBoxController> provideWidget(Screen screen, Dimension<Integer> widgetDimension) {
+    public ControllerWidget<TickBoxController> provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
         return new TickBoxControllerElement(this, screen, widgetDimension);
     }
 
     @ApiStatus.Internal
     public static class TickBoxControllerElement extends ControllerWidget<TickBoxController> {
-        private TickBoxControllerElement(TickBoxController control, Screen screen, Dimension<Integer> dim) {
+        private TickBoxControllerElement(TickBoxController control, YACLScreen screen, Dimension<Integer> dim) {
             super(control, screen, dim);
         }
 

@@ -3,6 +3,7 @@ package dev.isxander.yacl.gui.controllers;
 import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.utils.Dimension;
+import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -96,13 +97,13 @@ public class BooleanController implements Controller<Boolean> {
      * {@inheritDoc}
      */
     @Override
-    public ControllerWidget<BooleanController> provideWidget(Screen screen, Dimension<Integer> widgetDimension) {
+    public ControllerWidget<BooleanController> provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
         return new BooleanControllerElement(this, screen, widgetDimension);
     }
 
     @ApiStatus.Internal
     public static class BooleanControllerElement extends ControllerWidget<BooleanController> {
-        private BooleanControllerElement(BooleanController control, Screen screen, Dimension<Integer> dim) {
+        private BooleanControllerElement(BooleanController control, YACLScreen screen, Dimension<Integer> dim) {
             super(control, screen, dim);
         }
 

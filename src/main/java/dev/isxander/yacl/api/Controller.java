@@ -1,8 +1,8 @@
 package dev.isxander.yacl.api;
 
 import dev.isxander.yacl.api.utils.Dimension;
+import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.ControllerWidget;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -26,5 +26,5 @@ public interface Controller<T> {
      * @param screen parent screen
      */
     @ApiStatus.Internal
-    ControllerWidget<?> provideWidget(Screen screen, Dimension<Integer> widgetDimension);
+    ControllerWidget<?> provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension);
 }

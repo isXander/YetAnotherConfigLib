@@ -3,26 +3,28 @@ package dev.isxander.yacl.impl;
 import dev.isxander.yacl.api.Binding;
 import dev.isxander.yacl.api.ButtonOption;
 import dev.isxander.yacl.api.Controller;
+import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 @ApiStatus.Internal
 public class ButtonOptionImpl implements ButtonOption {
     private final Text name;
     private final Text tooltip;
-    private final Runnable action;
-    private final Controller<Runnable> controller;
-    private final Binding<Runnable> binding;
+    private final Consumer<YACLScreen> action;
+    private final Controller<Consumer<YACLScreen>> controller;
+    private final Binding<Consumer<YACLScreen>> binding;
 
     public ButtonOptionImpl(
             @NotNull Text name,
             @Nullable Text tooltip,
-            @NotNull Runnable action,
-            @NotNull Function<ButtonOption, Controller<Runnable>> controlGetter
+            @NotNull Consumer<YACLScreen> action,
+            @NotNull Function<ButtonOption, Controller<Consumer<YACLScreen>>> controlGetter
     ) {
         this.name = name;
         this.tooltip = tooltip;
@@ -42,17 +44,17 @@ public class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
-    public Runnable action() {
+    public Consumer<YACLScreen> action() {
         return action;
     }
 
     @Override
-    public @NotNull Controller<Runnable> controller() {
+    public @NotNull Controller<Consumer<YACLScreen>> controller() {
         return controller;
     }
 
     @Override
-    public @NotNull Binding<Runnable> binding() {
+    public @NotNull Binding<Consumer<YACLScreen>> binding() {
         return binding;
     }
 
@@ -62,12 +64,12 @@ public class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
-    public @NotNull Runnable pendingValue() {
+    public @NotNull Consumer<YACLScreen> pendingValue() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void requestSet(Runnable value) {
+    public void requestSet(Consumer<YACLScreen> value) {
         throw new UnsupportedOperationException();
     }
 
@@ -86,19 +88,19 @@ public class ButtonOptionImpl implements ButtonOption {
 
     }
 
-    private static class EmptyBinderImpl implements Binding<Runnable> {
+    private static class EmptyBinderImpl implements Binding<Consumer<YACLScreen>> {
         @Override
-        public void setValue(Runnable value) {
+        public void setValue(Consumer<YACLScreen> value) {
 
         }
 
         @Override
-        public Runnable getValue() {
+        public Consumer<YACLScreen> getValue() {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public Runnable defaultValue() {
+        public Consumer<YACLScreen> defaultValue() {
             throw new UnsupportedOperationException();
         }
     }

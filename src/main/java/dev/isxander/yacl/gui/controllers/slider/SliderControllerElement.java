@@ -1,6 +1,7 @@
 package dev.isxander.yacl.gui.controllers.slider;
 
 import dev.isxander.yacl.api.utils.Dimension;
+import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.ControllerWidget;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
@@ -18,7 +19,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
 
     private boolean mouseDown = false;
 
-    public SliderControllerElement(ISliderController<?> option, Screen screen, Dimension<Integer> dim, double min, double max, double interval) {
+    public SliderControllerElement(ISliderController<?> option, YACLScreen screen, Dimension<Integer> dim, double min, double max, double interval) {
         super(option, screen, dim);
         this.min = min;
         this.max = max;

@@ -2,8 +2,8 @@ package dev.isxander.yacl.gui.controllers.slider;
 
 import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.utils.Dimension;
+import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.ControllerWidget;
-import net.minecraft.client.gui.screen.Screen;
 
 /**
  * Simple custom slider implementation that shifts the current value across when shown.
@@ -48,7 +48,7 @@ public interface ISliderController<T extends Number> extends Controller<T> {
      * {@inheritDoc}
      */
     @Override
-    default ControllerWidget<?> provideWidget(Screen screen, Dimension<Integer> widgetDimension) {
+    default ControllerWidget<?> provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
         return new SliderControllerElement(this, screen, widgetDimension, min(), max(), interval());
     }
 }
