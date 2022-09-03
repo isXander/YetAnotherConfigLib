@@ -88,13 +88,16 @@ public class ActionController implements Controller<Consumer<YACLScreen>> {
 
         @Override
         public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-            if (keyCode != GLFW.GLFW_KEY_ENTER && keyCode != GLFW.GLFW_KEY_SPACE && keyCode != GLFW.GLFW_KEY_KP_ENTER) {
+            if (!focused && !hovered) {
                 return false;
             }
 
-            executeAction();
+            if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_SPACE || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+                executeAction();
+                return true;
+            }
 
-            return true;
+            return false;
         }
 
         @Override

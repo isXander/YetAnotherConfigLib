@@ -109,6 +109,9 @@ public class EnumController<T extends Enum<T>> implements Controller<T> {
 
         @Override
         public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+            if (!focused && !hovered)
+                return false;
+
             switch (keyCode) {
                 case GLFW.GLFW_KEY_LEFT, GLFW.GLFW_KEY_DOWN ->
                         cycleValue(-1);

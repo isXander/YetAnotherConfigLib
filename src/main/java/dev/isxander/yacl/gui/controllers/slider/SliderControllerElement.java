@@ -101,6 +101,9 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (!focused && !hovered)
+            return false;
+
         switch (keyCode) {
             case GLFW.GLFW_KEY_LEFT, GLFW.GLFW_KEY_DOWN -> incrementValue(-1);
             case GLFW.GLFW_KEY_RIGHT, GLFW.GLFW_KEY_UP -> incrementValue(1);

@@ -97,13 +97,16 @@ public class TickBoxController implements Controller<Boolean> {
 
         @Override
         public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-            if (keyCode != GLFW.GLFW_KEY_ENTER && keyCode != GLFW.GLFW_KEY_SPACE && keyCode != GLFW.GLFW_KEY_KP_ENTER) {
+            if (!focused && !hovered) {
                 return false;
             }
 
-            toggleSetting();
+            if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_SPACE || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+                toggleSetting();
+                return true;
+            }
 
-            return true;
+            return false;
         }
     }
 }
