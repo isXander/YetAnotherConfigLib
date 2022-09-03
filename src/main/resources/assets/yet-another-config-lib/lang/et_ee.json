@@ -12,8 +12,8 @@
   "yacl.gui.reset.tooltip": "Lähtestab kõik valikud vaikeväärtustele. (Seda saab tagasi võtta!)",
   "yacl.gui.undo": "Võta tagasi",
   "yacl.gui.undo.tooltip": "Lähtestab kõik valikud muutmise-eelsetele väärtustele.",
-  "yocl.gui.fail_apply": "Rakendamine ebaõnnestus",
-  "yocl.gui.fail_apply.tooltip": "Esines viga ja muudatusi ei saadud rakendada.",
-  "yocl.gui.save_before_exit": "Salvesta enne väljumist!",
-  "yocl.gui.save_before_exit.tooltip": "Liidesest väljumiseks salvesta või loobu."
+  "yacl.gui.fail_apply": "Rakendamine ebaõnnestus",
+  "yacl.gui.fail_apply.tooltip": "Esines viga ja muudatusi ei saadud rakendada.",
+  "yacl.gui.save_before_exit": "Salvesta enne väljumist!",
+  "yacl.gui.save_before_exit.tooltip": "Liidesest väljumiseks salvesta või loobu."
 }
