@@ -69,7 +69,9 @@ public class OptionImpl<T> implements Option<T> {
 
     @Override
     public void applyValue() {
-        binding().setValue(pendingValue);
+        if (changed()) {
+            binding().setValue(pendingValue);
+        }
     }
 
     @Override

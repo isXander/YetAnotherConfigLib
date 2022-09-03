@@ -9,6 +9,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.ApiStatus;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Function;
 
@@ -117,14 +118,18 @@ public class BooleanController implements Controller<Boolean> {
             if (!isMouseOver(mouseX, mouseY))
                 return false;
 
-            control.option().requestSet(!control.option().pendingValue());
-            playDownSound();
+            toggleSetting();
             return true;
         }
 
         @Override
         protected int getHoveredControlWidth() {
             return getUnhoveredControlWidth();
+        }
+
+        public void toggleSetting() {
+            control.option().requestSet(!control.option().pendingValue());
+            playDownSound();
         }
 
         @Override
@@ -134,6 +139,20 @@ public class BooleanController implements Controller<Boolean> {
             }
 
             return super.getValueText();
+        }
+
+        @Override
+        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+            if (!focused && !hovered) {
+                return false;
+            }
+
+            if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_SPACE || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+                toggleSetting();
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -12,5 +12,6 @@
   "yacl.gui.finished": "Finished",
   "yacl.gui.cancel": "Cancel",
   "yacl.gui.reset": "Reset",
-  "yacl.gui.undo": "Undo"
+  "yacl.gui.undo": "Undo",
+  "yocl.gui.fail_apply": "Failed to apply"
 }

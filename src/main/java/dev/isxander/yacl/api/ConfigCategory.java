@@ -138,7 +138,7 @@ public interface ConfigCategory {
             Validate.notNull(name, "`name` must not be null to build `ConfigCategory`");
 
             List<OptionGroup> combinedGroups = new ArrayList<>();
-            combinedGroups.add(new OptionGroupImpl(Text.empty(), ImmutableList.copyOf(rootOptions), true));
+            combinedGroups.add(new OptionGroupImpl(Text.empty(), Text.empty(), ImmutableList.copyOf(rootOptions), true));
             combinedGroups.addAll(groups);
 
             Validate.notEmpty(combinedGroups, "at least one option must be added to build `ConfigCategory`");

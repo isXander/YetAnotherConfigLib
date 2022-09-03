@@ -2,6 +2,7 @@ package dev.isxander.yacl.api;
 
 import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl.impl.OptionGroupImpl;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +24,11 @@ public interface OptionGroup {
     Text name();
 
     /**
+     * Tooltip displayed on hover.
+     */
+    Text tooltip();
+
+    /**
      * List of all options in the group
      */
     @NotNull ImmutableList<Option<?>> options();
@@ -42,6 +48,7 @@ public interface OptionGroup {
 
     class Builder {
         private Text name = Text.empty();
+        private final List<Text> tooltipLines = new ArrayList<>();
         private final List<Option<?>> options = new ArrayList<>();
 
         private Builder() {
@@ -57,6 +64,20 @@ public interface OptionGroup {
             Validate.notNull(name, "`name` must not be null");
 
             this.name = name;
+            return this;
+        }
+
+        /**
+         * Sets the tooltip to be used by the option group.
+         * Can be invoked twice to append more lines.
+         * No need to wrap the text yourself, the gui does this itself.
+         *
+         * @param tooltips text lines - merged with a new-line on {@link Builder#build()}.
+         */
+        public Builder tooltip(@NotNull Text... tooltips) {
+            Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
+
+            tooltipLines.addAll(List.of(tooltips));
             return this;
         }
 
@@ -89,7 +110,16 @@ public interface OptionGroup {
         public OptionGroup build() {
             Validate.notEmpty(options, "`options` must not be empty to build `OptionGroup`");
 
-            return new OptionGroupImpl(name, ImmutableList.copyOf(options), false);
+            MutableText concatenatedTooltip = Text.empty();
+            boolean first = true;
+            for (Text line : tooltipLines) {
+                if (!first) concatenatedTooltip.append("\n");
+                first = false;
+
+                concatenatedTooltip.append(line);
+            }
+
+            return new OptionGroupImpl(name, concatenatedTooltip, ImmutableList.copyOf(options), false);
         }
     }
 }
