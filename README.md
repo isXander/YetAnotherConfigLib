@@ -45,7 +45,7 @@ YACL has the favour of hindsight. Whilst developing this fresh library, I can ma
 
 <center><div align="center">
 
-<img src="https://user-images.githubusercontent.com/43245524/188279091-2876a731-83bb-41e4-91bc-9512fd69d9c0.png">
+<img src="https://user-images.githubusercontent.com/43245524/188279454-80633c94-0a12-4110-ad54-a25469b25556.png">
 
 </div></center>
 
