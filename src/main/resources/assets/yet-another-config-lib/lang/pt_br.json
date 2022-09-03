@@ -1,0 +1,19 @@
+{
+  "yacl.control.boolean.true": "Verdadeiro",
+  "yacl.control.boolean.false": "Falso",
+
+  "yacl.control.action.execute": "EXECUTAR",
+
+  "yacl.gui.save": "Salvar Mudanças",
+  "yacl.gui.save.tooltip": "Faz as mudanças serem permanentes.",
+  "yacl.gui.finished": "Finalizado",
+  "yacl.gui.finished.tooltip": "Fecha o GUI.",
+  "yacl.gui.cancel.tooltip": "Esquece as mudanças pendentes e fecha o GUI.",
+  "yacl.gui.reset.tooltip": "Reinicia todas as opções para o valor padrão. (Isso é irreversível!)",
+  "yacl.gui.undo": "Desfazer",
+  "yacl.gui.undo.tooltip": "Reverte todas as opções como elas estavam antes de serem editadas.",
+  "yacl.gui.fail_apply": "Falha na aplicação",
+  "yacl.gui.fail_apply.tooltip": "Houve um erro e as mudanças não puderam ser aplicadas.",
+  "yacl.gui.save_before_exit": "Salve antes de sair!",
+  "yacl.gui.save_before_exit.tooltip": "Salve ou calcele para sair do GUI."
+}
