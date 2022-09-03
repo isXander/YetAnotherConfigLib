@@ -12,6 +12,7 @@ import dev.isxander.yacl.gui.controllers.slider.FloatSliderController;
 import dev.isxander.yacl.gui.controllers.slider.IntegerSliderController;
 import dev.isxander.yacl.gui.controllers.slider.LongSliderController;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.option.GraphicsMode;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
@@ -19,11 +20,31 @@ import net.minecraft.text.Text;
 public class ModMenuIntegration implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return getFullTestSuite();
+        return (parent) -> YetAnotherConfigLib.createBuilder()
+                .title(Text.of("Test Suites"))
+                .category(ConfigCategory.createBuilder()
+                        .name(Text.of("Suites"))
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Full Test Suite"))
+                                .controller(ActionController::new)
+                                .action(screen -> MinecraftClient.getInstance().setScreen(getFullTestSuite(screen)))
+                                .build())
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Basic Wiki Suite"))
+                                .controller(ActionController::new)
+                                .action(screen -> MinecraftClient.getInstance().setScreen(getWikiBasic(screen)))
+                                .build())
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Group Wiki Suite"))
+                                .controller(ActionController::new)
+                                .action(screen -> MinecraftClient.getInstance().setScreen(getWikiGroups(screen)))
+                                .build())
+                        .build())
+                .build().generateScreen(parent);
     }
 
-    private ConfigScreenFactory<?> getFullTestSuite() {
-        return (parent) -> YetAnotherConfigLib.createBuilder()
+    private Screen getFullTestSuite(Screen parent) {
+        return YetAnotherConfigLib.createBuilder()
                 .title(Text.of("Test GUI"))
                 .category(ConfigCategory.createBuilder()
                         .name(Text.of("Control Examples"))
@@ -263,8 +284,8 @@ public class ModMenuIntegration implements ModMenuApi {
                 .build().generateScreen(parent);
     }
 
-    private ConfigScreenFactory<?> getWikiBasic() {
-        return (parent) -> YetAnotherConfigLib.createBuilder()
+    private Screen getWikiBasic(Screen parent) {
+        return YetAnotherConfigLib.createBuilder()
                 .title(Text.of("Mod Name"))
                 .category(ConfigCategory.createBuilder()
                         .name(Text.of("My Category"))
@@ -285,8 +306,8 @@ public class ModMenuIntegration implements ModMenuApi {
                 .generateScreen(parent);
     }
 
-    private ConfigScreenFactory<?> getWikiGroups() {
-        return (parent) -> YetAnotherConfigLib.createBuilder()
+    private Screen getWikiGroups(Screen parent) {
+        return YetAnotherConfigLib.createBuilder()
                 .title(Text.of("Mod Name"))
                 .category(ConfigCategory.createBuilder()
                         .name(Text.of("My Category"))
