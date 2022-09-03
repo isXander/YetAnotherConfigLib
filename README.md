@@ -1,4 +1,4 @@
-<div align="center">
+<center><div align="center">
 
 ![](https://raw.githubusercontent.com/isXander/YetAnotherConfigLib/1.19/src/main/resources/yacl-128x.png)
 
@@ -15,7 +15,7 @@
 
 Yet Another Config Lib, like, what were you expecting?
 
-</div>
+</div></center>
 
 ## Why does this mod even exist?
 
@@ -43,11 +43,11 @@ YACL has the favour of hindsight. Whilst developing this fresh library, I can ma
 
 ## Screenshots
 
-<div align="center">
+<center><div align="center">
 
 <img src="https://user-images.githubusercontent.com/43245524/188279091-2876a731-83bb-41e4-91bc-9512fd69d9c0.png">
 
-</div>
+</div></center>
 
 ## License
 
