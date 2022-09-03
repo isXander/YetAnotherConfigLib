@@ -138,7 +138,7 @@ public class YACLScreen extends Screen {
         undoButton.active = pendingChanges;
         finishedSaveButton.setMessage(pendingChanges ? Text.translatable("yacl.gui.save") : Text.translatable("yacl.gui.finished"));
         finishedSaveButton.setTooltip(pendingChanges ? Text.translatable("yacl.gui.save.tooltip") : Text.translatable("yacl.gui.finished.tooltip"));
-        cancelResetButton.setMessage(pendingChanges ? Text.translatable("yacl.gui.cancel") : Text.translatable("yacl.gui.reset"));
+        cancelResetButton.setMessage(pendingChanges ? Text.translatable("gui.cancel") : Text.translatable("controls.reset"));
         cancelResetButton.setTooltip(pendingChanges ? Text.translatable("yacl.gui.cancel.tooltip") : Text.translatable("yacl.gui.reset.tooltip"));
     }
 

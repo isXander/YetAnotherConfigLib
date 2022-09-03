@@ -30,8 +30,8 @@ public class BooleanController implements Controller<Boolean> {
 
     public static final Function<Boolean, Text> YES_NO_FORMATTER = (state) ->
             state
-                    ? Text.translatable("yacl.control.boolean.yes")
-                    : Text.translatable("yacl.control.boolean.no");
+                    ? Text.translatable("gui.yes")
+                    : Text.translatable("gui.no");
 
     private final Option<Boolean> option;
     private final Function<Boolean, Text> valueFormatter;

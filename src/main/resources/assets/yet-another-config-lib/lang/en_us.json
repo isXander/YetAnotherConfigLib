@@ -1,8 +1,6 @@
 {
   "yacl.control.boolean.true": "True",
   "yacl.control.boolean.false": "False",
-  "yacl.control.boolean.yes": "Yes",
-  "yacl.control.boolean.no": "No",
 
   "yacl.control.action.execute": "EXECUTE",
 
@@ -10,9 +8,7 @@
   "yacl.gui.save.tooltip": "Makes the changes made permanent.",
   "yacl.gui.finished": "Finished",
   "yacl.gui.finished.tooltip": "Closes the GUI.",
-  "yacl.gui.cancel": "Cancel",
   "yacl.gui.cancel.tooltip": "Forgets pending changes and closes the GUI.",
-  "yacl.gui.reset": "Reset",
   "yacl.gui.reset.tooltip": "Resets all options to default. (This is reversible!)",
   "yacl.gui.undo": "Undo",
   "yacl.gui.undo.tooltip": "Reverts all options back to what they were before editing.",
