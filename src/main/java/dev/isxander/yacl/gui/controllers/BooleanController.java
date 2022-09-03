@@ -20,8 +20,8 @@ public class BooleanController implements Controller<Boolean> {
 
     public static final Function<Boolean, Text> ON_OFF_FORMATTER = (state) ->
             state
-                    ? Text.translatable("yacl.control.boolean.on")
-                    : Text.translatable("yacl.control.boolean.off");
+                    ? Text.translatable("options.on")
+                    : Text.translatable("options.off");
 
     public static final Function<Boolean, Text> TRUE_FALSE_FORMATTER = (state) ->
             state

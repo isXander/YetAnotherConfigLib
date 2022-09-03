@@ -1,6 +1,4 @@
 {
-  "yacl.control.boolean.on": "ON",
-  "yacl.control.boolean.off": "OFF",
   "yacl.control.boolean.true": "True",
   "yacl.control.boolean.false": "False",
   "yacl.control.boolean.yes": "Yes",
