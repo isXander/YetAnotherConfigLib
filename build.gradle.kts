@@ -13,7 +13,7 @@ plugins {
     id("org.ajoberstar.grgit") version "5.0.0"
 }
 
-val buildNumber = System.getenv("GITHUB.RUN_NUMBER")
+val buildNumber = System.getenv("GITHUB_RUN_NUMBER")
 
 group = "dev.isxander"
 version = "0.1.0"
