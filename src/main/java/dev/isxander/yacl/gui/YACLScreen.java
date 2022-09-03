@@ -74,7 +74,7 @@ public class YACLScreen extends Screen {
                 OptionUtils.forEachOptions(config, option -> {
                     if (option.changed()) {
                         YACLConstants.LOGGER.error("Option '{}' was saved as '{}' but the changes don't seem to have applied.", option.name().getString(), option.pendingValue());
-                        setSaveButtonMessage(Text.translatable("yocl.gui.fail_apply").formatted(Formatting.RED), Text.translatable("yocl.gui.fail_apply.tooltip"));
+                        setSaveButtonMessage(Text.translatable("yacl.gui.fail_apply").formatted(Formatting.RED), Text.translatable("yacl.gui.fail_apply.tooltip"));
                     }
                 });
                 config.saveFunction().run();
@@ -187,7 +187,7 @@ public class YACLScreen extends Screen {
     @Override
     public boolean shouldCloseOnEsc() {
         if (pendingChanges()) {
-            setSaveButtonMessage(Text.translatable("yocl.gui.save_before_exit").formatted(Formatting.RED), Text.translatable("yocl.gui.save_before_exit.tooltip"));
+            setSaveButtonMessage(Text.translatable("yacl.gui.save_before_exit").formatted(Formatting.RED), Text.translatable("yacl.gui.save_before_exit.tooltip"));
             return false;
         }
         return true;

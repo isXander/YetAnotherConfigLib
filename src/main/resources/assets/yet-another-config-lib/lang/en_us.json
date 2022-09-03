@@ -12,8 +12,8 @@
   "yacl.gui.reset.tooltip": "Resets all options to default. (This is reversible!)",
   "yacl.gui.undo": "Undo",
   "yacl.gui.undo.tooltip": "Reverts all options back to what they were before editing.",
-  "yocl.gui.fail_apply": "Failed to apply",
-  "yocl.gui.fail_apply.tooltip": "There was an error and the changes couldn't be applied.",
-  "yocl.gui.save_before_exit": "Save before exiting!",
-  "yocl.gui.save_before_exit.tooltip": "Save or cancel to exit the GUI."
+  "yacl.gui.fail_apply": "Failed to apply",
+  "yacl.gui.fail_apply.tooltip": "There was an error and the changes couldn't be applied.",
+  "yacl.gui.save_before_exit": "Save before exiting!",
+  "yacl.gui.save_before_exit.tooltip": "Save or cancel to exit the GUI."
 }
