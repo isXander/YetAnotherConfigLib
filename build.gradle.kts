@@ -19,7 +19,7 @@ group = "dev.isxander"
 version = "0.1.0"
 
 if (buildNumber != null)
-    version = "$version-$buildNumber"
+    version = "$version-$buildNumber-SNAPSHOT"
 
 val testmod by sourceSets.registering {
     compileClasspath += sourceSets.main.get().compileClasspath
