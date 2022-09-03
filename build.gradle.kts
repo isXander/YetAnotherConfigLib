@@ -13,13 +13,13 @@ plugins {
     id("org.ajoberstar.grgit") version "5.0.0"
 }
 
-val ciRun = System.getenv().containsKey("GITHUB_ACTIONS")
+val buildNumber = System.getenv("GITHUB.RUN_NUMBER")
 
 group = "dev.isxander"
 version = "0.1.0"
 
-if (ciRun)
-    version = grgit.head().abbreviatedId
+if (buildNumber != null)
+    version = "$version-$buildNumber"
 
 val testmod by sourceSets.registering {
     compileClasspath += sourceSets.main.get().compileClasspath
