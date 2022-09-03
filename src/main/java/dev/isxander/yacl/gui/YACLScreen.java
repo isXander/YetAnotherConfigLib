@@ -43,13 +43,14 @@ public class YACLScreen extends Screen {
         categoryButtons.clear();
         int columnWidth = width / 3;
         int padding = columnWidth / 20;
-        Dimension<Integer> categoryDim = Dimension.ofInt(padding, padding, columnWidth - padding * 2, 20);
+        columnWidth = Math.min(columnWidth, 400);
+        Dimension<Integer> categoryDim = Dimension.ofInt(width / 3 / 2, padding, columnWidth - padding * 2, 20);
         int idx = 0;
         for (ConfigCategory category : config.categories()) {
             CategoryWidget categoryWidget = new CategoryWidget(
                     this,
                     category,
-                    categoryDim.x(), categoryDim.y(),
+                    categoryDim.x() - categoryDim.width() / 2, categoryDim.y(),
                     categoryDim.width(), categoryDim.height()
             );
             if (idx == currentCategoryIdx)
@@ -58,11 +59,11 @@ public class YACLScreen extends Screen {
             addDrawableChild(categoryWidget);
 
             idx++;
-            categoryDim = categoryDim.moved(0, 21);
+            categoryDim.move(0, 21);
         }
 
-        Dimension<Integer> actionDim = Dimension.ofInt(padding, height - padding - 20, columnWidth - padding * 2, 20);
-        finishedSaveButton = new ButtonWidget(actionDim.x(), actionDim.y(), actionDim.width(), actionDim.height(), Text.empty(), (btn) -> {
+        Dimension<Integer> actionDim = Dimension.ofInt(width / 3 / 2, height - padding - 20, columnWidth - padding * 2, 20);
+        finishedSaveButton = new ButtonWidget(actionDim.x() - actionDim.width() / 2, actionDim.y(), actionDim.width(), actionDim.height(), Text.empty(), (btn) -> {
             saveButtonMessage = null;
 
             if (pendingChanges()) {
@@ -76,8 +77,8 @@ public class YACLScreen extends Screen {
                 config.saveFunction().run();
             } else close();
         });
-        actionDim = actionDim.moved(0, -22).expanded(-actionDim.width() / 2 - 2, 0);
-        cancelResetButton = new ButtonWidget(actionDim.x(), actionDim.y(), actionDim.width(), actionDim.height(), Text.translatable("yacl.gui.cancel"), (btn) -> {
+        actionDim.expand(-actionDim.width() / 2 - 2, 0).move(-actionDim.width() / 2 - 2, -22);
+        cancelResetButton = new ButtonWidget(actionDim.x() - actionDim.width() / 2, actionDim.y(), actionDim.width(), actionDim.height(), Text.translatable("yacl.gui.cancel"), (btn) -> {
             if (pendingChanges()) {
                 OptionUtils.forEachOptions(config, Option::forgetPendingValue);
                 close();
@@ -86,8 +87,8 @@ public class YACLScreen extends Screen {
             }
 
         });
-        actionDim = actionDim.moved(actionDim.width() + 4, 0);
-        undoButton = new ButtonWidget(actionDim.x(), actionDim.y(), actionDim.width(), actionDim.height(), Text.translatable("yacl.gui.undo"), (btn) -> {
+        actionDim.move(actionDim.width() + 4, 0);
+        undoButton = new ButtonWidget(actionDim.x() - actionDim.width() / 2, actionDim.y(), actionDim.width(), actionDim.height(), Text.translatable("yacl.gui.undo"), (btn) -> {
             OptionUtils.forEachOptions(config, Option::forgetPendingValue);
         });
 
