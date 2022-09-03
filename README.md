@@ -21,10 +21,10 @@ Yet Another Config Lib, like, what were you expecting?
 
 This mod was made to fill a hole in this area of Fabric modding. The existing main config libraries don't achieve what I want from them:
 
-- **[Cloth Config API](https://modrinth.com/mod/cloth-config)**:<br/>It's stale. The developer of cloth has clarified that they are likely not going to add any more features. They don't want to touch it.
-- **[SpruceUI](https://github.com/LambdAurora/SpruceUI)**:<br/>It isn't designed for configuration. In this essence the design feels cluttered. Further details available in this issue.
-- **[MidnightLib](https://modrinth.com/mod/midnightlib)**:<br/>It's mostly bloat and doesn't have a focus on config. This library includes other unwanted features such as cosmetics.
-- **[OwoLib](https://modrinth.com/mod/owo-lib)**:<br/>It's content focused. Like MidnightLib, it does a lot of other things as well, adding to the size.
+- **[Cloth Config API](https://modrinth.com/mod/cloth-config)**:<br/>**It's stale.** The developer of cloth has clarified that they are likely not going to add any more features. They don't want to touch it.
+- **[SpruceUI](https://github.com/LambdAurora/SpruceUI)**:<br/>**It isn't designed for configuration.** In this essence the design feels cluttered. Further details available in this issue.
+- **[MidnightLib](https://modrinth.com/mod/midnightlib)**:<br/>**It's mostly bloat and doesn't have a focus on config.** This library includes other unwanted features such as cosmetics.
+- **[OwoLib](https://modrinth.com/mod/owo-lib)**:<br/>**It's content focused.** Like MidnightLib, it does a lot of other things as well, adding to the size.
 
 As you can see, there's sadly a drawback with all of them and this is where YetAnotherConfigLib comes in.
 
