@@ -59,6 +59,11 @@ public class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
+    public @NotNull Class<Consumer<YACLScreen>> typeClass() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean changed() {
         return false;
     }

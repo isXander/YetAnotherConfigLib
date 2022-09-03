@@ -12,6 +12,7 @@ import dev.isxander.yacl.gui.controllers.slider.FloatSliderController;
 import dev.isxander.yacl.gui.controllers.slider.IntegerSliderController;
 import dev.isxander.yacl.gui.controllers.slider.LongSliderController;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.GraphicsMode;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
 
@@ -58,6 +59,12 @@ public class ModMenuIntegration implements ModMenuApi {
                                                 () -> TestSettings.tickbox,
                                                 (value) -> TestSettings.tickbox = value
                                         )
+                                        .controller(TickBoxController::new)
+                                        .build())
+                                .option(Option.createBuilder(boolean.class)
+                                        .name(Text.of("Minecraft AutoJump"))
+                                        .tooltip(Text.of("You can even bind minecraft options!"))
+                                        .binding(Binding.minecraft(MinecraftClient.getInstance().options.getAutoJump()))
                                         .controller(TickBoxController::new)
                                         .build())
                                 .build())
@@ -109,7 +116,12 @@ public class ModMenuIntegration implements ModMenuApi {
                                                 () -> TestSettings.enumOption,
                                                 (value) -> TestSettings.enumOption = value
                                         )
-                                        .controller(opt -> new EnumController<>(opt, TestSettings.Alphabet.class))
+                                        .controller(EnumController::new)
+                                        .build())
+                                .option(Option.createBuilder(GraphicsMode.class)
+                                        .name(Text.of("Minecraft Graphics Mode"))
+                                        .binding(Binding.minecraft(MinecraftClient.getInstance().options.getGraphicsMode()))
+                                        .controller(EnumController::new)
                                         .build())
                                 .build())
                         .group(OptionGroup.createBuilder()
@@ -243,6 +255,7 @@ public class ModMenuIntegration implements ModMenuApi {
                                 .controller(ActionController::new)
                                 .build())
                         .build())
+                .save(() -> MinecraftClient.getInstance().options.write())
                 .build().generateScreen(parent);
     }
 

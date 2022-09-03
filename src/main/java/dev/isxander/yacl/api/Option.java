@@ -40,6 +40,12 @@ public interface Option<T> {
     @NotNull Binding<T> binding();
 
     /**
+     * Class of the option type.
+     * Used by some controllers.
+     */
+    @NotNull Class<T> typeClass();
+
+    /**
      * Checks if the pending value is not equal to the current set value
      */
     boolean changed();
@@ -77,7 +83,7 @@ public interface Option<T> {
      * @param typeClass used to capture the type
      */
     static <T> Builder<T> createBuilder(Class<T> typeClass) {
-        return new Builder<>();
+        return new Builder<>(typeClass);
     }
 
     class Builder<T> {
@@ -89,8 +95,10 @@ public interface Option<T> {
 
         private Binding<T> binding;
 
-        private Builder() {
+        private final Class<T> typeClass;
 
+        private Builder(Class<T> typeClass) {
+            this.typeClass = typeClass;
         }
 
         /**
@@ -177,7 +185,7 @@ public interface Option<T> {
                 concatenatedTooltip.append(line);
             }
 
-            return new OptionImpl<>(name, concatenatedTooltip, controlGetter, binding);
+            return new OptionImpl<>(name, concatenatedTooltip, controlGetter, binding, typeClass);
         }
     }
 }

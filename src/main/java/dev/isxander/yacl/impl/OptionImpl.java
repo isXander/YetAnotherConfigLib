@@ -17,18 +17,22 @@ public class OptionImpl<T> implements Option<T> {
     private final Controller<T> controller;
     private final Binding<T> binding;
 
+    private final Class<T> typeClass;
+
     private T pendingValue;
 
     public OptionImpl(
             @NotNull Text name,
             @Nullable Text tooltip,
             @NotNull Function<Option<T>, Controller<T>> controlGetter,
-            @NotNull Binding<T> binding
+            @NotNull Binding<T> binding,
+            @NotNull Class<T> typeClass
     ) {
         this.name = name;
         this.tooltip = tooltip;
         this.controller = controlGetter.apply(this);
         this.binding = binding;
+        this.typeClass = typeClass;
         this.pendingValue = binding().getValue();
     }
 
@@ -50,6 +54,11 @@ public class OptionImpl<T> implements Option<T> {
     @Override
     public @NotNull Binding<T> binding() {
         return binding;
+    }
+
+    @Override
+    public @NotNull Class<T> typeClass() {
+        return typeClass;
     }
 
     @Override

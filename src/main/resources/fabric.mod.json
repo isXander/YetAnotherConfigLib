@@ -23,6 +23,9 @@
     "minecraft": "1.19.x",
     "java": ">=17"
   },
+  "mixins": [
+    "yet-another-config-lib.mixins.json"
+  ],
   "custom": {
     "modmenu": {
       "badges": ["library"]

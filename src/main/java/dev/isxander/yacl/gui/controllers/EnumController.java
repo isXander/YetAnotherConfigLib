@@ -22,7 +22,6 @@ import java.util.function.Function;
 public class EnumController<T extends Enum<T>> implements Controller<T> {
     private final Option<T> option;
     private final Function<T, Text> valueFormatter;
-    private final Class<T> enumClass;
 
     /**
      * Constructs a cycling enum controller with a default value formatter.
@@ -30,10 +29,9 @@ public class EnumController<T extends Enum<T>> implements Controller<T> {
      * enum is a {@link NameableEnum} else, just use {@link Enum#name()}
      *
      * @param option bound option
-     * @param enumClass class of enum
      */
-    public EnumController(Option<T> option, Class<T> enumClass) {
-        this(option, enumClass, value -> {
+    public EnumController(Option<T> option) {
+        this(option, value -> {
             if (value instanceof NameableEnum nameableEnum)
                 return nameableEnum.getDisplayName();
             return Text.of(value.name());
@@ -44,13 +42,11 @@ public class EnumController<T extends Enum<T>> implements Controller<T> {
      * Constructs a cycling enum controller.
      *
      * @param option bound option
-     * @param enumClass class of enum
      * @param valueFormatter format the enum into any {@link Text}
      */
-    public EnumController(Option<T> option, Class<T> enumClass, Function<T, Text> valueFormatter) {
+    public EnumController(Option<T> option, Function<T, Text> valueFormatter) {
         this.option = option;
         this.valueFormatter = valueFormatter;
-        this.enumClass = enumClass;
     }
 
     /**
@@ -74,7 +70,7 @@ public class EnumController<T extends Enum<T>> implements Controller<T> {
      */
     @Override
     public ControllerWidget<EnumController<T>> provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
-        return new EnumControllerElement<>(this, screen, widgetDimension, enumClass.getEnumConstants());
+        return new EnumControllerElement<>(this, screen, widgetDimension, option().typeClass().getEnumConstants());
     }
 
     @ApiStatus.Internal
