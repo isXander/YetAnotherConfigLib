@@ -11,11 +11,11 @@ import net.minecraft.text.Text;
 import java.util.List;
 
 public class TooltipButtonWidget extends ButtonWidget {
-    private float hoveredTicks = 0;
-    private int prevMouseX, prevMouseY;
+    protected float hoveredTicks = 0;
+    protected int prevMouseX, prevMouseY;
 
-    private final Screen screen;
-    private List<OrderedText> wrappedDescription;
+    protected final Screen screen;
+    protected List<OrderedText> wrappedDescription;
 
     public TooltipButtonWidget(Screen screen, int x, int y, int width, int height, Text message, Text tooltip, PressAction onPress) {
         super(x, y, width, height, message, onPress);

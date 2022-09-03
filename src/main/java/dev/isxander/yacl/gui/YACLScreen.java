@@ -24,7 +24,7 @@ public class YACLScreen extends Screen {
     private final Screen parent;
 
     public OptionListWidget optionList;
-    public final List<TooltipButtonWidget> categoryButtons;
+    public final List<CategoryWidget> categoryButtons;
     public TooltipButtonWidget finishedSaveButton, cancelResetButton, undoButton;
 
     public Text saveButtonMessage;
@@ -49,15 +49,14 @@ public class YACLScreen extends Screen {
         Dimension<Integer> categoryDim = Dimension.ofInt(width / 3 / 2, padding, columnWidth - padding * 2, 20);
         int idx = 0;
         for (ConfigCategory category : config.categories()) {
-            TooltipButtonWidget categoryWidget = new TooltipButtonWidget(
+            CategoryWidget categoryWidget = new CategoryWidget(
                     this,
+                    category,
+                    idx,
                     categoryDim.x() - categoryDim.width() / 2, categoryDim.y(),
-                    categoryDim.width(), categoryDim.height(),
-                    category.name(), category.tooltip(),
-                    (btn) -> changeCategory(categoryButtons.indexOf(btn))
+                    categoryDim.width(), categoryDim.height()
             );
-            if (idx == currentCategoryIdx)
-                categoryWidget.active = false;
+
             categoryButtons.add(categoryWidget);
             addDrawableChild(categoryWidget);
 
@@ -123,11 +122,6 @@ public class YACLScreen extends Screen {
     }
 
     public void changeCategory(int idx) {
-        int currentIndex = 0;
-        for (ButtonWidget categoryWidget : categoryButtons) {
-            categoryWidget.active = currentIndex != idx;
-            currentIndex++;
-        }
         currentCategoryIdx = idx;
         refreshGUI();
     }
