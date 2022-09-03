@@ -7,6 +7,7 @@ import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+import net.minecraft.util.TranslatableOption;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.glfw.GLFW;
 
@@ -34,6 +35,8 @@ public class EnumController<T extends Enum<T>> implements Controller<T> {
         this(option, value -> {
             if (value instanceof NameableEnum nameableEnum)
                 return nameableEnum.getDisplayName();
+            if (value instanceof TranslatableOption translatableOption)
+                return translatableOption.getText();
             return Text.of(value.name());
         });
     }
