@@ -5,15 +5,18 @@ import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
 
-public class BasicStringController implements IStringController<String> {
+/**
+ * A custom text field implementation for strings.
+ */
+public class StringController implements IStringController<String> {
     private final Option<String> option;
 
     /**
-     * Constructs a tickbox controller
+     * Constructs a string controller
      *
      * @param option bound option
      */
-    public BasicStringController(Option<String> option) {
+    public StringController(Option<String> option) {
         this.option = option;
     }
 

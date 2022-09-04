@@ -9,28 +9,18 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
+/**
+ * Simply renders some text as a label.
+ */
 public class LabelController implements Controller<Text> {
     private final Option<Text> option;
-    private final int color;
-
     /**
      * Constructs a label controller
      *
      * @param option bound option
      */
     public LabelController(Option<Text> option) {
-        this(option, -1);
-    }
-
-    /**
-     * Constructs a label controller
-     *
-     * @param option bound option
-     * @param color color of the label
-     */
-    public LabelController(Option<Text> option, int color) {
         this.option = option;
-        this.color = color;
     }
 
     /**
@@ -39,10 +29,6 @@ public class LabelController implements Controller<Text> {
     @Override
     public Option<Text> option() {
         return option;
-    }
-
-    public int color() {
-        return color;
     }
 
     @Override
@@ -64,7 +50,7 @@ public class LabelController implements Controller<Text> {
 
         @Override
         public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-            textRenderer.drawWithShadow(matrices, formatValue(), dim.x(), dim.centerY() - textRenderer.fontHeight / 2f, color());
+            textRenderer.drawWithShadow(matrices, formatValue(), dim.x(), dim.centerY() - textRenderer.fontHeight / 2f, -1);
         }
     }
 }

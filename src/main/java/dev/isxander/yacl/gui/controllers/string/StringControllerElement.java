@@ -8,7 +8,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Pair;
 import org.lwjgl.glfw.GLFW;
 
 public class StringControllerElement extends ControllerWidget<IStringController<?>> {
@@ -27,7 +26,6 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         super(control, screen, dim);
         inputField = new StringBuilder(control.getString());
         inputFieldFocused = false;
-        caretPos = inputField.length();
         selectionLength = 0;
         emptyText = Text.literal("Click to type...").formatted(Formatting.GRAY);
     }
@@ -40,7 +38,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         DrawableHelper.fill(matrices, inputFieldBounds.x() + 1, inputFieldBounds.yLimit() + 1, inputFieldBounds.xLimit() + 1, inputFieldBounds.yLimit() + 2, 0xFF404040);
 
         if (inputFieldFocused || focused) {
-            int caretX = inputFieldBounds.x() + textRenderer.getWidth(inputField.substring(0, caretPos)) - 1;
+            int caretX = inputFieldBounds.x() + textRenderer.getWidth(control.getString().substring(0, caretPos)) - 1;
             if (inputField.isEmpty())
                 caretX += inputFieldBounds.width() / 2;
 
@@ -58,18 +56,24 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (inputFieldBounds.isPointInside((int) mouseX, (int) mouseY)) {
-            if (!inputFieldFocused)
+            if (!inputFieldFocused) {
                 inputFieldFocused = true;
-            else {
+                caretPos = getDefaultCarotPos();
+            } else {
                 int textWidth = (int) mouseX - inputFieldBounds.x();
                 caretPos = textRenderer.trimToWidth(control.getString(), textWidth).length();
                 selectionLength = 0;
             }
+            return true;
         } else {
             inputFieldFocused = false;
         }
 
-        return super.mouseClicked(mouseX, mouseY, button);
+        return false;
+    }
+
+    protected int getDefaultCarotPos() {
+        return inputField.length();
     }
 
     @Override
@@ -115,34 +119,27 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                 return true;
             }
             case GLFW.GLFW_KEY_BACKSPACE -> {
-                if (selectionLength != 0) {
-                    write("");
-                } else if (caretPos > 0) {
-                    inputField.deleteCharAt(caretPos - 1);
-                    updateControl();
-                    caretPos--;
-                }
+                doBackspace();
                 return true;
             }
             case GLFW.GLFW_KEY_DELETE -> {
-                if (caretPos < inputField.length()) {
-                    inputField.deleteCharAt(caretPos);
-                    updateControl();
-                }
+                doDelete();
                 return true;
             }
         }
 
-        if (Screen.isPaste(keyCode)) {
-            this.write(client.keyboard.getClipboard());
-        } else if (Screen.isCopy(keyCode) && selectionLength != 0) {
-            client.keyboard.setClipboard(getSelection());
-        } else if (Screen.isCut(keyCode) && selectionLength != 0) {
-            client.keyboard.setClipboard(getSelection());
-            this.write("");
-        } else if (Screen.isSelectAll(keyCode)) {
-            caretPos = inputField.length();
-            selectionLength = -caretPos;
+        if (canUseShortcuts()) {
+            if (Screen.isPaste(keyCode)) {
+                this.write(client.keyboard.getClipboard());
+            } else if (Screen.isCopy(keyCode) && selectionLength != 0) {
+                client.keyboard.setClipboard(getSelection());
+            } else if (Screen.isCut(keyCode) && selectionLength != 0) {
+                client.keyboard.setClipboard(getSelection());
+                this.write("");
+            } else if (Screen.isSelectAll(keyCode)) {
+                caretPos = inputField.length();
+                selectionLength = -caretPos;
+            }
         }
 
         return false;
@@ -156,6 +153,26 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         write(Character.toString(chr));
 
         return true;
+    }
+
+    protected boolean canUseShortcuts() {
+        return true;
+    }
+
+    protected void doBackspace() {
+        if (selectionLength != 0) {
+            write("");
+        } else if (caretPos > 0) {
+            inputField.deleteCharAt(caretPos - 1);
+            caretPos--;
+        }
+    }
+
+    protected void doDelete() {
+        if (caretPos < inputField.length()) {
+            inputField.deleteCharAt(caretPos);
+            updateControl();
+        }
     }
 
     public void write(String string) {

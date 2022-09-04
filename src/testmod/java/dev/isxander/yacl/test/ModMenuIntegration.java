@@ -8,12 +8,14 @@ import dev.isxander.yacl.gui.controllers.slider.DoubleSliderController;
 import dev.isxander.yacl.gui.controllers.slider.FloatSliderController;
 import dev.isxander.yacl.gui.controllers.slider.IntegerSliderController;
 import dev.isxander.yacl.gui.controllers.slider.LongSliderController;
-import dev.isxander.yacl.gui.controllers.string.BasicStringController;
+import dev.isxander.yacl.gui.controllers.string.StringController;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.option.GraphicsMode;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.Text;
+
+import java.awt.*;
 
 public class ModMenuIntegration implements ModMenuApi {
     @Override
@@ -130,7 +132,12 @@ public class ModMenuIntegration implements ModMenuApi {
                                                 () -> TestSettings.textField,
                                                 value -> TestSettings.textField = value
                                         )
-                                        .controller(BasicStringController::new)
+                                        .controller(StringController::new)
+                                        .build())
+                                .option(Option.createBuilder(Color.class)
+                                        .name(Text.of("Color Option"))
+                                        .binding(Binding.immutable(Color.red))
+                                        .controller(ColorController::new)
                                         .build())
                                 .build())
                         .group(OptionGroup.createBuilder()
