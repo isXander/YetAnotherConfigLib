@@ -34,6 +34,11 @@ public interface OptionGroup {
     @NotNull ImmutableList<Option<?>> options();
 
     /**
+     * Dictates if the group should be collapsed by default.
+     */
+    boolean collapsed();
+
+    /**
      * Always false when using the {@link Builder}
      * used to not render the separator if true
      */
@@ -50,6 +55,7 @@ public interface OptionGroup {
         private Text name = Text.empty();
         private final List<Text> tooltipLines = new ArrayList<>();
         private final List<Option<?>> options = new ArrayList<>();
+        private boolean collapsed = false;
 
         private Builder() {
 
@@ -107,6 +113,16 @@ public interface OptionGroup {
             return this;
         }
 
+        /**
+         * Dictates if the group should be collapsed by default
+         *
+         * @see OptionGroup#collapsed()
+         */
+        public Builder collapsed(boolean collapsible) {
+            this.collapsed = collapsible;
+            return this;
+        }
+
         public OptionGroup build() {
             Validate.notEmpty(options, "`options` must not be empty to build `OptionGroup`");
 
@@ -119,7 +135,7 @@ public interface OptionGroup {
                 concatenatedTooltip.append(line);
             }
 
-            return new OptionGroupImpl(name, concatenatedTooltip, ImmutableList.copyOf(options), false);
+            return new OptionGroupImpl(name, concatenatedTooltip, ImmutableList.copyOf(options), collapsed, false);
         }
     }
 }

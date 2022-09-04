@@ -16,8 +16,6 @@ import java.util.List;
 public abstract class ControllerWidget<T extends Controller<?>> extends AbstractWidget {
     protected final T control;
     protected final List<OrderedText> wrappedTooltip;
-
-    protected Dimension<Integer> dim;
     protected final YACLScreen screen;
 
     protected boolean focused = false;
@@ -27,8 +25,8 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     private int prevMouseX, prevMouseY;
 
     public ControllerWidget(T control, YACLScreen screen, Dimension<Integer> dim) {
+        super(dim);
         this.control = control;
-        this.dim = dim;
         this.screen = screen;
         this.wrappedTooltip = textRenderer.wrapLines(control.option().tooltip(), screen.width / 2);
     }
@@ -47,7 +45,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
 
         boolean firstIter = true;
         while (textRenderer.getWidth(nameString) > dim.width() - getControlWidth() - getXPadding() - 7) {
-            nameString = nameString.substring(0, nameString.length() - (firstIter ? 2 : 5)).trim();
+            nameString = nameString.substring(0, Math.max(nameString.length() - (firstIter ? 2 : 5), 0)).trim();
             nameString += "...";
 
             firstIter = false;
@@ -55,14 +53,14 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
 
         Text shortenedName = Text.literal(nameString).fillStyle(name.getStyle());
 
-        drawButtonRect(matrices, dim.x(), dim.y(), dim.xLimit(), dim.yLimit(), hovered || focused);
+        drawButtonRect(matrices, dim.x(), dim.y(), dim.xLimit(), dim.yLimit(), isHovered());
         matrices.push();
         matrices.translate(dim.x() + getXPadding(), getTextY(), 0);
         textRenderer.drawWithShadow(matrices, shortenedName, 0, 0, -1);
         matrices.pop();
 
         drawValueText(matrices, mouseX, mouseY, delta);
-        if (hovered || focused) {
+        if (isHovered()) {
             drawHoveredControl(matrices, mouseX, mouseY, delta);
         }
 
@@ -88,11 +86,16 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
+        if (dim == null) return false;
         return this.dim.isPointInside((int) mouseX, (int) mouseY);
     }
 
     protected int getControlWidth() {
-        return hovered || focused ? getHoveredControlWidth() : getUnhoveredControlWidth();
+        return isHovered() ? getHoveredControlWidth() : getUnhoveredControlWidth();
+    }
+
+    public boolean isHovered() {
+        return hovered || focused;
     }
 
     protected abstract int getHoveredControlWidth();
@@ -124,10 +127,6 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         return dim.y() + dim.height() / 2f - textRenderer.fontHeight / 2f;
     }
 
-    public void setDimension(Dimension<Integer> dim) {
-        this.dim = dim;
-    }
-
     @Override
     public boolean changeFocus(boolean lookForwards) {
         this.focused = !this.focused;
@@ -135,8 +134,13 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     }
 
     @Override
+    public void unfocus() {
+        this.focused = false;
+    }
+
+    @Override
     public SelectionType getType() {
-        return focused ? SelectionType.FOCUSED : hovered ? SelectionType.HOVERED : SelectionType.NONE;
+        return focused ? SelectionType.FOCUSED : isHovered() ? SelectionType.HOVERED : SelectionType.NONE;
     }
 
     @Override

@@ -3,8 +3,8 @@ package dev.isxander.yacl.gui.controllers;
 import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.utils.Dimension;
+import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -98,7 +98,7 @@ public class BooleanController implements Controller<Boolean> {
      * {@inheritDoc}
      */
     @Override
-    public ControllerWidget<BooleanController> provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
+    public AbstractWidget provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
         return new BooleanControllerElement(this, screen, widgetDimension);
     }
 
@@ -143,7 +143,7 @@ public class BooleanController implements Controller<Boolean> {
 
         @Override
         public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-            if (!focused && !hovered) {
+            if (!focused) {
                 return false;
             }
 

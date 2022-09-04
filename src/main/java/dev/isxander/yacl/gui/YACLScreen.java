@@ -121,6 +121,24 @@ public class YACLScreen extends Screen {
         }
     }
 
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (optionList.keyPressed(keyCode, scanCode, modifiers)) {
+            return true;
+        }
+
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean charTyped(char chr, int modifiers) {
+        if (optionList.charTyped(chr, modifiers)) {
+            return true;
+        }
+
+        return super.charTyped(chr, modifiers);
+    }
+
     public void changeCategory(int idx) {
         currentCategoryIdx = idx;
         refreshGUI();

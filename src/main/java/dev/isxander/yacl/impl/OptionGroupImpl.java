@@ -6,5 +6,5 @@ import dev.isxander.yacl.api.OptionGroup;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
-public record OptionGroupImpl(@NotNull Text name, @NotNull Text tooltip, ImmutableList<Option<?>> options, boolean isRoot) implements OptionGroup {
+public record OptionGroupImpl(@NotNull Text name, @NotNull Text tooltip, ImmutableList<Option<?>> options, boolean collapsed, boolean isRoot) implements OptionGroup {
 }

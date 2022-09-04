@@ -3,6 +3,7 @@ package dev.isxander.yacl.gui.controllers;
 import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.utils.Dimension;
+import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
@@ -45,7 +46,7 @@ public class TickBoxController implements Controller<Boolean> {
      * {@inheritDoc}
      */
     @Override
-    public ControllerWidget<TickBoxController> provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
+    public AbstractWidget provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
         return new TickBoxControllerElement(this, screen, widgetDimension);
     }
 
@@ -97,7 +98,7 @@ public class TickBoxController implements Controller<Boolean> {
 
         @Override
         public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-            if (!focused && !hovered) {
+            if (!focused) {
                 return false;
             }
 

@@ -3,14 +3,12 @@ package dev.isxander.yacl.test;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import dev.isxander.yacl.api.*;
-import dev.isxander.yacl.gui.controllers.ActionController;
-import dev.isxander.yacl.gui.controllers.BooleanController;
-import dev.isxander.yacl.gui.controllers.EnumController;
-import dev.isxander.yacl.gui.controllers.TickBoxController;
+import dev.isxander.yacl.gui.controllers.*;
 import dev.isxander.yacl.gui.controllers.slider.DoubleSliderController;
 import dev.isxander.yacl.gui.controllers.slider.FloatSliderController;
 import dev.isxander.yacl.gui.controllers.slider.IntegerSliderController;
 import dev.isxander.yacl.gui.controllers.slider.LongSliderController;
+import dev.isxander.yacl.gui.controllers.string.BasicStringController;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.option.GraphicsMode;
@@ -52,6 +50,7 @@ public class ModMenuIntegration implements ModMenuApi {
                         .group(OptionGroup.createBuilder()
                                 .name(Text.of("Boolean Controllers"))
                                 .tooltip(Text.of("Test!"))
+                                .collapsed(true)
                                 .option(Option.createBuilder(boolean.class)
                                         .name(Text.of("Boolean Toggle"))
                                         .tooltip(Text.of("A simple toggle button."))
@@ -123,6 +122,18 @@ public class ModMenuIntegration implements ModMenuApi {
                                         .build())
                                 .build())
                         .group(OptionGroup.createBuilder()
+                                .name(Text.of("Input Field Controllers"))
+                                .option(Option.createBuilder(String.class)
+                                        .name(Text.of("Text Option"))
+                                        .binding(
+                                                "Hello",
+                                                () -> TestSettings.textField,
+                                                value -> TestSettings.textField = value
+                                        )
+                                        .controller(BasicStringController::new)
+                                        .build())
+                                .build())
+                        .group(OptionGroup.createBuilder()
                                 .name(Text.of("Enum Controllers"))
                                 .option(Option.createBuilder(TestSettings.Alphabet.class)
                                         .name(Text.of("Enum Cycler"))
@@ -135,11 +146,15 @@ public class ModMenuIntegration implements ModMenuApi {
                                         .build())
                                 .build())
                         .group(OptionGroup.createBuilder()
-                                .name(Text.of("Buttons!"))
+                                .name(Text.of("Options that aren't really options"))
                                 .option(ButtonOption.createBuilder()
                                         .name(Text.of("Button \"Option\""))
                                         .action(screen -> SystemToast.add(MinecraftClient.getInstance().getToastManager(), SystemToast.Type.TUTORIAL_HINT, Text.of("Button Pressed"), Text.of("Button option was invoked!")))
                                         .controller(ActionController::new)
+                                        .build())
+                                .option(Option.createBuilder(Text.class)
+                                        .binding(Binding.immutable(Text.of("To center, or not to center?!")))
+                                        .controller(LabelController::new)
                                         .build())
                                 .build())
                         .group(OptionGroup.createBuilder()
@@ -357,6 +372,7 @@ public class ModMenuIntegration implements ModMenuApi {
         private static double doubleSlider = 0;
         private static float floatSlider = 0;
         private static long longSlider = 0;
+        private static String textField = "Hello";
         private static Alphabet enumOption = Alphabet.A;
 
         private static boolean groupTestRoot = false;

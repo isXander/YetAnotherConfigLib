@@ -101,7 +101,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (!focused && !hovered)
+        if (!focused)
             return false;
 
         switch (keyCode) {

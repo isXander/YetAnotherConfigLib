@@ -1,12 +1,14 @@
 package dev.isxander.yacl.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import dev.isxander.yacl.api.utils.Dimension;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.sound.PositionedSoundInstance;
@@ -18,7 +20,27 @@ public abstract class AbstractWidget implements Element, Drawable, Selectable {
     protected final MinecraftClient client = MinecraftClient.getInstance();
     protected final TextRenderer textRenderer = client.textRenderer;
 
-    public void tick() {
+    protected Dimension<Integer> dim;
+
+    public AbstractWidget(Dimension<Integer> dim) {
+        this.dim = dim;
+    }
+
+    public void setDimension(Dimension<Integer> dim) {
+        this.dim = dim;
+    }
+
+    @Override
+    public SelectionType getType() {
+        return SelectionType.NONE;
+    }
+
+    public void unfocus() {
+
+    }
+
+    @Override
+    public void appendNarrations(NarrationMessageBuilder builder) {
 
     }
 

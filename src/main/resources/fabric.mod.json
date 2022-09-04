@@ -26,6 +26,7 @@
   "mixins": [
     "yet-another-config-lib.mixins.json"
   ],
+  "accessWidener": "yacl.accesswidener",
   "custom": {
     "modmenu": {
       "badges": ["library"]

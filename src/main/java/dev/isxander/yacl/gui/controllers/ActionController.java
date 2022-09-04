@@ -3,6 +3,7 @@ package dev.isxander.yacl.gui.controllers;
 import dev.isxander.yacl.api.ButtonOption;
 import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.utils.Dimension;
+import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
@@ -62,7 +63,7 @@ public class ActionController implements Controller<Consumer<YACLScreen>> {
      * {@inheritDoc}
      */
     @Override
-    public ControllerWidget<ActionController> provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
+    public AbstractWidget provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
         return new ActionControllerElement(this, screen, widgetDimension);
     }
 
@@ -88,7 +89,7 @@ public class ActionController implements Controller<Consumer<YACLScreen>> {
 
         @Override
         public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-            if (!focused && !hovered) {
+            if (!focused) {
                 return false;
             }
 

@@ -2,8 +2,8 @@ package dev.isxander.yacl.gui.controllers.slider;
 
 import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.utils.Dimension;
+import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
-import dev.isxander.yacl.gui.controllers.ControllerWidget;
 
 /**
  * Simple custom slider implementation that shifts the current value across when shown.
@@ -48,7 +48,7 @@ public interface ISliderController<T extends Number> extends Controller<T> {
      * {@inheritDoc}
      */
     @Override
-    default ControllerWidget<?> provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
+    default AbstractWidget provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
         return new SliderControllerElement(this, screen, widgetDimension, min(), max(), interval());
     }
 }

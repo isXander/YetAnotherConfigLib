@@ -27,6 +27,8 @@ val testmod by sourceSets.registering {
 }
 
 loom {
+    accessWidenerPath.set(file("src/main/resources/yacl.accesswidener"))
+
     runs {
         register("testmod") {
             client()

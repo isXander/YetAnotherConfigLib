@@ -3,6 +3,7 @@ package dev.isxander.yacl.api;
 import dev.isxander.yacl.impl.OptionImpl;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 
@@ -87,7 +88,7 @@ public interface Option<T> {
     }
 
     class Builder<T> {
-        private Text name;
+        private Text name = Text.literal("Name not specified!").formatted(Formatting.RED);
 
         private final List<Text> tooltipLines = new ArrayList<>();
 
@@ -172,7 +173,6 @@ public interface Option<T> {
         }
 
         public Option<T> build() {
-            Validate.notNull(name, "`name` must not be null when building `Option`");
             Validate.notNull(controlGetter, "`control` must not be null when building `Option`");
             Validate.notNull(binding, "`binding` must not be null when building `Option`");
 

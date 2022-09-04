@@ -46,4 +46,19 @@ public interface Binding<T> {
                 minecraftOption::setValue
         );
     }
+
+    /**
+     * Creates an immutable binding that has no default and cannot be modified.
+     *
+     * @param value the value for the binding
+     */
+    static <T> Binding<T> immutable(T value) {
+        Validate.notNull(value, "`value` must not be null");
+
+        return new GenericBindingImpl<>(
+                value,
+                () -> value,
+                changed -> {}
+        );
+    }
 }

@@ -4,6 +4,7 @@ import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.NameableEnum;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.utils.Dimension;
+import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -72,7 +73,7 @@ public class EnumController<T extends Enum<T>> implements Controller<T> {
      * {@inheritDoc}
      */
     @Override
-    public ControllerWidget<EnumController<T>> provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
+    public AbstractWidget provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
         return new EnumControllerElement<>(this, screen, widgetDimension, option().typeClass().getEnumConstants());
     }
 
@@ -108,7 +109,7 @@ public class EnumController<T extends Enum<T>> implements Controller<T> {
 
         @Override
         public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-            if (!focused && !hovered)
+            if (!focused)
                 return false;
 
             switch (keyCode) {
