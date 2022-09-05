@@ -71,7 +71,7 @@ public class YACLScreen extends Screen {
             if (pendingChanges()) {
                 AtomicBoolean requiresRestart = new AtomicBoolean(false);
                 OptionUtils.forEachOptions(config, option -> {
-                    if (option.requiresRestart())
+                    if (option.requiresRestart() && option.changed())
                         requiresRestart.set(true);
                     option.applyValue();
                 });
