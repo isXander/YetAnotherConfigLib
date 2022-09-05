@@ -1,3 +1,4 @@
 accessWidener v1 named
 
 extendable method net/minecraft/client/gui/widget/EntryListWidget children ()Ljava/util/List;
+extendable method net/minecraft/client/gui/widget/EntryListWidget getEntryAtPosition (DD)Lnet/minecraft/client/gui/widget/EntryListWidget$Entry;

@@ -30,6 +30,10 @@ public abstract class AbstractWidget implements Element, Drawable, Selectable {
         this.dim = dim;
     }
 
+    public Dimension<Integer> getDimension() {
+        return dim;
+    }
+
     @Override
     public SelectionType getType() {
         return SelectionType.NONE;

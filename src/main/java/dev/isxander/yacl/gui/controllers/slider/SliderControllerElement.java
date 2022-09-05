@@ -25,6 +25,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
         this.min = min;
         this.max = max;
         this.interval = interval;
+        setDimension(dim);
     }
 
     @Override

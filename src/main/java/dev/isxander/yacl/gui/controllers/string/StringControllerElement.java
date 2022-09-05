@@ -28,6 +28,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         inputFieldFocused = false;
         selectionLength = 0;
         emptyText = Text.literal("Click to type...").formatted(Formatting.GRAY);
+        setDimension(dim);
     }
 
     @Override

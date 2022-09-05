@@ -18,6 +18,8 @@ import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,10 +43,75 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
             }
 
             for (Option<?> option : group.options()) {
-                addEntry(new OptionEntry(option.controller().provideWidget(screen, null), viewableSupplier));
+                addEntry(new OptionEntry(option.controller().provideWidget(screen, Dimension.ofInt(getRowLeft(), 0, getRowWidth(), 20)), viewableSupplier));
             }
         }
     }
+
+    /*
+      below code is licensed from cloth-config under LGPL3
+      modified to inherit vanilla's EntryListWidget and use yarn mappings
+    */
+
+    @Nullable
+    @Override
+    protected Entry getEntryAtPosition(double x, double y) {
+        int listMiddleX = this.left + this.width / 2;
+        int minX = listMiddleX - this.getRowWidth() / 2;
+        int maxX = listMiddleX + this.getRowWidth() / 2;
+        int currentY = MathHelper.floor(y - (double) this.top) - this.headerHeight + (int) this.getScrollAmount() - 4;
+        int itemY = 0;
+        int itemIndex = -1;
+        for (int i = 0; i < children().size(); i++) {
+            Entry item = children().get(i);
+            itemY += item.getItemHeight();
+            if (itemY > currentY) {
+                itemIndex = i;
+                break;
+            }
+        }
+        return x < (double) this.getScrollbarPositionX() && x >= minX && y <= maxX && itemIndex >= 0 && currentY >= 0 && itemIndex < this.getEntryCount() ? this.children().get(itemIndex) : null;
+    }
+
+    @Override
+    protected int getMaxPosition() {
+        return children().stream().map(Entry::getItemHeight).reduce(0, Integer::sum) + headerHeight;
+    }
+
+    @Override
+    protected void centerScrollOn(Entry entry) {
+        double d = (this.bottom - this.top) / -2d;
+        for (int i = 0; i < this.children().indexOf(entry) && i < this.getEntryCount(); i++)
+            d += children().get(i).getItemHeight();
+        this.setScrollAmount(d);
+    }
+
+    @Override
+    protected int getRowTop(int index) {
+        int integer = top + 4 - (int) this.getScrollAmount() + headerHeight;
+        for (int i = 0; i < children().size() && i < index; i++)
+            integer += children().get(i).getItemHeight();
+        return integer;
+    }
+
+    @Override
+    protected void renderList(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        int left = this.getRowLeft();
+        int right = this.getRowWidth();
+        int count = this.getEntryCount();
+
+        for(int i = 0; i < count; ++i) {
+            Entry entry = children().get(i);
+            int top = this.getRowTop(i);
+            int bottom = top + entry.getItemHeight();
+            int entryHeight = entry.getItemHeight() - 4;
+            if (bottom >= this.top && top <= this.bottom) {
+                this.renderEntry(matrices, mouseX, mouseY, delta, i, left, top, right, entryHeight);
+            }
+        }
+    }
+
+    /* END cloth config code */
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -63,7 +130,8 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
                 return true;
         }
 
-        return super.mouseScrolled(mouseX, mouseY, amount);
+        this.setScrollAmount(this.getScrollAmount() - amount * (double) (getMaxScroll() / getEntryCount()) / 2.0D);
+        return true;
     }
 
     @Override
@@ -103,13 +171,17 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         return super.children().stream().filter(Entry::isViewable).toList();
     }
 
-    public static abstract class Entry extends ElementListWidget.Entry<Entry> {
+    public abstract class Entry extends ElementListWidget.Entry<Entry> {
         public boolean isViewable() {
             return true;
         }
+
+        public int getItemHeight() {
+            return 22;
+        }
     }
 
-    private static class OptionEntry extends Entry {
+    private class OptionEntry extends Entry {
         public final AbstractWidget widget;
         private final Supplier<Boolean> viewableSupplier;
 
@@ -120,7 +192,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         @Override
         public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            widget.setDimension(Dimension.ofInt(x, y, entryWidth, 20));
+            widget.setDimension(widget.getDimension().setY(y));
 
             widget.render(matrices, mouseX, mouseY, tickDelta);
         }
@@ -146,6 +218,11 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         }
 
         @Override
+        public int getItemHeight() {
+            return widget.getDimension().height() + 2;
+        }
+
+        @Override
         public List<? extends Selectable> selectableChildren() {
             return ImmutableList.of(widget);
         }
@@ -156,8 +233,9 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         }
     }
 
-    private static class GroupSeparatorEntry extends Entry {
+    private class GroupSeparatorEntry extends Entry {
         private final OptionGroup group;
+        private final List<OrderedText> wrappedName;
         private final List<OrderedText> wrappedTooltip;
 
         private final ButtonWidget expandMinimizeButton;
@@ -173,6 +251,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         public GroupSeparatorEntry(OptionGroup group, Screen screen) {
             this.group = group;
             this.screen = screen;
+            this.wrappedName = textRenderer.wrapLines(group.name(), getRowWidth() - 45);
             this.wrappedTooltip = textRenderer.wrapLines(group.tooltip(), screen.width / 2);
             this.groupExpanded = !group.collapsed();
             this.expandMinimizeButton = new ButtonWidget(0, 0, 20, 20, Text.empty(), btn -> {
@@ -195,10 +274,14 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
             else
                 hoveredTicks = 0;
 
-            drawCenteredText(matrices, textRenderer, group.name(), x + entryWidth / 2, y + entryHeight / 2 - textRenderer.fontHeight / 2, -1);
+            int i = 0;
+            for (OrderedText line : wrappedName) {
+                textRenderer.drawWithShadow(matrices, line, x + entryWidth / 2f - textRenderer.getWidth(line) / 2f, y + getYPadding() + i * textRenderer.fontHeight, -1);
+                i++;
+            }
 
             if (hoveredTicks >= YACLConstants.HOVER_TICKS) {
-                screen.renderOrderedTooltip(matrices, wrappedTooltip, x - 6, y + entryHeight);
+                screen.renderOrderedTooltip(matrices, wrappedTooltip, x - 6, y + entryHeight / 2 + 6 + (wrappedTooltip.size() * textRenderer.fontHeight) / 2);
             }
 
             prevMouseX = mouseX;
@@ -211,6 +294,15 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         private void updateExpandMinimizeText() {
             expandMinimizeButton.setMessage(Text.of(isExpanded() ? "\u25BC" : "\u25C0"));
+        }
+
+        @Override
+        public int getItemHeight() {
+            return wrappedName.size() * textRenderer.fontHeight + getYPadding() * 2;
+        }
+
+        private int getYPadding() {
+            return 6;
         }
 
         @Override
