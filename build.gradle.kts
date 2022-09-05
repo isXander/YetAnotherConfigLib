@@ -114,10 +114,13 @@ if (modrinthId.isNotEmpty()) {
         token.set(findProperty("modrinth.token")?.toString())
         projectId.set(modrinthId)
         versionNumber.set("${project.version}")
-        versionType.set("release")
+        versionType.set("beta")
         uploadFile.set(tasks["remapJar"])
         gameVersions.set(listOf("1.19", "1.19.1", "1.19.2"))
         loaders.set(listOf("fabric", "quilt"))
+        dependencies {
+            required.project("fabric-api")
+        }
         changelog.set(changelogText)
         syncBodyFrom.set(file("README.md").readText())
     }
@@ -133,7 +136,7 @@ if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
             })
 
             id = curseforgeId
-            releaseType = "release"
+            releaseType = "beta"
             addGameVersion("1.19")
             addGameVersion("1.19.1")
             addGameVersion("1.19.2")
@@ -142,6 +145,10 @@ if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
 
             changelog = changelogText
             changelogType = "markdown"
+
+            relations(closureOf<me.hypherionmc.cursegradle.CurseRelation> {
+                requiredDependency("fabric-api")
+            })
         })
 
         options(closureOf<me.hypherionmc.cursegradle.Options> {
