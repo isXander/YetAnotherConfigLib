@@ -1,19 +1,19 @@
 {
-  "yacl.control.boolean.true": "Da",
-  "yacl.control.boolean.false": "Ne",
+  "yacl.control.boolean.true": "Vklopljeno",
+  "yacl.control.boolean.false": "Izklopljeno",
 
   "yacl.control.action.execute": "POŽENI",
 
   "yacl.gui.save": "Shrani spremembe",
   "yacl.gui.save.tooltip": "Uvede trajne spremembe.",
   "yacl.gui.finished": "Končano",
-  "yacl.gui.finished.tooltip": "Zapre GUI.",
-  "yacl.gui.cancel.tooltip": "Zavrže neshranjene spremembe in zapre GUI.",
+  "yacl.gui.finished.tooltip": "Zapre meni.",
+  "yacl.gui.cancel.tooltip": "Zavrže neshranjene spremembe in zapre meni.",
   "yacl.gui.reset.tooltip": "Ponastavi vse možnosti na privzete. (To se da razveljaviti!)",
   "yacl.gui.undo": "Razveljavi",
   "yacl.gui.undo.tooltip": "Ponastavi vse možnosti na take kot pred spreminjanjem.",
   "yacl.gui.fail_apply": "Napaka pri uveljavljanju",
   "yacl.gui.fail_apply.tooltip": "Prišlo je do napake pri uveljavljanju sprememb.",
   "yacl.gui.save_before_exit": "Shrani pred izhodom!",
-  "yacl.gui.save_before_exit.tooltip": "Shrani ali prekliči za izhod iz GUI."
+  "yacl.gui.save_before_exit.tooltip": "Shrani ali prekliči za izhod iz menija."
 }
