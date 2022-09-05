@@ -158,7 +158,7 @@ githubRelease {
     owner(split[0])
     repo(split[1])
     tagName("${project.version}")
-    targetCommitish(grgit.branch.toString())
+    targetCommitish(grgit.branch.current().name)
     body(changelogText)
     releaseAssets(tasks["remapJar"].outputs.files)
 }
