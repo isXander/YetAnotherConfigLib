@@ -71,7 +71,7 @@ public class YACLScreen extends Screen {
             if (pendingChanges()) {
                 AtomicBoolean requiresRestart = new AtomicBoolean(false);
                 OptionUtils.forEachOptions(config, option -> {
-                    if (option.requiresRestart())
+                    if (option.requiresRestart() && option.changed())
                         requiresRestart.set(true);
                     option.applyValue();
                 });
@@ -81,7 +81,7 @@ public class YACLScreen extends Screen {
                         setSaveButtonMessage(Text.translatable("yacl.gui.fail_apply").formatted(Formatting.RED), Text.translatable("yacl.gui.fail_apply.tooltip"));
                     }
                 });
-                config.saveFunction().run();
+                config.serializer().save();
                 if (requiresRestart.get()) {
                     client.setScreen(new RequireRestartScreen(this));
                 }

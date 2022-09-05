@@ -1,8 +1,10 @@
 package dev.isxander.yacl.api;
 
 import com.google.common.collect.ImmutableList;
+import dev.isxander.yacl.serialization.IYACLSerializer;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.impl.YetAnotherConfigLibImpl;
+import dev.isxander.yacl.serialization.impl.CustomYACLSerializer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.Validate;
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Main class of the mod.
@@ -32,7 +35,7 @@ public interface YetAnotherConfigLib {
     /**
      * Ran when changes are saved. Can be used to save config to a file etc.
      */
-    Runnable saveFunction();
+    IYACLSerializer serializer();
 
     /**
      * Ran every time the YACL screen initialises. Can be paired with FAPI to add custom widgets.
@@ -56,7 +59,7 @@ public interface YetAnotherConfigLib {
     class Builder {
         private Text title;
         private final List<ConfigCategory> categories = new ArrayList<>();
-        private Runnable saveFunction = () -> {};
+        private Function<YetAnotherConfigLib, IYACLSerializer> serializer = yacl -> IYACLSerializer.EMPTY;
         private Consumer<YACLScreen> initConsumer = screen -> {};
 
         private Builder() {
@@ -101,15 +104,22 @@ public interface YetAnotherConfigLib {
             return this;
         }
 
+        public Builder serializer(Function<YetAnotherConfigLib, IYACLSerializer> serializer) {
+            Validate.notNull(serializer, "`serializer` cannot be null");
+
+            this.serializer = serializer;
+            return this;
+        }
+
         /**
          * Used to define a save function for when user clicks the Save Changes button
          *
-         * @see YetAnotherConfigLib#saveFunction()
+         * @see YetAnotherConfigLib#serializer()
          */
         public Builder save(@NotNull Runnable saveFunction) {
             Validate.notNull(saveFunction, "`saveFunction` cannot be null");
 
-            this.saveFunction = saveFunction;
+            this.serializer = yacl -> new CustomYACLSerializer(saveFunction, () -> {});
             return this;
         }
 
@@ -129,7 +139,7 @@ public interface YetAnotherConfigLib {
             Validate.notNull(title, "`title must not be null to build `YetAnotherConfigLib`");
             Validate.notEmpty(categories, "`categories` must not be empty to build `YetAnotherConfigLib`");
 
-            return new YetAnotherConfigLibImpl(title, ImmutableList.copyOf(categories), saveFunction, initConsumer);
+            return new YetAnotherConfigLibImpl(title, ImmutableList.copyOf(categories), serializer, initConsumer);
         }
     }
 }
