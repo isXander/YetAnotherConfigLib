@@ -62,6 +62,7 @@ public class ModMenuIntegration implements ModMenuApi {
                                                 (value) -> TestSettings.booleanToggle = value
                                         )
                                         .controller(BooleanController::new)
+                                        .requiresRestart(true)
                                         .build())
                                 .option(Option.createBuilder(boolean.class)
                                         .name(Text.of("Custom Boolean Toggle"))

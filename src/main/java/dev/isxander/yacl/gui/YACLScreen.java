@@ -69,7 +69,12 @@ public class YACLScreen extends Screen {
             saveButtonMessage = null;
 
             if (pendingChanges()) {
-                OptionUtils.forEachOptions(config, Option::applyValue);
+                AtomicBoolean requiresRestart = new AtomicBoolean(false);
+                OptionUtils.forEachOptions(config, option -> {
+                    if (option.requiresRestart())
+                        requiresRestart.set(true);
+                    option.applyValue();
+                });
                 OptionUtils.forEachOptions(config, option -> {
                     if (option.changed()) {
                         YACLConstants.LOGGER.error("Option '{}' was saved as '{}' but the changes don't seem to have applied.", option.name().getString(), option.pendingValue());
@@ -77,6 +82,9 @@ public class YACLScreen extends Screen {
                     }
                 });
                 config.saveFunction().run();
+                if (requiresRestart.get()) {
+                    client.setScreen(new RequireRestartScreen(this));
+                }
             } else close();
         });
         actionDim.expand(-actionDim.width() / 2 - 2, 0).move(-actionDim.width() / 2 - 2, -22);

@@ -16,6 +16,7 @@ public class OptionImpl<T> implements Option<T> {
     private final Text tooltip;
     private final Controller<T> controller;
     private final Binding<T> binding;
+    private final boolean requiresRestart;
 
     private final Class<T> typeClass;
 
@@ -26,12 +27,14 @@ public class OptionImpl<T> implements Option<T> {
             @Nullable Text tooltip,
             @NotNull Function<Option<T>, Controller<T>> controlGetter,
             @NotNull Binding<T> binding,
+            boolean requiresRestart,
             @NotNull Class<T> typeClass
     ) {
         this.name = name;
         this.tooltip = tooltip;
         this.controller = controlGetter.apply(this);
         this.binding = binding;
+        this.requiresRestart = requiresRestart;
         this.typeClass = typeClass;
         this.pendingValue = binding().getValue();
     }
@@ -59,6 +62,11 @@ public class OptionImpl<T> implements Option<T> {
     @Override
     public @NotNull Class<T> typeClass() {
         return typeClass;
+    }
+
+    @Override
+    public boolean requiresRestart() {
+        return requiresRestart;
     }
 
     @Override

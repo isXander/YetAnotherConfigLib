@@ -5,8 +5,8 @@ import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
+import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -46,7 +46,7 @@ public class LabelController implements Controller<Text> {
 
     @ApiStatus.Internal
     public class LabelControllerElement extends AbstractWidget {
-        private List<OrderedText> wrappedText;
+        private MultilineText wrappedText;
 
         public LabelControllerElement(Dimension<Integer> dim) {
             super(dim);
@@ -57,11 +57,7 @@ public class LabelController implements Controller<Text> {
         public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
             updateText();
 
-            int i = 0;
-            for (OrderedText text : wrappedText) {
-                textRenderer.drawWithShadow(matrices, text, dim.x(), dim.y() + getYPadding() + i * textRenderer.fontHeight, -1);
-                i++;
-            }
+            wrappedText.drawWithShadow(matrices, dim.x(), dim.y() + getYPadding(), textRenderer.fontHeight, -1);
         }
 
         private int getYPadding() {
@@ -69,8 +65,8 @@ public class LabelController implements Controller<Text> {
         }
 
         private void updateText() {
-            wrappedText = textRenderer.wrapLines(formatValue(), dim.width());
-            dim.setHeight(wrappedText.size() * 9 + getYPadding() * 2);
+            wrappedText = MultilineText.create(textRenderer, formatValue(), dim.width());
+            dim.setHeight(wrappedText.count() * textRenderer.fontHeight + getYPadding() * 2);
         }
     }
 }

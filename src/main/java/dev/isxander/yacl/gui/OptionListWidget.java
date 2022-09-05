@@ -7,6 +7,7 @@ import dev.isxander.yacl.api.OptionGroup;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.impl.YACLConstants;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
@@ -235,7 +236,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
     private class GroupSeparatorEntry extends Entry {
         private final OptionGroup group;
-        private final List<OrderedText> wrappedName;
+        private final MultilineText wrappedName;
         private final List<OrderedText> wrappedTooltip;
 
         private final ButtonWidget expandMinimizeButton;
@@ -251,7 +252,8 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         public GroupSeparatorEntry(OptionGroup group, Screen screen) {
             this.group = group;
             this.screen = screen;
-            this.wrappedName = textRenderer.wrapLines(group.name(), getRowWidth() - 45);
+            this.wrappedName = MultilineText.create(textRenderer, group.name(), getRowWidth() - 45);
+            //this.wrappedName = textRenderer.wrapLines(group.name(), getRowWidth() - 45);
             this.wrappedTooltip = textRenderer.wrapLines(group.tooltip(), screen.width / 2);
             this.groupExpanded = !group.collapsed();
             this.expandMinimizeButton = new ButtonWidget(0, 0, 20, 20, Text.empty(), btn -> {
@@ -274,11 +276,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
             else
                 hoveredTicks = 0;
 
-            int i = 0;
-            for (OrderedText line : wrappedName) {
-                textRenderer.drawWithShadow(matrices, line, x + entryWidth / 2f - textRenderer.getWidth(line) / 2f, y + getYPadding() + i * textRenderer.fontHeight, -1);
-                i++;
-            }
+            wrappedName.drawCenterWithShadow(matrices, x + entryWidth / 2, y + getYPadding());
 
             if (hoveredTicks >= YACLConstants.HOVER_TICKS) {
                 screen.renderOrderedTooltip(matrices, wrappedTooltip, x - 6, y + entryHeight / 2 + 6 + (wrappedTooltip.size() * textRenderer.fontHeight) / 2);
@@ -298,7 +296,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         @Override
         public int getItemHeight() {
-            return wrappedName.size() * textRenderer.fontHeight + getYPadding() * 2;
+            return wrappedName.count() * textRenderer.fontHeight + getYPadding() * 2;
         }
 
         private int getYPadding() {

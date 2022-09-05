@@ -64,6 +64,11 @@ public class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
+    public boolean requiresRestart() {
+        return false;
+    }
+
+    @Override
     public boolean changed() {
         return false;
     }
