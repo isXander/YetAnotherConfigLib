@@ -6,7 +6,6 @@
 
   "yacl.gui.save": "保存更改",
   "yacl.gui.save.tooltip": "使所做更改变为永久性的.",
-  "yacl.gui.finished": "完成",
   "yacl.gui.finished.tooltip": "关闭GUI.",
   "yacl.gui.cancel.tooltip": "忽略犹豫不决的更改然后关闭GUI.",
   "yacl.gui.reset.tooltip": "将所有选项重置为默认值.(这是可逆的!)",

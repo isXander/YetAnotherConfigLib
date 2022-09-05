@@ -6,7 +6,6 @@
 
   "yacl.gui.save": "Salvesta muudatused",
   "yacl.gui.save.tooltip": "Teeb tehtud muudatused püsivaks.",
-  "yacl.gui.finished": "Lõpetatud",
   "yacl.gui.finished.tooltip": "Sulgeb liidese.",
   "yacl.gui.cancel.tooltip": "Unustab tehtud muudatused ja sulgeb liidese.",
   "yacl.gui.reset.tooltip": "Lähtestab kõik valikud vaikeväärtustele. (Seda saab tagasi võtta!)",

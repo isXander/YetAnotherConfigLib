@@ -6,7 +6,6 @@
   
     "yacl.gui.save": "Сохранить изменения",
     "yacl.gui.save.tooltip": "Сохраняет изменения навсегда.",
-    "yacl.gui.finished": "Готово",
     "yacl.gui.finished.tooltip": "Закрывает меню.",
     "yacl.gui.cancel.tooltip": "Не сохраняет изменения и закрывает меню.",
     "yacl.gui.reset.tooltip": "Сбрасывает все настройки к значениям по умолчанию. (Это можно отменить!)",

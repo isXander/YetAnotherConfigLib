@@ -6,7 +6,6 @@
 
   "yacl.gui.save": "Save Changes",
   "yacl.gui.save.tooltip": "Makes the changes made permanent.",
-  "yacl.gui.finished": "Finished",
   "yacl.gui.finished.tooltip": "Closes the GUI.",
   "yacl.gui.cancel.tooltip": "Forgets pending changes and closes the GUI.",
   "yacl.gui.reset.tooltip": "Resets all options to default. (This is reversible!)",

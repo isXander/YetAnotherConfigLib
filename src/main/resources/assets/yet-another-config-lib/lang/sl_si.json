@@ -6,7 +6,6 @@
 
   "yacl.gui.save": "Shrani spremembe",
   "yacl.gui.save.tooltip": "Uvede trajne spremembe.",
-  "yacl.gui.finished": "Končano",
   "yacl.gui.finished.tooltip": "Zapre meni.",
   "yacl.gui.cancel.tooltip": "Zavrže neshranjene spremembe in zapre meni.",
   "yacl.gui.reset.tooltip": "Ponastavi vse možnosti na privzete. (To se da razveljaviti!)",

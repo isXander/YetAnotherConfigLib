@@ -6,7 +6,6 @@
 
   "yacl.gui.save": "Αποθήκευση Αλλαγών",
   "yacl.gui.save.tooltip": "Μονιμοποιήει τις αλλαγές.",
-  "yacl.gui.finished": "Τέλος",
   "yacl.gui.finished.tooltip": "Κλείνει το GUI.",
   "yacl.gui.cancel.tooltip": "Ξεχνά τις ενεργές αλλαγές και κλείνει το μενού.",
   "yacl.gui.reset.tooltip": "Επαναφέρει όλες τις επιλογές στις προεπιλογές τους. (Μπορεί να ανερεθε)",

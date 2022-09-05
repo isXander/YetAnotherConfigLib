@@ -6,7 +6,6 @@
 
   "yacl.gui.save": "Zapisz zmiany",
   "yacl.gui.save.tooltip": "Sprawia, że wprowadzone zmiany są trwałe.",
-  "yacl.gui.finished": "Zakończono",
   "yacl.gui.finished.tooltip": "Zamyka GUI.",
   "yacl.gui.cancel.tooltip": "Zapomina oczekujące zmiany i zamyka GUI.",
   "yacl.gui.reset.tooltip": "Resetuje wszystkie opcje do wartości domyślnych. (To jest odwracalne!)",
@@ -22,4 +21,3 @@
   "yacl.restart.yes": "Zamknij Minecrafta",
   "yacl.restart.no": "Ignoruj"
 }
-  
