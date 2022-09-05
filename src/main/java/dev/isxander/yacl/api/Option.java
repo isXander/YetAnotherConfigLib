@@ -52,6 +52,11 @@ public interface Option<T> {
     boolean changed();
 
     /**
+     * If true, modifying this option recommends a restart.
+     */
+    boolean requiresRestart();
+
+    /**
      * Value in the GUI, ready to set the actual bound value or be undone.
      */
     @NotNull T pendingValue();
@@ -96,6 +101,8 @@ public interface Option<T> {
 
         private Binding<T> binding;
 
+        private boolean requiresRestart;
+
         private final Class<T> typeClass;
 
         private Builder(Class<T> typeClass) {
@@ -122,7 +129,7 @@ public interface Option<T> {
          * @param tooltips text lines - merged with a new-line on {@link Builder#build()}.
          */
         public Builder<T> tooltip(@NotNull Text... tooltips) {
-            Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
+            Validate.notNull(tooltips, "`tooltips` cannot be empty");
 
             tooltipLines.addAll(List.of(tooltips));
             return this;
@@ -172,6 +179,15 @@ public interface Option<T> {
             return this;
         }
 
+        /**
+         * Dictates whether the option should require a restart.
+         * {@link Option#requiresRestart()}
+         */
+        public Builder<T> requiresRestart(boolean requiresRestart) {
+            this.requiresRestart = requiresRestart;
+            return this;
+        }
+
         public Option<T> build() {
             Validate.notNull(controlGetter, "`control` must not be null when building `Option`");
             Validate.notNull(binding, "`binding` must not be null when building `Option`");
@@ -185,7 +201,7 @@ public interface Option<T> {
                 concatenatedTooltip.append(line);
             }
 
-            return new OptionImpl<>(name, concatenatedTooltip, controlGetter, binding, typeClass);
+            return new OptionImpl<>(name, concatenatedTooltip, controlGetter, binding, requiresRestart, typeClass);
         }
     }
 }
