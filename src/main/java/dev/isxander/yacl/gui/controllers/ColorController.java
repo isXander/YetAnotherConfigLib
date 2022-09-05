@@ -63,10 +63,10 @@ public class ColorController implements IStringController<Color> {
     @Override
     public Text formatValue() {
         MutableText text = Text.literal("#");
-        if (allowAlpha()) text.append(toHex(option().pendingValue().getAlpha()));
         text.append(Text.literal(toHex(option().pendingValue().getRed())).formatted(Formatting.RED));
         text.append(Text.literal(toHex(option().pendingValue().getGreen())).formatted(Formatting.GREEN));
         text.append(Text.literal(toHex(option().pendingValue().getBlue())).formatted(Formatting.BLUE));
+        if (allowAlpha()) text.append(toHex(option().pendingValue().getAlpha()));
         return text;
     }
 
@@ -82,12 +82,16 @@ public class ColorController implements IStringController<Color> {
         if (value.startsWith("#"))
             value = value.substring(1);
 
-        int alpha = Integer.parseInt(value.substring(0, 2), 16);
-        int red = Integer.parseInt(allowAlpha() ? value.substring(2, 4) : value.substring(0, 2), 16);
-        int green = Integer.parseInt(allowAlpha() ? value.substring(4, 6) : value.substring(2, 4), 16);
-        int blue = Integer.parseInt(allowAlpha() ? value.substring(6, 8) : value.substring(4, 6), 16);
+        int red = Integer.parseInt(value.substring(0, 2), 16);
+        int green = Integer.parseInt(value.substring(2, 4), 16);
+        int blue = Integer.parseInt(value.substring(4, 6), 16);
 
-        option().requestSet(allowAlpha() ? new Color(red, green, blue, alpha) : new Color(red, green, blue));
+        if (allowAlpha()) {
+            int alpha = Integer.parseInt(value.substring(6, 8), 16);
+            option().requestSet(new Color(red, green, blue, alpha));
+        } else {
+            option().requestSet(new Color(red, green, blue));
+        }
     }
 
     @Override
