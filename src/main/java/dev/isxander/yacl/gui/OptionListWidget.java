@@ -22,8 +22,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> {
@@ -180,6 +180,10 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         public int getItemHeight() {
             return 22;
         }
+
+        protected boolean isHovered() {
+            return Objects.equals(getHoveredEntry(), this);
+        }
     }
 
     private class OptionEntry extends Entry {
@@ -239,7 +243,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         private final MultilineText wrappedName;
         private final List<OrderedText> wrappedTooltip;
 
-        private final ButtonWidget expandMinimizeButton;
+        private final LowProfileButtonWidget expandMinimizeButton;
 
         private float hoveredTicks = 0;
         private int prevMouseX, prevMouseY;
@@ -253,10 +257,9 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
             this.group = group;
             this.screen = screen;
             this.wrappedName = MultilineText.create(textRenderer, group.name(), getRowWidth() - 45);
-            //this.wrappedName = textRenderer.wrapLines(group.name(), getRowWidth() - 45);
             this.wrappedTooltip = textRenderer.wrapLines(group.tooltip(), screen.width / 2);
             this.groupExpanded = !group.collapsed();
-            this.expandMinimizeButton = new ButtonWidget(0, 0, 20, 20, Text.empty(), btn -> {
+            this.expandMinimizeButton = new LowProfileButtonWidget(0, 0, 20, 20, Text.empty(), btn -> {
                 groupExpanded = !groupExpanded;
                 updateExpandMinimizeText();
             });
@@ -265,10 +268,9 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         @Override
         public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            expandMinimizeButton.x = x + entryWidth - expandMinimizeButton.getWidth();
+            expandMinimizeButton.x = x;
             expandMinimizeButton.y = y + entryHeight / 2 - expandMinimizeButton.getHeight() / 2;
-            if (hovered)
-                expandMinimizeButton.render(matrices, mouseX, mouseY, tickDelta);
+            expandMinimizeButton.render(matrices, mouseX, mouseY, tickDelta);
 
             hovered &= !expandMinimizeButton.isMouseOver(mouseX, mouseY);
             if (hovered && (!YACLConstants.HOVER_MOUSE_RESET || (mouseX == prevMouseX && mouseY == prevMouseY)))
@@ -291,7 +293,8 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         }
 
         private void updateExpandMinimizeText() {
-            expandMinimizeButton.setMessage(Text.of(isExpanded() ? "\u25BC" : "\u25C0"));
+//            expandMinimizeButton.setMessage(Text.of(isExpanded() ? "\u25BC" : "\u25C0"));
+            expandMinimizeButton.setMessage(Text.of(isExpanded() ? "\u25BC" : "\u25B6"));
         }
 
         @Override

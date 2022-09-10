@@ -137,7 +137,11 @@ public class ModMenuIntegration implements ModMenuApi {
                                         .build())
                                 .option(Option.createBuilder(Color.class)
                                         .name(Text.of("Color Option"))
-                                        .binding(Binding.immutable(Color.red))
+                                        .binding(
+                                                Color.red,
+                                                () -> TestSettings.colorOption,
+                                                value -> TestSettings.colorOption = value
+                                        )
                                         .controller(ColorController::new)
                                         .build())
                                 .build())
@@ -381,6 +385,7 @@ public class ModMenuIntegration implements ModMenuApi {
         private static float floatSlider = 0;
         private static long longSlider = 0;
         private static String textField = "Hello";
+        private static Color colorOption = Color.red;
         private static Alphabet enumOption = Alphabet.A;
 
         private static boolean groupTestRoot = false;

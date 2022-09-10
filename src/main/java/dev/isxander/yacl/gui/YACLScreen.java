@@ -77,7 +77,7 @@ public class YACLScreen extends Screen {
                 });
                 OptionUtils.forEachOptions(config, option -> {
                     if (option.changed()) {
-                        YACLConstants.LOGGER.error("Option '{}' was saved as '{}' but the changes don't seem to have applied.", option.name().getString(), option.pendingValue());
+                        YACLConstants.LOGGER.error("'{}' was saved as '{}' but the changes don't seem to have applied. (Maybe binding is immutable?)", option.name().getString(), option.pendingValue());
                         setSaveButtonMessage(Text.translatable("yacl.gui.fail_apply").formatted(Formatting.RED), Text.translatable("yacl.gui.fail_apply.tooltip"));
                     }
                 });
@@ -156,7 +156,7 @@ public class YACLScreen extends Screen {
         boolean pendingChanges = pendingChanges();
 
         undoButton.active = pendingChanges;
-        finishedSaveButton.setMessage(pendingChanges ? Text.translatable("yacl.gui.save") : Text.translatable("multiplayer.status.finished"));
+        finishedSaveButton.setMessage(pendingChanges ? Text.translatable("yacl.gui.save") : Text.translatable("gui.done"));
         finishedSaveButton.setTooltip(pendingChanges ? Text.translatable("yacl.gui.save.tooltip") : Text.translatable("yacl.gui.finished.tooltip"));
         cancelResetButton.setMessage(pendingChanges ? Text.translatable("gui.cancel") : Text.translatable("controls.reset"));
         cancelResetButton.setTooltip(pendingChanges ? Text.translatable("yacl.gui.cancel.tooltip") : Text.translatable("yacl.gui.reset.tooltip"));
