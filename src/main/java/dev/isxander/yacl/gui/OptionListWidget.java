@@ -230,7 +230,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         @Override
         public boolean isViewable() {
-            return viewableSupplier.get() && widget.matchesSearch(yaclScreen.searchFieldWidget.getText());
+            return viewableSupplier.get() && widget.matchesSearch(yaclScreen.searchFieldWidget.getText().trim());
         }
 
         @Override
