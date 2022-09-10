@@ -22,29 +22,40 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
 public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> {
+    private final YACLScreen yaclScreen;
 
     public OptionListWidget(ConfigCategory category, YACLScreen screen, MinecraftClient client, int width, int height) {
         super(client, width / 3 * 2, height, 0, height, 22);
+        this.yaclScreen = screen;
         left = width - this.width;
         right = width;
 
         for (OptionGroup group : category.groups()) {
             Supplier<Boolean> viewableSupplier;
+            GroupSeparatorEntry groupSeparatorEntry = null;
             if (!group.isRoot()) {
-                GroupSeparatorEntry groupSeparatorEntry = new GroupSeparatorEntry(group, screen);
+                groupSeparatorEntry = new GroupSeparatorEntry(group, screen);
                 viewableSupplier = groupSeparatorEntry::isExpanded;
                 addEntry(groupSeparatorEntry);
             } else {
                 viewableSupplier = () -> true;
             }
 
+            List<OptionEntry> optionEntries = new ArrayList<>();
             for (Option<?> option : group.options()) {
-                addEntry(new OptionEntry(option.controller().provideWidget(screen, Dimension.ofInt(getRowLeft(), 0, getRowWidth(), 20)), viewableSupplier));
+                OptionEntry entry = new OptionEntry(option.controller().provideWidget(screen, Dimension.ofInt(getRowLeft(), 0, getRowWidth(), 20)), viewableSupplier);
+                addEntry(entry);
+                optionEntries.add(entry);
+            }
+
+            if (groupSeparatorEntry != null) {
+                groupSeparatorEntry.setOptionEntries(optionEntries);
             }
         }
     }
@@ -219,7 +230,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         @Override
         public boolean isViewable() {
-            return viewableSupplier.get();
+            return viewableSupplier.get() && widget.matchesSearch(yaclScreen.searchFieldWidget.getText());
         }
 
         @Override
@@ -238,7 +249,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         }
     }
 
-    private class GroupSeparatorEntry extends Entry {
+    public class GroupSeparatorEntry extends Entry {
         private final OptionGroup group;
         private final MultilineText wrappedName;
         private final List<OrderedText> wrappedTooltip;
@@ -253,15 +264,16 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         private boolean groupExpanded;
 
-        public GroupSeparatorEntry(OptionGroup group, Screen screen) {
+        private List<OptionEntry> optionEntries;
+
+        private GroupSeparatorEntry(OptionGroup group, Screen screen) {
             this.group = group;
             this.screen = screen;
             this.wrappedName = MultilineText.create(textRenderer, group.name(), getRowWidth() - 45);
             this.wrappedTooltip = textRenderer.wrapLines(group.tooltip(), screen.width / 2);
             this.groupExpanded = !group.collapsed();
             this.expandMinimizeButton = new LowProfileButtonWidget(0, 0, 20, 20, Text.empty(), btn -> {
-                groupExpanded = !groupExpanded;
-                updateExpandMinimizeText();
+                setExpanded(!isExpanded());
             });
             updateExpandMinimizeText();
         }
@@ -292,14 +304,27 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
             return groupExpanded;
         }
 
+        public void setExpanded(boolean expanded) {
+            this.groupExpanded = expanded;
+            updateExpandMinimizeText();
+        }
+
         private void updateExpandMinimizeText() {
-//            expandMinimizeButton.setMessage(Text.of(isExpanded() ? "\u25BC" : "\u25C0"));
             expandMinimizeButton.setMessage(Text.of(isExpanded() ? "\u25BC" : "\u25B6"));
+        }
+
+        public void setOptionEntries(List<OptionEntry> optionEntries) {
+            this.optionEntries = optionEntries;
+        }
+
+        @Override
+        public boolean isViewable() {
+            return yaclScreen.searchFieldWidget.getText().isEmpty() || optionEntries.stream().anyMatch(OptionEntry::isViewable);
         }
 
         @Override
         public int getItemHeight() {
-            return wrappedName.count() * textRenderer.fontHeight + getYPadding() * 2;
+            return Math.max(wrappedName.count(), 1) * textRenderer.fontHeight + getYPadding() * 2;
         }
 
         private int getYPadding() {

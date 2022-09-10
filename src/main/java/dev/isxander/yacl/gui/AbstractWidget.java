@@ -43,6 +43,10 @@ public abstract class AbstractWidget implements Element, Drawable, Selectable {
 
     }
 
+    public boolean matchesSearch(String query) {
+        return true;
+    }
+
     @Override
     public void appendNarrations(NarrationMessageBuilder builder) {
 
