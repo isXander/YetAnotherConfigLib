@@ -48,7 +48,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
             }
 
             if (selectionLength != 0) {
-                int selectionX = inputFieldBounds.x() + textRenderer.getWidth(inputField.substring(0, caretPos + selectionLength));
+                int selectionX = inputFieldBounds.x() + textRenderer.getWidth(control.getString().substring(0, caretPos + selectionLength));
                 DrawableHelper.fill(matrices, caretX, inputFieldBounds.y() - 1, selectionX, inputFieldBounds.yLimit(), 0x803030FF);
             }
         }
@@ -83,6 +83,10 @@ public class StringControllerElement extends ControllerWidget<IStringController<
             return false;
 
         switch (keyCode) {
+            case GLFW.GLFW_KEY_ESCAPE -> {
+                inputFieldFocused = false;
+                return true;
+            }
             case GLFW.GLFW_KEY_LEFT -> {
                 if (Screen.hasShiftDown()) {
                     if (Screen.hasControlDown()) {
@@ -132,14 +136,18 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         if (canUseShortcuts()) {
             if (Screen.isPaste(keyCode)) {
                 this.write(client.keyboard.getClipboard());
+                return true;
             } else if (Screen.isCopy(keyCode) && selectionLength != 0) {
                 client.keyboard.setClipboard(getSelection());
+                return true;
             } else if (Screen.isCut(keyCode) && selectionLength != 0) {
                 client.keyboard.setClipboard(getSelection());
                 this.write("");
+                return true;
             } else if (Screen.isSelectAll(keyCode)) {
                 caretPos = inputField.length();
                 selectionLength = -caretPos;
+                return true;
             }
         }
 
@@ -166,6 +174,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         } else if (caretPos > 0) {
             inputField.deleteCharAt(caretPos - 1);
             caretPos--;
+            updateControl();
         }
     }
 
@@ -228,7 +237,6 @@ public class StringControllerElement extends ControllerWidget<IStringController<
             if (i == -1) i = inputField.length();
         }
 
-        System.out.println(i);
         return i;
     }
 
