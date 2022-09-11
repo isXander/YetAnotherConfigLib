@@ -15,6 +15,7 @@
   "yacl.gui.fail_apply.tooltip": "There was an error and the changes couldn't be applied.",
   "yacl.gui.save_before_exit": "Save before exiting!",
   "yacl.gui.save_before_exit.tooltip": "Save or cancel to exit the GUI.",
+  "yacl.gui.search": "Search",
 
   "yacl.restart.title": "Config requires restart!",
   "yacl.restart.message": "One or more options needs you to restart the game to apply the changes.",

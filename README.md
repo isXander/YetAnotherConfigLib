@@ -23,8 +23,8 @@ This mod was made to fill a hole in this area of Fabric modding. The existing ma
 
 - **[Cloth Config API](https://modrinth.com/mod/cloth-config)**:<br/>**It's stale.** The developer of cloth has clarified that they are likely not going to add any more features. They don't want to touch it.
 - **[SpruceUI](https://github.com/LambdAurora/SpruceUI)**:<br/>**It isn't designed for configuration.** In this essence the design feels cluttered. Further details available in [this issue](https://github.com/isXander/Zoomify/issues/85).
-- **[MidnightLib](https://modrinth.com/mod/midnightlib)**:<br/>**It's mostly bloat and doesn't have a focus on config.** This library includes other unwanted features such as cosmetics.
-- **[OwoLib](https://modrinth.com/mod/owo-lib)**:<br/>**It's content focused.** Like MidnightLib, it does a lot of other things as well, adding to the size.
+- **[MidnightLib](https://modrinth.com/mod/midnightlib)**:<br/>**It has cosmetics among other utilities.** It may not be large but some players (including me) wouldn't want cosmetics out of nowhere.
+- **[OwoLib](https://modrinth.com/mod/owo-lib)**:<br/>**It's content focused.** It does a lot of other things as well as config, adding to the size.
 
 As you can see, there's sadly a drawback with all of them and this is where YetAnotherConfigLib comes in.
 

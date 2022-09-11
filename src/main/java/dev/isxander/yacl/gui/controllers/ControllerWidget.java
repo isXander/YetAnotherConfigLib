@@ -139,6 +139,11 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     }
 
     @Override
+    public boolean matchesSearch(String query) {
+        return control.option().name().getString().toLowerCase().contains(query.toLowerCase());
+    }
+
+    @Override
     public SelectionType getType() {
         return focused ? SelectionType.FOCUSED : isHovered() ? SelectionType.HOVERED : SelectionType.NONE;
     }

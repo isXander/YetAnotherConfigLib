@@ -14,5 +14,9 @@
   "yacl.gui.fail_apply": "Napaka pri uveljavljanju",
   "yacl.gui.fail_apply.tooltip": "Prišlo je do napake pri uveljavljanju sprememb.",
   "yacl.gui.save_before_exit": "Shrani pred izhodom!",
-  "yacl.gui.save_before_exit.tooltip": "Shrani ali prekliči za izhod iz menija."
+  "yacl.gui.save_before_exit.tooltip": "Shrani ali prekliči za izhod iz menija.",
+  "yacl.restart.title": "Nastavitve potrebujejo ponovni zagon!",
+  "yacl.restart.message": "Vsaj ena izmed nastavitev potrebuje ponovni zagon igre za uveljavitev.",
+  "yacl.restart.yes": "Zapri Minecraft",
+  "yacl.restart.no": "Prezri"
 }

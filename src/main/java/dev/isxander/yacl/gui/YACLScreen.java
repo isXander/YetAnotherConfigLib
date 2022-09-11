@@ -8,7 +8,6 @@ import dev.isxander.yacl.api.utils.OptionUtils;
 import dev.isxander.yacl.impl.YACLConstants;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -26,6 +25,7 @@ public class YACLScreen extends Screen {
     public OptionListWidget optionList;
     public final List<CategoryWidget> categoryButtons;
     public TooltipButtonWidget finishedSaveButton, cancelResetButton, undoButton;
+    public SearchFieldWidget searchFieldWidget;
 
     public Text saveButtonMessage;
     public Text saveButtonTooltipMessage;
@@ -46,7 +46,8 @@ public class YACLScreen extends Screen {
         int columnWidth = width / 3;
         int padding = columnWidth / 20;
         columnWidth = Math.min(columnWidth, 400);
-        Dimension<Integer> categoryDim = Dimension.ofInt(width / 3 / 2, padding, columnWidth - padding * 2, 20);
+        int paddedWidth = columnWidth - padding * 2;
+        Dimension<Integer> categoryDim = Dimension.ofInt(width / 3 / 2, padding, paddedWidth, 20);
         int idx = 0;
         for (ConfigCategory category : config.categories()) {
             CategoryWidget categoryWidget = new CategoryWidget(
@@ -64,7 +65,9 @@ public class YACLScreen extends Screen {
             categoryDim.move(0, 21);
         }
 
-        Dimension<Integer> actionDim = Dimension.ofInt(width / 3 / 2, height - padding - 20, columnWidth - padding * 2, 20);
+        searchFieldWidget = new SearchFieldWidget(this, textRenderer, width / 3 / 2 - paddedWidth / 2 + 1, height - 71, paddedWidth - 2, 18, Text.translatable("yacl.gui.search"), Text.translatable("yacl.gui.search"));
+
+        Dimension<Integer> actionDim = Dimension.ofInt(width / 3 / 2, height - padding - 20, paddedWidth, 20);
         finishedSaveButton = new TooltipButtonWidget(this, actionDim.x() - actionDim.width() / 2, actionDim.y(), actionDim.width(), actionDim.height(), Text.empty(), Text.empty(), (btn) -> {
             saveButtonMessage = null;
 
@@ -77,7 +80,7 @@ public class YACLScreen extends Screen {
                 });
                 OptionUtils.forEachOptions(config, option -> {
                     if (option.changed()) {
-                        YACLConstants.LOGGER.error("Option '{}' was saved as '{}' but the changes don't seem to have applied.", option.name().getString(), option.pendingValue());
+                        YACLConstants.LOGGER.error("'{}' was saved as '{}' but the changes don't seem to have applied. (Maybe binding is immutable?)", option.name().getString(), option.pendingValue());
                         setSaveButtonMessage(Text.translatable("yacl.gui.fail_apply").formatted(Formatting.RED), Text.translatable("yacl.gui.fail_apply.tooltip"));
                     }
                 });
@@ -103,6 +106,7 @@ public class YACLScreen extends Screen {
         });
 
         updateActionAvailability();
+        addDrawableChild(searchFieldWidget);
         addDrawableChild(cancelResetButton);
         addDrawableChild(undoButton);
         addDrawableChild(finishedSaveButton);
@@ -121,6 +125,7 @@ public class YACLScreen extends Screen {
         super.render(matrices, mouseX, mouseY, delta);
 
         optionList.render(matrices, mouseX, mouseY, delta);
+        searchFieldWidget.render(matrices, mouseX, mouseY, delta);
 
         for (Element child : children()) {
             if (child instanceof TooltipButtonWidget tooltipButtonWidget) {
@@ -156,7 +161,7 @@ public class YACLScreen extends Screen {
         boolean pendingChanges = pendingChanges();
 
         undoButton.active = pendingChanges;
-        finishedSaveButton.setMessage(pendingChanges ? Text.translatable("yacl.gui.save") : Text.translatable("multiplayer.status.finished"));
+        finishedSaveButton.setMessage(pendingChanges ? Text.translatable("yacl.gui.save") : Text.translatable("gui.done"));
         finishedSaveButton.setTooltip(pendingChanges ? Text.translatable("yacl.gui.save.tooltip") : Text.translatable("yacl.gui.finished.tooltip"));
         cancelResetButton.setMessage(pendingChanges ? Text.translatable("gui.cancel") : Text.translatable("controls.reset"));
         cancelResetButton.setTooltip(pendingChanges ? Text.translatable("yacl.gui.cancel.tooltip") : Text.translatable("yacl.gui.reset.tooltip"));
@@ -164,6 +169,8 @@ public class YACLScreen extends Screen {
 
     @Override
     public void tick() {
+        searchFieldWidget.tick();
+
         updateActionAvailability();
 
         if (saveButtonMessage != null) {

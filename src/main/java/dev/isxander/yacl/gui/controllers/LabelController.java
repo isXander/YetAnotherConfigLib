@@ -68,5 +68,10 @@ public class LabelController implements Controller<Text> {
             wrappedText = MultilineText.create(textRenderer, formatValue(), dim.width());
             dim.setHeight(wrappedText.count() * textRenderer.fontHeight + getYPadding() * 2);
         }
+
+        @Override
+        public boolean matchesSearch(String query) {
+            return formatValue().getString().toLowerCase().contains(query.toLowerCase());
+        }
     }
 }

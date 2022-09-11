@@ -16,7 +16,7 @@ plugins {
 val ciRun = System.getenv().containsKey("GITHUB_ACTIONS")
 
 group = "dev.isxander"
-version = "0.1.2"
+version = "1.0.0"
 
 if (ciRun)
     version = "$version-SNAPSHOT"
@@ -114,7 +114,7 @@ if (modrinthId.isNotEmpty()) {
         token.set(findProperty("modrinth.token")?.toString())
         projectId.set(modrinthId)
         versionNumber.set("${project.version}")
-        versionType.set("beta")
+        versionType.set("release")
         uploadFile.set(tasks["remapJar"])
         gameVersions.set(listOf("1.19", "1.19.1", "1.19.2"))
         loaders.set(listOf("fabric", "quilt"))
@@ -136,7 +136,7 @@ if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
             })
 
             id = curseforgeId
-            releaseType = "beta"
+            releaseType = "release"
             addGameVersion("1.19")
             addGameVersion("1.19.1")
             addGameVersion("1.19.2")
