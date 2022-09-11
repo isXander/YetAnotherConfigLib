@@ -7,7 +7,10 @@ public class CategoryWidget extends TooltipButtonWidget {
     private final int categoryIndex;
 
     public CategoryWidget(YACLScreen screen, ConfigCategory category, int categoryIndex, int x, int y, int width, int height) {
-        super(screen, x, y, width, height, category.name(), category.tooltip(), btn -> screen.changeCategory(screen.categoryButtons.indexOf(btn)));
+        super(screen, x, y, width, height, category.name(), category.tooltip(), btn -> {
+            screen.searchFieldWidget.setText("");
+            screen.changeCategory(screen.categoryButtons.indexOf(btn));
+        });
         this.categoryIndex = categoryIndex;
     }
 

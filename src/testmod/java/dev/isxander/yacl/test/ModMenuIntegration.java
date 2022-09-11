@@ -50,7 +50,7 @@ public class ModMenuIntegration implements ModMenuApi {
                         .name(Text.of("Control Examples"))
                         .tooltip(Text.of("Example Category Description"))
                         .group(OptionGroup.createBuilder()
-                                .name(Text.of("Boolean Controllers but it has a super long name that needs to wrap"))
+                                .name(Text.of("Boolean Controllers"))
                                 .tooltip(Text.of("Test!"))
                                 .collapsed(true)
                                 .option(Option.createBuilder(boolean.class)
@@ -62,7 +62,7 @@ public class ModMenuIntegration implements ModMenuApi {
                                                 (value) -> TestSettings.booleanToggle = value
                                         )
                                         .controller(BooleanController::new)
-                                        .requiresRestart(true)
+                                        .flag(OptionFlag.GAME_RESTART)
                                         .build())
                                 .option(Option.createBuilder(boolean.class)
                                         .name(Text.of("Custom Boolean Toggle"))

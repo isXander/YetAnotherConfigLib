@@ -30,34 +30,51 @@ import java.util.function.Supplier;
 public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> {
     private final YACLScreen yaclScreen;
 
-    public OptionListWidget(ConfigCategory category, YACLScreen screen, MinecraftClient client, int width, int height) {
+    public OptionListWidget(YACLScreen screen, MinecraftClient client, int width, int height) {
         super(client, width / 3 * 2, height, 0, height, 22);
         this.yaclScreen = screen;
         left = width - this.width;
         right = width;
 
-        for (OptionGroup group : category.groups()) {
-            Supplier<Boolean> viewableSupplier;
-            GroupSeparatorEntry groupSeparatorEntry = null;
-            if (!group.isRoot()) {
-                groupSeparatorEntry = new GroupSeparatorEntry(group, screen);
-                viewableSupplier = groupSeparatorEntry::isExpanded;
-                addEntry(groupSeparatorEntry);
-            } else {
-                viewableSupplier = () -> true;
-            }
+        refreshOptions();
+    }
 
-            List<OptionEntry> optionEntries = new ArrayList<>();
-            for (Option<?> option : group.options()) {
-                OptionEntry entry = new OptionEntry(option.controller().provideWidget(screen, Dimension.ofInt(getRowLeft(), 0, getRowWidth(), 20)), viewableSupplier);
-                addEntry(entry);
-                optionEntries.add(entry);
-            }
+    public void refreshOptions() {
+        super.children().clear();
 
-            if (groupSeparatorEntry != null) {
-                groupSeparatorEntry.setOptionEntries(optionEntries);
+        List<ConfigCategory> categories = new ArrayList<>();
+        if (yaclScreen.currentCategoryIdx == -1) {
+            categories.addAll(yaclScreen.config.categories());
+        } else {
+            categories.add(yaclScreen.config.categories().get(yaclScreen.currentCategoryIdx));
+        }
+
+        for (ConfigCategory category : categories) {
+            for (OptionGroup group : category.groups()) {
+                Supplier<Boolean> viewableSupplier;
+                GroupSeparatorEntry groupSeparatorEntry = null;
+                if (!group.isRoot()) {
+                    groupSeparatorEntry = new GroupSeparatorEntry(group, yaclScreen);
+                    viewableSupplier = groupSeparatorEntry::isExpanded;
+                    addEntry(groupSeparatorEntry);
+                } else {
+                    viewableSupplier = () -> true;
+                }
+
+                List<OptionEntry> optionEntries = new ArrayList<>();
+                for (Option<?> option : group.options()) {
+                    OptionEntry entry = new OptionEntry(option.controller().provideWidget(yaclScreen, Dimension.ofInt(getRowLeft(), 0, getRowWidth(), 20)), viewableSupplier);
+                    addEntry(entry);
+                    optionEntries.add(entry);
+                }
+
+                if (groupSeparatorEntry != null) {
+                    groupSeparatorEntry.setOptionEntries(optionEntries);
+                }
             }
         }
+
+        setScrollAmount(0);
     }
 
     /*
@@ -126,6 +143,11 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
     /* END cloth config code */
 
     @Override
+    public int getRowWidth() {
+        return Math.min(396, (int)(width / 1.3f));
+    }
+
+    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         for (Entry child : children()) {
             if (child != getEntryAtPosition(mouseX, mouseY) && child instanceof OptionEntry optionEntry)
@@ -168,7 +190,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
     @Override
     protected int getScrollbarPositionX() {
-        return left + super.getScrollbarPositionX();
+        return left + width - (int)(width * 0.05f);
     }
 
     @Override

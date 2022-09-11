@@ -1,5 +1,6 @@
 package dev.isxander.yacl.api;
 
+import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.impl.OptionImpl;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -7,8 +8,7 @@ import net.minecraft.util.Formatting;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -47,6 +47,11 @@ public interface Option<T> {
     @NotNull Class<T> typeClass();
 
     /**
+     * Tasks that needs to be executed upon applying changes.
+     */
+    @NotNull ImmutableSet<OptionFlag> flags();
+
+    /**
      * Checks if the pending value is not equal to the current set value
      */
     boolean changed();
@@ -54,6 +59,7 @@ public interface Option<T> {
     /**
      * If true, modifying this option recommends a restart.
      */
+    @Deprecated
     boolean requiresRestart();
 
     /**
@@ -69,8 +75,10 @@ public interface Option<T> {
     /**
      * Applies the pending value to the bound value.
      * Cannot be undone.
+     *
+     * @return if there were changes to apply {@link Option#changed()}
      */
-    void applyValue();
+    boolean applyValue();
 
     /**
      * Sets the pending value to the bound value.
@@ -101,7 +109,7 @@ public interface Option<T> {
 
         private Binding<T> binding;
 
-        private boolean requiresRestart;
+        private final Set<OptionFlag> flags = new HashSet<>();
 
         private final Class<T> typeClass;
 
@@ -180,11 +188,38 @@ public interface Option<T> {
         }
 
         /**
+         * Adds a flag to the option.
+         * Upon applying changes, all flags are executed.
+         * {@link Option#flags()}
+         */
+        public Builder<T> flag(@NotNull OptionFlag... flag) {
+            Validate.notNull(flag, "`flag` must not be null");
+
+            this.flags.addAll(Arrays.asList(flag));
+            return this;
+        }
+
+        /**
+         * Adds a flag to the option.
+         * Upon applying changes, all flags are executed.
+         * {@link Option#flags()}
+         */
+        public Builder<T> flags(@NotNull Collection<OptionFlag> flags) {
+            Validate.notNull(flags, "`flags` must not be null");
+
+            this.flags.addAll(flags);
+            return this;
+        }
+
+        /**
          * Dictates whether the option should require a restart.
          * {@link Option#requiresRestart()}
          */
+        @Deprecated
         public Builder<T> requiresRestart(boolean requiresRestart) {
-            this.requiresRestart = requiresRestart;
+            if (requiresRestart) flag(OptionFlag.GAME_RESTART);
+            else flags.remove(OptionFlag.GAME_RESTART);
+
             return this;
         }
 
@@ -201,7 +236,7 @@ public interface Option<T> {
                 concatenatedTooltip.append(line);
             }
 
-            return new OptionImpl<>(name, concatenatedTooltip, controlGetter, binding, requiresRestart, typeClass);
+            return new OptionImpl<>(name, concatenatedTooltip, controlGetter, binding, ImmutableSet.copyOf(flags), typeClass);
         }
     }
 }

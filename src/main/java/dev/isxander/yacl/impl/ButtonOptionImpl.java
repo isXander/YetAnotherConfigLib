@@ -1,8 +1,10 @@
 package dev.isxander.yacl.impl;
 
+import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.api.Binding;
 import dev.isxander.yacl.api.ButtonOption;
 import dev.isxander.yacl.api.Controller;
+import dev.isxander.yacl.api.OptionFlag;
 import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
@@ -64,6 +66,11 @@ public class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
+    public @NotNull ImmutableSet<OptionFlag> flags() {
+        return ImmutableSet.of();
+    }
+
+    @Override
     public boolean requiresRestart() {
         return false;
     }
@@ -84,8 +91,8 @@ public class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
-    public void applyValue() {
-
+    public boolean applyValue() {
+        return false;
     }
 
     @Override

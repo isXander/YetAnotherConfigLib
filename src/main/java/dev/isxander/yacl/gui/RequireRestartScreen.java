@@ -7,7 +7,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class RequireRestartScreen extends ConfirmScreen {
-    protected RequireRestartScreen(Screen parent) {
+    public RequireRestartScreen(Screen parent) {
         super(option -> {
             if (option) MinecraftClient.getInstance().scheduleStop();
             else MinecraftClient.getInstance().setScreen(parent);

@@ -2,6 +2,7 @@ package dev.isxander.yacl.gui;
 
 import dev.isxander.yacl.api.ConfigCategory;
 import dev.isxander.yacl.api.Option;
+import dev.isxander.yacl.api.OptionFlag;
 import dev.isxander.yacl.api.YetAnotherConfigLib;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.api.utils.OptionUtils;
@@ -13,7 +14,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class YACLScreen extends Screen {
@@ -65,18 +68,16 @@ public class YACLScreen extends Screen {
             categoryDim.move(0, 21);
         }
 
-        searchFieldWidget = new SearchFieldWidget(this, textRenderer, width / 3 / 2 - paddedWidth / 2 + 1, height - 71, paddedWidth - 2, 18, Text.translatable("yacl.gui.search"), Text.translatable("yacl.gui.search"));
-
         Dimension<Integer> actionDim = Dimension.ofInt(width / 3 / 2, height - padding - 20, paddedWidth, 20);
         finishedSaveButton = new TooltipButtonWidget(this, actionDim.x() - actionDim.width() / 2, actionDim.y(), actionDim.width(), actionDim.height(), Text.empty(), Text.empty(), (btn) -> {
             saveButtonMessage = null;
 
             if (pendingChanges()) {
-                AtomicBoolean requiresRestart = new AtomicBoolean(false);
+                Set<OptionFlag> flags = new HashSet<>();
                 OptionUtils.forEachOptions(config, option -> {
-                    if (option.requiresRestart() && option.changed())
-                        requiresRestart.set(true);
-                    option.applyValue();
+                    if (option.applyValue()) {
+                        flags.addAll(option.flags());
+                    }
                 });
                 OptionUtils.forEachOptions(config, option -> {
                     if (option.changed()) {
@@ -85,9 +86,8 @@ public class YACLScreen extends Screen {
                     }
                 });
                 config.saveFunction().run();
-                if (requiresRestart.get()) {
-                    client.setScreen(new RequireRestartScreen(this));
-                }
+
+                flags.forEach(flag -> flag.accept(client));
             } else close();
         });
         actionDim.expand(-actionDim.width() / 2 - 2, 0).move(-actionDim.width() / 2 - 2, -22);
@@ -105,14 +105,15 @@ public class YACLScreen extends Screen {
             OptionUtils.forEachOptions(config, Option::forgetPendingValue);
         });
 
+        searchFieldWidget = new SearchFieldWidget(this, textRenderer, width / 3 / 2 - paddedWidth / 2 + 1, undoButton.y - 22, paddedWidth - 2, 18, Text.translatable("yacl.gui.search"), Text.translatable("yacl.gui.search"));
+
         updateActionAvailability();
         addDrawableChild(searchFieldWidget);
         addDrawableChild(cancelResetButton);
         addDrawableChild(undoButton);
         addDrawableChild(finishedSaveButton);
 
-        ConfigCategory currentCategory = config.categories().get(currentCategoryIdx);
-        optionList = new OptionListWidget(currentCategory, this, client, width, height);
+        optionList = new OptionListWidget(this, client, width, height);
         addSelectableChild(optionList);
 
         config.initConsumer().accept(this);
@@ -154,7 +155,7 @@ public class YACLScreen extends Screen {
 
     public void changeCategory(int idx) {
         currentCategoryIdx = idx;
-        refreshGUI();
+        optionList.refreshOptions();
     }
 
     private void updateActionAvailability() {
@@ -170,6 +171,12 @@ public class YACLScreen extends Screen {
     @Override
     public void tick() {
         searchFieldWidget.tick();
+        if (!searchFieldWidget.getText().isEmpty() && currentCategoryIdx != -1) {
+            changeCategory(-1);
+        }
+        if (searchFieldWidget.getText().isEmpty() && currentCategoryIdx == -1) {
+            changeCategory(0);
+        }
 
         updateActionAvailability();
 
@@ -205,10 +212,6 @@ public class YACLScreen extends Screen {
         });
 
         return pendingChanges.get();
-    }
-
-    private void refreshGUI() {
-        init(client, width, height);
     }
 
     @Override

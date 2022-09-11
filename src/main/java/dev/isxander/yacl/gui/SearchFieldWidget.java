@@ -37,6 +37,13 @@ public class SearchFieldWidget extends TextFieldWidget {
         super.write(text);
     }
 
+    @Override
+    public void eraseCharacters(int characterOffset) {
+        yaclScreen.optionList.setScrollAmount(0);
+
+        super.eraseCharacters(characterOffset);
+    }
+
     public Text getEmptyText() {
         return emptyText;
     }
