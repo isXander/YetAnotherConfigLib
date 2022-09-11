@@ -45,7 +45,7 @@ public interface ConfigCategory {
     class Builder {
         private Text name;
 
-        private final List<Option<?>> rootOptions = new ArrayList<>();
+        private final List<Option<?, ?>> rootOptions = new ArrayList<>();
         private final List<OptionGroup> groups = new ArrayList<>();
 
         private final List<Text> tooltipLines = new ArrayList<>();
@@ -74,7 +74,7 @@ public interface ConfigCategory {
          * @see ConfigCategory#groups()
          * @see OptionGroup#isRoot()
          */
-        public Builder option(@NotNull Option<?> option) {
+        public Builder option(@NotNull Option<?, ?> option) {
             Validate.notNull(option, "`option` must not be null");
 
             this.rootOptions.add(option);
@@ -89,7 +89,7 @@ public interface ConfigCategory {
          * @see ConfigCategory#groups()
          * @see OptionGroup#isRoot()
          */
-        public Builder options(@NotNull Collection<Option<?>> options) {
+        public Builder options(@NotNull Collection<Option<?, ?>> options) {
             Validate.notEmpty(options, "`options` must not be empty");
 
             this.rootOptions.addAll(options);

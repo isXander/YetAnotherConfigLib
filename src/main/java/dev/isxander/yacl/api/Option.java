@@ -9,11 +9,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public interface Option<T> {
+public interface Option<T, S> {
     /**
      * Name of the option
      */
@@ -38,7 +39,9 @@ public interface Option<T> {
      *
      * @see Binding
      */
-    @NotNull Binding<T> binding();
+    @NotNull Binding<T, S> binding();
+
+    @NotNull Storage<S> storage();
 
     /**
      * Class of the option type.
@@ -69,8 +72,10 @@ public interface Option<T> {
     /**
      * Applies the pending value to the bound value.
      * Cannot be undone.
+     *
+     * @return if there were changes to apply
      */
-    void applyValue();
+    boolean applyValue();
 
     /**
      * Sets the pending value to the bound value.
@@ -88,25 +93,32 @@ public interface Option<T> {
      * @param <T> type of the option's value
      * @param typeClass used to capture the type
      */
-    static <T> Builder<T> createBuilder(Class<T> typeClass) {
-        return new Builder<>(typeClass);
+    static <T, S> Builder<T, S> createBuilder(Class<T> typeClass, Storage<S> storage) {
+        return new Builder<>(typeClass, storage);
     }
 
-    class Builder<T> {
+    static <T> Builder<T, ?> createBuilder(Class<T> typeClass) {
+        return createBuilder(typeClass, Storage.EMPTY);
+    }
+
+    class Builder<T, S> {
         private Text name = Text.literal("Name not specified!").formatted(Formatting.RED);
 
         private final List<Text> tooltipLines = new ArrayList<>();
 
-        private Function<Option<T>, Controller<T>> controlGetter;
+        private Function<Option<T, S>, Controller<T>> controlGetter;
 
-        private Binding<T> binding;
+        private Binding<T, S> binding;
+
+        private final Storage<S> storage;
 
         private boolean requiresRestart;
 
         private final Class<T> typeClass;
 
-        private Builder(Class<T> typeClass) {
+        private Builder(Class<T> typeClass, Storage<S> storage) {
             this.typeClass = typeClass;
+            this.storage = storage;
         }
 
         /**
@@ -114,7 +126,7 @@ public interface Option<T> {
          *
          * @see Option#name()
          */
-        public Builder<T> name(@NotNull Text name) {
+        public Builder<T, S> name(@NotNull Text name) {
             Validate.notNull(name, "`name` cannot be null");
 
             this.name = name;
@@ -128,7 +140,7 @@ public interface Option<T> {
          *
          * @param tooltips text lines - merged with a new-line on {@link Builder#build()}.
          */
-        public Builder<T> tooltip(@NotNull Text... tooltips) {
+        public Builder<T, S> tooltip(@NotNull Text... tooltips) {
             Validate.notNull(tooltips, "`tooltips` cannot be empty");
 
             tooltipLines.addAll(List.of(tooltips));
@@ -141,7 +153,7 @@ public interface Option<T> {
          *
          * @see dev.isxander.yacl.gui.controllers
          */
-        public Builder<T> controller(@NotNull Function<Option<T>, Controller<T>> control) {
+        public Builder<T, S> controller(@NotNull Function<Option<T, S>, Controller<T>> control) {
             Validate.notNull(control, "`control` cannot be null");
 
             this.controlGetter = control;
@@ -154,7 +166,7 @@ public interface Option<T> {
          *
          * @see Binding
          */
-        public Builder<T> binding(@NotNull Binding<T> binding) {
+        public Builder<T, S> binding(@NotNull Binding<T, S> binding) {
             Validate.notNull(binding, "`binding` cannot be null");
 
             this.binding = binding;
@@ -170,7 +182,25 @@ public interface Option<T> {
          * @param setter should set the option to the supplied value
          * @see Binding
          */
-        public Builder<T> binding(@NotNull T def, @NotNull Supplier<@NotNull T> getter, @NotNull Consumer<@NotNull T> setter) {
+        public Builder<T, S> binding(@NotNull Function<S, T> def, @NotNull Function<S, T> getter, @NotNull BiConsumer<S, T> setter) {
+            Validate.notNull(def, "`def` must not be null");
+            Validate.notNull(getter, "`getter` must not be null");
+            Validate.notNull(setter, "`setter` must not be null");
+
+            this.binding = Binding.generic(def, getter, setter);
+            return this;
+        }
+
+        /**
+         * Sets the binding for the option.
+         * Shorthand of {@link Binding#generic(Object, Supplier, Consumer)}
+         *
+         * @param def default value of the option, used to reset
+         * @param getter should return the current value of the option
+         * @param setter should set the option to the supplied value
+         * @see Binding
+         */
+        public Builder<T, S> binding(@NotNull T def, @NotNull Supplier<@NotNull T> getter, @NotNull Consumer<@NotNull T> setter) {
             Validate.notNull(def, "`def` must not be null");
             Validate.notNull(getter, "`getter` must not be null");
             Validate.notNull(setter, "`setter` must not be null");
@@ -183,12 +213,12 @@ public interface Option<T> {
          * Dictates whether the option should require a restart.
          * {@link Option#requiresRestart()}
          */
-        public Builder<T> requiresRestart(boolean requiresRestart) {
+        public Builder<T, S> requiresRestart(boolean requiresRestart) {
             this.requiresRestart = requiresRestart;
             return this;
         }
 
-        public Option<T> build() {
+        public Option<T, S> build() {
             Validate.notNull(controlGetter, "`control` must not be null when building `Option`");
             Validate.notNull(binding, "`binding` must not be null when building `Option`");
 
@@ -201,7 +231,7 @@ public interface Option<T> {
                 concatenatedTooltip.append(line);
             }
 
-            return new OptionImpl<>(name, concatenatedTooltip, controlGetter, binding, requiresRestart, typeClass);
+            return new OptionImpl<>(name, concatenatedTooltip, controlGetter, binding, storage, requiresRestart, typeClass);
         }
     }
 }

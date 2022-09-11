@@ -3,6 +3,7 @@ package dev.isxander.yacl.impl;
 import dev.isxander.yacl.api.Binding;
 import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.Option;
+import dev.isxander.yacl.api.Storage;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -11,11 +12,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Function;
 
 @ApiStatus.Internal
-public class OptionImpl<T> implements Option<T> {
+public class OptionImpl<T, S> implements Option<T, S> {
     private final Text name;
     private final Text tooltip;
     private final Controller<T> controller;
-    private final Binding<T> binding;
+    private final Binding<T, S> binding;
+    private final Storage<S> storage;
     private final boolean requiresRestart;
 
     private final Class<T> typeClass;
@@ -25,8 +27,9 @@ public class OptionImpl<T> implements Option<T> {
     public OptionImpl(
             @NotNull Text name,
             @Nullable Text tooltip,
-            @NotNull Function<Option<T>, Controller<T>> controlGetter,
-            @NotNull Binding<T> binding,
+            @NotNull Function<Option<T, S>, Controller<T>> controlGetter,
+            @NotNull Binding<T, S> binding,
+            @NotNull Storage<S> storage,
             boolean requiresRestart,
             @NotNull Class<T> typeClass
     ) {
@@ -34,9 +37,10 @@ public class OptionImpl<T> implements Option<T> {
         this.tooltip = tooltip;
         this.controller = controlGetter.apply(this);
         this.binding = binding;
+        this.storage = storage;
         this.requiresRestart = requiresRestart;
         this.typeClass = typeClass;
-        this.pendingValue = binding().getValue();
+        this.pendingValue = binding().getValue(storage.data());
     }
 
     @Override
@@ -55,8 +59,13 @@ public class OptionImpl<T> implements Option<T> {
     }
 
     @Override
-    public @NotNull Binding<T> binding() {
+    public @NotNull Binding<T, S> binding() {
         return binding;
+    }
+
+    @Override
+    public @NotNull Storage<S> storage() {
+        return storage;
     }
 
     @Override
@@ -71,7 +80,7 @@ public class OptionImpl<T> implements Option<T> {
 
     @Override
     public boolean changed() {
-        return !binding().getValue().equals(pendingValue);
+        return !binding().getValue(storage().data()).equals(pendingValue);
     }
 
     @Override
@@ -85,19 +94,21 @@ public class OptionImpl<T> implements Option<T> {
     }
 
     @Override
-    public void applyValue() {
+    public boolean applyValue() {
         if (changed()) {
-            binding().setValue(pendingValue);
+            binding().setValue(storage().data(), pendingValue);
+            return true;
         }
+        return false;
     }
 
     @Override
     public void forgetPendingValue() {
-        pendingValue = binding().getValue();
+        pendingValue = binding().getValue(storage().data());
     }
 
     @Override
     public void requestSetDefault() {
-        pendingValue = binding().defaultValue();
+        pendingValue = binding().defaultValue(storage().data());
     }
 }

@@ -3,6 +3,7 @@ package dev.isxander.yacl.impl;
 import dev.isxander.yacl.api.Binding;
 import dev.isxander.yacl.api.ButtonOption;
 import dev.isxander.yacl.api.Controller;
+import dev.isxander.yacl.api.Storage;
 import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
@@ -18,7 +19,7 @@ public class ButtonOptionImpl implements ButtonOption {
     private final Text tooltip;
     private final Consumer<YACLScreen> action;
     private final Controller<Consumer<YACLScreen>> controller;
-    private final Binding<Consumer<YACLScreen>> binding;
+    private final Binding<Consumer<YACLScreen>, Void> binding;
 
     public ButtonOptionImpl(
             @NotNull Text name,
@@ -54,8 +55,13 @@ public class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
-    public @NotNull Binding<Consumer<YACLScreen>> binding() {
+    public @NotNull Binding<Consumer<YACLScreen>, Void> binding() {
         return binding;
+    }
+
+    @Override
+    public @NotNull Storage<Void> storage() {
+        return Storage.EMPTY;
     }
 
     @Override
@@ -84,8 +90,8 @@ public class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
-    public void applyValue() {
-
+    public boolean applyValue() {
+        return false;
     }
 
     @Override
@@ -98,19 +104,19 @@ public class ButtonOptionImpl implements ButtonOption {
 
     }
 
-    private static class EmptyBinderImpl implements Binding<Consumer<YACLScreen>> {
+    private static class EmptyBinderImpl implements Binding<Consumer<YACLScreen>, Void> {
         @Override
-        public void setValue(Consumer<YACLScreen> value) {
+        public void setValue(Void storage, Consumer<YACLScreen> value) {
 
         }
 
         @Override
-        public Consumer<YACLScreen> getValue() {
+        public Consumer<YACLScreen> getValue(Void storage) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public Consumer<YACLScreen> defaultValue() {
+        public Consumer<YACLScreen> defaultValue(Void storage) {
             throw new UnsupportedOperationException();
         }
     }

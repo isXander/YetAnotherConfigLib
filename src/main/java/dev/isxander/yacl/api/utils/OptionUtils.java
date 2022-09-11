@@ -13,10 +13,10 @@ public class OptionUtils {
      * Consumes all options, ignoring groups and categories.
      * When consumer returns true, this function stops iterating.
      */
-    public static void consumeOptions(YetAnotherConfigLib yacl, Function<Option<?>, Boolean> consumer) {
+    public static void consumeOptions(YetAnotherConfigLib yacl, Function<Option<?, ?>, Boolean> consumer) {
         for (ConfigCategory category : yacl.categories()) {
             for (OptionGroup group : category.groups()) {
-                for (Option<?> option : group.options()) {
+                for (Option<?, ?> option : group.options()) {
                     if (consumer.apply(option)) return;
                 }
             }
@@ -28,8 +28,8 @@ public class OptionUtils {
      *
      * @see OptionUtils#consumeOptions(YetAnotherConfigLib, Function)
      */
-    public static void forEachOptions(YetAnotherConfigLib yacl, Consumer<Option<?>> consumer) {
-        consumeOptions(yacl, (opt) -> {
+    public static void forEachOptions(YetAnotherConfigLib yacl, Consumer<Option<?, ?>> consumer) {
+        consumeOptions(yacl, opt -> {
             consumer.accept(opt);
             return false;
         });

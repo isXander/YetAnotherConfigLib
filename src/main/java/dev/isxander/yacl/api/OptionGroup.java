@@ -31,7 +31,7 @@ public interface OptionGroup {
     /**
      * List of all options in the group
      */
-    @NotNull ImmutableList<Option<?>> options();
+    @NotNull ImmutableList<Option<?, ?>> options();
 
     /**
      * Dictates if the group should be collapsed by default.
@@ -54,7 +54,7 @@ public interface OptionGroup {
     class Builder {
         private Text name = Text.empty();
         private final List<Text> tooltipLines = new ArrayList<>();
-        private final List<Option<?>> options = new ArrayList<>();
+        private final List<Option<?, ?>> options = new ArrayList<>();
         private boolean collapsed = false;
 
         private Builder() {
@@ -93,7 +93,7 @@ public interface OptionGroup {
          *
          * @see OptionGroup#options()
          */
-        public Builder option(@NotNull Option<?> option) {
+        public Builder option(@NotNull Option<?, ?> option) {
             Validate.notNull(option, "`option` must not be null");
 
             this.options.add(option);
@@ -106,7 +106,7 @@ public interface OptionGroup {
          *
          * @see OptionGroup#options()
          */
-        public Builder options(@NotNull Collection<Option<?>> options) {
+        public Builder options(@NotNull Collection<Option<?, ?>> options) {
             Validate.notEmpty(options, "`options` must not be empty");
 
             this.options.addAll(options);

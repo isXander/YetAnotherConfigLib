@@ -2,6 +2,7 @@ package dev.isxander.yacl.api;
 
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.impl.ButtonOptionImpl;
+import dev.isxander.yacl.impl.EmptyStorage;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.Validate;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public interface ButtonOption extends Option<Consumer<YACLScreen>> {
+public interface ButtonOption extends Option<Consumer<YACLScreen>, Void> {
     Consumer<YACLScreen> action();
 
     static Builder createBuilder() {

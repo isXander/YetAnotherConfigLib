@@ -33,7 +33,7 @@ public class BooleanController implements Controller<Boolean> {
                     ? Text.translatable("gui.yes")
                     : Text.translatable("gui.no");
 
-    private final Option<Boolean> option;
+    private final Option<Boolean, ?> option;
     private final Function<Boolean, Text> valueFormatter;
     private final boolean coloured;
 
@@ -43,7 +43,7 @@ public class BooleanController implements Controller<Boolean> {
      *
      * @param option bound option
      */
-    public BooleanController(Option<Boolean> option) {
+    public BooleanController(Option<Boolean, ?> option) {
         this(option, ON_OFF_FORMATTER, false);
     }
 
@@ -54,7 +54,7 @@ public class BooleanController implements Controller<Boolean> {
      * @param option bound option
      * @param coloured value format is green or red depending on the state
      */
-    public BooleanController(Option<Boolean> option, boolean coloured) {
+    public BooleanController(Option<Boolean, ?> option, boolean coloured) {
         this(option, ON_OFF_FORMATTER, coloured);
     }
 
@@ -65,7 +65,7 @@ public class BooleanController implements Controller<Boolean> {
      * @param valueFormatter format value into any {@link Text}
      * @param coloured value format is green or red depending on the state
      */
-    public BooleanController(Option<Boolean> option, Function<Boolean, Text> valueFormatter, boolean coloured) {
+    public BooleanController(Option<Boolean, ?> option, Function<Boolean, Text> valueFormatter, boolean coloured) {
         this.option = option;
         this.valueFormatter = valueFormatter;
         this.coloured = coloured;
@@ -75,7 +75,7 @@ public class BooleanController implements Controller<Boolean> {
      * {@inheritDoc}
      */
     @Override
-    public Option<Boolean> option() {
+    public Option<Boolean, ?> option() {
         return option;
     }
 

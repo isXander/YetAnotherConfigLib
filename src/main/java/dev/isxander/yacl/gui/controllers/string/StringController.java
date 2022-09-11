@@ -9,14 +9,14 @@ import dev.isxander.yacl.gui.YACLScreen;
  * A custom text field implementation for strings.
  */
 public class StringController implements IStringController<String> {
-    private final Option<String> option;
+    private final Option<String, ?> option;
 
     /**
      * Constructs a string controller
      *
      * @param option bound option
      */
-    public StringController(Option<String> option) {
+    public StringController(Option<String, ?> option) {
         this.option = option;
     }
 
@@ -24,7 +24,7 @@ public class StringController implements IStringController<String> {
      * {@inheritDoc}
      */
     @Override
-    public Option<String> option() {
+    public Option<String, ?> option() {
         return option;
     }
 

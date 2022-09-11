@@ -22,7 +22,7 @@ import java.util.function.Function;
  * @param <T> enum type
  */
 public class EnumController<T extends Enum<T>> implements Controller<T> {
-    private final Option<T> option;
+    private final Option<T, ?> option;
     private final Function<T, Text> valueFormatter;
 
     /**
@@ -32,7 +32,7 @@ public class EnumController<T extends Enum<T>> implements Controller<T> {
      *
      * @param option bound option
      */
-    public EnumController(Option<T> option) {
+    public EnumController(Option<T, ?> option) {
         this(option, value -> {
             if (value instanceof NameableEnum nameableEnum)
                 return nameableEnum.getDisplayName();
@@ -48,7 +48,7 @@ public class EnumController<T extends Enum<T>> implements Controller<T> {
      * @param option bound option
      * @param valueFormatter format the enum into any {@link Text}
      */
-    public EnumController(Option<T> option, Function<T, Text> valueFormatter) {
+    public EnumController(Option<T, ?> option, Function<T, Text> valueFormatter) {
         this.option = option;
         this.valueFormatter = valueFormatter;
     }
@@ -57,7 +57,7 @@ public class EnumController<T extends Enum<T>> implements Controller<T> {
      * {@inheritDoc}
      */
     @Override
-    public Option<T> option() {
+    public Option<T, ?> option() {
         return option;
     }
 

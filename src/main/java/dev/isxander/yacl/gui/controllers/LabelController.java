@@ -16,13 +16,13 @@ import java.util.List;
  * Simply renders some text as a label.
  */
 public class LabelController implements Controller<Text> {
-    private final Option<Text> option;
+    private final Option<Text, ?> option;
     /**
      * Constructs a label controller
      *
      * @param option bound option
      */
-    public LabelController(Option<Text> option) {
+    public LabelController(Option<Text, ?> option) {
         this.option = option;
     }
 
@@ -30,7 +30,7 @@ public class LabelController implements Controller<Text> {
      * {@inheritDoc}
      */
     @Override
-    public Option<Text> option() {
+    public Option<Text, ?> option() {
         return option;
     }
 

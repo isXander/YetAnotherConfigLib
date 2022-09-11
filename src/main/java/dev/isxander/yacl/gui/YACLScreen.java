@@ -2,6 +2,7 @@ package dev.isxander.yacl.gui;
 
 import dev.isxander.yacl.api.ConfigCategory;
 import dev.isxander.yacl.api.Option;
+import dev.isxander.yacl.api.Storage;
 import dev.isxander.yacl.api.YetAnotherConfigLib;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.api.utils.OptionUtils;
@@ -13,7 +14,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class YACLScreen extends Screen {
@@ -73,10 +76,13 @@ public class YACLScreen extends Screen {
 
             if (pendingChanges()) {
                 AtomicBoolean requiresRestart = new AtomicBoolean(false);
+                Set<Storage<?>> dirtyStorages = new HashSet<>();
                 OptionUtils.forEachOptions(config, option -> {
-                    if (option.requiresRestart() && option.changed())
-                        requiresRestart.set(true);
-                    option.applyValue();
+                    if (option.applyValue()) {
+                        dirtyStorages.add(option.storage());
+                        if (option.requiresRestart())
+                            requiresRestart.set(true);
+                    }
                 });
                 OptionUtils.forEachOptions(config, option -> {
                     if (option.changed()) {
@@ -84,6 +90,12 @@ public class YACLScreen extends Screen {
                         setSaveButtonMessage(Text.translatable("yacl.gui.fail_apply").formatted(Formatting.RED), Text.translatable("yacl.gui.fail_apply.tooltip"));
                     }
                 });
+
+                for (Storage<?> storage : dirtyStorages) {
+                    storage.save();
+                }
+
+                // TODO: merge into Storages
                 config.serializer().save();
                 if (requiresRestart.get()) {
                     client.setScreen(new RequireRestartScreen(this));

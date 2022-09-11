@@ -13,7 +13,7 @@ public interface Controller<T> {
     /**
      * Gets the dedicated {@link Option} for this controller
      */
-    Option<T> option();
+    Option<T, ?> option();
 
     /**
      * Gets the formatted value based on {@link Option#pendingValue()}

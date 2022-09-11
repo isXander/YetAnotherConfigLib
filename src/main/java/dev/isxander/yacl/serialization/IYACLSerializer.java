@@ -1,5 +1,8 @@
 package dev.isxander.yacl.serialization;
 
+/**
+ * Handles saving and loading for YACL configs.
+ */
 public interface IYACLSerializer {
     IYACLSerializer EMPTY = new IYACLSerializer() {
         @Override

@@ -3,6 +3,7 @@ package dev.isxander.yacl.impl;
 import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl.api.ConfigCategory;
 import dev.isxander.yacl.api.Option;
+import dev.isxander.yacl.api.Storage;
 import dev.isxander.yacl.api.YetAnotherConfigLib;
 import dev.isxander.yacl.api.utils.OptionUtils;
 import dev.isxander.yacl.gui.YACLScreen;
@@ -11,6 +12,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -36,6 +39,13 @@ public class YetAnotherConfigLibImpl implements YetAnotherConfigLib {
     @Override
     public ImmutableList<ConfigCategory> categories() {
         return categories;
+    }
+
+    @Override
+    public Set<Storage<?>> storages() {
+        Set<Storage<?>> storages = new HashSet<>();
+        categories().forEach(category -> category.groups().forEach(group -> group.options().forEach(option -> storages.add(option.storage()))));
+        return storages;
     }
 
     @Override

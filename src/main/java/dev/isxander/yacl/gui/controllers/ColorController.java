@@ -20,7 +20,7 @@ import java.util.List;
  * A color controller that uses a hex color field as input.
  */
 public class ColorController implements IStringController<Color> {
-    private final Option<Color> option;
+    private final Option<Color, ?> option;
     private final boolean allowAlpha;
 
     /**
@@ -28,7 +28,7 @@ public class ColorController implements IStringController<Color> {
      *
      * @param option bound option
      */
-    public ColorController(Option<Color> option) {
+    public ColorController(Option<Color, ?> option) {
         this(option, false);
     }
 
@@ -38,7 +38,7 @@ public class ColorController implements IStringController<Color> {
      * @param option bound option
      * @param allowAlpha allows the color input to accept alpha values
      */
-    public ColorController(Option<Color> option, boolean allowAlpha) {
+    public ColorController(Option<Color, ?> option, boolean allowAlpha) {
         this.option = option;
         this.allowAlpha = allowAlpha;
     }
@@ -47,7 +47,7 @@ public class ColorController implements IStringController<Color> {
      * {@inheritDoc}
      */
     @Override
-    public Option<Color> option() {
+    public Option<Color, ?> option() {
         return option;
     }
 

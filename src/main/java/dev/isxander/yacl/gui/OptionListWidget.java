@@ -48,7 +48,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
             }
 
             List<OptionEntry> optionEntries = new ArrayList<>();
-            for (Option<?> option : group.options()) {
+            for (Option<?, ?> option : group.options()) {
                 OptionEntry entry = new OptionEntry(option.controller().provideWidget(screen, Dimension.ofInt(getRowLeft(), 0, getRowWidth(), 20)), viewableSupplier);
                 addEntry(entry);
                 optionEntries.add(entry);

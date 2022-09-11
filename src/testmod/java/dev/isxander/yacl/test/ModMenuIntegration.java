@@ -49,8 +49,8 @@ public class ModMenuIntegration implements ModMenuApi {
                                 .tooltip(Text.of("This option displays the basic capabilities of YetAnotherConfigLib")) // optional
                                 .binding(
                                         true, // default
-                                        () -> TestSettings.booleanToggle, // getter
-                                        newValue -> TestSettings.booleanToggle = newValue // setter
+                                        () -> TestSettings.INSTANCE.booleanToggle, // getter
+                                        newValue -> TestSettings.INSTANCE.booleanToggle = newValue // setter
                                 )
                                 .controller(BooleanController::new)
                                 .build())
@@ -72,8 +72,8 @@ public class ModMenuIntegration implements ModMenuApi {
                                         .tooltip(Text.of("This option displays the basic capabilities of YetAnotherConfigLib")) // optional
                                         .binding(
                                                 true, // default
-                                                () -> TestSettings.booleanToggle, // getter
-                                                newValue -> TestSettings.booleanToggle = newValue // setter
+                                                () -> TestSettings.INSTANCE.booleanToggle, // getter
+                                                newValue -> TestSettings.INSTANCE.booleanToggle = newValue // setter
                                         )
                                         .controller(BooleanController::new)
                                         .build())

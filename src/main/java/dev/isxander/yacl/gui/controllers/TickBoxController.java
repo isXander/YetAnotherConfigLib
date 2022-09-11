@@ -15,14 +15,14 @@ import org.lwjgl.glfw.GLFW;
  * This controller renders a tickbox
  */
 public class TickBoxController implements Controller<Boolean> {
-    private final Option<Boolean> option;
+    private final Option<Boolean, ?> option;
 
     /**
      * Constructs a tickbox controller
      *
      * @param option bound option
      */
-    public TickBoxController(Option<Boolean> option) {
+    public TickBoxController(Option<Boolean, ?> option) {
         this.option = option;
     }
 
@@ -30,7 +30,7 @@ public class TickBoxController implements Controller<Boolean> {
      * {@inheritDoc}
      */
     @Override
-    public Option<Boolean> option() {
+    public Option<Boolean, ?> option() {
         return option;
     }
 

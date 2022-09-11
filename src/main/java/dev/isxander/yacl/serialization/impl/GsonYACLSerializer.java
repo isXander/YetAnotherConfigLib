@@ -3,7 +3,6 @@ package dev.isxander.yacl.serialization.impl;
 import com.google.gson.*;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.impl.YACLConstants;
-import dev.isxander.yacl.serialization.IYACLSerializer;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
@@ -13,22 +12,25 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.Supplier;
 
-public class GsonYACLSerializer implements IYACLSerializer {
-    private final YetAnotherConfigLib yacl;
+public class GsonYACLSerializer<T> implements Storage<T> {
+    private final Supplier<YetAnotherConfigLib> yaclSupplier;
+    private final T storage;
     private final Gson gson;
     private final Path filePath;
 
-    public GsonYACLSerializer(YetAnotherConfigLib yacl, Path filePath) {
-        this(yacl, filePath, new GsonBuilder().setPrettyPrinting());
+    public GsonYACLSerializer(Supplier<YetAnotherConfigLib> yacl, T storage, Path filePath) {
+        this(yacl, storage, filePath, new GsonBuilder().setPrettyPrinting());
     }
 
-    public GsonYACLSerializer(YetAnotherConfigLib yacl, Path filePath, Gson gson) {
-        this(yacl, filePath, gson.newBuilder());
+    public GsonYACLSerializer(Supplier<YetAnotherConfigLib> yacl, T storage, Path filePath, Gson gson) {
+        this(yacl, storage, filePath, gson.newBuilder());
     }
 
-    public GsonYACLSerializer(YetAnotherConfigLib yacl, Path filePath, GsonBuilder gsonBuilder) {
-        this.yacl = yacl;
+    public GsonYACLSerializer(Supplier<YetAnotherConfigLib> yacl, T storage, Path filePath, GsonBuilder gsonBuilder) {
+        this.yaclSupplier = yacl;
+        this.storage = storage;
         this.filePath = filePath;
         gsonBuilder
                 .disableHtmlEscaping()
@@ -39,7 +41,14 @@ public class GsonYACLSerializer implements IYACLSerializer {
     }
 
     @Override
+    public T data() {
+        return storage;
+    }
+
+    @Override
     public void save() {
+        YetAnotherConfigLib yacl = yaclSupplier.get();
+
         YACLConstants.LOGGER.info("Saving {}", yacl.title().getString());
 
         JsonObject rootObj = new JsonObject();
@@ -51,18 +60,25 @@ public class GsonYACLSerializer implements IYACLSerializer {
                 if (group.isRoot()) groupObj = categoryObj;
                 else groupObj = new JsonObject();
 
-                for (Option<?> option : group.options()) {
+                for (Option<?, ?> option : group.options()) {
+                    if (option.storage() != this)
+                        continue;
                     if (option instanceof ButtonOption)
                         continue;
 
-                    groupObj.add(getKey(option.name()), gson.toJsonTree(option.binding().getValue()));
+                    Option<?, T> castedOption = (Option<?, T>) option;
+                    groupObj.add(getKey(option.name()), gson.toJsonTree(castedOption.binding().getValue(castedOption.storage().data())));
                 }
 
                 if (!group.isRoot())
                     categoryObj.add(getKey(group.name()), groupObj);
             }
 
-            rootObj.add(getKey(category.name()), categoryObj);
+            String categoryKey = getKey(category.name());
+            while (rootObj.has(categoryKey)) {
+                categoryKey = categoryKey + "-duplicate";
+            }
+            rootObj.add(categoryKey, categoryObj);
         }
 
         try {
@@ -75,6 +91,8 @@ public class GsonYACLSerializer implements IYACLSerializer {
 
     @Override
     public void load() {
+        YetAnotherConfigLib yacl = yaclSupplier.get();
+
         YACLConstants.LOGGER.info("Loading {}", yacl.title().getString());
 
         if (Files.notExists(filePath)) {
@@ -113,7 +131,14 @@ public class GsonYACLSerializer implements IYACLSerializer {
                     groupObj = categoryObj.getAsJsonObject(groupKey);
                 }
 
-                for (Option<?> option : group.options()) {
+                for (Option<?, ?> option : group.options()) {
+                    if (option.storage() != this)
+                        continue;
+                    if (option instanceof ButtonOption)
+                        continue;
+
+                    Option<?, T> castedOption = (Option<?, T>) option;
+
                     String optionKey = getKey(option.name());
                     if (!groupObj.has(optionKey)) {
                         YACLConstants.LOGGER.warn("JSON for '{}' did not have expected element '{}'! Re-saving once loaded.", yacl.title().getString(), optionKey);
@@ -121,10 +146,7 @@ public class GsonYACLSerializer implements IYACLSerializer {
                         continue;
                     }
 
-                    if (option instanceof ButtonOption)
-                        continue;
-
-                    option.binding().setValue(gson.fromJson(groupObj.get(optionKey), (Type) option.typeClass()));
+                    castedOption.binding().setValue(castedOption.storage().data(), gson.fromJson(groupObj.get(optionKey), (Type) option.typeClass()));
                 }
             }
         }
@@ -139,7 +161,7 @@ public class GsonYACLSerializer implements IYACLSerializer {
             return translatableTextContent.getKey();
         }
 
-        return text.getString().toLowerCase().replace(' ', '_');
+        return text.getString().toLowerCase().replaceAll("\\W", "_").replaceAll("__", "_");
     }
 
     private static class ColorSerializer implements JsonSerializer<Color>, JsonDeserializer<Color> {
