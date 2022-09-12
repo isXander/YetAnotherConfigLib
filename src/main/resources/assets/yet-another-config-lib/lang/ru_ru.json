@@ -1,23 +1,21 @@
 {
-  "yacl.control.boolean.true": "Активно",
-  "yacl.control.boolean.false": "Не активно",
-  
-  "yacl.control.action.execute": "ВЫПОЛНИТЬ",
-  
-  "yacl.gui.save": "Сохранить изменения",
-  "yacl.gui.save.tooltip": "Сохраняет изменения навсегда.",
-  "yacl.gui.finished.tooltip": "Закрывает меню.",
-  "yacl.gui.cancel.tooltip": "Не сохраняет изменения и закрывает меню.",
-  "yacl.gui.reset.tooltip": "Сбрасывает все настройки к значениям по умолчанию. (Это можно отменить!)",
-  "yacl.gui.undo": "Отменить",
-  "yacl.gui.undo.tooltip": "Возвращает все настройки к состоянию, в котором они были до изменения.",
-  "yacl.gui.fail_apply": "Не удалось применить",
-  "yacl.gui.fail_apply.tooltip": "Произошла ошибка и изменения не смогли примениться.",
-  "yacl.gui.save_before_exit": "Сохраните перед закрытием!",
-  "yacl.gui.save_before_exit.tooltip": "Сохраните или отмените изменения чтобы закрыть меню."
-	
-  "yacl.restart.title": "Конфигурация требует перезагрузки!",
-  "yacl.restart.message": "Одна или более настроек требует перезагрузки игры для применения изменений.",
-  "yacl.restart.yes": "Закрыть Minecraft",
-  "yacl.restart.no": "Игнорировать"
+    "yacl.control.boolean.true": "§atrue",
+    "yacl.control.boolean.false": "§cfalse",
+    "yacl.control.action.execute": "Выполнить",
+    "yacl.gui.save": "Сохранить",
+    "yacl.gui.save.tooltip": "Сохранить изменения до следующего редактирования.",
+    "yacl.gui.finished.tooltip": "Закрыть меню.",
+    "yacl.gui.cancel.tooltip": "Отменить изменения и закрыть настройки.",
+    "yacl.gui.reset.tooltip": "Сбросить все настройки до значений по умолчанию (это можно отменить).",
+    "yacl.gui.undo": "Отменить",
+    "yacl.gui.undo.tooltip": "Вернуть все настройки к состоянию, в котором они были до изменений.",
+    "yacl.gui.fail_apply": "Не удалось применить изменения",
+    "yacl.gui.fail_apply.tooltip": "Возникла ошибка; изменения невозможно применить.",
+    "yacl.gui.save_before_exit": "Сохраните перед закрытием",
+    "yacl.gui.save_before_exit.tooltip": "Сохраните или отмените изменения, чтобы закрыть настройки.",
+    "yacl.gui.search": "Поиск...",
+    "yacl.restart.title": "Настройки требуют перезагрузки.",
+    "yacl.restart.message": "Одна или несколько настроек требует перезапуска игры для применения изменений.",
+    "yacl.restart.yes": "Закрыть Minecraft",
+    "yacl.restart.no": "Игнорировать"
 }
