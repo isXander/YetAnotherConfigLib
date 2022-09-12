@@ -64,12 +64,15 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
             drawHoveredControl(matrices, mouseX, mouseY, delta);
         }
 
+        prevMouseX = mouseX;
+        prevMouseY = mouseY;
+    }
+
+    @Override
+    public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         if (hoveredTicks > YACLConstants.HOVER_TICKS) {
             screen.renderOrderedTooltip(matrices, wrappedTooltip, mouseX, mouseY);
         }
-
-        prevMouseX = mouseX;
-        prevMouseY = mouseY;
     }
 
     protected void drawHoveredControl(MatrixStack matrices, int mouseX, int mouseY, float delta) {

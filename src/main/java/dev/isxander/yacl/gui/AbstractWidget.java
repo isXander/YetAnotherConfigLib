@@ -26,6 +26,10 @@ public abstract class AbstractWidget implements Element, Drawable, Selectable {
         this.dim = dim;
     }
 
+    public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+
+    }
+
     public void setDimension(Dimension<Integer> dim) {
         this.dim = dim;
     }

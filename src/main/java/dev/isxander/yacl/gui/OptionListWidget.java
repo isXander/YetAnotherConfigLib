@@ -140,6 +140,14 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         }
     }
 
+    @Override
+    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        super.render(matrices, mouseX, mouseY, delta);
+        for (Entry entry : children()) {
+            entry.postRender(matrices, mouseX, mouseY, delta);
+        }
+    }
+
     /* END cloth config code */
 
     @Override
@@ -206,6 +214,10 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
     }
 
     public abstract class Entry extends ElementListWidget.Entry<Entry> {
+        public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+
+        }
+
         public boolean isViewable() {
             return true;
         }
@@ -233,6 +245,11 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
             widget.setDimension(widget.getDimension().setY(y));
 
             widget.render(matrices, mouseX, mouseY, tickDelta);
+        }
+
+        @Override
+        public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+            widget.postRender(matrices, mouseX, mouseY, delta);
         }
 
         @Override
@@ -314,12 +331,15 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
             wrappedName.drawCenterWithShadow(matrices, x + entryWidth / 2, y + getYPadding());
 
-            if (hoveredTicks >= YACLConstants.HOVER_TICKS) {
-                screen.renderOrderedTooltip(matrices, wrappedTooltip, x - 6, y + entryHeight / 2 + 6 + (wrappedTooltip.size() * textRenderer.fontHeight) / 2);
-            }
-
             prevMouseX = mouseX;
             prevMouseY = mouseY;
+        }
+
+        @Override
+        public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+            if (hoveredTicks >= YACLConstants.HOVER_TICKS) {
+                screen.renderOrderedTooltip(matrices, wrappedTooltip, mouseX, mouseY);
+            }
         }
 
         public boolean isExpanded() {
