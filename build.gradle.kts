@@ -54,7 +54,7 @@ dependencies {
     mappings("net.fabricmc:yarn:$minecraftVersion+build.+:v2")
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 
-    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.60.0+1.19.2"))
+    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.61.0+1.19.2"))
 
     "testmodImplementation"(sourceSets.main.get().output)
     "modTestmodImplementation"("com.terraformersmc:modmenu:4.0.6") {
