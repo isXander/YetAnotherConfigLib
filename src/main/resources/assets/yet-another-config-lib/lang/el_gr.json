@@ -15,4 +15,10 @@
   "yacl.gui.fail_apply.tooltip": "Δημιουργήθηκε ένα σφάλμα και οι αλλαγές δεν μπόρεσαν να εφαρμοστούν.",
   "yacl.gui.save_before_exit": "Αποθήκευση πριν το κλείσιμο!",
   "yacl.gui.save_before_exit.tooltip": "Αποθήκευσε ή ακύρωσε για να βγεις απ' το μενού."
+  "yacl.gui.search": "Αναζήτηση",
+
+  "yacl.restart.title": "Η ρύθμιση απαιτεί επανεκκήνιση!",
+  "yacl.restart.message": "Μία ή παραπάνω επιλογές προϋποθέτουν επανεκκήνηση το παιχνιδιού για να εφαρμοστούν.",
+  "yacl.restart.yes": "Κλείσιμο του Minecraft",
+  "yacl.restart.no": "Αγνόησε το για τώρα"
 }
