@@ -124,9 +124,9 @@ public class YACLScreen extends Screen {
         renderBackground(matrices);
 
         super.render(matrices, mouseX, mouseY, delta);
+        searchFieldWidget.render(matrices, mouseX, mouseY, delta);
 
         optionList.render(matrices, mouseX, mouseY, delta);
-        searchFieldWidget.render(matrices, mouseX, mouseY, delta);
 
         for (Element child : children()) {
             if (child instanceof TooltipButtonWidget tooltipButtonWidget) {
