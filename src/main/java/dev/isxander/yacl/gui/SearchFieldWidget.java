@@ -28,6 +28,7 @@ public class SearchFieldWidget extends TextFieldWidget {
     @Override
     public void write(String text) {
         yaclScreen.optionList.setScrollAmount(0);
+        yaclScreen.categoryList.setScrollAmount(0);
         for (OptionListWidget.Entry entry : yaclScreen.optionList.children()) {
             if (entry instanceof OptionListWidget.GroupSeparatorEntry groupSeparatorEntry) {
                 groupSeparatorEntry.setExpanded(true);

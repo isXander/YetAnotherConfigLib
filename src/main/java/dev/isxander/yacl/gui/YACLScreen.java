@@ -26,7 +26,8 @@ public class YACLScreen extends Screen {
     private final Screen parent;
 
     public OptionListWidget optionList;
-    public final List<CategoryWidget> categoryButtons;
+//    public final List<CategoryWidget> categoryButtons;
+    public CategoryListWidget categoryList;
     public TooltipButtonWidget finishedSaveButton, cancelResetButton, undoButton;
     public SearchFieldWidget searchFieldWidget;
 
@@ -39,34 +40,34 @@ public class YACLScreen extends Screen {
         super(config.title());
         this.config = config;
         this.parent = parent;
-        this.categoryButtons = new ArrayList<>();
+//        this.categoryButtons = new ArrayList<>();
         this.currentCategoryIdx = 0;
     }
 
     @Override
     protected void init() {
-        categoryButtons.clear();
+//        categoryButtons.clear();
         int columnWidth = width / 3;
         int padding = columnWidth / 20;
         columnWidth = Math.min(columnWidth, 400);
         int paddedWidth = columnWidth - padding * 2;
-        Dimension<Integer> categoryDim = Dimension.ofInt(width / 3 / 2, padding, paddedWidth, 20);
-        int idx = 0;
-        for (ConfigCategory category : config.categories()) {
-            CategoryWidget categoryWidget = new CategoryWidget(
-                    this,
-                    category,
-                    idx,
-                    categoryDim.x() - categoryDim.width() / 2, categoryDim.y(),
-                    categoryDim.width(), categoryDim.height()
-            );
-
-            categoryButtons.add(categoryWidget);
-            addDrawableChild(categoryWidget);
-
-            idx++;
-            categoryDim.move(0, 21);
-        }
+//        Dimension<Integer> categoryDim = Dimension.ofInt(width / 3 / 2, padding, paddedWidth, 20);
+//        int idx = 0;
+//        for (ConfigCategory category : config.categories()) {
+//            CategoryWidget categoryWidget = new CategoryWidget(
+//                    this,
+//                    category,
+//                    idx,
+//                    categoryDim.x() - categoryDim.width() / 2, categoryDim.y(),
+//                    categoryDim.width(), categoryDim.height()
+//            );
+//
+//            categoryButtons.add(categoryWidget);
+//            addDrawableChild(categoryWidget);
+//
+//            idx++;
+//            categoryDim.move(0, 21);
+//        }
 
         Dimension<Integer> actionDim = Dimension.ofInt(width / 3 / 2, height - padding - 20, paddedWidth, 20);
         finishedSaveButton = new TooltipButtonWidget(this, actionDim.x() - actionDim.width() / 2, actionDim.y(), actionDim.width(), actionDim.height(), Text.empty(), Text.empty(), (btn) -> {
@@ -107,6 +108,9 @@ public class YACLScreen extends Screen {
 
         searchFieldWidget = new SearchFieldWidget(this, textRenderer, width / 3 / 2 - paddedWidth / 2 + 1, undoButton.y - 22, paddedWidth - 2, 18, Text.translatable("yacl.gui.search"), Text.translatable("yacl.gui.search"));
 
+        categoryList = new CategoryListWidget(client, this, width, height);
+        addSelectableChild(categoryList);
+
         updateActionAvailability();
         addDrawableChild(searchFieldWidget);
         addDrawableChild(cancelResetButton);
@@ -124,6 +128,7 @@ public class YACLScreen extends Screen {
         renderBackground(matrices);
 
         super.render(matrices, mouseX, mouseY, delta);
+        categoryList.render(matrices, mouseX, mouseY, delta);
         searchFieldWidget.render(matrices, mouseX, mouseY, delta);
 
         optionList.render(matrices, mouseX, mouseY, delta);

@@ -40,7 +40,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
     }
 
     public void refreshOptions() {
-        super.children().clear();
+        clearEntries();
 
         List<ConfigCategory> categories = new ArrayList<>();
         if (yaclScreen.currentCategoryIdx == -1) {
