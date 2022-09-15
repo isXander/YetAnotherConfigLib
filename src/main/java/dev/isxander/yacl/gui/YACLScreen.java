@@ -245,7 +245,7 @@ public class YACLScreen extends Screen {
         if (text.count() > 0) {
             int maxWidth = text.getMaxWidth();
             int lineHeight = textRenderer.fontHeight + 1;
-            int height = text.count() * lineHeight;
+            int height = text.count() * lineHeight - 1;
 
             int drawX = x + 12;
             int drawY = y - 12;
