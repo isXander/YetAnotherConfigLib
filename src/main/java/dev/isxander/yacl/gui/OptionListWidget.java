@@ -140,9 +140,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         }
     }
 
-    @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        super.render(matrices, mouseX, mouseY, delta);
+    public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         for (Entry entry : children()) {
             entry.postRender(matrices, mouseX, mouseY, delta);
         }

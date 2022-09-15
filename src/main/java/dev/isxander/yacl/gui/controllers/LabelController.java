@@ -57,7 +57,7 @@ public class LabelController implements Controller<Text> {
         public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
             updateText();
 
-            wrappedText.drawWithShadow(matrices, dim.x(), dim.y() + getYPadding(), textRenderer.fontHeight, -1);
+            wrappedText.drawWithShadow(matrices, dim.x(), dim.y() + getYPadding(), textRenderer.fontHeight, option().available() ? -1 : 0xFFA0A0A0);
         }
 
         private int getYPadding() {

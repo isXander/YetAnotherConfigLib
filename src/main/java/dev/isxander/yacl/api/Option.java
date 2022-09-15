@@ -41,6 +41,11 @@ public interface Option<T> {
     @NotNull Binding<T> binding();
 
     /**
+     * If the option can be configured
+     */
+    boolean available();
+
+    /**
      * Class of the option type.
      * Used by some controllers.
      */
@@ -108,6 +113,8 @@ public interface Option<T> {
         private Function<Option<T>, Controller<T>> controlGetter;
 
         private Binding<T> binding;
+
+        private boolean available = true;
 
         private final Set<OptionFlag> flags = new HashSet<>();
 
@@ -188,6 +195,16 @@ public interface Option<T> {
         }
 
         /**
+         * Sets if the option can be configured
+         *
+         * @see Option#available()
+         */
+        public Builder<T> available(boolean available) {
+            this.available = available;
+            return this;
+        }
+
+        /**
          * Adds a flag to the option.
          * Upon applying changes, all flags are executed.
          * {@link Option#flags()}
@@ -236,7 +253,7 @@ public interface Option<T> {
                 concatenatedTooltip.append(line);
             }
 
-            return new OptionImpl<>(name, concatenatedTooltip, controlGetter, binding, ImmutableSet.copyOf(flags), typeClass);
+            return new OptionImpl<>(name, concatenatedTooltip, controlGetter, binding, available, ImmutableSet.copyOf(flags), typeClass);
         }
     }
 }

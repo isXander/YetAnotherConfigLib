@@ -33,6 +33,12 @@ public class CategoryListWidget extends ElementListWidget<CategoryListWidget.Cat
         RenderSystem.disableScissor();
     }
 
+    public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        for (CategoryEntry entry : children()) {
+            entry.postRender(matrices, mouseX, mouseY, delta);
+        }
+    }
+
     @Override
     public int getRowWidth() {
         return width - width / 10;
@@ -71,6 +77,10 @@ public class CategoryListWidget extends ElementListWidget<CategoryListWidget.Cat
 
             categoryButton.y = y;
             categoryButton.render(matrices, mouseX, mouseY, tickDelta);
+        }
+
+        private void postRender(MatrixStack matrices, int mouseX, int mouseY, float tickDelta) {
+            categoryButton.renderHoveredTooltip(matrices, mouseX, mouseY);
         }
 
         @Override

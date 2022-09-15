@@ -2,6 +2,7 @@ package dev.isxander.yacl.gui;
 
 import dev.isxander.yacl.impl.YACLConstants;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
@@ -15,7 +16,7 @@ public class TooltipButtonWidget extends ButtonWidget {
     protected int prevMouseX, prevMouseY;
 
     protected final Screen screen;
-    protected List<OrderedText> wrappedDescription;
+    protected MultilineText wrappedDescription;
 
     public TooltipButtonWidget(Screen screen, int x, int y, int width, int height, Text message, Text tooltip, PressAction onPress) {
         super(x, y, width, height, message, onPress);
@@ -37,13 +38,13 @@ public class TooltipButtonWidget extends ButtonWidget {
         prevMouseY = mouseY;
     }
 
-    public void renderTooltip(MatrixStack matrices, int mouseX, int mouseY) {
+    public void renderHoveredTooltip(MatrixStack matrices, int mouseX, int mouseY) {
         if (hoveredTicks >= YACLConstants.HOVER_TICKS) {
-            screen.renderOrderedTooltip(matrices, wrappedDescription, mouseX, mouseY);
+            YACLScreen.renderMultilineTooltip(matrices, MinecraftClient.getInstance().textRenderer, wrappedDescription, mouseX, mouseY, screen.width, screen.height);
         }
     }
 
     public void setTooltip(Text tooltip) {
-        wrappedDescription = MinecraftClient.getInstance().textRenderer.wrapLines(tooltip, screen.width / 2);
+        wrappedDescription = MultilineText.create(MinecraftClient.getInstance().textRenderer, tooltip, screen.width / 2);
     }
 }

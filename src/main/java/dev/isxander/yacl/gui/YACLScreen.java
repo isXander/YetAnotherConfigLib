@@ -1,5 +1,6 @@
 package dev.isxander.yacl.gui;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import dev.isxander.yacl.api.ConfigCategory;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.OptionFlag;
@@ -7,11 +8,16 @@ import dev.isxander.yacl.api.YetAnotherConfigLib;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.api.utils.OptionUtils;
 import dev.isxander.yacl.impl.YACLConstants;
+import net.minecraft.client.font.MultilineText;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.TooltipComponent;
+import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -130,12 +136,14 @@ public class YACLScreen extends Screen {
         super.render(matrices, mouseX, mouseY, delta);
         categoryList.render(matrices, mouseX, mouseY, delta);
         searchFieldWidget.render(matrices, mouseX, mouseY, delta);
-
         optionList.render(matrices, mouseX, mouseY, delta);
+
+        categoryList.postRender(matrices, mouseX, mouseY, delta);
+        optionList.postRender(matrices, mouseX, mouseY, delta);
 
         for (Element child : children()) {
             if (child instanceof TooltipButtonWidget tooltipButtonWidget) {
-                tooltipButtonWidget.renderTooltip(matrices, mouseX, mouseY);
+                tooltipButtonWidget.renderHoveredTooltip(matrices, mouseX, mouseY);
             }
         }
     }
@@ -231,5 +239,51 @@ public class YACLScreen extends Screen {
     @Override
     public void close() {
         client.setScreen(parent);
+    }
+
+    public static void renderMultilineTooltip(MatrixStack matrices, TextRenderer textRenderer, MultilineText text, int x, int y, int screenWidth, int screenHeight) {
+        if (text.count() > 0) {
+            int maxWidth = text.getMaxWidth();
+            int lineHeight = textRenderer.fontHeight + 1;
+            int height = text.count() * lineHeight;
+
+            int drawX = x + 12;
+            int drawY = y - 12;
+            if (drawX + maxWidth > screenWidth) {
+                drawX -= 28 + maxWidth;
+            }
+
+            if (drawY + height + 6 > screenHeight) {
+                drawY = screenHeight - height - 6;
+            }
+
+            matrices.push();
+            Tessellator tessellator = Tessellator.getInstance();
+            BufferBuilder bufferBuilder = tessellator.getBuffer();
+            RenderSystem.setShader(GameRenderer::getPositionColorShader);
+            bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+            Matrix4f matrix4f = matrices.peek().getPositionMatrix();
+            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY - 4, drawX + maxWidth + 3, drawY - 3, 400, -267386864, -267386864);
+            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY + height + 3, drawX + maxWidth + 3, drawY + height + 4, 400, -267386864, -267386864);
+            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY - 3, drawX + maxWidth + 3, drawY + height + 3, 400, -267386864, -267386864);
+            fillGradient(matrix4f, bufferBuilder, drawX - 4, drawY - 3, drawX - 3, drawY + height + 3, 400, -267386864, -267386864);
+            fillGradient(matrix4f, bufferBuilder, drawX + maxWidth + 3, drawY - 3, drawX + maxWidth + 4, drawY + height + 3, 400, -267386864, -267386864);
+            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY - 3 + 1, drawX - 3 + 1, drawY + height + 3 - 1, 400, 1347420415, 1344798847);
+            fillGradient(matrix4f, bufferBuilder, drawX + maxWidth + 2, drawY - 3 + 1, drawX + maxWidth + 3, drawY + height + 3 - 1, 400, 1347420415, 1344798847);
+            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY - 3, drawX + maxWidth + 3, drawY - 3 + 1, 400, 1347420415, 1347420415);
+            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY + height + 2, drawX + maxWidth + 3, drawY + height + 3, 400, 1344798847, 1344798847);
+            RenderSystem.enableDepthTest();
+            RenderSystem.disableTexture();
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+            BufferRenderer.drawWithShader(bufferBuilder.end());
+            RenderSystem.disableBlend();
+            RenderSystem.enableTexture();
+            matrices.translate(0.0, 0.0, 400.0);
+
+            text.drawWithShadow(matrices, drawX, drawY, lineHeight, -1);
+
+            matrices.pop();
+        }
     }
 }

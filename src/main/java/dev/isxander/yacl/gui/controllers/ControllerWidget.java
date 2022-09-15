@@ -5,6 +5,7 @@ import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.impl.YACLConstants;
+import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.util.math.MatrixStack;
@@ -15,7 +16,7 @@ import java.util.List;
 
 public abstract class ControllerWidget<T extends Controller<?>> extends AbstractWidget {
     protected final T control;
-    protected final List<OrderedText> wrappedTooltip;
+    protected final MultilineText wrappedTooltip;
     protected final YACLScreen screen;
 
     protected boolean focused = false;
@@ -28,7 +29,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         super(dim);
         this.control = control;
         this.screen = screen;
-        this.wrappedTooltip = textRenderer.wrapLines(control.option().tooltip(), screen.width / 2);
+        this.wrappedTooltip = MultilineText.create(textRenderer, control.option().tooltip(), screen.width / 2);
     }
 
     @Override
@@ -53,10 +54,10 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
 
         Text shortenedName = Text.literal(nameString).fillStyle(name.getStyle());
 
-        drawButtonRect(matrices, dim.x(), dim.y(), dim.xLimit(), dim.yLimit(), isHovered());
+        drawButtonRect(matrices, dim.x(), dim.y(), dim.xLimit(), dim.yLimit(), isHovered(), isAvailable());
         matrices.push();
         matrices.translate(dim.x() + getXPadding(), getTextY(), 0);
-        textRenderer.drawWithShadow(matrices, shortenedName, 0, 0, -1);
+        textRenderer.drawWithShadow(matrices, shortenedName, 0, 0, getValueColor());
         matrices.pop();
 
         drawValueText(matrices, mouseX, mouseY, delta);
@@ -71,7 +72,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     @Override
     public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         if (hoveredTicks > YACLConstants.HOVER_TICKS) {
-            screen.renderOrderedTooltip(matrices, wrappedTooltip, mouseX, mouseY);
+            YACLScreen.renderMultilineTooltip(matrices, textRenderer, wrappedTooltip, mouseX, mouseY, screen.width, screen.height);
         }
     }
 
@@ -83,7 +84,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         Text valueText = getValueText();
         matrices.push();
         matrices.translate(dim.xLimit() - textRenderer.getWidth(valueText) - getXPadding(), getTextY(), 0);
-        textRenderer.drawWithShadow(matrices, valueText, 0, 0, -1);
+        textRenderer.drawWithShadow(matrices, valueText, 0, 0, getValueColor());
         matrices.pop();
     }
 
@@ -98,7 +99,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     }
 
     public boolean isHovered() {
-        return hovered || focused;
+        return isAvailable() && (hovered || focused);
     }
 
     protected abstract int getHoveredControlWidth();
@@ -119,6 +120,14 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         return control.formatValue();
     }
 
+    protected boolean isAvailable() {
+        return control.option().available();
+    }
+
+    protected int getValueColor() {
+        return isAvailable() ? -1 : inactiveColor;
+    }
+
     protected void drawOutline(MatrixStack matrices, int x1, int y1, int x2, int y2, int width, int color) {
         DrawableHelper.fill(matrices, x1, y1, x2, y1 + width, color);
         DrawableHelper.fill(matrices, x2, y1, x2 - width, y2, color);
@@ -132,6 +141,9 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
 
     @Override
     public boolean changeFocus(boolean lookForwards) {
+        if (!isAvailable())
+            return false;
+
         this.focused = !this.focused;
         return this.focused;
     }

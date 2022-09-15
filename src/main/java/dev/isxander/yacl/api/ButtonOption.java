@@ -13,6 +13,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public interface ButtonOption extends Option<Consumer<YACLScreen>> {
+    /**
+     * Action to be executed upon button press
+     */
     Consumer<YACLScreen> action();
 
     static Builder createBuilder() {
@@ -22,6 +25,7 @@ public interface ButtonOption extends Option<Consumer<YACLScreen>> {
     class Builder {
         private Text name;
         private final List<Text> tooltipLines = new ArrayList<>();
+        private boolean available = true;
         private Function<ButtonOption, Controller<Consumer<YACLScreen>>> controlGetter;
         private Consumer<YACLScreen> action;
 
@@ -29,6 +33,11 @@ public interface ButtonOption extends Option<Consumer<YACLScreen>> {
 
         }
 
+        /**
+         * Sets the name to be used by the option.
+         *
+         * @see Option#name()
+         */
         public Builder name(@NotNull Text name) {
             Validate.notNull(name, "`name` cannot be null");
 
@@ -36,13 +45,25 @@ public interface ButtonOption extends Option<Consumer<YACLScreen>> {
             return this;
         }
 
+        /**
+         * Sets the tooltip to be used by the option.
+         * Can be invoked twice to append more lines.
+         * No need to wrap the text yourself, the gui does this itself.
+         *
+         * @param tooltips text lines - merged with a new-line on {@link Option.Builder#build()}.
+         */
         public Builder tooltip(@NotNull Text... tooltips) {
-            Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
+            Validate.notNull(tooltips, "`tooltips` cannot be empty");
 
             tooltipLines.addAll(List.of(tooltips));
             return this;
         }
 
+        /**
+         * Action to be executed upon button press
+         *
+         * @see ButtonOption#action()
+         */
         public Builder action(@NotNull Consumer<YACLScreen> action) {
             Validate.notNull(action, "`action` cannot be null");
 
@@ -50,6 +71,22 @@ public interface ButtonOption extends Option<Consumer<YACLScreen>> {
             return this;
         }
 
+        /**
+         * Sets if the option can be configured
+         *
+         * @see Option#available()
+         */
+        public Builder available(boolean available) {
+            this.available = available;
+            return this;
+        }
+
+        /**
+         * Sets the controller for the option.
+         * This is how you interact and change the options.
+         *
+         * @see dev.isxander.yacl.gui.controllers
+         */
         public Builder controller(@NotNull Function<ButtonOption, Controller<Consumer<YACLScreen>>> control) {
             Validate.notNull(control, "`control` cannot be null");
 
@@ -71,7 +108,7 @@ public interface ButtonOption extends Option<Consumer<YACLScreen>> {
                 concatenatedTooltip.append(line);
             }
 
-            return new ButtonOptionImpl(name, concatenatedTooltip, action, controlGetter);
+            return new ButtonOptionImpl(name, concatenatedTooltip, action, available, controlGetter);
         }
     }
 }

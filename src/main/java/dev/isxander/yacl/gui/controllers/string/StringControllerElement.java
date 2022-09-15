@@ -56,7 +56,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (inputFieldBounds.isPointInside((int) mouseX, (int) mouseY)) {
+        if (isAvailable() && inputFieldBounds.isPointInside((int) mouseX, (int) mouseY)) {
             if (!inputFieldFocused) {
                 inputFieldFocused = true;
                 caretPos = getDefaultCarotPos();

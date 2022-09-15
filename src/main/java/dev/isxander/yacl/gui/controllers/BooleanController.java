@@ -115,7 +115,7 @@ public class BooleanController implements Controller<Boolean> {
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (!isMouseOver(mouseX, mouseY))
+            if (!isMouseOver(mouseX, mouseY) || !isAvailable())
                 return false;
 
             toggleSetting();

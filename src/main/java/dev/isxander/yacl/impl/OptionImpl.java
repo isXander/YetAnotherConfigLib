@@ -18,6 +18,7 @@ public class OptionImpl<T> implements Option<T> {
     private final Text tooltip;
     private final Controller<T> controller;
     private final Binding<T> binding;
+    private final boolean available;
 
     private final ImmutableSet<OptionFlag> flags;
 
@@ -30,6 +31,7 @@ public class OptionImpl<T> implements Option<T> {
             @Nullable Text tooltip,
             @NotNull Function<Option<T>, Controller<T>> controlGetter,
             @NotNull Binding<T> binding,
+            boolean available,
             ImmutableSet<OptionFlag> flags,
             @NotNull Class<T> typeClass
     ) {
@@ -37,6 +39,7 @@ public class OptionImpl<T> implements Option<T> {
         this.tooltip = tooltip;
         this.controller = controlGetter.apply(this);
         this.binding = binding;
+        this.available = available;
         this.flags = flags;
         this.typeClass = typeClass;
         this.pendingValue = binding().getValue();
@@ -60,6 +63,11 @@ public class OptionImpl<T> implements Option<T> {
     @Override
     public @NotNull Binding<T> binding() {
         return binding;
+    }
+
+    @Override
+    public boolean available() {
+        return available;
     }
 
     @Override

@@ -63,23 +63,27 @@ public class TickBoxController implements Controller<Boolean> {
             int outlineY1 = dim.centerY() - outlineSize / 2;
             int outlineX2 = dim.xLimit() - getXPadding();
             int outlineY2 = dim.centerY() + outlineSize / 2;
-            drawOutline(matrices, outlineX1 + 1, outlineY1 + 1, outlineX2 + 1, outlineY2 + 1, 1, 0xFF404040);
-            drawOutline(matrices, outlineX1, outlineY1, outlineX2, outlineY2, 1, -1);
+
+            int color = getValueColor();
+            int shadowColor = multiplyColor(color, 0.25f);
+
+            drawOutline(matrices, outlineX1 + 1, outlineY1 + 1, outlineX2 + 1, outlineY2 + 1, 1, shadowColor);
+            drawOutline(matrices, outlineX1, outlineY1, outlineX2, outlineY2, 1, color);
             if (control.option().pendingValue()) {
-                DrawableHelper.fill(matrices, outlineX1 + 3, outlineY1 + 3, outlineX2 - 1, outlineY2 - 1, 0xFF404040);
-                DrawableHelper.fill(matrices, outlineX1 + 2, outlineY1 + 2, outlineX2 - 2, outlineY2 - 2, -1);
+                DrawableHelper.fill(matrices, outlineX1 + 3, outlineY1 + 3, outlineX2 - 1, outlineY2 - 1, shadowColor);
+                DrawableHelper.fill(matrices, outlineX1 + 2, outlineY1 + 2, outlineX2 - 2, outlineY2 - 2, color);
             }
         }
 
         @Override
         protected void drawValueText(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-            if (!hovered)
+            if (!isHovered())
                 drawHoveredControl(matrices, mouseX, mouseY, delta);
         }
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (!isMouseOver(mouseX, mouseY))
+            if (!isMouseOver(mouseX, mouseY) || !isAvailable())
                 return false;
 
             toggleSetting();

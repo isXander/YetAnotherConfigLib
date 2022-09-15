@@ -39,6 +39,11 @@ public class ModMenuIntegration implements ModMenuApi {
                                 .controller(ActionController::new)
                                 .action(screen -> MinecraftClient.getInstance().setScreen(getWikiGroups(screen)))
                                 .build())
+                        .option(ButtonOption.createBuilder()
+                                .name(Text.of("Unavailable Test Suite"))
+                                .controller(ActionController::new)
+                                .action(screen -> MinecraftClient.getInstance().setScreen(getDisabledTest(screen)))
+                                .build())
                         .build())
                 .build().generateScreen(parent);
     }
@@ -308,6 +313,38 @@ public class ModMenuIntegration implements ModMenuApi {
                                 .build())
                         .build())
                 .save(() -> MinecraftClient.getInstance().options.write())
+                .build().generateScreen(parent);
+    }
+
+    private Screen getDisabledTest(Screen parent) {
+        return YetAnotherConfigLib.createBuilder()
+                .title(Text.empty())
+                .category(ConfigCategory.createBuilder()
+                        .name(Text.of("Disabled Test"))
+                        .option(Option.createBuilder(int.class)
+                                .name(Text.of("Slider"))
+                                .binding(Binding.immutable(0))
+                                .controller(opt -> new IntegerSliderController(opt, 0, 5, 1))
+                                .available(false)
+                                .build())
+                        .option(Option.createBuilder(boolean.class)
+                                .name(Text.of("Tick Box"))
+                                .binding(Binding.immutable(true))
+                                .controller(TickBoxController::new)
+                                .available(false)
+                                .build())
+                        .option(Option.createBuilder(boolean.class)
+                                .name(Text.of("Tick Box (Enabled)"))
+                                .binding(Binding.immutable(true))
+                                .controller(TickBoxController::new)
+                                .build())
+                        .option(Option.createBuilder(String.class)
+                                .name(Text.of("Text Field"))
+                                .binding(Binding.immutable("hi"))
+                                .controller(StringController::new)
+                                .available(false)
+                                .build())
+                        .build())
                 .build().generateScreen(parent);
     }
 

@@ -98,7 +98,7 @@ public class EnumController<T extends Enum<T>> implements Controller<T> {
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (!isMouseOver(mouseX, mouseY) || (button != 0 && button != 1))
+            if (!isMouseOver(mouseX, mouseY) || (button != 0 && button != 1) || !isAvailable())
                 return false;
 
             playDownSound();

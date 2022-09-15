@@ -51,7 +51,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     @Override
     protected void drawValueText(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         matrices.push();
-        if (hovered || focused)
+        if (isHovered())
             matrices.translate(-(sliderBounds.width() + 6 + getThumbWidth() / 2f), 0, 0);
         super.drawValueText(matrices, mouseX, mouseY, delta);
         matrices.pop();
@@ -59,7 +59,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button != 0 || !sliderBounds.isPointInside((int) mouseX, (int) mouseY))
+        if (!isAvailable() || button != 0 || !sliderBounds.isPointInside((int) mouseX, (int) mouseY))
             return false;
 
         mouseDown = true;
@@ -70,7 +70,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        if (button != 0 || !mouseDown)
+        if (!isAvailable() || button != 0 || !mouseDown)
             return false;
 
         setValueFromMouse(mouseX);
@@ -84,7 +84,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        if ((!isMouseOver(mouseX, mouseY)) || (!Screen.hasShiftDown() && !Screen.hasControlDown()))
+        if (!isAvailable() || (!isMouseOver(mouseX, mouseY)) || (!Screen.hasShiftDown() && !Screen.hasControlDown()))
             return false;
 
         incrementValue(amount);
@@ -93,7 +93,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (mouseDown)
+        if (isAvailable() && mouseDown)
             playDownSound();
         mouseDown = false;
 

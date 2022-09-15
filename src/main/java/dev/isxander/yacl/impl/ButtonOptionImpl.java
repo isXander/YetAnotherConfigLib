@@ -19,6 +19,7 @@ public class ButtonOptionImpl implements ButtonOption {
     private final Text name;
     private final Text tooltip;
     private final Consumer<YACLScreen> action;
+    private final boolean available;
     private final Controller<Consumer<YACLScreen>> controller;
     private final Binding<Consumer<YACLScreen>> binding;
 
@@ -26,11 +27,13 @@ public class ButtonOptionImpl implements ButtonOption {
             @NotNull Text name,
             @Nullable Text tooltip,
             @NotNull Consumer<YACLScreen> action,
+            boolean available,
             @NotNull Function<ButtonOption, Controller<Consumer<YACLScreen>>> controlGetter
     ) {
         this.name = name;
         this.tooltip = tooltip;
         this.action = action;
+        this.available = available;
         this.controller = controlGetter.apply(this);
         this.binding = new EmptyBinderImpl();
     }
@@ -48,6 +51,11 @@ public class ButtonOptionImpl implements ButtonOption {
     @Override
     public Consumer<YACLScreen> action() {
         return action;
+    }
+
+    @Override
+    public boolean available() {
+        return available;
     }
 
     @Override

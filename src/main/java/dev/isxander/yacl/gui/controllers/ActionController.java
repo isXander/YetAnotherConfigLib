@@ -80,7 +80,7 @@ public class ActionController implements Controller<Consumer<YACLScreen>> {
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (isMouseOver(mouseX, mouseY)) {
+            if (isMouseOver(mouseX, mouseY) && isAvailable()) {
                 executeAction();
                 return true;
             }

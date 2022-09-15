@@ -12,13 +12,15 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.SoundManager;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
+
+import java.awt.*;
 
 public abstract class AbstractWidget implements Element, Drawable, Selectable {
     protected final MinecraftClient client = MinecraftClient.getInstance();
     protected final TextRenderer textRenderer = client.textRenderer;
+    protected final int inactiveColor = 0xFFA0A0A0;
 
     protected Dimension<Integer> dim;
 
@@ -56,7 +58,7 @@ public abstract class AbstractWidget implements Element, Drawable, Selectable {
 
     }
 
-    protected void drawButtonRect(MatrixStack matrices, int x1, int y1, int x2, int y2, boolean hovered) {
+    protected void drawButtonRect(MatrixStack matrices, int x1, int y1, int x2, int y2, boolean hovered, boolean enabled) {
         if (x1 > x2) {
             int xx1 = x1;
             x1 = x2;
@@ -73,12 +75,21 @@ public abstract class AbstractWidget implements Element, Drawable, Selectable {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, ClickableWidget.WIDGETS_TEXTURE);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        int i = hovered ? 2 : 1;
+        int i = !enabled ? 0 : hovered ? 2 : 1;
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
         DrawableHelper.drawTexture(matrices, x1, y1, 0, 0, 46 + i * 20, width / 2, height, 256, 256);
         DrawableHelper.drawTexture(matrices, x1 + width / 2, y1, 0, 200 - width / 2f, 46 + i * 20, width / 2, height, 256, 256);
+    }
+
+    protected int multiplyColor(int hex, float amount) {
+        Color color = new Color(hex, true);
+
+        return new Color(Math.max((int)(color.getRed()  *amount), 0),
+                  Math.max((int)(color.getGreen()*amount), 0),
+                  Math.max((int)(color.getBlue() *amount), 0),
+                  color.getAlpha()).getRGB();
     }
 
     public void playDownSound() {
