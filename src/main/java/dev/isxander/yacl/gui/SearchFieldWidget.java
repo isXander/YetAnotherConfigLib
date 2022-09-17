@@ -1,5 +1,7 @@
 package dev.isxander.yacl.gui;
 
+import dev.isxander.yacl.api.ConfigCategory;
+import dev.isxander.yacl.api.OptionGroup;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
@@ -43,6 +45,25 @@ public class SearchFieldWidget extends TextFieldWidget {
         yaclScreen.optionList.setScrollAmount(0);
 
         super.eraseCharacters(characterOffset);
+    }
+
+    public boolean matches(OptionListWidget.OptionEntry optionEntry, boolean ignoreCategory) {
+        return (matchesCategory(optionEntry.category) && !ignoreCategory) || matchesGroup(optionEntry.group) || matchesWidget(optionEntry.widget);
+    }
+
+    public boolean matchesCategory(ConfigCategory category) {
+        return category.name().getString().toLowerCase().contains(getText().trim());
+    }
+
+    public boolean matchesGroup(OptionGroup group) {
+        if (group.isRoot())
+            return false;
+
+        return group.name().getString().toLowerCase().contains(getText().trim());
+    }
+
+    public boolean matchesWidget(AbstractWidget widget) {
+        return widget.matchesSearch(getText().trim());
     }
 
     public Text getEmptyText() {

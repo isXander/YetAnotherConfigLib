@@ -29,6 +29,7 @@ import java.util.function.Supplier;
 
 public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> {
     private final YACLScreen yaclScreen;
+    private boolean singleCategory = false;
 
     public OptionListWidget(YACLScreen screen, MinecraftClient client, int width, int height) {
         super(client, width / 3 * 2, height, 0, height, 22);
@@ -48,6 +49,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         } else {
             categories.add(yaclScreen.config.categories().get(yaclScreen.currentCategoryIdx));
         }
+        singleCategory = categories.size() == 1;
 
         for (ConfigCategory category : categories) {
             for (OptionGroup group : category.groups()) {
@@ -63,7 +65,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
                 List<OptionEntry> optionEntries = new ArrayList<>();
                 for (Option<?> option : group.options()) {
-                    OptionEntry entry = new OptionEntry(option.controller().provideWidget(yaclScreen, Dimension.ofInt(getRowLeft(), 0, getRowWidth(), 20)), viewableSupplier);
+                    OptionEntry entry = new OptionEntry(category, group, option.controller().provideWidget(yaclScreen, Dimension.ofInt(getRowLeft(), 0, getRowWidth(), 20)), viewableSupplier);
                     addEntry(entry);
                     optionEntries.add(entry);
                 }
@@ -229,11 +231,16 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         }
     }
 
-    private class OptionEntry extends Entry {
+    public class OptionEntry extends Entry {
+        public final ConfigCategory category;
+        public final OptionGroup group;
+
         public final AbstractWidget widget;
         private final Supplier<Boolean> viewableSupplier;
 
-        public OptionEntry(AbstractWidget widget, Supplier<Boolean> viewableSupplier) {
+        private OptionEntry(ConfigCategory category, OptionGroup group, AbstractWidget widget, Supplier<Boolean> viewableSupplier) {
+            this.category = category;
+            this.group = group;
             this.widget = widget;
             this.viewableSupplier = viewableSupplier;
         }
@@ -267,7 +274,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         @Override
         public boolean isViewable() {
-            return viewableSupplier.get() && widget.matchesSearch(yaclScreen.searchFieldWidget.getText().trim());
+            return viewableSupplier.get() && yaclScreen.searchFieldWidget.matches(this, singleCategory);
         }
 
         @Override
