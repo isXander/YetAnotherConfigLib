@@ -3,6 +3,7 @@ package dev.isxander.yacl.test;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import dev.isxander.yacl.api.*;
+import dev.isxander.yacl.gui.RequireRestartScreen;
 import dev.isxander.yacl.gui.controllers.*;
 import dev.isxander.yacl.gui.controllers.slider.DoubleSliderController;
 import dev.isxander.yacl.gui.controllers.slider.FloatSliderController;
@@ -10,6 +11,7 @@ import dev.isxander.yacl.gui.controllers.slider.IntegerSliderController;
 import dev.isxander.yacl.gui.controllers.slider.LongSliderController;
 import dev.isxander.yacl.gui.controllers.string.StringController;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.MessageScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.option.GraphicsMode;
 import net.minecraft.client.toast.SystemToast;
@@ -60,7 +62,7 @@ public class ModMenuIntegration implements ModMenuApi {
                                 .collapsed(true)
                                 .option(Option.createBuilder(boolean.class)
                                         .name(Text.of("Boolean Toggle"))
-                                        .tooltip(Text.of("A simple toggle button."))
+                                        .tooltip(value -> Text.of("A simple toggle button that contains the value '" + value + "'"))
                                         .binding(
                                                 false,
                                                 () -> TestSettings.booleanToggle,
@@ -189,6 +191,10 @@ public class ModMenuIntegration implements ModMenuApi {
                                         .controller(EnumController::new)
                                         .build())
                                 .build())
+                        .build())
+                .category(PlaceholderCategory.createBuilder()
+                        .name(Text.of("Placeholder Category"))
+                        .screen((client, yaclScreen) -> new RequireRestartScreen(yaclScreen))
                         .build())
                 .category(ConfigCategory.createBuilder()
                         .name(Text.of("Group Test"))

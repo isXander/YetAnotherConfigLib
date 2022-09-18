@@ -1,10 +1,7 @@
 package dev.isxander.yacl.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import dev.isxander.yacl.api.ConfigCategory;
-import dev.isxander.yacl.api.Option;
-import dev.isxander.yacl.api.OptionFlag;
-import dev.isxander.yacl.api.YetAnotherConfigLib;
+import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.api.utils.OptionUtils;
 import dev.isxander.yacl.impl.YACLConstants;
@@ -32,13 +29,11 @@ public class YACLScreen extends Screen {
     private final Screen parent;
 
     public OptionListWidget optionList;
-//    public final List<CategoryWidget> categoryButtons;
     public CategoryListWidget categoryList;
     public TooltipButtonWidget finishedSaveButton, cancelResetButton, undoButton;
     public SearchFieldWidget searchFieldWidget;
 
-    public Text saveButtonMessage;
-    public Text saveButtonTooltipMessage;
+    public Text saveButtonMessage, saveButtonTooltipMessage;
     private int saveButtonMessageTime;
 
 
@@ -46,34 +41,15 @@ public class YACLScreen extends Screen {
         super(config.title());
         this.config = config;
         this.parent = parent;
-//        this.categoryButtons = new ArrayList<>();
         this.currentCategoryIdx = 0;
     }
 
     @Override
     protected void init() {
-//        categoryButtons.clear();
         int columnWidth = width / 3;
         int padding = columnWidth / 20;
         columnWidth = Math.min(columnWidth, 400);
         int paddedWidth = columnWidth - padding * 2;
-//        Dimension<Integer> categoryDim = Dimension.ofInt(width / 3 / 2, padding, paddedWidth, 20);
-//        int idx = 0;
-//        for (ConfigCategory category : config.categories()) {
-//            CategoryWidget categoryWidget = new CategoryWidget(
-//                    this,
-//                    category,
-//                    idx,
-//                    categoryDim.x() - categoryDim.width() / 2, categoryDim.y(),
-//                    categoryDim.width(), categoryDim.height()
-//            );
-//
-//            categoryButtons.add(categoryWidget);
-//            addDrawableChild(categoryWidget);
-//
-//            idx++;
-//            categoryDim.move(0, 21);
-//        }
 
         Dimension<Integer> actionDim = Dimension.ofInt(width / 3 / 2, height - padding - 20, paddedWidth, 20);
         finishedSaveButton = new TooltipButtonWidget(this, actionDim.x() - actionDim.width() / 2, actionDim.y(), actionDim.width(), actionDim.height(), Text.empty(), Text.empty(), (btn) -> {
@@ -167,8 +143,12 @@ public class YACLScreen extends Screen {
     }
 
     public void changeCategory(int idx) {
-        currentCategoryIdx = idx;
-        optionList.refreshOptions();
+        if (currentCategoryIdx != -1 && config.categories().get(idx) instanceof PlaceholderCategory placeholderCategory) {
+            client.setScreen(placeholderCategory.screen().apply(client, this));
+        } else {
+            currentCategoryIdx = idx;
+            optionList.refreshOptions();
+        }
     }
 
     private void updateActionAvailability() {

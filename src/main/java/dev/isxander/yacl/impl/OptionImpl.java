@@ -10,12 +10,16 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 @ApiStatus.Internal
 public class OptionImpl<T> implements Option<T> {
     private final Text name;
-    private final Text tooltip;
+    private Text tooltip;
+    private final Function<T, Text> tooltipGetter;
     private final Controller<T> controller;
     private final Binding<T> binding;
     private final boolean available;
@@ -26,9 +30,11 @@ public class OptionImpl<T> implements Option<T> {
 
     private T pendingValue;
 
+    private final List<BiConsumer<Option<T>, T>> listeners;
+
     public OptionImpl(
             @NotNull Text name,
-            @Nullable Text tooltip,
+            @Nullable Function<T, Text> tooltipGetter,
             @NotNull Function<Option<T>, Controller<T>> controlGetter,
             @NotNull Binding<T> binding,
             boolean available,
@@ -36,13 +42,16 @@ public class OptionImpl<T> implements Option<T> {
             @NotNull Class<T> typeClass
     ) {
         this.name = name;
-        this.tooltip = tooltip;
+        this.tooltipGetter = tooltipGetter;
         this.controller = controlGetter.apply(this);
         this.binding = binding;
         this.available = available;
         this.flags = flags;
         this.typeClass = typeClass;
-        this.pendingValue = binding().getValue();
+        this.listeners = new ArrayList<>();
+
+        addListener((opt, pending) -> tooltip = tooltipGetter.apply(pending));
+        requestSet(binding().getValue());
     }
 
     @Override
@@ -98,6 +107,7 @@ public class OptionImpl<T> implements Option<T> {
     @Override
     public void requestSet(T value) {
         pendingValue = value;
+        listeners.forEach(listener -> listener.accept(this, pendingValue));
     }
 
     @Override
@@ -117,5 +127,10 @@ public class OptionImpl<T> implements Option<T> {
     @Override
     public void requestSetDefault() {
         pendingValue = binding().defaultValue();
+    }
+
+    @Override
+    public void addListener(BiConsumer<Option<T>, T> changedListener) {
+        this.listeners.add(changedListener);
     }
 }

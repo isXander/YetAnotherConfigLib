@@ -16,7 +16,7 @@ import java.util.List;
 
 public abstract class ControllerWidget<T extends Controller<?>> extends AbstractWidget {
     protected final T control;
-    protected final MultilineText wrappedTooltip;
+    protected MultilineText wrappedTooltip;
     protected final YACLScreen screen;
 
     protected boolean focused = false;
@@ -29,7 +29,8 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         super(dim);
         this.control = control;
         this.screen = screen;
-        this.wrappedTooltip = MultilineText.create(textRenderer, control.option().tooltip(), screen.width / 2);
+        control.option().addListener((opt, pending) -> updateTooltip());
+        updateTooltip();
     }
 
     @Override
@@ -71,7 +72,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
 
     @Override
     public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        if (hoveredTicks > YACLConstants.HOVER_TICKS) {
+        if (hoveredTicks >= YACLConstants.HOVER_TICKS) {
             YACLScreen.renderMultilineTooltip(matrices, textRenderer, wrappedTooltip, mouseX, mouseY, screen.width, screen.height);
         }
     }
@@ -92,6 +93,10 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     public boolean isMouseOver(double mouseX, double mouseY) {
         if (dim == null) return false;
         return this.dim.isPointInside((int) mouseX, (int) mouseY);
+    }
+
+    private void updateTooltip() {
+        this.wrappedTooltip = MultilineText.create(textRenderer, control.option().tooltip(), screen.width / 2);
     }
 
     protected int getControlWidth() {

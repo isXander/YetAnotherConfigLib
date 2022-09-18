@@ -90,7 +90,7 @@ public interface ConfigCategory {
          * @see OptionGroup#isRoot()
          */
         public Builder options(@NotNull Collection<Option<?>> options) {
-            Validate.notEmpty(options, "`options` must not be empty");
+            Validate.notNull(options, "`options` must not be null");
 
             this.rootOptions.addAll(options);
             return this;

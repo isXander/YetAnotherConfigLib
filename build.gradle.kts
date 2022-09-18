@@ -16,7 +16,7 @@ plugins {
 val ciRun = System.getenv().containsKey("GITHUB_ACTIONS")
 
 group = "dev.isxander"
-version = "1.2.1"
+version = "1.3.0"
 
 if (ciRun)
     version = "$version-SNAPSHOT"

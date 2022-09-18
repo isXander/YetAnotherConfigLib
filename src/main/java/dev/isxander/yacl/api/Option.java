@@ -9,9 +9,11 @@ import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public interface Option<T> {
     /**
@@ -95,6 +97,8 @@ public interface Option<T> {
      */
     void requestSetDefault();
 
+    void addListener(BiConsumer<Option<T>, T> changedListener);
+
     /**
      * Creates a builder to construct an {@link Option}
      *
@@ -108,7 +112,7 @@ public interface Option<T> {
     class Builder<T> {
         private Text name = Text.literal("Name not specified!").formatted(Formatting.RED);
 
-        private final List<Text> tooltipLines = new ArrayList<>();
+        private final List<Function<T, Text>> tooltipGetters = new ArrayList<>();
 
         private Function<Option<T>, Controller<T>> controlGetter;
 
@@ -138,6 +142,20 @@ public interface Option<T> {
 
         /**
          * Sets the tooltip to be used by the option.
+         * No need to wrap the text yourself, the gui does this itself.
+         *
+         * @param tooltipGetter function to get tooltip depending on value {@link Builder#build()}.
+         */
+        @SafeVarargs
+        public final Builder<T> tooltip(@NotNull Function<T, Text>... tooltipGetter) {
+            Validate.notNull(tooltipGetter, "`tooltipGetter` cannot be null");
+
+            this.tooltipGetters.addAll(List.of(tooltipGetter));
+            return this;
+        }
+
+        /**
+         * Sets the tooltip to be used by the option.
          * Can be invoked twice to append more lines.
          * No need to wrap the text yourself, the gui does this itself.
          *
@@ -146,7 +164,7 @@ public interface Option<T> {
         public Builder<T> tooltip(@NotNull Text... tooltips) {
             Validate.notNull(tooltips, "`tooltips` cannot be empty");
 
-            tooltipLines.addAll(List.of(tooltips));
+            this.tooltipGetters.addAll(Stream.of(tooltips).map(text -> (Function<T, Text>) t -> text).toList());
             return this;
         }
 
@@ -244,16 +262,20 @@ public interface Option<T> {
             Validate.notNull(controlGetter, "`control` must not be null when building `Option`");
             Validate.notNull(binding, "`binding` must not be null when building `Option`");
 
-            MutableText concatenatedTooltip = Text.empty();
-            boolean first = true;
-            for (Text line : tooltipLines) {
-                if (!first) concatenatedTooltip.append("\n");
-                first = false;
+            Function<T, Text> concatenatedTooltipGetter = value -> {
+                MutableText concatenatedTooltip = Text.empty();
+                boolean first = true;
+                for (Function<T, Text> line : tooltipGetters) {
+                    if (!first) concatenatedTooltip.append("\n");
+                    first = false;
 
-                concatenatedTooltip.append(line);
-            }
+                    concatenatedTooltip.append(line.apply(value));
+                }
 
-            return new OptionImpl<>(name, concatenatedTooltip, controlGetter, binding, available, ImmutableSet.copyOf(flags), typeClass);
+                return concatenatedTooltip;
+            };
+
+            return new OptionImpl<>(name, concatenatedTooltipGetter, controlGetter, binding, available, ImmutableSet.copyOf(flags), typeClass);
         }
     }
 }
