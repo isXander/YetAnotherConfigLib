@@ -123,6 +123,8 @@ public interface Option<T> {
 
         private boolean available = true;
 
+        private boolean instant = false;
+
         private final Set<OptionFlag> flags = new HashSet<>();
 
         private final Class<T> typeClass;
@@ -250,6 +252,17 @@ public interface Option<T> {
         }
 
         /**
+         * Instantly invokes the binder's setter when modified in the GUI.
+         * Prevents the user from undoing the change
+         * <p>
+         * Does not support {@link Option#flags()}!
+         */
+        public Builder<T> instant(boolean instant) {
+            this.instant = instant;
+            return this;
+        }
+
+        /**
          * Dictates whether the option should require a restart.
          * {@link Option#requiresRestart()}
          */
@@ -264,6 +277,7 @@ public interface Option<T> {
         public Option<T> build() {
             Validate.notNull(controlGetter, "`control` must not be null when building `Option`");
             Validate.notNull(binding, "`binding` must not be null when building `Option`");
+            Validate.isTrue(!instant || flags.isEmpty(), "instant application does not support option flags");
 
             Function<T, Text> concatenatedTooltipGetter = value -> {
                 MutableText concatenatedTooltip = Text.empty();
@@ -278,7 +292,11 @@ public interface Option<T> {
                 return concatenatedTooltip;
             };
 
-            return new OptionImpl<>(name, concatenatedTooltipGetter, controlGetter, binding, available, ImmutableSet.copyOf(flags), typeClass);
+            OptionImpl<T> option = new OptionImpl<>(name, concatenatedTooltipGetter, controlGetter, binding, available, ImmutableSet.copyOf(flags), typeClass);
+            if (instant) {
+                option.addListener((opt, pendingValue) -> opt.applyValue());
+            }
+            return option;
         }
     }
 }

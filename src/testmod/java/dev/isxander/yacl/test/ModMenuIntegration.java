@@ -96,10 +96,14 @@ public class ModMenuIntegration implements ModMenuApi {
                                 .name(Text.of("Slider Controllers"))
                                 .option(Option.createBuilder(int.class)
                                         .name(Text.of("Int Slider that is cut off because the slider"))
+                                        .instant(true)
                                         .binding(
                                                 0,
                                                 () -> TestSettings.intSlider,
-                                                (value) -> TestSettings.intSlider = value
+                                                (value) -> {
+                                                    TestSettings.intSlider = value;
+                                                    System.out.println("Set int value!");
+                                                }
                                         )
                                         .controller(opt -> new IntegerSliderController(opt, 0, 3, 1))
                                         .build())
