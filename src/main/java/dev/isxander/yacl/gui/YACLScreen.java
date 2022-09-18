@@ -64,8 +64,7 @@ public class YACLScreen extends Screen {
                 });
                 OptionUtils.forEachOptions(config, option -> {
                     if (option.changed()) {
-                        YACLConstants.LOGGER.error("'{}' was saved as '{}' but the changes don't seem to have applied. (Maybe binding is immutable?)", option.name().getString(), option.pendingValue());
-                        setSaveButtonMessage(Text.translatable("yacl.gui.fail_apply").formatted(Formatting.RED), Text.translatable("yacl.gui.fail_apply.tooltip"));
+                        option.forgetPendingValue();
                     }
                 });
                 config.saveFunction().run();
