@@ -142,7 +142,7 @@ public class YACLScreen extends Screen {
     }
 
     public void changeCategory(int idx) {
-        if (currentCategoryIdx != -1 && config.categories().get(idx) instanceof PlaceholderCategory placeholderCategory) {
+        if (idx != -1 && config.categories().get(idx) instanceof PlaceholderCategory placeholderCategory) {
             client.setScreen(placeholderCategory.screen().apply(client, this));
         } else {
             currentCategoryIdx = idx;

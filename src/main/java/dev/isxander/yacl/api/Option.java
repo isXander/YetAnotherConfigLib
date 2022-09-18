@@ -97,6 +97,9 @@ public interface Option<T> {
      */
     void requestSetDefault();
 
+    /**
+     * Adds a listener for when the pending value changes
+     */
     void addListener(BiConsumer<Option<T>, T> changedListener);
 
     /**
