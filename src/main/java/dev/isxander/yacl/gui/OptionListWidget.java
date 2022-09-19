@@ -19,9 +19,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> {
@@ -310,7 +308,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
             this.group = group;
             this.screen = screen;
             this.wrappedName = MultilineText.create(textRenderer, group.name(), getRowWidth() - 45);
-            this.wrappedTooltip = MultilineText.create(textRenderer, group.tooltip(), screen.width / 3 * 2);
+            this.wrappedTooltip = MultilineText.create(textRenderer, group.tooltip(), screen.width / 3 * 2 - 10);
             this.groupExpanded = !group.collapsed();
             this.expandMinimizeButton = new LowProfileButtonWidget(0, 0, 20, 20, Text.empty(), btn -> {
                 setExpanded(!isExpanded());

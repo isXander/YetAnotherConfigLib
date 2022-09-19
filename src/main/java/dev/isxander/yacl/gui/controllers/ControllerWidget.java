@@ -81,7 +81,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     }
 
     private void updateTooltip() {
-        this.wrappedTooltip = MultilineText.create(textRenderer, control.option().tooltip(), screen.width / 3 * 2);
+        this.wrappedTooltip = MultilineText.create(textRenderer, control.option().tooltip(), screen.width / 3 * 2 - 10);
     }
 
     protected int getControlWidth() {

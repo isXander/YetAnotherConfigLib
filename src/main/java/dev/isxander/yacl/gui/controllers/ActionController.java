@@ -105,5 +105,10 @@ public class ActionController implements Controller<BiConsumer<YACLScreen, Butto
         protected int getHoveredControlWidth() {
             return getUnhoveredControlWidth();
         }
+
+        @Override
+        public boolean matchesSearch(String query) {
+            return super.matchesSearch(query) || getValueText().getString().toLowerCase().contains(query);
+        }
     }
 }

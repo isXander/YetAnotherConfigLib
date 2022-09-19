@@ -25,6 +25,6 @@ public class TooltipButtonWidget extends ButtonWidget {
     }
 
     public void setTooltip(Text tooltip) {
-        wrappedDescription = MultilineText.create(MinecraftClient.getInstance().textRenderer, tooltip, screen.width / 3);
+        wrappedDescription = MultilineText.create(MinecraftClient.getInstance().textRenderer, tooltip, screen.width / 3 - 5);
     }
 }
