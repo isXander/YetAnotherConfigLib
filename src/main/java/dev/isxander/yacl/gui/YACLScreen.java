@@ -83,7 +83,7 @@ public class YACLScreen extends Screen {
             OptionUtils.forEachOptions(config, Option::forgetPendingValue);
         });
 
-        searchFieldWidget = new SearchFieldWidget(this, textRenderer, width / 3 / 2 - paddedWidth / 2 + 1, undoButton.y - 22, paddedWidth - 2, 18, Text.translatable("yacl.gui.search"), Text.translatable("yacl.gui.search"));
+        searchFieldWidget = new SearchFieldWidget(this, textRenderer, width / 3 / 2 - paddedWidth / 2 + 1, undoButton.y - 22, paddedWidth - 2, 18, Text.translatable("gui.recipebook.search_hint"), Text.translatable("gui.recipebook.search_hint"));
 
         categoryList = new CategoryListWidget(client, this, width, height);
         addSelectableChild(categoryList);
