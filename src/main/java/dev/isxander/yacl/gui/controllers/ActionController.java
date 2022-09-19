@@ -9,13 +9,13 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 /**
  * Simple controller that simply runs the button action on press
  * and renders a {@link} Text on the right.
  */
-public class ActionController implements Controller<Consumer<YACLScreen>> {
+public class ActionController implements Controller<BiConsumer<YACLScreen, ButtonOption>> {
     public static final Text DEFAULT_TEXT = Text.translatable("yacl.control.action.execute");
 
     private final ButtonOption option;
@@ -75,7 +75,7 @@ public class ActionController implements Controller<Consumer<YACLScreen>> {
 
         public void executeAction() {
             playDownSound();
-            control.option().action().accept(screen);
+            control.option().action().accept(screen, control.option());
         }
 
         @Override

@@ -4,21 +4,17 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.api.utils.OptionUtils;
-import dev.isxander.yacl.impl.YACLConstants;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Matrix4f;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -118,7 +114,7 @@ public class YACLScreen extends Screen {
 
         for (Element child : children()) {
             if (child instanceof TooltipButtonWidget tooltipButtonWidget) {
-                tooltipButtonWidget.renderHoveredTooltip(matrices, mouseX, mouseY);
+                tooltipButtonWidget.renderHoveredTooltip(matrices);
             }
         }
     }
@@ -220,21 +216,24 @@ public class YACLScreen extends Screen {
         client.setScreen(parent);
     }
 
-    public static void renderMultilineTooltip(MatrixStack matrices, TextRenderer textRenderer, MultilineText text, int x, int y, int screenWidth, int screenHeight) {
+    public static void renderMultilineTooltip(MatrixStack matrices, TextRenderer textRenderer, MultilineText text, int centerX, int yAbove, int yBelow, int screenWidth, int screenHeight) {
         if (text.count() > 0) {
             int maxWidth = text.getMaxWidth();
             int lineHeight = textRenderer.fontHeight + 1;
             int height = text.count() * lineHeight - 1;
 
+            int belowY = yBelow + 12;
+            int aboveY = yAbove - height + 12;
+            int maxBelow = screenHeight - (belowY + height);
+            int minAbove = aboveY - height;
+            int y = belowY;
+            if (maxBelow < -8)
+                y = maxBelow > minAbove ? belowY : aboveY;
+
+            int x = centerX - text.getMaxWidth() / 2 - 12;
+
             int drawX = x + 12;
             int drawY = y - 12;
-            if (drawX + maxWidth > screenWidth) {
-                drawX -= 28 + maxWidth;
-            }
-
-            if (drawY + height + 6 > screenHeight) {
-                drawY = screenHeight - height - 6;
-            }
 
             matrices.push();
             Tessellator tessellator = Tessellator.getInstance();

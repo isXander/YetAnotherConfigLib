@@ -5,7 +5,6 @@ import dev.isxander.yacl.api.ConfigCategory;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.OptionGroup;
 import dev.isxander.yacl.api.utils.Dimension;
-import dev.isxander.yacl.impl.YACLConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.font.TextRenderer;
@@ -14,10 +13,8 @@ import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.screen.narration.NarrationPart;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
@@ -296,12 +293,9 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
     public class GroupSeparatorEntry extends Entry {
         private final OptionGroup group;
         private final MultilineText wrappedName;
-        private final List<OrderedText> wrappedTooltip;
+        private final MultilineText wrappedTooltip;
 
         private final LowProfileButtonWidget expandMinimizeButton;
-
-        private float hoveredTicks = 0;
-        private int prevMouseX, prevMouseY;
 
         private final Screen screen;
         private final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
@@ -310,11 +304,13 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         private List<OptionEntry> optionEntries;
 
+        private int y;
+
         private GroupSeparatorEntry(OptionGroup group, Screen screen) {
             this.group = group;
             this.screen = screen;
             this.wrappedName = MultilineText.create(textRenderer, group.name(), getRowWidth() - 45);
-            this.wrappedTooltip = textRenderer.wrapLines(group.tooltip(), screen.width / 2);
+            this.wrappedTooltip = MultilineText.create(textRenderer, group.tooltip(), screen.width / 3 * 2);
             this.groupExpanded = !group.collapsed();
             this.expandMinimizeButton = new LowProfileButtonWidget(0, 0, 20, 20, Text.empty(), btn -> {
                 setExpanded(!isExpanded());
@@ -324,26 +320,19 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         @Override
         public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            this.y = y;
+
             expandMinimizeButton.x = x;
             expandMinimizeButton.y = y + entryHeight / 2 - expandMinimizeButton.getHeight() / 2;
             expandMinimizeButton.render(matrices, mouseX, mouseY, tickDelta);
 
-            hovered &= !expandMinimizeButton.isMouseOver(mouseX, mouseY);
-            if (hovered && (!YACLConstants.HOVER_MOUSE_RESET || (mouseX == prevMouseX && mouseY == prevMouseY)))
-                hoveredTicks += tickDelta;
-            else
-                hoveredTicks = 0;
-
             wrappedName.drawCenterWithShadow(matrices, x + entryWidth / 2, y + getYPadding());
-
-            prevMouseX = mouseX;
-            prevMouseY = mouseY;
         }
 
         @Override
         public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-            if (hoveredTicks >= YACLConstants.HOVER_TICKS) {
-                screen.renderOrderedTooltip(matrices, wrappedTooltip, mouseX, mouseY);
+            if (isHovered() && !expandMinimizeButton.isMouseOver(mouseX, mouseY)) {
+                YACLScreen.renderMultilineTooltip(matrices, textRenderer, wrappedTooltip, getRowLeft() + getRowWidth() / 2, y - 3, y + getItemHeight() + 3, screen.width, screen.height);
             }
         }
 

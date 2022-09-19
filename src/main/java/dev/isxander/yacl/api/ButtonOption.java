@@ -9,14 +9,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public interface ButtonOption extends Option<Consumer<YACLScreen>> {
+public interface ButtonOption extends Option<BiConsumer<YACLScreen, ButtonOption>> {
     /**
      * Action to be executed upon button press
      */
-    Consumer<YACLScreen> action();
+    BiConsumer<YACLScreen, ButtonOption> action();
 
     static Builder createBuilder() {
         return new Builder();
@@ -26,8 +27,8 @@ public interface ButtonOption extends Option<Consumer<YACLScreen>> {
         private Text name;
         private final List<Text> tooltipLines = new ArrayList<>();
         private boolean available = true;
-        private Function<ButtonOption, Controller<Consumer<YACLScreen>>> controlGetter;
-        private Consumer<YACLScreen> action;
+        private Function<ButtonOption, Controller<BiConsumer<YACLScreen, ButtonOption>>> controlGetter;
+        private BiConsumer<YACLScreen, ButtonOption> action;
 
         private Builder() {
 
@@ -59,15 +60,23 @@ public interface ButtonOption extends Option<Consumer<YACLScreen>> {
             return this;
         }
 
+        public Builder action(@NotNull BiConsumer<YACLScreen, ButtonOption> action) {
+            Validate.notNull(action, "`action` cannot be null");
+
+            this.action = action;
+            return this;
+        }
+
         /**
          * Action to be executed upon button press
          *
          * @see ButtonOption#action()
          */
+        @Deprecated
         public Builder action(@NotNull Consumer<YACLScreen> action) {
             Validate.notNull(action, "`action` cannot be null");
 
-            this.action = action;
+            this.action = (screen, button) -> action.accept(screen);
             return this;
         }
 
@@ -87,7 +96,7 @@ public interface ButtonOption extends Option<Consumer<YACLScreen>> {
          *
          * @see dev.isxander.yacl.gui.controllers
          */
-        public Builder controller(@NotNull Function<ButtonOption, Controller<Consumer<YACLScreen>>> control) {
+        public Builder controller(@NotNull Function<ButtonOption, Controller<BiConsumer<YACLScreen, ButtonOption>>> control) {
             Validate.notNull(control, "`control` cannot be null");
 
             this.controlGetter = control;

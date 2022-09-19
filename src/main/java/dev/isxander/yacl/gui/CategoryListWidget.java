@@ -80,7 +80,7 @@ public class CategoryListWidget extends ElementListWidget<CategoryListWidget.Cat
         }
 
         private void postRender(MatrixStack matrices, int mouseX, int mouseY, float tickDelta) {
-            categoryButton.renderHoveredTooltip(matrices, mouseX, mouseY);
+            categoryButton.renderHoveredTooltip(matrices);
         }
 
         @Override

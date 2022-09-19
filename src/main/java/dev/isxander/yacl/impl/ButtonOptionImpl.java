@@ -16,17 +16,17 @@ import java.util.function.Function;
 public class ButtonOptionImpl implements ButtonOption {
     private final Text name;
     private final Text tooltip;
-    private final Consumer<YACLScreen> action;
-    private final boolean available;
-    private final Controller<Consumer<YACLScreen>> controller;
-    private final Binding<Consumer<YACLScreen>> binding;
+    private final BiConsumer<YACLScreen, ButtonOption> action;
+    private boolean available;
+    private final Controller<BiConsumer<YACLScreen, ButtonOption>> controller;
+    private final Binding<BiConsumer<YACLScreen, ButtonOption>> binding;
 
     public ButtonOptionImpl(
             @NotNull Text name,
             @Nullable Text tooltip,
-            @NotNull Consumer<YACLScreen> action,
+            @NotNull BiConsumer<YACLScreen, ButtonOption> action,
             boolean available,
-            @NotNull Function<ButtonOption, Controller<Consumer<YACLScreen>>> controlGetter
+            @NotNull Function<ButtonOption, Controller<BiConsumer<YACLScreen, ButtonOption>>> controlGetter
     ) {
         this.name = name;
         this.tooltip = tooltip;
@@ -47,7 +47,7 @@ public class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
-    public Consumer<YACLScreen> action() {
+    public BiConsumer<YACLScreen, ButtonOption> action() {
         return action;
     }
 
@@ -57,17 +57,22 @@ public class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
-    public @NotNull Controller<Consumer<YACLScreen>> controller() {
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    @Override
+    public @NotNull Controller<BiConsumer<YACLScreen, ButtonOption>> controller() {
         return controller;
     }
 
     @Override
-    public @NotNull Binding<Consumer<YACLScreen>> binding() {
+    public @NotNull Binding<BiConsumer<YACLScreen, ButtonOption>> binding() {
         return binding;
     }
 
     @Override
-    public @NotNull Class<Consumer<YACLScreen>> typeClass() {
+    public @NotNull Class<BiConsumer<YACLScreen, ButtonOption>> typeClass() {
         throw new UnsupportedOperationException();
     }
 
@@ -87,12 +92,12 @@ public class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
-    public @NotNull Consumer<YACLScreen> pendingValue() {
+    public @NotNull BiConsumer<YACLScreen, ButtonOption> pendingValue() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void requestSet(Consumer<YACLScreen> value) {
+    public void requestSet(BiConsumer<YACLScreen, ButtonOption> value) {
         throw new UnsupportedOperationException();
     }
 
@@ -112,23 +117,23 @@ public class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
-    public void addListener(BiConsumer<Option<Consumer<YACLScreen>>, Consumer<YACLScreen>> changedListener) {
+    public void addListener(BiConsumer<Option<BiConsumer<YACLScreen, ButtonOption>>, BiConsumer<YACLScreen, ButtonOption>> changedListener) {
 
     }
 
-    private static class EmptyBinderImpl implements Binding<Consumer<YACLScreen>> {
+    private static class EmptyBinderImpl implements Binding<BiConsumer<YACLScreen, ButtonOption>> {
         @Override
-        public void setValue(Consumer<YACLScreen> value) {
+        public void setValue(BiConsumer<YACLScreen, ButtonOption> value) {
 
         }
 
         @Override
-        public Consumer<YACLScreen> getValue() {
+        public BiConsumer<YACLScreen, ButtonOption> getValue() {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public Consumer<YACLScreen> defaultValue() {
+        public BiConsumer<YACLScreen, ButtonOption> defaultValue() {
             throw new UnsupportedOperationException();
         }
     }

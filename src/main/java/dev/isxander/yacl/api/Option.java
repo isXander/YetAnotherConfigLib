@@ -48,6 +48,13 @@ public interface Option<T> {
     boolean available();
 
     /**
+     * Sets if the option can be configured after being built
+     *
+     * @see Option#available()
+     */
+    void setAvailable(boolean available);
+
+    /**
      * Class of the option type.
      * Used by some controllers.
      */

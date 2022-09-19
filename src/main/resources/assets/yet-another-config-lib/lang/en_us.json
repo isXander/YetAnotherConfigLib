@@ -20,5 +20,17 @@
   "yacl.restart.title": "Config requires restart!",
   "yacl.restart.message": "One or more options needs you to restart the game to apply the changes.",
   "yacl.restart.yes": "Close Minecraft",
-  "yacl.restart.no": "Ignore"
+  "yacl.restart.no": "Ignore",
+
+  "yacl.config.category.tooltips": "Tooltips",
+  "yacl.config.category.tooltips.description": "Modify how YACL's tooltips behave.",
+  "yacl.config.tooltip.group.option": "Options",
+  "yacl.config.tooltip.group.group": "Groups",
+  "yacl.config.tooltip.group.category": "Categories",
+  "yacl.config.opt.hover_ticks": "Hover Time",
+  "yacl.config.opt.hover_ticks.tooltip": "How long to hover before the tooltip appears.",
+  "yacl.config.opt.tooltip_location": "Tooltip Location",
+  "yacl.config.opt.tooltip_location.tooltip": "Where the tooltip should appear on the screen.",
+  "yacl.config.tooltip_location.adjacent": "Adjacent",
+  "yacl.config.tooltip_location.mouse": "Mouse"
 }

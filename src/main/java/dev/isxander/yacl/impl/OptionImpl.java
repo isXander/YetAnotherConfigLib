@@ -22,7 +22,7 @@ public class OptionImpl<T> implements Option<T> {
     private final Function<T, Text> tooltipGetter;
     private final Controller<T> controller;
     private final Binding<T> binding;
-    private final boolean available;
+    private boolean available;
 
     private final ImmutableSet<OptionFlag> flags;
 
@@ -77,6 +77,11 @@ public class OptionImpl<T> implements Option<T> {
     @Override
     public boolean available() {
         return available;
+    }
+
+    @Override
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 
     @Override

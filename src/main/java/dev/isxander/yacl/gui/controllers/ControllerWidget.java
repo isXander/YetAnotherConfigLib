@@ -4,15 +4,11 @@ import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
-import dev.isxander.yacl.impl.YACLConstants;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-
-import java.util.List;
 
 public abstract class ControllerWidget<T extends Controller<?>> extends AbstractWidget {
     protected final T control;
@@ -21,9 +17,6 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
 
     protected boolean focused = false;
     protected boolean hovered = false;
-    protected float hoveredTicks = 0;
-
-    private int prevMouseX, prevMouseY;
 
     public ControllerWidget(T control, YACLScreen screen, Dimension<Integer> dim) {
         super(dim);
@@ -36,11 +29,6 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         hovered = isMouseOver(mouseX, mouseY);
-        if (hovered && (!YACLConstants.HOVER_MOUSE_RESET || (mouseX == prevMouseX && mouseY == prevMouseY))) {
-            hoveredTicks += delta;
-        } else {
-            hoveredTicks = 0;
-        }
 
         Text name = control.option().name();
         String nameString = name.getString();
@@ -65,15 +53,12 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         if (isHovered()) {
             drawHoveredControl(matrices, mouseX, mouseY, delta);
         }
-
-        prevMouseX = mouseX;
-        prevMouseY = mouseY;
     }
 
     @Override
     public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        if (hoveredTicks >= YACLConstants.HOVER_TICKS) {
-            YACLScreen.renderMultilineTooltip(matrices, textRenderer, wrappedTooltip, mouseX, mouseY, screen.width, screen.height);
+        if (hovered) {
+            YACLScreen.renderMultilineTooltip(matrices, textRenderer, wrappedTooltip, dim.centerX(), dim.y() - 5, dim.yLimit() + 5, screen.width, screen.height);
         }
     }
 
@@ -96,7 +81,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     }
 
     private void updateTooltip() {
-        this.wrappedTooltip = MultilineText.create(textRenderer, control.option().tooltip(), screen.width / 2);
+        this.wrappedTooltip = MultilineText.create(textRenderer, control.option().tooltip(), screen.width / 3 * 2);
     }
 
     protected int getControlWidth() {
