@@ -150,4 +150,10 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     private int getThumbWidth() {
         return 4;
     }
+
+    @Override
+    public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        if (super.isMouseOver(mouseX, mouseY))
+            super.postRender(matrices, mouseX, mouseY, delta);
+    }
 }
