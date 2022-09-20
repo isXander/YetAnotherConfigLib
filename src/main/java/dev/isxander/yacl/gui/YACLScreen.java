@@ -12,6 +12,7 @@ import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Matrix4f;
 
 import java.util.HashSet;
@@ -230,7 +231,7 @@ public class YACLScreen extends Screen {
             if (maxBelow < -8)
                 y = maxBelow > minAbove ? belowY : aboveY;
 
-            int x = centerX - text.getMaxWidth() / 2 - 12;
+            int x = Math.max(centerX - text.getMaxWidth() / 2 - 12, -6);
 
             int drawX = x + 12;
             int drawY = y - 12;
