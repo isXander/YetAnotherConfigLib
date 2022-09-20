@@ -77,7 +77,6 @@ public class EnumController<T extends Enum<T>> implements Controller<T> {
         return new EnumControllerElement<>(this, screen, widgetDimension, option().typeClass().getEnumConstants());
     }
 
-    @ApiStatus.Internal
     public static class EnumControllerElement<T extends Enum<T>> extends ControllerWidget<EnumController<T>> {
         private final T[] values;
 

@@ -136,6 +136,8 @@ public interface Option<T> {
 
         private final Class<T> typeClass;
 
+        private final List<BiConsumer<Option<T>, T>> listeners = new ArrayList<>();
+
         private Builder(Class<T> typeClass) {
             this.typeClass = typeClass;
         }
@@ -270,6 +272,26 @@ public interface Option<T> {
         }
 
         /**
+         * Adds a listener to the option. Invoked upon changing the pending value.
+         *
+         * @see Option#addListener(BiConsumer)
+         */
+        public Builder<T> listener(@NotNull BiConsumer<Option<T>, T> listener) {
+            this.listeners.add(listener);
+            return this;
+        }
+
+        /**
+         * Adds multiple listeners to the option. Invoked upon changing the pending value.
+         *
+         * @see Option#addListener(BiConsumer)
+         */
+        public Builder<T> listeners(@NotNull Collection<BiConsumer<Option<T>, T>> listeners) {
+            this.listeners.addAll(listeners);
+            return this;
+        }
+
+        /**
          * Dictates whether the option should require a restart.
          * {@link Option#requiresRestart()}
          */
@@ -299,11 +321,11 @@ public interface Option<T> {
                 return concatenatedTooltip;
             };
 
-            OptionImpl<T> option = new OptionImpl<>(name, concatenatedTooltipGetter, controlGetter, binding, available, ImmutableSet.copyOf(flags), typeClass);
             if (instant) {
-                option.addListener((opt, pendingValue) -> opt.applyValue());
+                listeners.add((opt, pendingValue) -> opt.applyValue());
             }
-            return option;
+
+            return new OptionImpl<>(name, concatenatedTooltipGetter, controlGetter, binding, available, ImmutableSet.copyOf(flags), typeClass, listeners);
         }
     }
 }

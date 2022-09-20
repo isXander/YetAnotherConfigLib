@@ -6,7 +6,6 @@ import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.function.BiConsumer;
@@ -67,10 +66,12 @@ public class ActionController implements Controller<BiConsumer<YACLScreen, Butto
         return new ActionControllerElement(this, screen, widgetDimension);
     }
 
-    @ApiStatus.Internal
     public static class ActionControllerElement extends ControllerWidget<ActionController> {
+        private final String buttonString;
+
         public ActionControllerElement(ActionController control, YACLScreen screen, Dimension<Integer> dim) {
             super(control, screen, dim);
+            buttonString = control.formatValue().getString().toLowerCase();
         }
 
         public void executeAction() {
@@ -108,7 +109,7 @@ public class ActionController implements Controller<BiConsumer<YACLScreen, Butto
 
         @Override
         public boolean matchesSearch(String query) {
-            return super.matchesSearch(query) || getValueText().getString().toLowerCase().contains(query);
+            return super.matchesSearch(query) || buttonString.contains(query);
         }
     }
 }

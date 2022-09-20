@@ -106,7 +106,7 @@ public interface OptionGroup {
          *
          * @see OptionGroup#options()
          */
-        public Builder options(@NotNull Collection<Option<?>> options) {
+        public Builder options(@NotNull Collection<? extends Option<?>> options) {
             Validate.notEmpty(options, "`options` must not be empty");
 
             this.options.addAll(options);

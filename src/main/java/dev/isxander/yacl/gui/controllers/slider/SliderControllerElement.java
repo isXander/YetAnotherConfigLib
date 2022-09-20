@@ -7,10 +7,8 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
-import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.glfw.GLFW;
 
-@ApiStatus.Internal
 public class SliderControllerElement extends ControllerWidget<ISliderController<?>> {
     private final double min, max, interval;
 

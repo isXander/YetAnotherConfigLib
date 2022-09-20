@@ -4,15 +4,12 @@ import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-@ApiStatus.Internal
 public class ButtonOptionImpl implements ButtonOption {
     private final Text name;
     private final Text tooltip;

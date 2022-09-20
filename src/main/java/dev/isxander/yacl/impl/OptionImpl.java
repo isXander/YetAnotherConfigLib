@@ -11,15 +11,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-@ApiStatus.Internal
 public class OptionImpl<T> implements Option<T> {
     private final Text name;
     private Text tooltip;
-    private final Function<T, Text> tooltipGetter;
     private final Controller<T> controller;
     private final Binding<T> binding;
     private boolean available;
@@ -39,16 +38,16 @@ public class OptionImpl<T> implements Option<T> {
             @NotNull Binding<T> binding,
             boolean available,
             ImmutableSet<OptionFlag> flags,
-            @NotNull Class<T> typeClass
+            @NotNull Class<T> typeClass,
+            @NotNull Collection<BiConsumer<Option<T>, T>> listeners
     ) {
         this.name = name;
-        this.tooltipGetter = tooltipGetter;
         this.controller = controlGetter.apply(this);
         this.binding = binding;
         this.available = available;
         this.flags = flags;
         this.typeClass = typeClass;
-        this.listeners = new ArrayList<>();
+        this.listeners = new ArrayList<>(listeners);
 
         addListener((opt, pending) -> tooltip = tooltipGetter.apply(pending));
         requestSet(binding().getValue());

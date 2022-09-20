@@ -18,12 +18,15 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     protected boolean focused = false;
     protected boolean hovered = false;
 
+    protected final String optionName;
+
     public ControllerWidget(T control, YACLScreen screen, Dimension<Integer> dim) {
         super(dim);
         this.control = control;
         this.screen = screen;
         control.option().addListener((opt, pending) -> updateTooltip());
         updateTooltip();
+        this.optionName = control.option().name().getString().toLowerCase();
     }
 
     @Override
@@ -145,7 +148,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
 
     @Override
     public boolean matchesSearch(String query) {
-        return control.option().name().getString().toLowerCase().contains(query.toLowerCase());
+        return optionName.contains(query.toLowerCase());
     }
 
     @Override

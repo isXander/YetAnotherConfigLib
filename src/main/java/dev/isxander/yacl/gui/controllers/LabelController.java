@@ -44,7 +44,6 @@ public class LabelController implements Controller<Text> {
         return new LabelControllerElement(widgetDimension);
     }
 
-    @ApiStatus.Internal
     public class LabelControllerElement extends AbstractWidget {
         private MultilineText wrappedText;
 

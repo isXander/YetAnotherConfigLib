@@ -1,12 +1,10 @@
 package dev.isxander.yacl.impl;
 
 import dev.isxander.yacl.api.Binding;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@ApiStatus.Internal
 public class GenericBindingImpl<T> implements Binding<T> {
     private final T def;
     private final Supplier<T> getter;

@@ -50,7 +50,6 @@ public class TickBoxController implements Controller<Boolean> {
         return new TickBoxControllerElement(this, screen, widgetDimension);
     }
 
-    @ApiStatus.Internal
     public static class TickBoxControllerElement extends ControllerWidget<TickBoxController> {
         private TickBoxControllerElement(TickBoxController control, YACLScreen screen, Dimension<Integer> dim) {
             super(control, screen, dim);

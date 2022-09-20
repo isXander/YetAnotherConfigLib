@@ -1,9 +1,7 @@
 package dev.isxander.yacl.impl.utils;
 
 import dev.isxander.yacl.api.utils.Dimension;
-import org.jetbrains.annotations.ApiStatus;
 
-@ApiStatus.Internal
 public class DimensionIntegerImpl implements Dimension<Integer> {
     private int x, y;
     private int width, height;

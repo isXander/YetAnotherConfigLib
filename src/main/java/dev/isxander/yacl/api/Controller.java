@@ -25,6 +25,5 @@ public interface Controller<T> {
      *
      * @param screen parent screen
      */
-    @ApiStatus.Internal
     AbstractWidget provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension);
 }

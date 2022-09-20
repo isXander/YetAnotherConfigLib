@@ -102,7 +102,6 @@ public class BooleanController implements Controller<Boolean> {
         return new BooleanControllerElement(this, screen, widgetDimension);
     }
 
-    @ApiStatus.Internal
     public static class BooleanControllerElement extends ControllerWidget<BooleanController> {
         private BooleanControllerElement(BooleanController control, YACLScreen screen, Dimension<Integer> dim) {
             super(control, screen, dim);

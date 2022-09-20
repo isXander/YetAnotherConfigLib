@@ -233,11 +233,16 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         public final AbstractWidget widget;
         private final Supplier<Boolean> viewableSupplier;
 
+        private final String categoryName;
+        private final String groupName;
+
         private OptionEntry(ConfigCategory category, OptionGroup group, AbstractWidget widget, Supplier<Boolean> viewableSupplier) {
             this.category = category;
             this.group = group;
             this.widget = widget;
             this.viewableSupplier = viewableSupplier;
+            this.categoryName = category.name().getString().toLowerCase();
+            this.groupName = group.name().getString().toLowerCase();
         }
 
         @Override
@@ -269,7 +274,12 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         @Override
         public boolean isViewable() {
-            return viewableSupplier.get() && yaclScreen.searchFieldWidget.matches(this, singleCategory);
+            String query = yaclScreen.searchFieldWidget.getText();
+            return viewableSupplier.get()
+                    && (yaclScreen.searchFieldWidget.isEmpty()
+                    || (!singleCategory && categoryName.contains(query))
+                    || groupName.contains(query)
+                    || widget.matchesSearch(query));
         }
 
         @Override
@@ -353,7 +363,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         @Override
         public boolean isViewable() {
-            return yaclScreen.searchFieldWidget.getText().isEmpty() || optionEntries.stream().anyMatch(OptionEntry::isViewable);
+            return yaclScreen.searchFieldWidget.isEmpty() || optionEntries.stream().anyMatch(OptionEntry::isViewable);
         }
 
         @Override
