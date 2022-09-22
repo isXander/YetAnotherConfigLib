@@ -26,6 +26,8 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
     private final YACLScreen yaclScreen;
     private boolean singleCategory = false;
 
+    private ImmutableList<Entry> viewableChildren;
+
     public OptionListWidget(YACLScreen screen, MinecraftClient client, int width, int height) {
         super(client, width / 3 * 2, height, 0, height, 22);
         this.yaclScreen = screen;
@@ -71,6 +73,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
             }
         }
 
+        recacheViewableChildren();
         setScrollAmount(0);
     }
 
@@ -203,9 +206,13 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
             fill(matrices, left, top, right, bottom, 0x6B000000);
     }
 
+    public void recacheViewableChildren() {
+        this.viewableChildren = ImmutableList.copyOf(super.children().stream().filter(Entry::isViewable).toList());
+    }
+
     @Override
     public List<Entry> children() {
-        return super.children().stream().filter(Entry::isViewable).toList();
+        return viewableChildren;
     }
 
     public abstract class Entry extends ElementListWidget.Entry<Entry> {
@@ -322,6 +329,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
             this.groupExpanded = !group.collapsed();
             this.expandMinimizeButton = new LowProfileButtonWidget(0, 0, 20, 20, Text.empty(), btn -> {
                 setExpanded(!isExpanded());
+                recacheViewableChildren();
             });
             updateExpandMinimizeText();
         }

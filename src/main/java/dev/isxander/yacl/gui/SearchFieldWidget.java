@@ -31,19 +31,15 @@ public class SearchFieldWidget extends TextFieldWidget {
     @Override
     public void write(String text) {
         update();
-
         super.write(text);
-
-        isEmpty = getText().isEmpty();
+        postUpdate();
     }
 
     @Override
     public void eraseCharacters(int characterOffset) {
         update();
-
         super.eraseCharacters(characterOffset);
-
-        isEmpty = getText().isEmpty();
+        postUpdate();
     }
 
     private void update() {
@@ -54,6 +50,11 @@ public class SearchFieldWidget extends TextFieldWidget {
                 groupSeparatorEntry.setExpanded(true);
             }
         }
+    }
+
+    private void postUpdate() {
+        isEmpty = getText().isEmpty();
+        yaclScreen.optionList.recacheViewableChildren();
     }
 
     public boolean isEmpty() {

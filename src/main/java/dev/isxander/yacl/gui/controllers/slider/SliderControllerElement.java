@@ -119,11 +119,14 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
         return super.isMouseOver(mouseX, mouseY) || mouseDown;
     }
 
-    private void setValueFromMouse(double mouseX) {
+    protected void setValueFromMouse(double mouseX) {
         double value = (mouseX - sliderBounds.x()) / sliderBounds.width() * control.range();
-        double roundedValue = MathHelper.clamp(min + (interval * Math.round(value / interval)), min, max); // extremely imprecise, requires clamping
-        control.setPendingValue(roundedValue);
+        control.setPendingValue(roundToInterval(value));
         calculateInterpolation();
+    }
+
+    protected double roundToInterval(double value) {
+        return MathHelper.clamp(min + (interval * Math.round(value / interval)), min, max); // extremely imprecise, requires clamping
     }
 
     @Override
@@ -131,7 +134,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
         return sliderBounds.width() + getUnhoveredControlWidth() + 6 + getThumbWidth() / 2;
     }
 
-    private void calculateInterpolation() {
+    protected void calculateInterpolation() {
         interpolation = (float) ((control.pendingValue() - control.min()) * 1 / control.range());
     }
 
@@ -141,11 +144,11 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
         sliderBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - getThumbWidth() / 2 - dim.width() / 3, dim.centerY() - 5, dim.width() / 3, 10);
     }
 
-    private int getThumbX() {
+    protected int getThumbX() {
         return (int) (sliderBounds.x() + sliderBounds.width() * interpolation);
     }
 
-    private int getThumbWidth() {
+    protected int getThumbWidth() {
         return 4;
     }
 
