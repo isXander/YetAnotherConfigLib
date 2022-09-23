@@ -42,12 +42,12 @@ public class OptionImpl<T> implements Option<T> {
             @NotNull Collection<BiConsumer<Option<T>, T>> listeners
     ) {
         this.name = name;
-        this.controller = controlGetter.apply(this);
         this.binding = binding;
         this.available = available;
         this.flags = flags;
         this.typeClass = typeClass;
         this.listeners = new ArrayList<>(listeners);
+        this.controller = controlGetter.apply(this);
 
         addListener((opt, pending) -> tooltip = tooltipGetter.apply(pending));
         requestSet(binding().getValue());
