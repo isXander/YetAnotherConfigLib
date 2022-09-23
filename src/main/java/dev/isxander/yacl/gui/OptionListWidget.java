@@ -41,10 +41,10 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         clearEntries();
 
         List<ConfigCategory> categories = new ArrayList<>();
-        if (yaclScreen.currentCategoryIdx == -1) {
+        if (yaclScreen.getCurrentCategoryIdx() == -1) {
             categories.addAll(yaclScreen.config.categories());
         } else {
-            categories.add(yaclScreen.config.categories().get(yaclScreen.currentCategoryIdx));
+            categories.add(yaclScreen.config.categories().get(yaclScreen.getCurrentCategoryIdx()));
         }
         singleCategory = categories.size() == 1;
 
@@ -75,6 +75,14 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         recacheViewableChildren();
         setScrollAmount(0);
+    }
+
+    public void expandAllGroups() {
+        for (Entry entry : super.children()) {
+            if (entry instanceof GroupSeparatorEntry groupSeparatorEntry) {
+                groupSeparatorEntry.setExpanded(true);
+            }
+        }
     }
 
     /*
@@ -282,6 +290,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         @Override
         public boolean isViewable() {
             String query = yaclScreen.searchFieldWidget.getText();
+            System.out.println(viewableSupplier.get());
             return viewableSupplier.get()
                     && (yaclScreen.searchFieldWidget.isEmpty()
                     || (!singleCategory && categoryName.contains(query))

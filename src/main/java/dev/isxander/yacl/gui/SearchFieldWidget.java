@@ -14,6 +14,7 @@ public class SearchFieldWidget extends TextFieldWidget {
 
     public SearchFieldWidget(YACLScreen yaclScreen, TextRenderer textRenderer, int x, int y, int width, int height, Text text, Text emptyText) {
         super(textRenderer, x, y, width, height, text);
+        setChangedListener(string -> update());
         setTextPredicate(string -> !string.endsWith(" ") && !string.startsWith(" "));
         this.yaclScreen = yaclScreen;
         this.textRenderer = textRenderer;
@@ -28,33 +29,23 @@ public class SearchFieldWidget extends TextFieldWidget {
         }
     }
 
-    @Override
-    public void write(String text) {
-        update();
-        super.write(text);
-        postUpdate();
-    }
-
-    @Override
-    public void eraseCharacters(int characterOffset) {
-        update();
-        super.eraseCharacters(characterOffset);
-        postUpdate();
-    }
-
     private void update() {
+        boolean wasEmpty = isEmpty;
+        isEmpty = getText().isEmpty();
+
+        if (isEmpty && wasEmpty)
+            return;
+
+        if (!isEmpty && yaclScreen.getCurrentCategoryIdx() != -1)
+            yaclScreen.changeCategory(-1);
+        if (isEmpty && yaclScreen.getCurrentCategoryIdx() == -1)
+            yaclScreen.changeCategory(0);
+
+        yaclScreen.optionList.expandAllGroups();
+        yaclScreen.optionList.recacheViewableChildren();
+
         yaclScreen.optionList.setScrollAmount(0);
         yaclScreen.categoryList.setScrollAmount(0);
-        for (OptionListWidget.Entry entry : yaclScreen.optionList.children()) {
-            if (entry instanceof OptionListWidget.GroupSeparatorEntry groupSeparatorEntry) {
-                groupSeparatorEntry.setExpanded(true);
-            }
-        }
-    }
-
-    private void postUpdate() {
-        isEmpty = getText().isEmpty();
-        yaclScreen.optionList.recacheViewableChildren();
     }
 
     public boolean isEmpty() {

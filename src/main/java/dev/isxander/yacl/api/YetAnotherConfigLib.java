@@ -94,8 +94,8 @@ public interface YetAnotherConfigLib {
          *
          * @see YetAnotherConfigLib#categories()
          */
-        public Builder categories(@NotNull Collection<ConfigCategory> categories) {
-            Validate.notEmpty(categories, "`categories` cannot be empty");
+        public Builder categories(@NotNull Collection<? extends ConfigCategory> categories) {
+            Validate.notNull(categories, "`categories` cannot be null");
 
             this.categories.addAll(categories);
             return this;
@@ -128,6 +128,7 @@ public interface YetAnotherConfigLib {
         public YetAnotherConfigLib build() {
             Validate.notNull(title, "`title must not be null to build `YetAnotherConfigLib`");
             Validate.notEmpty(categories, "`categories` must not be empty to build `YetAnotherConfigLib`");
+            Validate.isTrue(!categories.stream().allMatch(category -> category instanceof PlaceholderCategory), "At least one regular category is required to build `YetAnotherConfigLib`");
 
             return new YetAnotherConfigLibImpl(title, ImmutableList.copyOf(categories), saveFunction, initConsumer);
         }

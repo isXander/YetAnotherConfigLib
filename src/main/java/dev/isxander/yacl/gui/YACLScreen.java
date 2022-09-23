@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class YACLScreen extends Screen {
     public final YetAnotherConfigLib config;
-    public int currentCategoryIdx;
+    private int currentCategoryIdx;
 
     private final Screen parent;
 
@@ -139,12 +139,19 @@ public class YACLScreen extends Screen {
     }
 
     public void changeCategory(int idx) {
+        if (idx == currentCategoryIdx)
+            return;
+
         if (idx != -1 && config.categories().get(idx) instanceof PlaceholderCategory placeholderCategory) {
             client.setScreen(placeholderCategory.screen().apply(client, this));
         } else {
             currentCategoryIdx = idx;
             optionList.refreshOptions();
         }
+    }
+
+    public int getCurrentCategoryIdx() {
+        return currentCategoryIdx;
     }
 
     private void updateActionAvailability() {
@@ -160,12 +167,6 @@ public class YACLScreen extends Screen {
     @Override
     public void tick() {
         searchFieldWidget.tick();
-        if (!searchFieldWidget.getText().isEmpty() && currentCategoryIdx != -1) {
-            changeCategory(-1);
-        }
-        if (searchFieldWidget.getText().isEmpty() && currentCategoryIdx == -1) {
-            changeCategory(0);
-        }
 
         updateActionAvailability();
 

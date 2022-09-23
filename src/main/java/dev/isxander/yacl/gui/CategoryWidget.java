@@ -15,7 +15,7 @@ public class CategoryWidget extends TooltipButtonWidget {
     }
 
     private boolean isCurrentCategory() {
-        return ((YACLScreen) screen).currentCategoryIdx == categoryIndex;
+        return ((YACLScreen) screen).getCurrentCategoryIdx() == categoryIndex;
     }
 
     @Override
