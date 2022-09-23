@@ -43,6 +43,7 @@ public class IntegerSliderController implements ISliderController<Integer> {
     public IntegerSliderController(Option<Integer> option, int min, int max, int interval, Function<Integer, Text> valueFormatter) {
         Validate.isTrue(max > min, "`max` cannot be smaller than `min`");
         Validate.isTrue(interval > 0, "`interval` must be more than 0");
+        Validate.notNull(valueFormatter, "`valueFormatter` must not be null");
 
         this.option = option;
         this.min = min;

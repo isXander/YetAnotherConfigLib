@@ -43,6 +43,7 @@ public class LongSliderController implements ISliderController<Long> {
     public LongSliderController(Option<Long> option, long min, long max, long interval, Function<Long, Text> valueFormatter) {
         Validate.isTrue(max > min, "`max` cannot be smaller than `min`");
         Validate.isTrue(interval > 0, "`interval` must be more than 0");
+        Validate.notNull(valueFormatter, "`valueFormatter` must not be null");
 
         this.option = option;
         this.min = min;

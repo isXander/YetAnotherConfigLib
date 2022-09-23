@@ -9,6 +9,7 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 public abstract class ControllerWidget<T extends Controller<?>> extends AbstractWidget {
     protected final T control;
@@ -18,7 +19,8 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     protected boolean focused = false;
     protected boolean hovered = false;
 
-    protected final String optionName;
+    protected final Text modifiedOptionName;
+    protected final String optionNameString;
 
     public ControllerWidget(T control, YACLScreen screen, Dimension<Integer> dim) {
         super(dim);
@@ -26,14 +28,15 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         this.screen = screen;
         control.option().addListener((opt, pending) -> updateTooltip());
         updateTooltip();
-        this.optionName = control.option().name().getString().toLowerCase();
+        this.modifiedOptionName = control.option().name().copy().formatted(Formatting.ITALIC);
+        this.optionNameString = control.option().name().getString().toLowerCase();
     }
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         hovered = isMouseOver(mouseX, mouseY);
 
-        Text name = control.option().name();
+        Text name = control.option().changed() ? modifiedOptionName : control.option().name();
         String nameString = name.getString();
 
         boolean firstIter = true;
@@ -148,7 +151,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
 
     @Override
     public boolean matchesSearch(String query) {
-        return optionName.contains(query.toLowerCase());
+        return optionNameString.contains(query.toLowerCase());
     }
 
     @Override

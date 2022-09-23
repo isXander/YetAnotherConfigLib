@@ -24,22 +24,37 @@ import java.util.function.Function;
 public class EnumController<T extends Enum<T>> implements Controller<T> {
     private final Option<T> option;
     private final Function<T, Text> valueFormatter;
+    private final T[] availableValues;
+
+    public static <T extends Enum<T>> Function<T, Text> getDefaultFormatter() {
+        return value -> {
+            if (value instanceof NameableEnum nameableEnum)
+                return nameableEnum.getDisplayName();
+            if (value instanceof TranslatableOption translatableOption)
+                return translatableOption.getText();
+            return Text.of(value.name());
+        };
+    }
 
     /**
-     * Constructs a cycling enum controller with a default value formatter.
+     * Constructs a cycling enum controller with a default value formatter and all values being available.
      * The default value formatter first searches if the
      * enum is a {@link NameableEnum} else, just use {@link Enum#name()}
      *
      * @param option bound option
      */
     public EnumController(Option<T> option) {
-        this(option, value -> {
-            if (value instanceof NameableEnum nameableEnum)
-                return nameableEnum.getDisplayName();
-            if (value instanceof TranslatableOption translatableOption)
-                return translatableOption.getText();
-            return Text.of(value.name());
-        });
+        this(option, getDefaultFormatter());
+    }
+
+    /**
+     * Constructs a cycling enum controller with all values being available.
+     *
+     * @param option bound option
+     * @param valueFormatter format the enum into any {@link Text}
+     */
+    public EnumController(Option<T> option, Function<T, Text> valueFormatter) {
+        this(option, valueFormatter, option.typeClass().getEnumConstants());
     }
 
     /**
@@ -47,10 +62,12 @@ public class EnumController<T extends Enum<T>> implements Controller<T> {
      *
      * @param option bound option
      * @param valueFormatter format the enum into any {@link Text}
+     * @param availableValues all enum constants that can be cycled through
      */
-    public EnumController(Option<T> option, Function<T, Text> valueFormatter) {
+    public EnumController(Option<T> option, Function<T, Text> valueFormatter, T[] availableValues) {
         this.option = option;
         this.valueFormatter = valueFormatter;
+        this.availableValues = availableValues;
     }
 
     /**
@@ -74,7 +91,7 @@ public class EnumController<T extends Enum<T>> implements Controller<T> {
      */
     @Override
     public AbstractWidget provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
-        return new EnumControllerElement<>(this, screen, widgetDimension, option().typeClass().getEnumConstants());
+        return new EnumControllerElement<>(this, screen, widgetDimension, availableValues);
     }
 
     public static class EnumControllerElement<T extends Enum<T>> extends ControllerWidget<EnumController<T>> {

@@ -135,7 +135,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     protected void calculateInterpolation() {
-        interpolation = (float) ((control.pendingValue() - control.min()) * 1 / control.range());
+        interpolation = MathHelper.clamp((float) ((control.pendingValue() - control.min()) * 1 / control.range()), 0f, 1f);
     }
 
     @Override
