@@ -290,7 +290,6 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         @Override
         public boolean isViewable() {
             String query = yaclScreen.searchFieldWidget.getText();
-            System.out.println(viewableSupplier.get());
             return viewableSupplier.get()
                     && (yaclScreen.searchFieldWidget.isEmpty()
                     || (!singleCategory && categoryName.contains(query))
