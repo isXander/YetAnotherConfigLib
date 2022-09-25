@@ -15,7 +15,7 @@
     "yacl.gui.fail_apply.tooltip": "Возникла ошибка; изменения невозможно применить.",
     "yacl.gui.save_before_exit": "Сохраните перед закрытием",
     "yacl.gui.save_before_exit.tooltip": "Сохраните или отмените изменения, чтобы закрыть настройки.",
- 
+
     "yacl.restart.title": "Настройки требуют перезагрузки.",
     "yacl.restart.message": "Одна или несколько настроек требует перезапуска игры для применения изменений.",
     "yacl.restart.yes": "Закрыть Minecraft",
