@@ -1,18 +1,21 @@
 {
     "yacl.control.boolean.true": "§atrue",
     "yacl.control.boolean.false": "§cfalse",
+
     "yacl.control.action.execute": "Выполнить",
+
     "yacl.gui.save": "Сохранить",
     "yacl.gui.save.tooltip": "Сохранить изменения до следующего редактирования.",
     "yacl.gui.finished.tooltip": "Закрыть меню.",
     "yacl.gui.cancel.tooltip": "Отменить изменения и закрыть настройки.",
     "yacl.gui.reset.tooltip": "Сбросить все настройки до значений по умолчанию (это можно отменить).",
-    "yacl.gui.undo": "Отменить",
+    "yacl.gui.undo": "Восстановить",
     "yacl.gui.undo.tooltip": "Вернуть все настройки к состоянию, в котором они были до изменений.",
     "yacl.gui.fail_apply": "Не удалось применить изменения",
     "yacl.gui.fail_apply.tooltip": "Возникла ошибка; изменения невозможно применить.",
     "yacl.gui.save_before_exit": "Сохраните перед закрытием",
     "yacl.gui.save_before_exit.tooltip": "Сохраните или отмените изменения, чтобы закрыть настройки.",
+
     "yacl.restart.title": "Настройки требуют перезагрузки.",
     "yacl.restart.message": "Одна или несколько настроек требует перезапуска игры для применения изменений.",
     "yacl.restart.yes": "Закрыть Minecraft",
