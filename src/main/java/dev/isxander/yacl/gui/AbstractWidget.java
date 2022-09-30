@@ -32,6 +32,12 @@ public abstract class AbstractWidget implements Element, Drawable, Selectable {
 
     }
 
+    @Override
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        if (dim == null) return false;
+        return this.dim.isPointInside((int) mouseX, (int) mouseY);
+    }
+
     public void setDimension(Dimension<Integer> dim) {
         this.dim = dim;
     }

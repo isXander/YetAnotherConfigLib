@@ -80,12 +80,6 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         matrices.pop();
     }
 
-    @Override
-    public boolean isMouseOver(double mouseX, double mouseY) {
-        if (dim == null) return false;
-        return this.dim.isPointInside((int) mouseX, (int) mouseY);
-    }
-
     private void updateTooltip() {
         this.wrappedTooltip = MultilineText.create(textRenderer, control.option().tooltip(), screen.width / 3 * 2 - 10);
     }

@@ -15,6 +15,8 @@ import net.minecraft.client.gui.screen.MessageScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.option.GraphicsMode;
 import net.minecraft.client.toast.SystemToast;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
 
 import java.awt.*;
@@ -176,7 +178,13 @@ public class ModMenuIntegration implements ModMenuApi {
                                         .controller(ActionController::new)
                                         .build())
                                 .option(Option.createBuilder(Text.class)
-                                        .binding(Binding.immutable(Text.of("Labels that are very large get wrapped around onto a new line! I hope this is a good demonstration!")))
+                                        .binding(Binding.immutable(Text.empty()
+                                                .append(Text.literal("a").styled(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("a")))))
+                                                .append(Text.literal("b").styled(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("b")))))
+                                                .append(Text.literal("c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c").styled(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("c")))))
+                                                .append(Text.literal("e").styled(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("e")))))
+                                                .styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://isxander.dev")))
+                                        ))
                                         .controller(LabelController::new)
                                         .build())
                                 .build())
