@@ -216,6 +216,14 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
     public void recacheViewableChildren() {
         this.viewableChildren = ImmutableList.copyOf(super.children().stream().filter(Entry::isViewable).toList());
+
+        // update y positions before they need to be rendered are rendered
+        int i = 0;
+        for (Entry entry : viewableChildren) {
+            if (entry instanceof OptionEntry optionEntry)
+                optionEntry.widget.setDimension(optionEntry.widget.getDimension().setY(getRowTop(i)));
+            i++;
+        }
     }
 
     @Override

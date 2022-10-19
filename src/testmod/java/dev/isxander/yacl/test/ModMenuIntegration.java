@@ -72,6 +72,7 @@ public class ModMenuIntegration implements ModMenuApi {
                                         )
                                         .controller(BooleanController::new)
                                         .flag(OptionFlag.GAME_RESTART)
+                                        .available(false)
                                         .build())
                                 .option(Option.createBuilder(boolean.class)
                                         .name(Text.of("Custom Boolean Toggle"))
