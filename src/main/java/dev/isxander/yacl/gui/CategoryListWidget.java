@@ -41,7 +41,7 @@ public class CategoryListWidget extends ElementListWidget<CategoryListWidget.Cat
 
     @Override
     public int getRowWidth() {
-        return width - width / 10;
+        return Math.min(width - width / 10, 396);
     }
 
     @Override

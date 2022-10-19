@@ -6,13 +6,10 @@ import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.client.font.MultilineText;
-import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.*;
-import net.minecraft.util.Util;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -112,6 +109,9 @@ public class LabelController implements Controller<Text> {
         }
 
         protected Style getStyle(int mouseX, int mouseY) {
+            if (!dim.isPointInside(mouseX, mouseY))
+                return null;
+
             int x = mouseX - dim.x();
             int y = mouseY - dim.y() - getYPadding();
             int line = y / textRenderer.fontHeight;

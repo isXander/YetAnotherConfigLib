@@ -29,7 +29,7 @@ public class EnumController<T extends Enum<T>> extends CyclingListController<T> 
     /**
      * Constructs a cycling enum controller with a default value formatter and all values being available.
      * The default value formatter first searches if the
-     * enum is a {@link NameableEnum} else, just uses {@link Enum#toString()}
+     * enum is a {@link NameableEnum} or {@link TranslatableOption} else, just uses {@link Enum#toString()}
      *
      * @param option bound option
      */
