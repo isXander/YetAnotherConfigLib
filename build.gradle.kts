@@ -55,11 +55,11 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 
     modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.62.0+1.19.2"))
-    modImplementation("com.terraformersmc:modmenu:4.0.6") {
-        exclude(module = "fabric-loader")
-    }
 
     "testmodImplementation"(sourceSets.main.get().output)
+    "modTestmodImplementation"("com.terraformersmc:modmenu:4.0.6") {
+        exclude(module = "fabric-loader")
+    }
 }
 
 java {
@@ -118,7 +118,7 @@ if (modrinthId.isNotEmpty()) {
         versionNumber.set("${project.version}")
         versionType.set("release")
         uploadFile.set(tasks["remapJar"])
-        gameVersions.set(listOf("1.19", "1.19.1", "1.19.2", "22w42a"))
+        gameVersions.set(listOf("1.19", "1.19.1", "1.19.2"))
         loaders.set(listOf("fabric", "quilt"))
         dependencies {
             required.project("fabric-api")
@@ -142,7 +142,6 @@ if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
             addGameVersion("1.19")
             addGameVersion("1.19.1")
             addGameVersion("1.19.2")
-            addGameVersion("1.19.3")
             addGameVersion("Fabric")
             addGameVersion("Java 17")
 
