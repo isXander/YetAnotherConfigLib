@@ -104,10 +104,6 @@ tasks {
     }
 }
 
-java {
-    withSourcesJar()   
-}
-
 val changelogText = file("changelogs/${project.version}.md").takeIf { it.exists() }?.readText() ?: "No changelog provided."
 
 val modrinthId: String by project
