@@ -47,9 +47,7 @@ public abstract class ConfigInstance<T> {
     }
 
     public YetAnotherConfigLib buildConfig(BiFunction<ConfigInstance<T>, YetAnotherConfigLib.Builder, YetAnotherConfigLib.Builder> builder) {
-        return builder.apply(this, YetAnotherConfigLib.createBuilder())
-                .save(this::save)
-                .build();
+        return builder.apply(this, YetAnotherConfigLib.createBuilder().save(this::save)).build();
     }
 
     public abstract void save();

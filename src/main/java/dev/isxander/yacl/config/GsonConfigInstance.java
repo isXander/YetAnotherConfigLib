@@ -14,9 +14,22 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.function.UnaryOperator;
 
+/**
+ * Uses GSON to serialize and deserialize config data from JSON to a file.
+ *
+ * You can exclude fields from serialization by marking them as transient.
+ * {@link Text}, {@link Style} and {@link Color} have default type adapters, so there is no need to provide them in your GSON instance.
+ * GSON is automatically configured to format fields as {@code lower_camel_case}.
+ *
+ * @param <T> config data type
+ */
 public class GsonConfigInstance<T> extends ConfigInstance<T> {
     private final Gson gson;
     private final Path path;
+
+    public GsonConfigInstance(Class<T> configClass, Path path) {
+        this(configClass, path, new GsonBuilder());
+    }
 
     public GsonConfigInstance(Class<T> configClass, Path path, Gson gson) {
         this(configClass, path, gson.newBuilder());
