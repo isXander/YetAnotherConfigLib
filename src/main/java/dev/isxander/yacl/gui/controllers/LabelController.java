@@ -62,9 +62,9 @@ public class LabelController implements Controller<Text> {
         public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
             updateText();
 
-            float y = dim.y();
+            float y = getDimension().y();
             for (OrderedText text : wrappedText) {
-                textRenderer.drawWithShadow(matrices, text, dim.x(), y + getYPadding(), option().available() ? -1 : 0xFFA0A0A0);
+                textRenderer.drawWithShadow(matrices, text, getDimension().x(), y + getYPadding(), option().available() ? -1 : 0xFFA0A0A0);
                 y += textRenderer.fontHeight;
             }
         }
@@ -72,7 +72,7 @@ public class LabelController implements Controller<Text> {
         @Override
         public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
             if (isMouseOver(mouseX, mouseY)) {
-                YACLScreen.renderMultilineTooltip(matrices, textRenderer, wrappedTooltip, dim.centerX(), dim.y() - 5, dim.yLimit() + 5, screen.width, screen.height);
+                YACLScreen.renderMultilineTooltip(matrices, textRenderer, wrappedTooltip, getDimension().centerX(), getDimension().y() - 5, getDimension().yLimit() + 5, screen.width, screen.height);
 
                 Style style = getStyle(mouseX, mouseY);
                 if (style != null && style.getHoverEvent() != null) {
@@ -90,8 +90,8 @@ public class LabelController implements Controller<Text> {
                         } else {
                             Text text = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
                             if (text != null) {
-                                MultilineText multilineText = MultilineText.create(textRenderer, text, dim.width());
-                                YACLScreen.renderMultilineTooltip(matrices, textRenderer, multilineText, dim.centerX(), dim.y(), dim.yLimit(), screen.width, screen.height);
+                                MultilineText multilineText = MultilineText.create(textRenderer, text, getDimension().width());
+                                YACLScreen.renderMultilineTooltip(matrices, textRenderer, multilineText, getDimension().centerX(), getDimension().y(), getDimension().yLimit(), screen.width, screen.height);
                             }
                         }
                     }
@@ -109,15 +109,15 @@ public class LabelController implements Controller<Text> {
         }
 
         protected Style getStyle(int mouseX, int mouseY) {
-            if (!dim.isPointInside(mouseX, mouseY))
+            if (!getDimension().isPointInside(mouseX, mouseY))
                 return null;
 
-            int x = mouseX - dim.x();
-            int y = mouseY - dim.y() - getYPadding();
+            int x = mouseX - getDimension().x();
+            int y = mouseY - getDimension().y() - getYPadding();
             int line = y / textRenderer.fontHeight;
 
-            if (x < 0 || x > dim.xLimit()) return null;
-            if (y < 0 || y > dim.yLimit()) return null;
+            if (x < 0 || x > getDimension().xLimit()) return null;
+            if (y < 0 || y > getDimension().yLimit()) return null;
             if (line < 0 || line >= wrappedText.size()) return null;
 
             return textRenderer.getTextHandler().getStyleAt(wrappedText.get(line), x);
@@ -128,8 +128,8 @@ public class LabelController implements Controller<Text> {
         }
 
         private void updateText() {
-            wrappedText = textRenderer.wrapLines(formatValue(), dim.width());
-            dim.setHeight(wrappedText.size() * textRenderer.fontHeight + getYPadding() * 2);
+            wrappedText = textRenderer.wrapLines(formatValue(), getDimension().width());
+            setDimension(getDimension().withHeight(wrappedText.size() * textRenderer.fontHeight + getYPadding() * 2));
         }
 
         private void updateTooltip() {

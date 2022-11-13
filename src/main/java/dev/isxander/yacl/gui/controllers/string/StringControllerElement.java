@@ -205,7 +205,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     }
 
     public int getMaxLength() {
-        return dim.width() / 8 * 7;
+        return getDimension().width() / 8 * 7;
     }
 
     public int getSelectionStart() {

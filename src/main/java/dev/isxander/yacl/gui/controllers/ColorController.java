@@ -3,6 +3,7 @@ package dev.isxander.yacl.gui.controllers;
 import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.utils.Dimension;
+import dev.isxander.yacl.api.utils.MutableDimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.string.IStringController;
@@ -102,7 +103,7 @@ public class ColorController implements IStringController<Color> {
     public static class ColorControllerElement extends StringControllerElement {
         private final ColorController colorController;
 
-        protected Dimension<Integer> colorPreviewDim;
+        protected MutableDimension<Integer> colorPreviewDim;
 
         private final List<Character> allowedChars;
 

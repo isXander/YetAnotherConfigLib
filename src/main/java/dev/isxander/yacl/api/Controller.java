@@ -4,7 +4,6 @@ import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Provides a widget to control the option.

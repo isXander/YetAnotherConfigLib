@@ -8,7 +8,6 @@ import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.glfw.GLFW;
 
 /**
@@ -58,10 +57,10 @@ public class TickBoxController implements Controller<Boolean> {
         @Override
         protected void drawHoveredControl(MatrixStack matrices, int mouseX, int mouseY, float delta) {
             int outlineSize = 10;
-            int outlineX1 = dim.xLimit() - getXPadding() - outlineSize;
-            int outlineY1 = dim.centerY() - outlineSize / 2;
-            int outlineX2 = dim.xLimit() - getXPadding();
-            int outlineY2 = dim.centerY() + outlineSize / 2;
+            int outlineX1 = getDimension().xLimit() - getXPadding() - outlineSize;
+            int outlineY1 = getDimension().centerY() - outlineSize / 2;
+            int outlineX2 = getDimension().xLimit() - getXPadding();
+            int outlineY2 = getDimension().centerY() + outlineSize / 2;
 
             int color = getValueColor();
             int shadowColor = multiplyColor(color, 0.25f);

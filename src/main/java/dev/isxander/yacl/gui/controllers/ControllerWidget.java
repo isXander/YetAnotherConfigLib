@@ -40,7 +40,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         String nameString = name.getString();
 
         boolean firstIter = true;
-        while (textRenderer.getWidth(nameString) > dim.width() - getControlWidth() - getXPadding() - 7) {
+        while (textRenderer.getWidth(nameString) > getDimension().width() - getControlWidth() - getXPadding() - 7) {
             nameString = nameString.substring(0, Math.max(nameString.length() - (firstIter ? 2 : 5), 0)).trim();
             nameString += "...";
 
@@ -49,9 +49,9 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
 
         Text shortenedName = Text.literal(nameString).fillStyle(name.getStyle());
 
-        drawButtonRect(matrices, dim.x(), dim.y(), dim.xLimit(), dim.yLimit(), isHovered(), isAvailable());
+        drawButtonRect(matrices, getDimension().x(), getDimension().y(), getDimension().xLimit(), getDimension().yLimit(), isHovered(), isAvailable());
         matrices.push();
-        matrices.translate(dim.x() + getXPadding(), getTextY(), 0);
+        matrices.translate(getDimension().x() + getXPadding(), getTextY(), 0);
         textRenderer.drawWithShadow(matrices, shortenedName, 0, 0, getValueColor());
         matrices.pop();
 
@@ -64,7 +64,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     @Override
     public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         if (hovered) {
-            YACLScreen.renderMultilineTooltip(matrices, textRenderer, wrappedTooltip, dim.centerX(), dim.y() - 5, dim.yLimit() + 5, screen.width, screen.height);
+            YACLScreen.renderMultilineTooltip(matrices, textRenderer, wrappedTooltip, getDimension().centerX(), getDimension().y() - 5, getDimension().yLimit() + 5, screen.width, screen.height);
         }
     }
 
@@ -75,7 +75,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     protected void drawValueText(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         Text valueText = getValueText();
         matrices.push();
-        matrices.translate(dim.xLimit() - textRenderer.getWidth(valueText) - getXPadding(), getTextY(), 0);
+        matrices.translate(getDimension().xLimit() - textRenderer.getWidth(valueText) - getXPadding(), getTextY(), 0);
         textRenderer.drawWithShadow(matrices, valueText, 0, 0, getValueColor());
         matrices.pop();
     }
@@ -118,6 +118,11 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         return isAvailable() ? -1 : inactiveColor;
     }
 
+    @Override
+    public boolean canReset() {
+        return true;
+    }
+
     protected void drawOutline(MatrixStack matrices, int x1, int y1, int x2, int y2, int width, int color) {
         DrawableHelper.fill(matrices, x1, y1, x2, y1 + width, color);
         DrawableHelper.fill(matrices, x2, y1, x2 - width, y2, color);
@@ -126,7 +131,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     }
 
     protected float getTextY() {
-        return dim.y() + dim.height() / 2f - textRenderer.fontHeight / 2f;
+        return getDimension().y() + getDimension().height() / 2f - textRenderer.fontHeight / 2f;
     }
 
     @Override

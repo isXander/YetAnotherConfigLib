@@ -105,6 +105,11 @@ public interface Option<T> {
     void requestSetDefault();
 
     /**
+     * Checks if the current pending value is equal to its default value
+     */
+    boolean isPendingValueDefault();
+
+    /**
      * Adds a listener for when the pending value changes
      */
     void addListener(BiConsumer<Option<T>, T> changedListener);

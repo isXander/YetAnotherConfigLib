@@ -22,7 +22,7 @@ public abstract class AbstractWidget implements Element, Drawable, Selectable {
     protected final TextRenderer textRenderer = client.textRenderer;
     protected final int inactiveColor = 0xFFA0A0A0;
 
-    protected Dimension<Integer> dim;
+    private Dimension<Integer> dim;
 
     public AbstractWidget(Dimension<Integer> dim) {
         this.dim = dim;
@@ -30,6 +30,10 @@ public abstract class AbstractWidget implements Element, Drawable, Selectable {
 
     public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
 
+    }
+
+    public boolean canReset() {
+        return false;
     }
 
     @Override

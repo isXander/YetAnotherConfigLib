@@ -28,6 +28,9 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
     private ImmutableList<Entry> viewableChildren;
 
+    private double smoothScrollAmount = getScrollAmount();
+    private boolean returnSmoothAmount = false;
+
     public OptionListWidget(YACLScreen screen, MinecraftClient client, int width, int height) {
         super(client, width / 3 * 2, height, 0, height, 22);
         this.yaclScreen = screen;
@@ -62,7 +65,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
                 List<OptionEntry> optionEntries = new ArrayList<>();
                 for (Option<?> option : group.options()) {
-                    OptionEntry entry = new OptionEntry(category, group, option.controller().provideWidget(yaclScreen, Dimension.ofInt(getRowLeft(), 0, getRowWidth(), 20)), viewableSupplier);
+                    OptionEntry entry = new OptionEntry(option, category, group, option.controller().provideWidget(yaclScreen, Dimension.ofInt(getRowLeft(), 0, getRowWidth(), 20)), viewableSupplier);
                     addEntry(entry);
                     optionEntries.add(entry);
                 }
@@ -148,13 +151,33 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         }
     }
 
+    /* END cloth config code */
+
+    @Override
+    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        smoothScrollAmount = MathHelper.lerp(MinecraftClient.getInstance().getLastFrameDuration() * 0.5, smoothScrollAmount, getScrollAmount());
+        returnSmoothAmount = true;
+        super.render(matrices, mouseX, mouseY, delta);
+        returnSmoothAmount = false;
+    }
+
+    /**
+     * awful code to only use smooth scroll state when rendering,
+     * not other code that needs target scroll amount
+     */
+    @Override
+    public double getScrollAmount() {
+        if (returnSmoothAmount)
+            return smoothScrollAmount;
+
+        return super.getScrollAmount();
+    }
+
     public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         for (Entry entry : children()) {
             entry.postRender(matrices, mouseX, mouseY, delta);
         }
     }
-
-    /* END cloth config code */
 
     @Override
     public int getRowWidth() {
@@ -178,7 +201,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
                 return true;
         }
 
-        this.setScrollAmount(this.getScrollAmount() - amount * (double) (getMaxScroll() / getEntryCount()) / 2.0D);
+        this.setScrollAmount(this.getScrollAmount() - amount * 20 /* * (double) (getMaxScroll() / getEntryCount()) / 2.0D */);
         return true;
     }
 
@@ -221,7 +244,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         int i = 0;
         for (Entry entry : viewableChildren) {
             if (entry instanceof OptionEntry optionEntry)
-                optionEntry.widget.setDimension(optionEntry.widget.getDimension().setY(getRowTop(i)));
+                optionEntry.widget.setDimension(optionEntry.widget.getDimension().withY(getRowTop(i)));
             i++;
         }
     }
@@ -250,29 +273,48 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
     }
 
     public class OptionEntry extends Entry {
+        public final Option<?> option;
         public final ConfigCategory category;
         public final OptionGroup group;
 
         public final AbstractWidget widget;
         private final Supplier<Boolean> viewableSupplier;
 
+        private final TextScaledButtonWidget resetButton;
+
         private final String categoryName;
         private final String groupName;
 
-        private OptionEntry(ConfigCategory category, OptionGroup group, AbstractWidget widget, Supplier<Boolean> viewableSupplier) {
+        private OptionEntry(Option<?> option, ConfigCategory category, OptionGroup group, AbstractWidget widget, Supplier<Boolean> viewableSupplier) {
+            this.option = option;
             this.category = category;
             this.group = group;
             this.widget = widget;
             this.viewableSupplier = viewableSupplier;
             this.categoryName = category.name().getString().toLowerCase();
             this.groupName = group.name().getString().toLowerCase();
+            if (this.widget.canReset()) {
+                this.widget.setDimension(this.widget.getDimension().expanded(-21, 0));
+                this.resetButton = new TextScaledButtonWidget(widget.getDimension().xLimit() + 1, -50, 20, 20, 2f, Text.of("\u21BB"), button -> {
+                    option.requestSetDefault();
+                });
+                option.addListener((opt, val) -> this.resetButton.active = !opt.isPendingValueDefault() && opt.available());
+                this.resetButton.active = !option.isPendingValueDefault() && option.available();
+            } else {
+                this.resetButton = null;
+            }
         }
 
         @Override
         public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            widget.setDimension(widget.getDimension().setY(y));
+            widget.setDimension(widget.getDimension().withY(y));
 
             widget.render(matrices, mouseX, mouseY, tickDelta);
+
+            if (resetButton != null) {
+                resetButton.y = y;
+                resetButton.render(matrices, mouseX, mouseY, tickDelta);
+            }
         }
 
         @Override
@@ -312,12 +354,18 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         @Override
         public List<? extends Selectable> selectableChildren() {
-            return ImmutableList.of(widget);
+            if (resetButton == null)
+                return ImmutableList.of(widget);
+
+            return ImmutableList.of(widget, resetButton);
         }
 
         @Override
         public List<? extends Element> children() {
-            return ImmutableList.of(widget);
+            if (resetButton == null)
+                return ImmutableList.of(widget);
+
+            return ImmutableList.of(widget, resetButton);
         }
     }
 

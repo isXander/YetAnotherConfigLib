@@ -114,6 +114,11 @@ public class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
+    public boolean isPendingValueDefault() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void addListener(BiConsumer<Option<BiConsumer<YACLScreen, ButtonOption>>, BiConsumer<YACLScreen, ButtonOption>> changedListener) {
 
     }

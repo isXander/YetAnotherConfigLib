@@ -3,6 +3,7 @@ package dev.isxander.yacl.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.api.utils.Dimension;
+import dev.isxander.yacl.api.utils.MutableDimension;
 import dev.isxander.yacl.api.utils.OptionUtils;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.font.TextRenderer;
@@ -48,7 +49,7 @@ public class YACLScreen extends Screen {
         columnWidth = Math.min(columnWidth, 400);
         int paddedWidth = columnWidth - padding * 2;
 
-        Dimension<Integer> actionDim = Dimension.ofInt(width / 3 / 2, height - padding - 20, paddedWidth, 20);
+        MutableDimension<Integer> actionDim = Dimension.ofInt(width / 3 / 2, height - padding - 20, paddedWidth, 20);
         finishedSaveButton = new TooltipButtonWidget(this, actionDim.x() - actionDim.width() / 2, actionDim.y(), actionDim.width(), actionDim.height(), Text.empty(), Text.empty(), (btn) -> {
             saveButtonMessage = null;
 

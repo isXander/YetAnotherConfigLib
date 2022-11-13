@@ -8,7 +8,6 @@ import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Function;

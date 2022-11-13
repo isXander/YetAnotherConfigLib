@@ -125,12 +125,17 @@ public class OptionImpl<T> implements Option<T> {
 
     @Override
     public void forgetPendingValue() {
-        pendingValue = binding().getValue();
+        requestSet(binding().getValue());
     }
 
     @Override
     public void requestSetDefault() {
-        pendingValue = binding().defaultValue();
+        requestSet(binding().defaultValue());
+    }
+
+    @Override
+    public boolean isPendingValueDefault() {
+        return binding().defaultValue().equals(pendingValue());
     }
 
     @Override

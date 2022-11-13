@@ -108,6 +108,11 @@ public class ActionController implements Controller<BiConsumer<YACLScreen, Butto
         }
 
         @Override
+        public boolean canReset() {
+            return false;
+        }
+
+        @Override
         public boolean matchesSearch(String query) {
             return super.matchesSearch(query) || buttonString.contains(query);
         }
