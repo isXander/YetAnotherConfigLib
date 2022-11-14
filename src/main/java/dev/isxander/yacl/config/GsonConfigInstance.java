@@ -7,7 +7,6 @@ import net.minecraft.text.Text;
 
 import java.awt.*;
 import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,7 +16,7 @@ import java.util.function.UnaryOperator;
 /**
  * Uses GSON to serialize and deserialize config data from JSON to a file.
  *
- * You can exclude fields from serialization by marking them as transient.
+ * Only fields annotated with {@link ConfigEntry} are included in the JSON.
  * {@link Text}, {@link Style} and {@link Color} have default type adapters, so there is no need to provide them in your GSON instance.
  * GSON is automatically configured to format fields as {@code lower_camel_case}.
  *
