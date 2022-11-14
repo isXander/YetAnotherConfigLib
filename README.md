@@ -34,8 +34,7 @@ As you can see, there's sadly a drawback with all of them and this is where YetA
 
 YACL has the favour of hindsight. Whilst developing this fresh library, I can make sure that it does everything right:
 
-- **It's just a config library.** YACL contains no other features, just config screen generation.
-- **It's lightweight.** YACL leaves managing your config up to you, it doesn't contain an alternative to [AutoConfig](https://shedaniel.gitbook.io/cloth-config/auto-config/introduction-to-auto-config-1u) or similar. (Can be paired with my other library, [Settxi](https://github.com/isXander/Settxi), for this feature)
+- **Client sided library.** YACL is built for client mods only, making it a smaller size.
 - **Easy API.** YACL takes inspiration from [Sodium's](https://modrinth.com/mod/sodium) internal configuration library.
 - **It's styled to fit in Minecraft.** YACL's GUI is designed to fit right in.
 
