@@ -43,7 +43,7 @@ public class GsonConfigInstance<T> extends ConfigInstance<T> {
         super(configClass);
         this.path = path;
         this.gson = builder
-                .excludeFieldsWithModifiers(Modifier.TRANSIENT)
+                .setExclusionStrategies(new ConfigExclusionStrategy())
                 .registerTypeHierarchyAdapter(Text.class, new Text.Serializer())
                 .registerTypeHierarchyAdapter(Style.class, new Style.Serializer())
                 .registerTypeHierarchyAdapter(Color.class, new ColorTypeAdapter())
@@ -79,6 +79,18 @@ public class GsonConfigInstance<T> extends ConfigInstance<T> {
 
     public Path getPath() {
         return this.path;
+    }
+
+    private static class ConfigExclusionStrategy implements ExclusionStrategy {
+        @Override
+        public boolean shouldSkipField(FieldAttributes fieldAttributes) {
+            return fieldAttributes.getAnnotation(ConfigEntry.class) == null;
+        }
+
+        @Override
+        public boolean shouldSkipClass(Class<?> aClass) {
+            return false;
+        }
     }
 
     public static class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeserializer<Color> {
