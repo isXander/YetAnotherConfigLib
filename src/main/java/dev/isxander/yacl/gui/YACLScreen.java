@@ -13,8 +13,7 @@ import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Matrix4f;
+import org.joml.Matrix4f;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -85,7 +84,7 @@ public class YACLScreen extends Screen {
             OptionUtils.forEachOptions(config, Option::forgetPendingValue);
         });
 
-        searchFieldWidget = new SearchFieldWidget(this, textRenderer, width / 3 / 2 - paddedWidth / 2 + 1, undoButton.y - 22, paddedWidth - 2, 18, Text.translatable("gui.recipebook.search_hint"), Text.translatable("gui.recipebook.search_hint"));
+        searchFieldWidget = new SearchFieldWidget(this, textRenderer, width / 3 / 2 - paddedWidth / 2 + 1, undoButton.getY() - 22, paddedWidth - 2, 18, Text.translatable("gui.recipebook.search_hint"), Text.translatable("gui.recipebook.search_hint"));
 
         categoryList = new CategoryListWidget(client, this, width, height);
         addSelectableChild(categoryList);
@@ -241,7 +240,7 @@ public class YACLScreen extends Screen {
             matrices.push();
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferBuilder = tessellator.getBuffer();
-            RenderSystem.setShader(GameRenderer::getPositionColorShader);
+            RenderSystem.setShader(GameRenderer::getPositionColorProgram);
             bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
             Matrix4f matrix4f = matrices.peek().getPositionMatrix();
             fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY - 4, drawX + maxWidth + 3, drawY - 3, 400, -267386864, -267386864);
@@ -257,7 +256,7 @@ public class YACLScreen extends Screen {
             RenderSystem.disableTexture();
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
-            BufferRenderer.drawWithShader(bufferBuilder.end());
+            BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
             RenderSystem.disableBlend();
             RenderSystem.enableTexture();
             matrices.translate(0.0, 0.0, 400.0);

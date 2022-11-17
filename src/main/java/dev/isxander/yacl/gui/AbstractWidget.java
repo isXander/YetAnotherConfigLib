@@ -82,7 +82,7 @@ public abstract class AbstractWidget implements Element, Drawable, Selectable {
         int width = x2 - x1;
         int height = y2 - y1;
 
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderTexture(0, ClickableWidget.WIDGETS_TEXTURE);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         int i = !enabled ? 0 : hovered ? 2 : 1;

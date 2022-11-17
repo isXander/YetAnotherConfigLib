@@ -15,7 +15,7 @@ public class CategoryListWidget extends ElementListWidget<CategoryListWidget.Cat
     private final YACLScreen yaclScreen;
 
     public CategoryListWidget(MinecraftClient client, YACLScreen yaclScreen, int screenWidth, int screenHeight) {
-        super(client, screenWidth / 3, yaclScreen.searchFieldWidget.y - 5, 0, yaclScreen.searchFieldWidget.y - 5, 21);
+        super(client, screenWidth / 3, yaclScreen.searchFieldWidget.getY() - 5, 0, yaclScreen.searchFieldWidget.getY() - 5, 21);
         this.yaclScreen = yaclScreen;
         setRenderBackground(false);
         setRenderHorizontalShadows(false);
@@ -75,7 +75,7 @@ public class CategoryListWidget extends ElementListWidget<CategoryListWidget.Cat
                 mouseY = -20;
             }
 
-            categoryButton.y = y;
+            categoryButton.setY(y);
             categoryButton.render(matrices, mouseX, mouseY, tickDelta);
         }
 

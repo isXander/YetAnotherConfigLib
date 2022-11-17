@@ -25,7 +25,7 @@ public class SearchFieldWidget extends TextFieldWidget {
     public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         super.renderButton(matrices, mouseX, mouseY, delta);
         if (isVisible() && isEmpty()) {
-            textRenderer.drawWithShadow(matrices, emptyText, x + 4, this.y + (this.height - 8) / 2f, 0x707070);
+            textRenderer.drawWithShadow(matrices, emptyText, getX() + 4, this.getY() + (this.height - 8) / 2f, 0x707070);
         }
     }
 

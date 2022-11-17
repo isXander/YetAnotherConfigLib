@@ -1,7 +1,5 @@
 package dev.isxander.yacl.test;
 
-import com.terraformersmc.modmenu.api.ConfigScreenFactory;
-import com.terraformersmc.modmenu.api.ModMenuApi;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.gui.RequireRestartScreen;
 import dev.isxander.yacl.gui.controllers.*;
@@ -23,10 +21,9 @@ import net.minecraft.text.Text;
 
 import java.awt.*;
 
-public class ModMenuIntegration implements ModMenuApi {
-    @Override
-    public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return (parent) -> Entrypoint.getConfig().buildConfig((config, builder) -> builder
+public class GuiTest {
+    public static Screen getModConfigScreenFactory(Screen parent) {
+        return Entrypoint.getConfig().buildConfig((config, builder) -> builder
                     .title(Text.of("Test Suites"))
                     .category(ConfigCategory.createBuilder()
                             .name(Text.of("Suites"))
@@ -55,7 +52,7 @@ public class ModMenuIntegration implements ModMenuApi {
                 .generateScreen(parent);
     }
 
-    private Screen getFullTestSuite(Screen parent) {
+    private static Screen getFullTestSuite(Screen parent) {
         return Entrypoint.getConfig().buildConfig((config, builder) -> builder
                     .title(Text.of("Test GUI"))
                     .category(ConfigCategory.createBuilder()
@@ -340,7 +337,7 @@ public class ModMenuIntegration implements ModMenuApi {
                 .generateScreen(parent);
     }
 
-    private Screen getDisabledTest(Screen parent) {
+    private static Screen getDisabledTest(Screen parent) {
         return Entrypoint.getConfig().buildConfig((config, builder) -> builder
                     .title(Text.empty())
                     .category(ConfigCategory.createBuilder()
@@ -373,7 +370,7 @@ public class ModMenuIntegration implements ModMenuApi {
                 .generateScreen(parent);
     }
 
-    private Screen getWikiBasic(Screen parent) {
+    private static Screen getWikiBasic(Screen parent) {
         return Entrypoint.getConfig().buildConfig((config, builder) -> builder
                     .title(Text.of("Mod Name"))
                     .category(ConfigCategory.createBuilder()
@@ -394,7 +391,7 @@ public class ModMenuIntegration implements ModMenuApi {
                 .generateScreen(parent);
     }
 
-    private Screen getWikiGroups(Screen parent) {
+    private static Screen getWikiGroups(Screen parent) {
         return Entrypoint.getConfig().buildConfig((config, builder) -> builder
                     .title(Text.of("Mod Name"))
                     .category(ConfigCategory.createBuilder()
@@ -412,23 +409,6 @@ public class ModMenuIntegration implements ModMenuApi {
                                             )
                                             .controller(BooleanController::new)
                                             .build())
-                                    .build())
-                            .build())
-                )
-                .generateScreen(parent);
-    }
-
-    private ConfigScreenFactory<?> getWikiButton() {
-        return (parent) -> Entrypoint.getConfig().buildConfig((config, builder) -> builder
-                    .title(Text.of("Mod Name"))
-                    .category(ConfigCategory.createBuilder()
-                            .name(Text.of("My Category"))
-                            .tooltip(Text.of("This displays when you hover over a category button")) // optional
-                            .option(ButtonOption.createBuilder()
-                                    .name(Text.of("Pressable Button"))
-                                    .tooltip(Text.of("This is so easy!")) // optional
-                                    .action(screen -> {})
-                                    .controller(ActionController::new)
                                     .build())
                             .build())
                 )

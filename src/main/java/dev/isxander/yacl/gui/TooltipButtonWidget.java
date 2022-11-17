@@ -13,14 +13,14 @@ public class TooltipButtonWidget extends ButtonWidget {
     protected MultilineText wrappedDescription;
 
     public TooltipButtonWidget(Screen screen, int x, int y, int width, int height, Text message, Text tooltip, PressAction onPress) {
-        super(x, y, width, height, message, onPress);
+        super(x, y, width, height, message, onPress, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
         this.screen = screen;
         setTooltip(tooltip);
     }
 
     public void renderHoveredTooltip(MatrixStack matrices) {
         if (isHovered()) {
-            YACLScreen.renderMultilineTooltip(matrices, MinecraftClient.getInstance().textRenderer, wrappedDescription, x + width / 2, y - 4, y + height + 4, screen.width, screen.height);
+            YACLScreen.renderMultilineTooltip(matrices, MinecraftClient.getInstance().textRenderer, wrappedDescription, getX() + width / 2, getY() - 4, getY() + height + 4, screen.width, screen.height);
         }
     }
 

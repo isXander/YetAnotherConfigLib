@@ -312,7 +312,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
             widget.render(matrices, mouseX, mouseY, tickDelta);
 
             if (resetButton != null) {
-                resetButton.y = y;
+                resetButton.setY(y);
                 resetButton.render(matrices, mouseX, mouseY, tickDelta);
             }
         }
@@ -402,8 +402,8 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             this.y = y;
 
-            expandMinimizeButton.x = x;
-            expandMinimizeButton.y = y + entryHeight / 2 - expandMinimizeButton.getHeight() / 2;
+            expandMinimizeButton.setX(x);
+            expandMinimizeButton.setY(y + entryHeight / 2 - expandMinimizeButton.getHeight() / 2);
             expandMinimizeButton.render(matrices, mouseX, mouseY, tickDelta);
 
             wrappedName.drawCenterWithShadow(matrices, x + entryWidth / 2, y + getYPadding());

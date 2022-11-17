@@ -16,10 +16,10 @@ plugins {
 val ciRun = System.getenv().containsKey("GITHUB_ACTIONS")
 
 group = "dev.isxander"
-version = "1.7.1"
+version = "2.0.0"
 
 if (ciRun)
-    version = "$version-SNAPSHOT"
+    version = "$version+${grgit.branch.current().name}-SNAPSHOT"
 
 val testmod by sourceSets.registering {
     compileClasspath += sourceSets.main.get().compileClasspath
@@ -54,12 +54,9 @@ dependencies {
     mappings("net.fabricmc:yarn:$minecraftVersion+build.+:v2")
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 
-    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.66.0+1.19.2"))
+    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.66.2+1.19.3"))
 
     "testmodImplementation"(sourceSets.main.get().output)
-    "modTestmodImplementation"("com.terraformersmc:modmenu:4.0.6") {
-        exclude(module = "fabric-loader")
-    }
 }
 
 java {
