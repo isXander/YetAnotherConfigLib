@@ -50,7 +50,7 @@ public class TickBoxController implements Controller<Boolean> {
     }
 
     public static class TickBoxControllerElement extends ControllerWidget<TickBoxController> {
-        private TickBoxControllerElement(TickBoxController control, YACLScreen screen, Dimension<Integer> dim) {
+        public TickBoxControllerElement(TickBoxController control, YACLScreen screen, Dimension<Integer> dim) {
             super(control, screen, dim);
         }
 

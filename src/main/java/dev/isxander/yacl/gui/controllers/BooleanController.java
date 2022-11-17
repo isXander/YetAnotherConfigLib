@@ -102,7 +102,7 @@ public class BooleanController implements Controller<Boolean> {
     }
 
     public static class BooleanControllerElement extends ControllerWidget<BooleanController> {
-        private BooleanControllerElement(BooleanController control, YACLScreen screen, Dimension<Integer> dim) {
+        public BooleanControllerElement(BooleanController control, YACLScreen screen, Dimension<Integer> dim) {
             super(control, screen, dim);
         }
 
