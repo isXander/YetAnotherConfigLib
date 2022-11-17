@@ -19,7 +19,7 @@ group = "dev.isxander"
 version = "1.7.1"
 
 if (ciRun)
-    version = "$version-SNAPSHOT"
+    version = "$version+${grgit.branch.current().name}-SNAPSHOT"
 
 val testmod by sourceSets.registering {
     compileClasspath += sourceSets.main.get().compileClasspath
