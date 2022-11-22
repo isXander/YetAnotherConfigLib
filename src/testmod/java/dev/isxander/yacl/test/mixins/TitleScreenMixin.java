@@ -18,9 +18,9 @@ public abstract class TitleScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("RETURN"))
     private void injectTestButton(CallbackInfo ci) {
-        addDrawableChild(ButtonWidget.createBuilder(Text.of("YACL"), button -> client.setScreen(GuiTest.getModConfigScreenFactory(client.currentScreen)))
-                .setPosition(0, 0)
-                .setWidth(50)
+        addDrawableChild(ButtonWidget.builder(Text.of("YACL"), button -> client.setScreen(GuiTest.getModConfigScreenFactory(client.currentScreen)))
+                .position(0, 0)
+                .width(50)
                 .build());
     }
 }

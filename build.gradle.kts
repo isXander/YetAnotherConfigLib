@@ -54,7 +54,7 @@ dependencies {
     mappings("net.fabricmc:yarn:$minecraftVersion+build.+:v2")
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 
-    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.66.2+1.19.3"))
+    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.67.1+1.19.3"))
 
     "testmodImplementation"(sourceSets.main.get().output)
 }
