@@ -1,25 +1,27 @@
 package dev.isxander.yacl.test.config;
 
+import dev.isxander.yacl.config.ConfigEntry;
+
 import java.awt.*;
 
 public class ConfigData {
-    public boolean booleanToggle = false;
-    public boolean customBooleanToggle = false;
-    public boolean tickbox = false;
-    public int intSlider = 0;
-    public double doubleSlider = 0;
-    public float floatSlider = 0;
-    public long longSlider = 0;
-    public String textField = "Hello";
-    public Color colorOption = Color.red;
-    public Alphabet enumOption = Alphabet.A;
+    @ConfigEntry public boolean booleanToggle = false;
+    @ConfigEntry public boolean customBooleanToggle = false;
+    @ConfigEntry public boolean tickbox = false;
+    @ConfigEntry public int intSlider = 0;
+    @ConfigEntry public double doubleSlider = 0;
+    @ConfigEntry public float floatSlider = 0;
+    @ConfigEntry public long longSlider = 0;
+    @ConfigEntry public String textField = "Hello";
+    @ConfigEntry public Color colorOption = Color.red;
+    @ConfigEntry public Alphabet enumOption = Alphabet.A;
 
-    public boolean groupTestRoot = false;
-    public boolean groupTestFirstGroup = false;
-    public boolean groupTestFirstGroup2 = false;
-    public boolean groupTestSecondGroup = false;
+    @ConfigEntry public boolean groupTestRoot = false;
+    @ConfigEntry public boolean groupTestFirstGroup = false;
+    @ConfigEntry public boolean groupTestFirstGroup2 = false;
+    @ConfigEntry public boolean groupTestSecondGroup = false;
 
-    public int scrollingSlider = 0;
+    @ConfigEntry public int scrollingSlider = 0;
 
     public enum Alphabet {
         A, B, C
