@@ -93,6 +93,11 @@ public class TickBoxController implements Controller<Boolean> {
             return 10;
         }
 
+        @Override
+        protected int getUnhoveredControlWidth() {
+            return 10;
+        }
+
         public void toggleSetting() {
             control.option().requestSet(!control.option().pendingValue());
             playDownSound();

@@ -85,7 +85,7 @@ public class GuiTest {
                                             .controller(opt -> new BooleanController(opt, state -> state ? Text.of("Amazing") : Text.of("Not Amazing"), true))
                                             .build())
                                     .option(Option.createBuilder(boolean.class)
-                                            .name(Text.of("Tick Box"))
+                                            .name(Text.of("Tick Box aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
                                             .tooltip(Text.of("There are even alternate methods of displaying the same data type!"))
                                             .binding(
                                                     config.getDefaults().tickbox,
