@@ -13,7 +13,7 @@ public class TooltipButtonWidget extends ButtonWidget {
     protected MultilineText wrappedDescription;
 
     public TooltipButtonWidget(Screen screen, int x, int y, int width, int height, Text message, Text tooltip, PressAction onPress) {
-        super(x, y, width, height, message, onPress, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
+        super(x, y, width, height, message, onPress, DEFAULT_NARRATION_SUPPLIER);
         this.screen = screen;
         setTooltip(tooltip);
     }

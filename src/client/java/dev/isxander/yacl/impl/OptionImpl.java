@@ -6,7 +6,6 @@ import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.OptionFlag;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

@@ -21,9 +21,22 @@ version = "2.0.0"
 if (ciRun)
     version = "$version+${grgit.branch.current().name}-SNAPSHOT"
 
+loom {
+    splitEnvironmentSourceSets()
+
+    mods {
+        register("yet-another-config-lib") {
+            sourceSet(sourceSets["main"])
+            sourceSet(sourceSets["client"])
+        }
+    }
+}
+
 val testmod by sourceSets.registering {
     compileClasspath += sourceSets.main.get().compileClasspath
     runtimeClasspath += sourceSets.main.get().runtimeClasspath
+    compileClasspath += sourceSets["client"].compileClasspath
+    runtimeClasspath += sourceSets["client"].runtimeClasspath
 }
 
 loom {
@@ -54,7 +67,7 @@ dependencies {
     mappings("net.fabricmc:yarn:$minecraftVersion+build.+:v2")
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 
-    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.67.2+1.19.3"))
+    "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.67.2+1.19.3"))
 
     "testmodImplementation"(sourceSets.main.get().output)
 }

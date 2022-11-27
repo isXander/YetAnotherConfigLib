@@ -14,7 +14,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.List;
 
 /**

@@ -25,7 +25,10 @@
     "fabric-resource-loader-v0": "*"
   },
   "mixins": [
-    "yet-another-config-lib.mixins.json"
+    {
+      "config": "yet-another-config-lib.client.mixins.json",
+      "environment": "client"
+    }
   ],
   "accessWidener": "yacl.accesswidener",
   "custom": {

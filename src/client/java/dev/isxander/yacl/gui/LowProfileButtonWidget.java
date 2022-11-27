@@ -9,7 +9,7 @@ import net.minecraft.util.math.MathHelper;
 
 public class LowProfileButtonWidget extends ButtonWidget {
     public LowProfileButtonWidget(int x, int y, int width, int height, Text message, PressAction onPress) {
-        super(x, y, width, height, message, onPress, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
+        super(x, y, width, height, message, onPress, DEFAULT_NARRATION_SUPPLIER);
     }
 
     public LowProfileButtonWidget(int x, int y, int width, int height, Text message, PressAction onPress, Tooltip tooltip) {

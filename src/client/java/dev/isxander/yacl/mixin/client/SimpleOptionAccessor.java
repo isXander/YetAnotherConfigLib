@@ -1,4 +1,4 @@
-package dev.isxander.yacl.mixin;
+package dev.isxander.yacl.mixin.client;
 
 import net.minecraft.client.option.SimpleOption;
 import org.spongepowered.asm.mixin.Mixin;

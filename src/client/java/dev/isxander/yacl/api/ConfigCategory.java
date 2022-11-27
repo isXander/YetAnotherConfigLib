@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * Separates {@link Option}s or {@link OptionGroup}s into multiple distinct sections.

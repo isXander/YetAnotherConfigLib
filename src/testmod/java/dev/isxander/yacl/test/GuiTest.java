@@ -2,7 +2,6 @@ package dev.isxander.yacl.test;
 
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.gui.RequireRestartScreen;
-import dev.isxander.yacl.gui.controllers.*;
 import dev.isxander.yacl.gui.controllers.cycling.EnumController;
 import dev.isxander.yacl.gui.controllers.slider.DoubleSliderController;
 import dev.isxander.yacl.gui.controllers.slider.FloatSliderController;

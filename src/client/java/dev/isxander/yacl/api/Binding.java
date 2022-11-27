@@ -1,7 +1,7 @@
 package dev.isxander.yacl.api;
 
 import dev.isxander.yacl.impl.GenericBindingImpl;
-import dev.isxander.yacl.mixin.SimpleOptionAccessor;
+import dev.isxander.yacl.mixin.client.SimpleOptionAccessor;
 import net.minecraft.client.option.SimpleOption;
 import org.apache.commons.lang3.Validate;
 

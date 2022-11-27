@@ -15,7 +15,7 @@ import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.sound.SoundEvents;
 
-import java.awt.*;
+import java.awt.Color;
 
 public abstract class AbstractWidget implements Element, Drawable, Selectable {
     protected final MinecraftClient client = MinecraftClient.getInstance();

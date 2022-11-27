@@ -13,7 +13,7 @@ public class TextScaledButtonWidget extends ButtonWidget {
     public float textScale;
 
     public TextScaledButtonWidget(int x, int y, int width, int height, float textScale, Text message, PressAction onPress) {
-        super(x, y, width, height, message, onPress, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
+        super(x, y, width, height, message, onPress, DEFAULT_NARRATION_SUPPLIER);
         this.textScale = textScale;
     }
 
