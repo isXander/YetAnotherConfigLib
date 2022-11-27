@@ -1,5 +1,8 @@
 package dev.isxander.yacl.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -13,6 +16,8 @@ import java.lang.reflect.InvocationTargetException;
  * @param <T> config data type
  */
 public abstract class ConfigInstance<T> {
+    protected final static Logger logger = LoggerFactory.getLogger("YetAnotherConfigLib");
+
     private final Class<T> configClass;
     private final T defaultInstance;
     private T instance;

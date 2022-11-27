@@ -1,7 +1,6 @@
 package dev.isxander.yacl.config;
 
 import com.google.gson.*;
-import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
@@ -54,7 +53,7 @@ public class GsonConfigInstance<T> extends ConfigInstance<T> {
     @Override
     public void save() {
         try {
-            YACLConstants.LOGGER.info("Saving {}...", getConfigClass().getSimpleName());
+            logger.info("Saving {}...", getConfigClass().getSimpleName());
             Files.writeString(path, gson.toJson(getConfig()), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
         } catch (IOException e) {
             e.printStackTrace();
@@ -69,7 +68,7 @@ public class GsonConfigInstance<T> extends ConfigInstance<T> {
                 return;
             }
 
-            YACLConstants.LOGGER.info("Loading {}...", getConfigClass().getSimpleName());
+            logger.info("Loading {}...", getConfigClass().getSimpleName());
             setConfig(gson.fromJson(Files.readString(path), getConfigClass()));
         } catch (IOException e) {
             e.printStackTrace();
