@@ -2,6 +2,7 @@ package dev.isxander.yacl.test;
 
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.gui.RequireRestartScreen;
+import dev.isxander.yacl.gui.controllers.*;
 import dev.isxander.yacl.gui.controllers.cycling.EnumController;
 import dev.isxander.yacl.gui.controllers.slider.DoubleSliderController;
 import dev.isxander.yacl.gui.controllers.slider.FloatSliderController;
@@ -22,7 +23,7 @@ import java.awt.*;
 
 public class GuiTest {
     public static Screen getModConfigScreenFactory(Screen parent) {
-        return Entrypoint.getConfig().buildConfig((config, builder) -> builder
+        return YetAnotherConfigLib.create(Entrypoint.getConfig(), (defaults, config, builder) -> builder
                     .title(Text.of("Test Suites"))
                     .category(ConfigCategory.createBuilder()
                             .name(Text.of("Suites"))
@@ -52,7 +53,7 @@ public class GuiTest {
     }
 
     private static Screen getFullTestSuite(Screen parent) {
-        return Entrypoint.getConfig().buildConfig((config, builder) -> builder
+        return YetAnotherConfigLib.create(Entrypoint.getConfig(), (defaults, config, builder) -> builder
                     .title(Text.of("Test GUI"))
                     .category(ConfigCategory.createBuilder()
                             .name(Text.of("Control Examples"))
@@ -65,9 +66,9 @@ public class GuiTest {
                                             .name(Text.of("Boolean Toggle"))
                                             .tooltip(value -> Text.of("A simple toggle button that contains the value '" + value + "'"))
                                             .binding(
-                                                    config.getDefaults().booleanToggle,
-                                                    () -> config.getConfig().booleanToggle,
-                                                    (value) -> config.getConfig().booleanToggle = value
+                                                    defaults.booleanToggle,
+                                                    () -> config.booleanToggle,
+                                                    (value) -> config.booleanToggle = value
                                             )
                                             .controller(BooleanController::new)
                                             .flag(OptionFlag.GAME_RESTART)
@@ -77,9 +78,9 @@ public class GuiTest {
                                             .name(Text.of("Custom Boolean Toggle"))
                                             .tooltip(Text.of("You can customize these controllers like this!"))
                                             .binding(
-                                                    config.getDefaults().customBooleanToggle,
-                                                    () -> config.getConfig().customBooleanToggle,
-                                                    (value) -> config.getConfig().customBooleanToggle = value
+                                                    defaults.customBooleanToggle,
+                                                    () -> config.customBooleanToggle,
+                                                    (value) -> config.customBooleanToggle = value
                                             )
                                             .controller(opt -> new BooleanController(opt, state -> state ? Text.of("Amazing") : Text.of("Not Amazing"), true))
                                             .build())
@@ -87,9 +88,9 @@ public class GuiTest {
                                             .name(Text.of("Tick Box aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
                                             .tooltip(Text.of("There are even alternate methods of displaying the same data type!"))
                                             .binding(
-                                                    config.getDefaults().tickbox,
-                                                    () -> config.getConfig().tickbox,
-                                                    (value) -> config.getConfig().tickbox = value
+                                                    defaults.tickbox,
+                                                    () -> config.tickbox,
+                                                    (value) -> config.tickbox = value
                                             )
                                             .controller(TickBoxController::new)
                                             .build())
@@ -100,9 +101,9 @@ public class GuiTest {
                                             .name(Text.of("Int Slider that is cut off because the slider"))
                                             .instant(true)
                                             .binding(
-                                                    config.getDefaults().intSlider,
-                                                    () -> config.getConfig().intSlider,
-                                                    value -> config.getConfig().intSlider = value
+                                                    defaults.intSlider,
+                                                    () -> config.intSlider,
+                                                    value -> config.intSlider = value
 
                                             )
                                             .controller(opt -> new IntegerSliderController(opt, 0, 3, 1))
@@ -110,27 +111,27 @@ public class GuiTest {
                                     .option(Option.createBuilder(double.class)
                                             .name(Text.of("Double Slider"))
                                             .binding(
-                                                    config.getDefaults().doubleSlider,
-                                                    () -> config.getConfig().doubleSlider,
-                                                    (value) -> config.getConfig().doubleSlider = value
+                                                    defaults.doubleSlider,
+                                                    () -> config.doubleSlider,
+                                                    (value) -> config.doubleSlider = value
                                             )
                                             .controller(opt -> new DoubleSliderController(opt, 0, 3, 0.05))
                                             .build())
                                     .option(Option.createBuilder(float.class)
                                             .name(Text.of("Float Slider"))
                                             .binding(
-                                                    config.getDefaults().floatSlider,
-                                                    () -> config.getConfig().floatSlider,
-                                                    (value) -> config.getConfig().floatSlider = value
+                                                    defaults.floatSlider,
+                                                    () -> config.floatSlider,
+                                                    (value) -> config.floatSlider = value
                                             )
                                             .controller(opt -> new FloatSliderController(opt, 0, 3, 0.1f))
                                             .build())
                                     .option(Option.createBuilder(long.class)
                                             .name(Text.of("Long Slider"))
                                             .binding(
-                                                    config.getDefaults().longSlider,
-                                                    () -> config.getConfig().longSlider,
-                                                    (value) -> config.getConfig().longSlider = value
+                                                    defaults.longSlider,
+                                                    () -> config.longSlider,
+                                                    (value) -> config.longSlider = value
                                             )
                                             .controller(opt -> new LongSliderController(opt, 0, 1_000_000, 100))
                                             .build())
@@ -140,18 +141,18 @@ public class GuiTest {
                                     .option(Option.createBuilder(String.class)
                                             .name(Text.of("Text Option"))
                                             .binding(
-                                                    config.getDefaults().textField,
-                                                    () -> config.getConfig().textField,
-                                                    value -> config.getConfig().textField = value
+                                                    defaults.textField,
+                                                    () -> config.textField,
+                                                    value -> config.textField = value
                                             )
                                             .controller(StringController::new)
                                             .build())
                                     .option(Option.createBuilder(Color.class)
                                             .name(Text.of("Color Option"))
                                             .binding(
-                                                    config.getDefaults().colorOption,
-                                                    () -> config.getConfig().colorOption,
-                                                    value -> config.getConfig().colorOption = value
+                                                    defaults.colorOption,
+                                                    () -> config.colorOption,
+                                                    value -> config.colorOption = value
                                             )
                                             .controller(ColorController::new)
                                             .build())
@@ -161,9 +162,9 @@ public class GuiTest {
                                     .option(Option.createBuilder(ConfigData.Alphabet.class)
                                             .name(Text.of("Enum Cycler"))
                                             .binding(
-                                                    config.getDefaults().enumOption,
-                                                    () -> config.getConfig().enumOption,
-                                                    (value) -> config.getConfig().enumOption = value
+                                                    defaults.enumOption,
+                                                    () -> config.enumOption,
+                                                    (value) -> config.enumOption = value
                                             )
                                             .controller(EnumController::new)
                                             .build())
@@ -211,9 +212,9 @@ public class GuiTest {
                             .option(Option.createBuilder(boolean.class)
                                     .name(Text.of("Root Test"))
                                     .binding(
-                                            config.getDefaults().groupTestRoot,
-                                            () -> config.getConfig().groupTestRoot,
-                                            value -> config.getConfig().groupTestRoot = value
+                                            defaults.groupTestRoot,
+                                            () -> config.groupTestRoot,
+                                            value -> config.groupTestRoot = value
                                     )
                                     .controller(TickBoxController::new)
                                     .build())
@@ -222,18 +223,18 @@ public class GuiTest {
                                     .option(Option.createBuilder(boolean.class)
                                             .name(Text.of("First Group Test 1"))
                                             .binding(
-                                                    config.getDefaults().groupTestFirstGroup,
-                                                    () -> config.getConfig().groupTestFirstGroup,
-                                                    value -> config.getConfig().groupTestFirstGroup = value
+                                                    defaults.groupTestFirstGroup,
+                                                    () -> config.groupTestFirstGroup,
+                                                    value -> config.groupTestFirstGroup = value
                                             )
                                             .controller(TickBoxController::new)
                                             .build())
                                     .option(Option.createBuilder(boolean.class)
                                             .name(Text.of("First Group Test 2"))
                                             .binding(
-                                                    config.getDefaults().groupTestFirstGroup2,
-                                                    () -> config.getConfig().groupTestFirstGroup2,
-                                                    value -> config.getConfig().groupTestFirstGroup2 = value
+                                                    defaults.groupTestFirstGroup2,
+                                                    () -> config.groupTestFirstGroup2,
+                                                    value -> config.groupTestFirstGroup2 = value
                                             )
                                             .controller(TickBoxController::new)
                                             .build())
@@ -243,9 +244,9 @@ public class GuiTest {
                                     .option(Option.createBuilder(boolean.class)
                                             .name(Text.of("Second Group Test"))
                                             .binding(
-                                                    config.getDefaults().groupTestSecondGroup,
-                                                    () -> config.getConfig().groupTestSecondGroup,
-                                                    value -> config.getConfig().groupTestSecondGroup = value
+                                                    defaults.groupTestSecondGroup,
+                                                    () -> config.groupTestSecondGroup,
+                                                    value -> config.groupTestSecondGroup = value
                                             )
                                             .controller(TickBoxController::new)
                                             .build())
@@ -256,9 +257,9 @@ public class GuiTest {
                             .option(Option.createBuilder(int.class)
                                     .name(Text.of("Int Slider that is cut off because the slider"))
                                     .binding(
-                                            config.getDefaults().scrollingSlider,
-                                            () -> config.getConfig().scrollingSlider,
-                                            (value) -> config.getConfig().scrollingSlider = value
+                                            defaults.scrollingSlider,
+                                            () -> config.scrollingSlider,
+                                            (value) -> config.scrollingSlider = value
                                     )
                                     .controller(opt -> new IntegerSliderController(opt, 0, 10, 1))
                                     .build())
@@ -330,14 +331,14 @@ public class GuiTest {
                             .build())
                     .save(() -> {
                         MinecraftClient.getInstance().options.write();
-                        config.save();
+                        Entrypoint.getConfig().save();
                     })
                 )
                 .generateScreen(parent);
     }
 
     private static Screen getDisabledTest(Screen parent) {
-        return Entrypoint.getConfig().buildConfig((config, builder) -> builder
+        return YetAnotherConfigLib.create(Entrypoint.getConfig(), (defaults, config, builder) -> builder
                     .title(Text.empty())
                     .category(ConfigCategory.createBuilder()
                             .name(Text.of("Disabled Test"))
@@ -370,7 +371,7 @@ public class GuiTest {
     }
 
     private static Screen getWikiBasic(Screen parent) {
-        return Entrypoint.getConfig().buildConfig((config, builder) -> builder
+        return YetAnotherConfigLib.create(Entrypoint.getConfig(), (defaults, config, builder) -> builder
                     .title(Text.of("Mod Name"))
                     .category(ConfigCategory.createBuilder()
                             .name(Text.of("My Category"))
@@ -379,9 +380,9 @@ public class GuiTest {
                                     .name(Text.of("My Boolean Option"))
                                     .tooltip(Text.of("This option displays the basic capabilities of YetAnotherConfigLib")) // optional
                                     .binding(
-                                            config.getDefaults().booleanToggle, // default
-                                            () -> config.getConfig().booleanToggle, // getter
-                                            newValue -> config.getConfig().booleanToggle = newValue // setter
+                                            defaults.booleanToggle, // default
+                                            () -> config.booleanToggle, // getter
+                                            newValue -> config.booleanToggle = newValue // setter
                                     )
                                     .controller(BooleanController::new)
                                     .build())
@@ -391,7 +392,7 @@ public class GuiTest {
     }
 
     private static Screen getWikiGroups(Screen parent) {
-        return Entrypoint.getConfig().buildConfig((config, builder) -> builder
+        return YetAnotherConfigLib.create(Entrypoint.getConfig(), (defaults, config, builder) -> builder
                     .title(Text.of("Mod Name"))
                     .category(ConfigCategory.createBuilder()
                             .name(Text.of("My Category"))
@@ -402,9 +403,9 @@ public class GuiTest {
                                             .name(Text.of("My Boolean Option"))
                                             .tooltip(Text.of("This option displays the basic capabilities of YetAnotherConfigLib")) // optional
                                             .binding(
-                                                    config.getDefaults().booleanToggle, // default
-                                                    () -> config.getConfig().booleanToggle, // getter
-                                                    newValue -> config.getConfig().booleanToggle = newValue // setter
+                                                    defaults.booleanToggle, // default
+                                                    () -> config.booleanToggle, // getter
+                                                    newValue -> config.booleanToggle = newValue // setter
                                             )
                                             .controller(BooleanController::new)
                                             .build())

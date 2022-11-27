@@ -70,6 +70,7 @@ dependencies {
     "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.67.2+1.19.3"))
 
     "testmodImplementation"(sourceSets.main.get().output)
+    "testmodImplementation"(sourceSets["client"].output)
 }
 
 java {

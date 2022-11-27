@@ -1,5 +1,6 @@
 package dev.isxander.yacl.config;
 
+import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.nbt.*;
 
 import java.awt.*;
@@ -57,13 +58,13 @@ public class NbtConfigInstance<T> extends ConfigInstance<T> {
 
     @Override
     public void save() {
-        logger.info("Saving {}...", getConfigClass().getSimpleName());
+        YACLConstants.LOGGER.info("Saving {}...", getConfigClass().getSimpleName());
 
         NbtCompound nbt;
         try {
             nbt = (NbtCompound) serializeObject(getConfig(), nbtSerializerHolder, field -> field.isAnnotationPresent(ConfigEntry.class));
         } catch (IllegalAccessException e) {
-            logger.error("Failed to convert '{}' -> NBT", getConfigClass().getName(), e);
+            YACLConstants.LOGGER.error("Failed to convert '{}' -> NBT", getConfigClass().getName(), e);
             return;
         }
 
@@ -76,7 +77,7 @@ public class NbtConfigInstance<T> extends ConfigInstance<T> {
             else
                 NbtIo.write(nbt, new DataOutputStream(fos));
         } catch (IOException e) {
-            logger.error("Failed to write NBT to '{}'", path, e);
+            YACLConstants.LOGGER.error("Failed to write NBT to '{}'", path, e);
         }
     }
 
@@ -87,19 +88,19 @@ public class NbtConfigInstance<T> extends ConfigInstance<T> {
             return;
         }
 
-        logger.info("Loading {}...", getConfigClass().getSimpleName());
+        YACLConstants.LOGGER.info("Loading {}...", getConfigClass().getSimpleName());
         NbtCompound nbt;
         try {
             nbt = compressed ? NbtIo.readCompressed(path.toFile()) : NbtIo.read(path.toFile());
         } catch (IOException e) {
-            logger.error("Failed to read NBT file '{}'", path, e);
+            YACLConstants.LOGGER.error("Failed to read NBT file '{}'", path, e);
             return;
         }
 
         try {
             setConfig(deserializeObject(nbt, getConfigClass(), nbtSerializerHolder, field -> field.isAnnotationPresent(ConfigEntry.class)));
         } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
-            logger.error("Failed to convert NBT -> '{}'", getConfigClass().getName(), e);
+            YACLConstants.LOGGER.error("Failed to convert NBT -> '{}'", getConfigClass().getName(), e);
         }
     }
 

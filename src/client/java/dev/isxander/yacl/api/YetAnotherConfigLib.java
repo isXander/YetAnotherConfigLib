@@ -1,6 +1,7 @@
 package dev.isxander.yacl.api;
 
 import com.google.common.collect.ImmutableList;
+import dev.isxander.yacl.config.ConfigInstance;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.impl.YetAnotherConfigLibImpl;
 import net.minecraft.client.gui.screen.Screen;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 /**
@@ -51,6 +53,14 @@ public interface YetAnotherConfigLib {
      */
     static Builder createBuilder() {
         return new Builder();
+    }
+
+    /**
+     * Creates an instance using a {@link ConfigInstance} which autofills the save() builder method.
+     * This also takes an easy functional interface that provides defaults and config to help build YACL bindings.
+     */
+    static <T> YetAnotherConfigLib create(ConfigInstance<T> configInstance, ConfigBackedBuilder<T> builder) {
+        return builder.build(configInstance.getDefaults(), configInstance.getConfig(), createBuilder().save(configInstance::save)).build();
     }
 
     class Builder {
@@ -132,5 +142,10 @@ public interface YetAnotherConfigLib {
 
             return new YetAnotherConfigLibImpl(title, ImmutableList.copyOf(categories), saveFunction, initConsumer);
         }
+    }
+
+    @FunctionalInterface
+    interface ConfigBackedBuilder<T> {
+        YetAnotherConfigLib.Builder build(T defaults, T config, YetAnotherConfigLib.Builder builder);
     }
 }
