@@ -96,13 +96,13 @@ public abstract class AbstractWidget implements Element, Drawable, Selectable {
     protected int multiplyColor(int hex, float amount) {
         Color color = new Color(hex, true);
 
-        return new Color(Math.max((int)(color.getRed()  *amount), 0),
-                  Math.max((int)(color.getGreen()*amount), 0),
-                  Math.max((int)(color.getBlue() *amount), 0),
+        return new Color(Math.max((int)(color.getRed() * amount), 0),
+                  Math.max((int)(color.getGreen() * amount), 0),
+                  Math.max((int)(color.getBlue() * amount), 0),
                   color.getAlpha()).getRGB();
     }
 
     public void playDownSound() {
-        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK.value(), 1.0F));
+        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.method_47978(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 }

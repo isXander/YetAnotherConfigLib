@@ -7,8 +7,10 @@ import dev.isxander.yacl.api.utils.MutableDimension;
 import dev.isxander.yacl.api.utils.OptionUtils;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.TooltipBackgroundRenderer;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
@@ -71,10 +73,10 @@ public class YACLScreen extends Screen {
         });
         actionDim.expand(-actionDim.width() / 2 - 2, 0).move(-actionDim.width() / 2 - 2, -22);
         cancelResetButton = new TooltipButtonWidget(this, actionDim.x() - actionDim.width() / 2, actionDim.y(), actionDim.width(), actionDim.height(), Text.empty(), Text.empty(), (btn) -> {
-            if (pendingChanges()) {
+            if (pendingChanges()) { // if pending changes, button acts as a cancel button
                 OptionUtils.forEachOptions(config, Option::forgetPendingValue);
                 close();
-            } else {
+            } else { // if not, button acts as a reset button
                 OptionUtils.forEachOptions(config, Option::requestSetDefault);
             }
 
@@ -243,15 +245,16 @@ public class YACLScreen extends Screen {
             RenderSystem.setShader(GameRenderer::getPositionColorProgram);
             bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
             Matrix4f matrix4f = matrices.peek().getPositionMatrix();
-            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY - 4, drawX + maxWidth + 3, drawY - 3, 400, -267386864, -267386864);
-            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY + height + 3, drawX + maxWidth + 3, drawY + height + 4, 400, -267386864, -267386864);
-            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY - 3, drawX + maxWidth + 3, drawY + height + 3, 400, -267386864, -267386864);
-            fillGradient(matrix4f, bufferBuilder, drawX - 4, drawY - 3, drawX - 3, drawY + height + 3, 400, -267386864, -267386864);
-            fillGradient(matrix4f, bufferBuilder, drawX + maxWidth + 3, drawY - 3, drawX + maxWidth + 4, drawY + height + 3, 400, -267386864, -267386864);
-            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY - 3 + 1, drawX - 3 + 1, drawY + height + 3 - 1, 400, 1347420415, 1344798847);
-            fillGradient(matrix4f, bufferBuilder, drawX + maxWidth + 2, drawY - 3 + 1, drawX + maxWidth + 3, drawY + height + 3 - 1, 400, 1347420415, 1344798847);
-            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY - 3, drawX + maxWidth + 3, drawY - 3 + 1, 400, 1347420415, 1347420415);
-            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY + height + 2, drawX + maxWidth + 3, drawY + height + 3, 400, 1344798847, 1344798847);
+            TooltipBackgroundRenderer.render(
+                    DrawableHelper::fillGradient,
+                    matrix4f,
+                    bufferBuilder,
+                    drawX,
+                    drawY,
+                    maxWidth,
+                    height,
+                    400
+            );
             RenderSystem.enableDepthTest();
             RenderSystem.disableTexture();
             RenderSystem.enableBlend();
