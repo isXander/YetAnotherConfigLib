@@ -103,6 +103,6 @@ public abstract class AbstractWidget implements Element, Drawable, Selectable {
     }
 
     public void playDownSound() {
-        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.method_47978(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 }
