@@ -11,11 +11,11 @@ import net.minecraft.client.util.math.MatrixStack;
 
 import java.util.List;
 
-public class CategoryListWidget extends ElementListWidget<CategoryListWidget.CategoryEntry> {
+public class CategoryListWidget extends ElementListWidgetExt<CategoryListWidget.CategoryEntry> {
     private final YACLScreen yaclScreen;
 
     public CategoryListWidget(MinecraftClient client, YACLScreen yaclScreen, int screenWidth, int screenHeight) {
-        super(client, screenWidth / 3, yaclScreen.searchFieldWidget.getY() - 5, 0, yaclScreen.searchFieldWidget.getY() - 5, 21);
+        super(client, 0, 0, screenWidth / 3, yaclScreen.searchFieldWidget.getY() - 5, true);
         this.yaclScreen = yaclScreen;
         setRenderBackground(false);
         setRenderHorizontalShadows(false);
@@ -26,10 +26,10 @@ public class CategoryListWidget extends ElementListWidget<CategoryListWidget.Cat
     }
 
     @Override
-    protected void renderList(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         double d = this.client.getWindow().getScaleFactor();
         RenderSystem.enableScissor(0, (int)((yaclScreen.height - bottom) * d), (int)(width * d), (int)(height * d));
-        super.renderList(matrices, mouseX, mouseY, delta);
+        super.render(matrices, mouseX, mouseY, delta);
         RenderSystem.disableScissor();
     }
 
@@ -52,6 +52,11 @@ public class CategoryListWidget extends ElementListWidget<CategoryListWidget.Cat
     @Override
     protected int getScrollbarPositionX() {
         return width - 2;
+    }
+
+    @Override
+    protected void renderBackground(MatrixStack matrices) {
+
     }
 
     public class CategoryEntry extends Entry<CategoryEntry> {
@@ -79,8 +84,13 @@ public class CategoryListWidget extends ElementListWidget<CategoryListWidget.Cat
             categoryButton.render(matrices, mouseX, mouseY, tickDelta);
         }
 
-        private void postRender(MatrixStack matrices, int mouseX, int mouseY, float tickDelta) {
+        public void postRender(MatrixStack matrices, int mouseX, int mouseY, float tickDelta) {
             categoryButton.renderHoveredTooltip(matrices);
+        }
+
+        @Override
+        public int getItemHeight() {
+            return 21;
         }
 
         @Override

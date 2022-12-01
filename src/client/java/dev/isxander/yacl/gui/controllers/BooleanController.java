@@ -6,6 +6,7 @@ import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.lwjgl.glfw.GLFW;
@@ -19,8 +20,8 @@ public class BooleanController implements Controller<Boolean> {
 
     public static final Function<Boolean, Text> ON_OFF_FORMATTER = (state) ->
             state
-                    ? Text.translatable("options.on")
-                    : Text.translatable("options.off");
+                    ? ScreenTexts.ON
+                    : ScreenTexts.OFF;
 
     public static final Function<Boolean, Text> TRUE_FALSE_FORMATTER = (state) ->
             state
@@ -29,8 +30,8 @@ public class BooleanController implements Controller<Boolean> {
 
     public static final Function<Boolean, Text> YES_NO_FORMATTER = (state) ->
             state
-                    ? Text.translatable("gui.yes")
-                    : Text.translatable("gui.no");
+                    ? ScreenTexts.YES
+                    : ScreenTexts.NO;
 
     private final Option<Boolean> option;
     private final Function<Boolean, Text> valueFormatter;

@@ -22,20 +22,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Supplier;
 
-public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> {
+public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entry> {
     private final YACLScreen yaclScreen;
     private boolean singleCategory = false;
 
     private ImmutableList<Entry> viewableChildren;
 
-    private double smoothScrollAmount = getScrollAmount();
-    private boolean returnSmoothAmount = false;
-
     public OptionListWidget(YACLScreen screen, MinecraftClient client, int width, int height) {
-        super(client, width / 3 * 2, height, 0, height, 22);
+        super(client, width / 3, 0, width / 3 * 2, height, true);
         this.yaclScreen = screen;
-        left = width - this.width;
-        right = width;
 
         refreshOptions();
     }
@@ -78,6 +73,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
         recacheViewableChildren();
         setScrollAmount(0);
+        resetSmoothScrolling();
     }
 
     public void expandAllGroups() {
@@ -85,97 +81,6 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
             if (entry instanceof GroupSeparatorEntry groupSeparatorEntry) {
                 groupSeparatorEntry.setExpanded(true);
             }
-        }
-    }
-
-    /*
-      below code is licensed from cloth-config under LGPL3
-      modified to inherit vanilla's EntryListWidget and use yarn mappings
-    */
-
-    @Nullable
-    @Override
-    protected Entry getEntryAtPosition(double x, double y) {
-        int listMiddleX = this.left + this.width / 2;
-        int minX = listMiddleX - this.getRowWidth() / 2;
-        int maxX = listMiddleX + this.getRowWidth() / 2;
-        int currentY = MathHelper.floor(y - (double) this.top) - this.headerHeight + (int) this.getScrollAmount() - 4;
-        int itemY = 0;
-        int itemIndex = -1;
-        for (int i = 0; i < children().size(); i++) {
-            Entry item = children().get(i);
-            itemY += item.getItemHeight();
-            if (itemY > currentY) {
-                itemIndex = i;
-                break;
-            }
-        }
-        return x < (double) this.getScrollbarPositionX() && x >= minX && y <= maxX && itemIndex >= 0 && currentY >= 0 && itemIndex < this.getEntryCount() ? this.children().get(itemIndex) : null;
-    }
-
-    @Override
-    protected int getMaxPosition() {
-        return children().stream().map(Entry::getItemHeight).reduce(0, Integer::sum) + headerHeight;
-    }
-
-    @Override
-    protected void centerScrollOn(Entry entry) {
-        double d = (this.bottom - this.top) / -2d;
-        for (int i = 0; i < this.children().indexOf(entry) && i < this.getEntryCount(); i++)
-            d += children().get(i).getItemHeight();
-        this.setScrollAmount(d);
-    }
-
-    @Override
-    protected int getRowTop(int index) {
-        int integer = top + 4 - (int) this.getScrollAmount() + headerHeight;
-        for (int i = 0; i < children().size() && i < index; i++)
-            integer += children().get(i).getItemHeight();
-        return integer;
-    }
-
-    @Override
-    protected void renderList(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        int left = this.getRowLeft();
-        int right = this.getRowWidth();
-        int count = this.getEntryCount();
-
-        for(int i = 0; i < count; ++i) {
-            Entry entry = children().get(i);
-            int top = this.getRowTop(i);
-            int bottom = top + entry.getItemHeight();
-            int entryHeight = entry.getItemHeight() - 4;
-            if (bottom >= this.top && top <= this.bottom) {
-                this.renderEntry(matrices, mouseX, mouseY, delta, i, left, top, right, entryHeight);
-            }
-        }
-    }
-
-    /* END cloth config code */
-
-    @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        smoothScrollAmount = MathHelper.lerp(MinecraftClient.getInstance().getLastFrameDuration() * 0.5, smoothScrollAmount, getScrollAmount());
-        returnSmoothAmount = true;
-        super.render(matrices, mouseX, mouseY, delta);
-        returnSmoothAmount = false;
-    }
-
-    /**
-     * awful code to only use smooth scroll state when rendering,
-     * not other code that needs target scroll amount
-     */
-    @Override
-    public double getScrollAmount() {
-        if (returnSmoothAmount)
-            return smoothScrollAmount;
-
-        return super.getScrollAmount();
-    }
-
-    public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        for (Entry entry : children()) {
-            entry.postRender(matrices, mouseX, mouseY, delta);
         }
     }
 
@@ -196,12 +101,13 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+        super.mouseScrolled(mouseX, mouseY, amount);
+
         for (Entry child : children()) {
             if (child.mouseScrolled(mouseX, mouseY, amount))
-                return true;
+                break;
         }
 
-        this.setScrollAmount(this.getScrollAmount() - amount * 20 /* * (double) (getMaxScroll() / getEntryCount()) / 2.0D */);
         return true;
     }
 
@@ -227,14 +133,7 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
 
     @Override
     protected int getScrollbarPositionX() {
-        return left + width - (int)(width * 0.05f);
-    }
-
-    @Override
-    protected void renderBackground(MatrixStack matrices) {
-        setRenderBackground(client.world == null);
-        if (client.world != null)
-            fill(matrices, left, top, right, bottom, 0x6B000000);
+        return right - (int)(width * 0.05f);
     }
 
     public void recacheViewableChildren() {
@@ -254,17 +153,9 @@ public class OptionListWidget extends ElementListWidget<OptionListWidget.Entry> 
         return viewableChildren;
     }
 
-    public abstract class Entry extends ElementListWidget.Entry<Entry> {
-        public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-
-        }
-
+    public abstract class Entry extends ElementListWidgetExt.Entry<Entry> {
         public boolean isViewable() {
             return true;
-        }
-
-        public int getItemHeight() {
-            return 22;
         }
 
         protected boolean isHovered() {

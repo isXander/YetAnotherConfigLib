@@ -13,6 +13,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.TooltipBackgroundRenderer;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.joml.Matrix4f;
@@ -160,9 +161,9 @@ public class YACLScreen extends Screen {
         boolean pendingChanges = pendingChanges();
 
         undoButton.active = pendingChanges;
-        finishedSaveButton.setMessage(pendingChanges ? Text.translatable("yacl.gui.save") : Text.translatable("gui.done"));
+        finishedSaveButton.setMessage(pendingChanges ? Text.translatable("yacl.gui.save") : ScreenTexts.DONE);
         finishedSaveButton.setTooltip(pendingChanges ? Text.translatable("yacl.gui.save.tooltip") : Text.translatable("yacl.gui.finished.tooltip"));
-        cancelResetButton.setMessage(pendingChanges ? Text.translatable("gui.cancel") : Text.translatable("controls.reset"));
+        cancelResetButton.setMessage(pendingChanges ? ScreenTexts.CANCEL : Text.translatable("controls.reset"));
         cancelResetButton.setTooltip(pendingChanges ? Text.translatable("yacl.gui.cancel.tooltip") : Text.translatable("yacl.gui.reset.tooltip"));
     }
 

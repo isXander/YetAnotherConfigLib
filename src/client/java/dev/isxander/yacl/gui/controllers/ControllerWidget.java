@@ -4,6 +4,7 @@ import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
+import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
@@ -43,6 +44,9 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         while (textRenderer.getWidth(nameString) > getDimension().width() - getControlWidth() - getXPadding() - 7) {
             nameString = nameString.substring(0, Math.max(nameString.length() - (firstIter ? 2 : 5), 0)).trim();
             nameString += "...";
+
+            if (nameString.equals("..."))
+                break;
 
             firstIter = false;
         }
