@@ -37,9 +37,4 @@ public class StringController implements IStringController<String> {
     public void setFromString(String value) {
         option().requestSet(value);
     }
-
-    @Override
-    public AbstractWidget provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
-        return new StringControllerElement(this, screen, widgetDimension);
-    }
 }

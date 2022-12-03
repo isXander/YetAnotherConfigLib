@@ -64,7 +64,7 @@ val fabricLoaderVersion: String by project
 
 dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
-    mappings("net.fabricmc:yarn:$minecraftVersion+build.1:v2")
+    mappings("net.fabricmc:yarn:$minecraftVersion+build.2:v2")
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 
     "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.68.1+1.19.3"))

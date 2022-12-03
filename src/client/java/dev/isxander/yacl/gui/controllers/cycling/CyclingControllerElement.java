@@ -4,7 +4,7 @@ import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.ControllerWidget;
 import net.minecraft.client.gui.screen.Screen;
-import org.lwjgl.glfw.GLFW;
+import net.minecraft.client.util.InputUtil;
 
 public class CyclingControllerElement extends ControllerWidget<ICyclingController<?>> {
 
@@ -39,11 +39,11 @@ public class CyclingControllerElement extends ControllerWidget<ICyclingControlle
             return false;
 
         switch (keyCode) {
-            case GLFW.GLFW_KEY_LEFT, GLFW.GLFW_KEY_DOWN ->
+            case InputUtil.GLFW_KEY_LEFT, InputUtil.GLFW_KEY_DOWN ->
                     cycleValue(-1);
-            case GLFW.GLFW_KEY_RIGHT, GLFW.GLFW_KEY_UP ->
+            case InputUtil.GLFW_KEY_RIGHT, InputUtil.GLFW_KEY_UP ->
                     cycleValue(1);
-            case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_SPACE, GLFW.GLFW_KEY_KP_ENTER ->
+            case InputUtil.GLFW_KEY_ENTER, InputUtil.GLFW_KEY_SPACE, InputUtil.GLFW_KEY_KP_ENTER ->
                     cycleValue(Screen.hasControlDown() || Screen.hasShiftDown() ? -1 : 1);
             default -> {
                 return false;

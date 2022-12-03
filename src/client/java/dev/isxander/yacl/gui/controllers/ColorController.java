@@ -108,7 +108,7 @@ public class ColorController implements IStringController<Color> {
         private final List<Character> allowedChars;
 
         public ColorControllerElement(ColorController control, YACLScreen screen, Dimension<Integer> dim) {
-            super(control, screen, dim);
+            super(control, screen, dim, true);
             this.colorController = control;
             this.allowedChars = ImmutableList.of('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
         }
@@ -135,21 +135,22 @@ public class ColorController implements IStringController<Color> {
             if (caretPos == 0)
                 return;
 
-            string = string.substring(0, Math.min(inputField.length() - caretPos, string.length()));
+            String trimmed = string.substring(0, Math.min(inputField.length() - caretPos, string.length()));
 
-            inputField.replace(caretPos, caretPos + string.length(), string);
-            caretPos += string.length();
-            setSelectionLength();
-
-            updateControl();
+            if (modifyInput(builder -> builder.replace(caretPos, caretPos + trimmed.length(), trimmed))) {
+                caretPos += trimmed.length();
+                setSelectionLength();
+                updateControl();
+            }
         }
 
         @Override
         protected void doBackspace() {
             if (caretPos > 1) {
-                inputField.setCharAt(caretPos - 1, '0');
-                caretPos--;
-                updateControl();
+                if (modifyInput(builder -> builder.setCharAt(caretPos - 1, '0'))) {
+                    caretPos--;
+                    updateControl();
+                }
             }
         }
 

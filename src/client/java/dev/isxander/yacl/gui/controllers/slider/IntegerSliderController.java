@@ -10,7 +10,7 @@ import java.util.function.Function;
  * {@link ISliderController} for integers.
  */
 public class IntegerSliderController implements ISliderController<Integer> {
-    public static final Function<Integer, Text> DEFAULT_FORMATTER = value -> Text.of(String.format("%,d", value));
+    public static final Function<Integer, Text> DEFAULT_FORMATTER = value -> Text.of(String.format("%,d", value).replaceAll("[\u00a0\u202F]", " "));
 
     private final Option<Integer> option;
 

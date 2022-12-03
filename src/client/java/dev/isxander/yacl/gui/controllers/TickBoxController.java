@@ -6,9 +6,9 @@ import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-import org.lwjgl.glfw.GLFW;
 
 /**
  * This controller renders a tickbox
@@ -109,7 +109,7 @@ public class TickBoxController implements Controller<Boolean> {
                 return false;
             }
 
-            if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_SPACE || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+            if (keyCode == InputUtil.GLFW_KEY_ENTER || keyCode == InputUtil.GLFW_KEY_SPACE || keyCode == InputUtil.GLFW_KEY_KP_ENTER) {
                 toggleSetting();
                 return true;
             }

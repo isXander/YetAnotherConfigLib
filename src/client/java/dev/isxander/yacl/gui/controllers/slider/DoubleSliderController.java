@@ -13,7 +13,7 @@ public class DoubleSliderController implements ISliderController<Double> {
     /**
      * Formats doubles to two decimal places
      */
-    public static final Function<Double, Text> DEFAULT_FORMATTER = value -> Text.of(String.format("%,.2f", value));
+    public static final Function<Double, Text> DEFAULT_FORMATTER = value -> Text.of(String.format("%,.2f", value).replaceAll("[\u00a0\u202F]", " "));
 
     private final Option<Double> option;
 

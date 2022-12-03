@@ -14,6 +14,10 @@ public class ConfigData {
     @ConfigEntry public long longSlider = 0;
     @ConfigEntry public String textField = "Hello";
     @ConfigEntry public Color colorOption = Color.red;
+    @ConfigEntry public double doubleField = 0.5;
+    @ConfigEntry public float floatField = 0.5f;
+    @ConfigEntry public int intField = 5;
+    @ConfigEntry public long longField = 5;
     @ConfigEntry public Alphabet enumOption = Alphabet.A;
 
     @ConfigEntry public boolean groupTestRoot = false;

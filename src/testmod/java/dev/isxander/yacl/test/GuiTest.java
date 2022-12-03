@@ -9,6 +9,10 @@ import dev.isxander.yacl.gui.controllers.slider.FloatSliderController;
 import dev.isxander.yacl.gui.controllers.slider.IntegerSliderController;
 import dev.isxander.yacl.gui.controllers.slider.LongSliderController;
 import dev.isxander.yacl.gui.controllers.string.StringController;
+import dev.isxander.yacl.gui.controllers.string.number.DoubleFieldController;
+import dev.isxander.yacl.gui.controllers.string.number.FloatFieldController;
+import dev.isxander.yacl.gui.controllers.string.number.IntegerFieldController;
+import dev.isxander.yacl.gui.controllers.string.number.LongFieldController;
 import dev.isxander.yacl.test.config.ConfigData;
 import dev.isxander.yacl.test.config.Entrypoint;
 import net.minecraft.client.MinecraftClient;
@@ -155,6 +159,45 @@ public class GuiTest {
                                                     value -> config.colorOption = value
                                             )
                                             .controller(ColorController::new)
+                                            .build())
+                                    .build())
+                            .group(OptionGroup.createBuilder()
+                                    .name(Text.of("Number Fields"))
+                                    .option(Option.createBuilder(double.class)
+                                            .name(Text.of("Double Field"))
+                                            .binding(
+                                                    defaults.doubleField,
+                                                    () -> config.doubleField,
+                                                    value -> config.doubleField = value
+                                            )
+                                            .controller(DoubleFieldController::new)
+                                            .build())
+                                    .option(Option.createBuilder(float.class)
+                                            .name(Text.of("Float Field"))
+                                            .binding(
+                                                    defaults.floatField,
+                                                    () -> config.floatField,
+                                                    value -> config.floatField = value
+                                            )
+                                            .controller(FloatFieldController::new)
+                                            .build())
+                                    .option(Option.createBuilder(int.class)
+                                            .name(Text.of("Integer Field"))
+                                            .binding(
+                                                    defaults.intField,
+                                                    () -> config.intField,
+                                                    value -> config.intField = value
+                                            )
+                                            .controller(IntegerFieldController::new)
+                                            .build())
+                                    .option(Option.createBuilder(long.class)
+                                            .name(Text.of("Long Field"))
+                                            .binding(
+                                                    defaults.longField,
+                                                    () -> config.longField,
+                                                    value -> config.longField = value
+                                            )
+                                            .controller(LongFieldController::new)
                                             .build())
                                     .build())
                             .group(OptionGroup.createBuilder()

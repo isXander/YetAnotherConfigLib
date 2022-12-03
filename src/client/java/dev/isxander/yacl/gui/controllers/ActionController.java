@@ -5,8 +5,8 @@ import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.function.BiConsumer;
 
@@ -94,7 +94,7 @@ public class ActionController implements Controller<BiConsumer<YACLScreen, Butto
                 return false;
             }
 
-            if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_SPACE || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+            if (keyCode == InputUtil.GLFW_KEY_ENTER || keyCode == InputUtil.GLFW_KEY_SPACE || keyCode == InputUtil.GLFW_KEY_KP_ENTER) {
                 executeAction();
                 return true;
             }

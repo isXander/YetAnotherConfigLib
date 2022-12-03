@@ -5,13 +5,17 @@ import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.ControllerWidget;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import org.lwjgl.glfw.GLFW;
+
+import java.util.function.Consumer;
 
 public class StringControllerElement extends ControllerWidget<IStringController<?>> {
-    protected StringBuilder inputField;
+    protected final boolean instantApply;
+
+    protected String inputField;
     protected Dimension<Integer> inputFieldBounds;
     protected boolean inputFieldFocused;
 
@@ -22,12 +26,14 @@ public class StringControllerElement extends ControllerWidget<IStringController<
 
     private final Text emptyText;
 
-    public StringControllerElement(IStringController<?> control, YACLScreen screen, Dimension<Integer> dim) {
+    public StringControllerElement(IStringController<?> control, YACLScreen screen, Dimension<Integer> dim, boolean instantApply) {
         super(control, screen, dim);
-        inputField = new StringBuilder(control.getString());
+        this.instantApply = instantApply;
+        inputField = control.getString();
         inputFieldFocused = false;
         selectionLength = 0;
         emptyText = Text.literal("Click to type...").formatted(Formatting.GRAY);
+        control.option().addListener((opt, val) -> inputField = control.getString());
         setDimension(dim);
     }
 
@@ -35,12 +41,14 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     protected void drawHoveredControl(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         ticks += delta;
 
+        String text = instantApply ? control.getString() : inputField;
+
         DrawableHelper.fill(matrices, inputFieldBounds.x(), inputFieldBounds.yLimit(), inputFieldBounds.xLimit(), inputFieldBounds.yLimit() + 1, -1);
         DrawableHelper.fill(matrices, inputFieldBounds.x() + 1, inputFieldBounds.yLimit() + 1, inputFieldBounds.xLimit() + 1, inputFieldBounds.yLimit() + 2, 0xFF404040);
 
         if (inputFieldFocused || focused) {
-            int caretX = inputFieldBounds.x() + textRenderer.getWidth(control.getString().substring(0, caretPos)) - 1;
-            if (inputField.isEmpty())
+            int caretX = inputFieldBounds.x() + textRenderer.getWidth(text.substring(0, caretPos)) - 1;
+            if (text.isEmpty())
                 caretX += inputFieldBounds.width() / 2;
 
             if (ticks % 20 <= 10) {
@@ -48,7 +56,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
             }
 
             if (selectionLength != 0) {
-                int selectionX = inputFieldBounds.x() + textRenderer.getWidth(control.getString().substring(0, caretPos + selectionLength));
+                int selectionX = inputFieldBounds.x() + textRenderer.getWidth(text.substring(0, caretPos + selectionLength));
                 DrawableHelper.fill(matrices, caretX, inputFieldBounds.y() - 1, selectionX, inputFieldBounds.yLimit(), 0x803030FF);
             }
         }
@@ -83,11 +91,11 @@ public class StringControllerElement extends ControllerWidget<IStringController<
             return false;
 
         switch (keyCode) {
-            case GLFW.GLFW_KEY_ESCAPE -> {
-                inputFieldFocused = false;
+            case InputUtil.GLFW_KEY_ESCAPE, InputUtil.GLFW_KEY_ENTER -> {
+                unfocus();
                 return true;
             }
-            case GLFW.GLFW_KEY_LEFT -> {
+            case InputUtil.GLFW_KEY_LEFT -> {
                 if (Screen.hasShiftDown()) {
                     if (Screen.hasControlDown()) {
                         int spaceChar = findSpaceIndex(true);
@@ -98,14 +106,18 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                         selectionLength += 1;
                     }
                 } else {
-                    if (caretPos > 0)
-                        caretPos--;
+                    if (caretPos > 0) {
+                        if (selectionLength != 0)
+                            caretPos += Math.min(selectionLength, 0);
+                        else
+                            caretPos--;
+                    }
                     selectionLength = 0;
                 }
 
                 return true;
             }
-            case GLFW.GLFW_KEY_RIGHT -> {
+            case InputUtil.GLFW_KEY_RIGHT -> {
                 if (Screen.hasShiftDown()) {
                     if (Screen.hasControlDown()) {
                         int spaceChar = findSpaceIndex(false);
@@ -116,18 +128,22 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                         selectionLength -= 1;
                     }
                 } else {
-                    if (caretPos < inputField.length())
-                        caretPos++;
+                    if (caretPos < inputField.length()) {
+                        if (selectionLength != 0)
+                            caretPos += Math.max(selectionLength, 0);
+                        else
+                            caretPos++;
+                    }
                     selectionLength = 0;
                 }
 
                 return true;
             }
-            case GLFW.GLFW_KEY_BACKSPACE -> {
+            case InputUtil.GLFW_KEY_BACKSPACE -> {
                 doBackspace();
                 return true;
             }
-            case GLFW.GLFW_KEY_DELETE -> {
+            case InputUtil.GLFW_KEY_DELETE -> {
                 doDelete();
                 return true;
             }
@@ -172,36 +188,46 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         if (selectionLength != 0) {
             write("");
         } else if (caretPos > 0) {
-            inputField.deleteCharAt(caretPos - 1);
-            caretPos--;
-            updateControl();
+            if (modifyInput(builder -> builder.deleteCharAt(caretPos - 1)))
+                caretPos--;
         }
     }
 
     protected void doDelete() {
         if (caretPos < inputField.length()) {
-            inputField.deleteCharAt(caretPos);
-            updateControl();
+            modifyInput(builder -> builder.deleteCharAt(caretPos));
         }
     }
 
     public void write(String string) {
         if (selectionLength == 0) {
-            string = textRenderer.trimToWidth(string, getMaxLength() - textRenderer.getWidth(inputField.toString()));
+            String trimmed = textRenderer.trimToWidth(string, getMaxLength() - textRenderer.getWidth(inputField));
 
-            inputField.insert(caretPos, string);
-            caretPos += string.length();
+            if (modifyInput(builder -> builder.insert(caretPos, trimmed))) {
+                caretPos += trimmed.length();
+            }
         } else {
             int start = getSelectionStart();
             int end = getSelectionEnd();
 
-            string = textRenderer.trimToWidth(string, getMaxLength() - textRenderer.getWidth(inputField.toString()) + textRenderer.getWidth(inputField.substring(start, end)));
+            String trimmed = textRenderer.trimToWidth(string, getMaxLength() - textRenderer.getWidth(inputField) + textRenderer.getWidth(inputField.substring(start, end)));
 
-            inputField.replace(start, end, string);
-            caretPos = start + string.length();
-            selectionLength = 0;
+            if (modifyInput(builder -> builder.replace(start, end, trimmed))) {
+                caretPos = start + trimmed.length();
+                selectionLength = 0;
+            }
         }
-        updateControl();
+    }
+
+    public boolean modifyInput(Consumer<StringBuilder> consumer) {
+        StringBuilder temp = new StringBuilder(inputField);
+        consumer.accept(temp);
+        if (!control.isInputValid(temp.toString()))
+            return false;
+        inputField = temp.toString();
+        if (instantApply)
+            updateControl();
+        return true;
     }
 
     public int getMaxLength() {
@@ -249,6 +275,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     public void unfocus() {
         super.unfocus();
         inputFieldFocused = false;
+        if (!instantApply) updateControl();
     }
 
     @Override
@@ -265,7 +292,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     }
 
     protected void updateControl() {
-        control.setFromString(inputField.toString());
+        control.setFromString(inputField);
     }
 
     @Override
@@ -278,6 +305,6 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         if (!inputFieldFocused && inputField.isEmpty())
             return emptyText;
 
-        return super.getValueText();
+        return instantApply || !inputFieldFocused ? control.formatValue() : Text.of(inputField);
     }
 }

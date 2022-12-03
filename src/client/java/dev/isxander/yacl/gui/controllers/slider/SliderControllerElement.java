@@ -5,9 +5,9 @@ import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.ControllerWidget;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
-import org.lwjgl.glfw.GLFW;
 
 public class SliderControllerElement extends ControllerWidget<ISliderController<?>> {
     private final double min, max, interval;
@@ -104,8 +104,8 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
             return false;
 
         switch (keyCode) {
-            case GLFW.GLFW_KEY_LEFT, GLFW.GLFW_KEY_DOWN -> incrementValue(-1);
-            case GLFW.GLFW_KEY_RIGHT, GLFW.GLFW_KEY_UP -> incrementValue(1);
+            case InputUtil.GLFW_KEY_LEFT, InputUtil.GLFW_KEY_DOWN -> incrementValue(-1);
+            case InputUtil.GLFW_KEY_RIGHT, InputUtil.GLFW_KEY_UP -> incrementValue(1);
             default -> {
                 return false;
             }

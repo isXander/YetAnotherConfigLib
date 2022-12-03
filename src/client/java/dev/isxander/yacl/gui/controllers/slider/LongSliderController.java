@@ -10,7 +10,7 @@ import java.util.function.Function;
  * {@link ISliderController} for longs.
  */
 public class LongSliderController implements ISliderController<Long> {
-    public static final Function<Long, Text> DEFAULT_FORMATTER = value -> Text.of(String.format("%,d", value));
+    public static final Function<Long, Text> DEFAULT_FORMATTER = value -> Text.of(String.format("%,d", value).replaceAll("[\u00a0\u202F]", " "));
 
     private final Option<Long> option;
 
