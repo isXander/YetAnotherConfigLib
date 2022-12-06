@@ -62,6 +62,11 @@ public class LongFieldController extends NumberFieldController<Long> {
         this(option, -Long.MAX_VALUE, Long.MAX_VALUE, LongSliderController.DEFAULT_FORMATTER);
     }
 
+    @Override
+    public boolean isInputValid(String input) {
+        return input.matches("\\d+|-|");
+    }
+
     /**
      * {@inheritDoc}
      */

@@ -183,11 +183,13 @@ public class ColorController implements IStringController<Color> {
 
         @Override
         public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+            int prevSelectionLength = selectionLength;
+            selectionLength = 0;
             if (super.keyPressed(keyCode, scanCode, modifiers)) {
                 caretPos = Math.max(1, caretPos);
                 setSelectionLength();
                 return true;
-            }
+            } else selectionLength = prevSelectionLength;
             return false;
         }
 

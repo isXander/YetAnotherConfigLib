@@ -84,7 +84,7 @@ public class DoubleFieldController extends NumberFieldController<Double> {
      */
     @Override
     public String getString() {
-        return BigDecimal.valueOf(option().pendingValue()).stripTrailingZeros().toPlainString();
+        return String.valueOf(option().pendingValue());
     }
 
     /**

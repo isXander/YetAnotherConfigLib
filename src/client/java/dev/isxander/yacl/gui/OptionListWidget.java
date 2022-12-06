@@ -317,7 +317,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         private void updateExpandMinimizeText() {
-            expandMinimizeButton.setMessage(Text.of(isExpanded() ? "\u25BC" : "\u25B6"));
+            expandMinimizeButton.setMessage(Text.of(isExpanded() ? "▼" : "▶"));
         }
 
         public void setOptionEntries(List<OptionEntry> optionEntries) {

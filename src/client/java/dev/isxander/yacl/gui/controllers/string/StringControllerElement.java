@@ -41,7 +41,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     protected void drawHoveredControl(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         ticks += delta;
 
-        String text = instantApply ? control.getString() : inputField;
+        String text = getValueText().getString();
 
         DrawableHelper.fill(matrices, inputFieldBounds.x(), inputFieldBounds.yLimit(), inputFieldBounds.xLimit(), inputFieldBounds.yLimit() + 1, -1);
         DrawableHelper.fill(matrices, inputFieldBounds.x() + 1, inputFieldBounds.yLimit() + 1, inputFieldBounds.xLimit() + 1, inputFieldBounds.yLimit() + 2, 0xFF404040);
@@ -64,13 +64,29 @@ public class StringControllerElement extends ControllerWidget<IStringController<
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (isAvailable() && inputFieldBounds.isPointInside((int) mouseX, (int) mouseY)) {
-            if (!inputFieldFocused) {
-                inputFieldFocused = true;
+        if (isAvailable() && getDimension().isPointInside((int) mouseX, (int) mouseY)) {
+            inputFieldFocused = true;
+
+            if (!inputFieldBounds.isPointInside((int) mouseX, (int) mouseY)) {
                 caretPos = getDefaultCarotPos();
             } else {
-                int textWidth = (int) mouseX - inputFieldBounds.x();
-                caretPos = textRenderer.trimToWidth(control.getString(), textWidth).length();
+                // gets the appropriate carot position for where you click
+                int textX = (int) mouseX - inputFieldBounds.x();
+                int pos = -1;
+                int currentWidth = 0;
+                for (char ch : inputField.toCharArray()) {
+                    pos++;
+                    int charLength = textRenderer.getWidth(String.valueOf(ch));
+                    if (currentWidth + charLength / 2 > textX) { // if more than half way past the characters select in front of that char
+                        caretPos = pos;
+                        break;
+                    } else if (pos == inputField.length() - 1) {
+                        // if we have reached the end and no matches, it must be the second half of the char so the last position
+                        caretPos = pos + 1;
+                    }
+                    currentWidth += charLength;
+                }
+
                 selectionLength = 0;
             }
             return true;

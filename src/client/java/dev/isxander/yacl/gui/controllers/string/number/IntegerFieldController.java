@@ -62,6 +62,11 @@ public class IntegerFieldController extends NumberFieldController<Integer> {
         this(option, -Integer.MAX_VALUE, Integer.MAX_VALUE, IntegerSliderController.DEFAULT_FORMATTER);
     }
 
+    @Override
+    public boolean isInputValid(String input) {
+        return input.matches("\\d+|-|");
+    }
+
     /**
      * {@inheritDoc}
      */

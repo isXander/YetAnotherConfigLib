@@ -2,7 +2,7 @@ plugins {
     java
 
     id("fabric-loom") version "1.0.+"
-    id("io.github.juuxel.loom-quiltflower") version "1.7.+"
+    id("io.github.juuxel.loom-quiltflower") version "1.8.+"
 
     id("com.modrinth.minotaur") version "2.4.+"
     id("me.hypherionmc.cursegradle") version "2.+"
@@ -61,10 +61,11 @@ repositories {
 
 val minecraftVersion: String by project
 val fabricLoaderVersion: String by project
+val yarnBuild: String by project
 
 dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
-    mappings("net.fabricmc:yarn:$minecraftVersion+build.2:v2")
+    mappings("net.fabricmc:yarn:$minecraftVersion+build.$yarnBuild:v2")
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 
     "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.68.1+1.19.3"))
