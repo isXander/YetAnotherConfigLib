@@ -30,6 +30,9 @@ public abstract class ConfigInstance<T> {
         }
     }
 
+    public abstract void save();
+    public abstract void load();
+
     public T getConfig() {
         return this.instance;
     }
@@ -45,7 +48,4 @@ public abstract class ConfigInstance<T> {
     public Class<T> getConfigClass() {
         return this.configClass;
     }
-
-    public abstract void save();
-    public abstract void load();
 }
