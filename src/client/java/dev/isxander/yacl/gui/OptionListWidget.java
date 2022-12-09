@@ -302,7 +302,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
         @Override
         public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-            if (isHovered() && !expandMinimizeButton.isMouseOver(mouseX, mouseY)) {
+            if ((isHovered() && !expandMinimizeButton.isMouseOver(mouseX, mouseY)) || expandMinimizeButton.isFocused()) {
                 YACLScreen.renderMultilineTooltip(matrices, textRenderer, wrappedTooltip, getRowLeft() + getRowWidth() / 2, y - 3, y + getItemHeight() + 3, screen.width, screen.height);
             }
         }

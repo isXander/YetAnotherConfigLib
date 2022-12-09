@@ -4,6 +4,7 @@ import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
+import dev.isxander.yacl.gui.utils.RenderUtils;
 import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.DrawableHelper;
@@ -38,20 +39,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         hovered = isMouseOver(mouseX, mouseY);
 
         Text name = control.option().changed() ? modifiedOptionName : control.option().name();
-        String nameString = name.getString();
-
-        boolean firstIter = true;
-        while (textRenderer.getWidth(nameString) > getDimension().width() - getControlWidth() - getXPadding() - 7) {
-            nameString = nameString.substring(0, Math.max(nameString.length() - (firstIter ? 2 : 5), 0)).trim();
-            nameString += "...";
-
-            if (nameString.equals("..."))
-                break;
-
-            firstIter = false;
-        }
-
-        Text shortenedName = Text.literal(nameString).fillStyle(name.getStyle());
+        Text shortenedName = Text.literal(RenderUtils.shortenString(name.getString(), textRenderer, getDimension().width() - getControlWidth() - getXPadding() - 7, "...")).fillStyle(name.getStyle());
 
         drawButtonRect(matrices, getDimension().x(), getDimension().y(), getDimension().xLimit(), getDimension().yLimit(), isHovered(), isAvailable());
         matrices.push();
@@ -67,7 +55,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
 
     @Override
     public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        if (hovered) {
+        if (hovered || focused) {
             YACLScreen.renderMultilineTooltip(matrices, textRenderer, wrappedTooltip, getDimension().centerX(), getDimension().y() - 5, getDimension().yLimit() + 5, screen.width, screen.height);
         }
     }
