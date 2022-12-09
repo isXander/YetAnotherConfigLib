@@ -1,9 +1,9 @@
 package dev.isxander.yacl.config;
 
-import dev.isxander.yacl.api.YetAnotherConfigLib;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.function.BiFunction;
 
 /**
  * Responsible for handing the actual config data type.
@@ -30,6 +30,9 @@ public abstract class ConfigInstance<T> {
         }
     }
 
+    public abstract void save();
+    public abstract void load();
+
     public T getConfig() {
         return this.instance;
     }
@@ -45,11 +48,4 @@ public abstract class ConfigInstance<T> {
     public Class<T> getConfigClass() {
         return this.configClass;
     }
-
-    public YetAnotherConfigLib buildConfig(BiFunction<ConfigInstance<T>, YetAnotherConfigLib.Builder, YetAnotherConfigLib.Builder> builder) {
-        return builder.apply(this, YetAnotherConfigLib.createBuilder().save(this::save)).build();
-    }
-
-    public abstract void save();
-    public abstract void load();
 }

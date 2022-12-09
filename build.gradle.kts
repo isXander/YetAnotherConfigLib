@@ -2,7 +2,7 @@ plugins {
     java
 
     id("fabric-loom") version "1.0.+"
-    id("io.github.juuxel.loom-quiltflower") version "1.7.+"
+    id("io.github.juuxel.loom-quiltflower") version "1.8.+"
 
     id("com.modrinth.minotaur") version "2.4.+"
     id("me.hypherionmc.cursegradle") version "2.+"
@@ -16,14 +16,27 @@ plugins {
 val ciRun = System.getenv().containsKey("GITHUB_ACTIONS")
 
 group = "dev.isxander"
-version = "1.7.1"
+version = "2.0.0"
 
 if (ciRun)
     version = "$version+${grgit.branch.current().name}-SNAPSHOT"
 
+loom {
+    splitEnvironmentSourceSets()
+
+    mods {
+        register("yet-another-config-lib") {
+            sourceSet(sourceSets["main"])
+            sourceSet(sourceSets["client"])
+        }
+    }
+}
+
 val testmod by sourceSets.registering {
     compileClasspath += sourceSets.main.get().compileClasspath
     runtimeClasspath += sourceSets.main.get().runtimeClasspath
+    compileClasspath += sourceSets["client"].compileClasspath
+    runtimeClasspath += sourceSets["client"].runtimeClasspath
 }
 
 loom {
@@ -48,18 +61,17 @@ repositories {
 
 val minecraftVersion: String by project
 val fabricLoaderVersion: String by project
+val yarnBuild: String by project
 
 dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
-    mappings("net.fabricmc:yarn:$minecraftVersion+build.+:v2")
+    mappings("net.fabricmc:yarn:$minecraftVersion+build.$yarnBuild:v2")
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 
-    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.66.0+1.19.2"))
+    "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.68.1+1.19.3"))
 
     "testmodImplementation"(sourceSets.main.get().output)
-    "modTestmodImplementation"("com.terraformersmc:modmenu:4.0.6") {
-        exclude(module = "fabric-loader")
-    }
+    "testmodImplementation"(sourceSets["client"].output)
 }
 
 java {
