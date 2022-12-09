@@ -121,12 +121,12 @@ val changelogText = file("changelogs/${project.version}.md").takeIf { it.exists(
 val modrinthId: String by project
 if (modrinthId.isNotEmpty()) {
     modrinth {
-        token.set(findProperty("modrinth.token")?.toString())
+        token.set(findProperty("MODRINTH_TOKEN")?.toString())
         projectId.set(modrinthId)
         versionNumber.set("${project.version}")
         versionType.set("release")
         uploadFile.set(tasks["remapJar"])
-        gameVersions.set(listOf("1.19", "1.19.1", "1.19.2"))
+        gameVersions.set(listOf("1.19.3"))
         loaders.set(listOf("fabric", "quilt"))
         dependencies {
             required.project("fabric-api")
@@ -139,7 +139,7 @@ if (modrinthId.isNotEmpty()) {
 val curseforgeId: String by project
 if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
     curseforge {
-        apiKey = findProperty("curseforge.token")
+        apiKey = findProperty("CURSEFORGE_TOKEN")
         project(closureOf<me.hypherionmc.cursegradle.CurseProject> {
             mainArtifact(tasks["remapJar"], closureOf<me.hypherionmc.cursegradle.CurseArtifact> {
                 displayName = "${project.version}"
@@ -168,7 +168,7 @@ if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
 }
 
 githubRelease {
-    token(findProperty("github.token")?.toString())
+    token(findProperty("GITHUB_TOKEN")?.toString())
 
     val githubProject: String by project
     val split = githubProject.split("/")
