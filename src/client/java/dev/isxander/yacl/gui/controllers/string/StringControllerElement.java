@@ -257,7 +257,9 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     }
 
     protected void doDelete() {
-        if (caretPos < inputField.length()) {
+        if (selectionLength != 0) {
+            write("");
+        } else if (caretPos < inputField.length()) {
             modifyInput(builder -> builder.deleteCharAt(caretPos));
         }
     }
