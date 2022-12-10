@@ -19,7 +19,7 @@ group = "dev.isxander"
 version = "2.0.0"
 
 if (ciRun)
-    version = "$version+${grgit.branch.current().name}-SNAPSHOT"
+    version = "$version+${grgit.branch.current().name.replace('/', '.')}-SNAPSHOT"
 
 loom {
     splitEnvironmentSourceSets()
