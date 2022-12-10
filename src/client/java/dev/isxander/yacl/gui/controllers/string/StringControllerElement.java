@@ -193,26 +193,46 @@ public class StringControllerElement extends ControllerWidget<IStringController<
             }
         }
 
-        if (canUseShortcuts()) {
-            if (Screen.isPaste(keyCode)) {
-                this.write(client.keyboard.getClipboard());
-                return true;
-            } else if (Screen.isCopy(keyCode) && selectionLength != 0) {
-                client.keyboard.setClipboard(getSelection());
-                return true;
-            } else if (Screen.isCut(keyCode) && selectionLength != 0) {
-                client.keyboard.setClipboard(getSelection());
-                this.write("");
-                return true;
-            } else if (Screen.isSelectAll(keyCode)) {
-                caretPos = inputField.length();
-                checkRenderOffset();
-                selectionLength = -caretPos;
-                return true;
-            }
+        if (Screen.isPaste(keyCode)) {
+            return doPaste();
+        } else if (Screen.isCopy(keyCode)) {
+            return  doCopy();
+        } else if (Screen.isCut(keyCode)) {
+            return doCut();
+        } else if (Screen.isSelectAll(keyCode)) {
+            return doSelectAll();
         }
 
         return false;
+    }
+
+    protected boolean doPaste() {
+        this.write(client.keyboard.getClipboard());
+        return true;
+    }
+
+    protected boolean doCopy() {
+        if (selectionLength != 0) {
+            client.keyboard.setClipboard(getSelection());
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean doCut() {
+        if (selectionLength != 0) {
+            client.keyboard.setClipboard(getSelection());
+            this.write("");
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean doSelectAll() {
+        caretPos = inputField.length();
+        checkRenderOffset();
+        selectionLength = -caretPos;
+        return true;
     }
 
     protected void checkRenderOffset() {
@@ -238,10 +258,6 @@ public class StringControllerElement extends ControllerWidget<IStringController<
 
         write(Character.toString(chr));
 
-        return true;
-    }
-
-    protected boolean canUseShortcuts() {
         return true;
     }
 
