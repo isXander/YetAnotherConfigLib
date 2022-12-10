@@ -245,6 +245,16 @@ public class GuiTest {
                                             .controller(EnumController::new)
                                             .build())
                                     .build())
+                            .group(ListGroup.createBuilder(String.class)
+                                    .name(Text.of("List Option"))
+                                    .binding(
+                                            defaults.stringList,
+                                            () -> config.stringList,
+                                            val -> config.stringList = val
+                                    )
+                                    .controller(StringController::new)
+                                    .initial("")
+                                    .build())
                             .build())
                     .category(PlaceholderCategory.createBuilder()
                             .name(Text.of("Placeholder Category"))

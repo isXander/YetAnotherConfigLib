@@ -31,7 +31,7 @@ public interface OptionGroup {
     /**
      * List of all options in the group
      */
-    @NotNull ImmutableList<Option<?>> options();
+    @NotNull ImmutableList<? extends Option<?>> options();
 
     /**
      * Dictates if the group should be collapsed by default.

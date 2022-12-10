@@ -49,7 +49,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     @Override
     protected void drawValueText(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         Text valueText = getValueText();
-        if (!isHovered()) valueText = Text.literal(RenderUtils.shortenString(valueText.getString(), textRenderer, getDimension().width() / 2, "...")).setStyle(valueText.getStyle());
+        if (!isHovered()) valueText = Text.literal(RenderUtils.shortenString(valueText.getString(), textRenderer, getMaxUnwrapLength(), "...")).setStyle(valueText.getStyle());
 
         int overflowWidth = textRenderer.getWidth(inputField.substring(inputField.length() - renderOffset));
 
@@ -294,7 +294,15 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     }
 
     public int getUnshiftedLength() {
+        if (optionNameString.isEmpty())
+            return getDimension().width() - getXPadding() * 2;
         return getDimension().width() / 8 * 5;
+    }
+
+    public int getMaxUnwrapLength() {
+        if (optionNameString.isEmpty())
+            return getDimension().width() - getXPadding() * 2;
+        return getDimension().width() / 2;
     }
 
     public int getSelectionStart() {
@@ -361,7 +369,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
 
     @Override
     protected int getUnhoveredControlWidth() {
-        return !isHovered() ? Math.min(getHoveredControlWidth(), getDimension().width() / 2) : getHoveredControlWidth();
+        return !isHovered() ? Math.min(getHoveredControlWidth(), getMaxUnwrapLength()) : getHoveredControlWidth();
     }
 
     @Override

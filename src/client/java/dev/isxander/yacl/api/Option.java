@@ -71,12 +71,6 @@ public interface Option<T> {
     boolean changed();
 
     /**
-     * If true, modifying this option recommends a restart.
-     */
-    @Deprecated
-    boolean requiresRestart();
-
-    /**
      * Value in the GUI, ready to set the actual bound value or be undone.
      */
     @NotNull T pendingValue();
@@ -108,6 +102,10 @@ public interface Option<T> {
      * Checks if the current pending value is equal to its default value
      */
     boolean isPendingValueDefault();
+
+    default boolean canResetToDefault() {
+        return true;
+    }
 
     /**
      * Adds a listener for when the pending value changes

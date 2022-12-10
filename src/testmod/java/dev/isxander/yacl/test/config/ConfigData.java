@@ -3,6 +3,7 @@ package dev.isxander.yacl.test.config;
 import dev.isxander.yacl.config.ConfigEntry;
 
 import java.awt.*;
+import java.util.List;
 
 public class ConfigData {
     @ConfigEntry public boolean booleanToggle = false;
@@ -19,6 +20,8 @@ public class ConfigData {
     @ConfigEntry public int intField = 5;
     @ConfigEntry public long longField = 5;
     @ConfigEntry public Alphabet enumOption = Alphabet.A;
+
+    @ConfigEntry public List<String> stringList = List.of("This is quite cool.", "You can add multiple items!", "And it is integrated so well into Option groups!");
 
     @ConfigEntry public boolean groupTestRoot = false;
     @ConfigEntry public boolean groupTestFirstGroup = false;
