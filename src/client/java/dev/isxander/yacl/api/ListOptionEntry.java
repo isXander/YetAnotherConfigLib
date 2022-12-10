@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 
 public interface ListOptionEntry<T> extends Option<T> {
-    ListGroup<T> parentGroup();
+    ListOption<T> parentGroup();
 
     @Override
     default @NotNull Class<T> typeClass() {

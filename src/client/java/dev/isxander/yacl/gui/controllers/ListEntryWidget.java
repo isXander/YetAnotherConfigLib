@@ -1,6 +1,6 @@
 package dev.isxander.yacl.gui.controllers;
 
-import dev.isxander.yacl.api.ListGroup;
+import dev.isxander.yacl.api.ListOption;
 import dev.isxander.yacl.api.ListOptionEntry;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.*;
@@ -17,7 +17,7 @@ public class ListEntryWidget extends AbstractWidget implements ParentElement {
     private final TooltipButtonWidget removeButton, moveUpButton, moveDownButton;
     private final AbstractWidget entryWidget;
 
-    private final ListGroup<?> listGroup;
+    private final ListOption<?> listOption;
 
     private final String optionNameString;
 
@@ -26,7 +26,7 @@ public class ListEntryWidget extends AbstractWidget implements ParentElement {
 
     public ListEntryWidget(YACLScreen screen, ListOptionEntry<?> listOptionEntry, AbstractWidget entryWidget) {
         super(entryWidget.getDimension());
-        this.listGroup = listOptionEntry.parentGroup();
+        this.listOption = listOptionEntry.parentGroup();
         this.optionNameString = listOptionEntry.name().getString().toLowerCase();
         this.entryWidget = entryWidget;
 
@@ -34,28 +34,28 @@ public class ListEntryWidget extends AbstractWidget implements ParentElement {
         entryWidget.setDimension(dim.clone().move(20 * 2, 0).expand(-20 * 3, 0));
 
         removeButton = new TooltipButtonWidget(screen, dim.xLimit() - 20, dim.y(), dim.height(), dim.height(), Text.of("\u274c"), Text.translatable("yacl.list.remove"), btn -> {
-            listGroup.removeEntry(listOptionEntry);
+            listOption.removeEntry(listOptionEntry);
         });
 
         moveUpButton = new TooltipButtonWidget(screen, dim.x(), dim.y(), dim.height(), dim.height(), Text.of("\u2191"), Text.translatable("yacl.list.move_up"), btn -> {
-            int index = listGroup.indexOf(listOptionEntry) - 1;
+            int index = listOption.indexOf(listOptionEntry) - 1;
             if (index >= 0) {
-                listGroup.removeEntry(listOptionEntry);
-                listGroup.insertEntry(index, listOptionEntry);
+                listOption.removeEntry(listOptionEntry);
+                listOption.insertEntry(index, listOptionEntry);
                 btn.active = index > 0;
             }
         });
-        moveUpButton.active = listGroup.indexOf(listOptionEntry) > 0;
+        moveUpButton.active = listOption.indexOf(listOptionEntry) > 0;
 
         moveDownButton = new TooltipButtonWidget(screen, dim.x() + 20, dim.y(), dim.height(), dim.height(), Text.of("\u2193"), Text.translatable("yacl.list.move_down"), btn -> {
-            int index = listGroup.indexOf(listOptionEntry) + 1;
-            if (index < listGroup.options().size()) {
-                listGroup.removeEntry(listOptionEntry);
-                listGroup.insertEntry(index, listOptionEntry);
-                btn.active = index < listGroup.options().size() - 1;
+            int index = listOption.indexOf(listOptionEntry) + 1;
+            if (index < listOption.options().size()) {
+                listOption.removeEntry(listOptionEntry);
+                listOption.insertEntry(index, listOptionEntry);
+                btn.active = index < listOption.options().size() - 1;
             }
         });
-        moveDownButton.active = listGroup.indexOf(listOptionEntry) < listOptionEntry.parentGroup().options().size() - 1;
+        moveDownButton.active = listOption.indexOf(listOptionEntry) < listOptionEntry.parentGroup().options().size() - 1;
     }
 
     @Override

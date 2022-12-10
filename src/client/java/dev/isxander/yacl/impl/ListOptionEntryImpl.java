@@ -8,14 +8,14 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class ListOptionEntryImpl<T> implements ListOptionEntry<T> {
-    private final ListGroup<T> group;
+    private final ListOption<T> group;
 
     private T value;
 
     private final Binding<T> binding;
     private final Controller<T> controller;
 
-    public ListOptionEntryImpl(ListGroup<T> group, T initialValue, @NotNull Function<ListOptionEntry<T>, Controller<T>> controlGetter) {
+    public ListOptionEntryImpl(ListOption<T> group, T initialValue, @NotNull Function<ListOptionEntry<T>, Controller<T>> controlGetter) {
         this.group = group;
         this.value = initialValue;
         this.binding = new EntryBinding();
@@ -53,7 +53,7 @@ public class ListOptionEntryImpl<T> implements ListOptionEntry<T> {
     }
 
     @Override
-    public ListGroup<T> parentGroup() {
+    public ListOption<T> parentGroup() {
         return group;
     }
 
@@ -106,7 +106,7 @@ public class ListOptionEntryImpl<T> implements ListOptionEntry<T> {
         @Override
         public void setValue(T newValue) {
             value = newValue;
-            ((ListGroupImpl<T>) group).callListeners();
+            ((ListOptionImpl<T>) group).callListeners();
         }
 
         @Override

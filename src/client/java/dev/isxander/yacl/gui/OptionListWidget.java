@@ -32,8 +32,8 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
         for (ConfigCategory category : screen.config.categories()) {
             for (OptionGroup group : category.groups()) {
-                if (group instanceof ListGroup<?> listGroup) {
-                    listGroup.addRefreshListener((opt, val) -> refreshListEntries(listGroup, category));
+                if (group instanceof ListOption<?> listOption) {
+                    listOption.addRefreshListener((opt, val) -> refreshListEntries(listOption, category));
                 }
             }
         }
@@ -55,8 +55,8 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             for (OptionGroup group : category.groups()) {
                 GroupSeparatorEntry groupSeparatorEntry;
                 if (!group.isRoot()) {
-                    groupSeparatorEntry = group instanceof ListGroup<?> listGroup
-                            ? new ListGroupSeparatorEntry(listGroup, yaclScreen)
+                    groupSeparatorEntry = group instanceof ListOption<?> listOption
+                            ? new ListGroupSeparatorEntry(listOption, yaclScreen)
                             : new GroupSeparatorEntry(group, yaclScreen);
                     addEntry(groupSeparatorEntry);
                 } else {
@@ -81,9 +81,9 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         resetSmoothScrolling();
     }
 
-    private void refreshListEntries(ListGroup<?> listGroup, ConfigCategory category) {
+    private void refreshListEntries(ListOption<?> listOption, ConfigCategory category) {
         // find group separator for group
-        GroupSeparatorEntry groupSeparator = super.children().stream().filter(e -> e instanceof GroupSeparatorEntry gs && gs.group == listGroup).map(GroupSeparatorEntry.class::cast).findAny().orElse(null);
+        GroupSeparatorEntry groupSeparator = super.children().stream().filter(e -> e instanceof GroupSeparatorEntry gs && gs.group == listOption).map(GroupSeparatorEntry.class::cast).findAny().orElse(null);
 
         if (groupSeparator == null)
             return;
@@ -93,8 +93,8 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
         groupSeparator.optionEntries.clear();
         Entry lastEntry = groupSeparator;
-        for (ListOptionEntry<?> listOptionEntry : listGroup.options()) {
-            OptionEntry optionEntry = new OptionEntry(listOptionEntry, category, listGroup, groupSeparator, listOptionEntry.controller().provideWidget(yaclScreen, getDefaultEntryPosition()));
+        for (ListOptionEntry<?> listOptionEntry : listOption.options()) {
+            OptionEntry optionEntry = new OptionEntry(listOptionEntry, category, listOption, groupSeparator, listOptionEntry.controller().provideWidget(yaclScreen, getDefaultEntryPosition()));
             addEntryBelow(lastEntry, optionEntry);
             groupSeparator.optionEntries.add(optionEntry);
             lastEntry = optionEntry;
@@ -432,7 +432,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         private final TextScaledButtonWidget resetListButton;
         private final TooltipButtonWidget addListButton;
 
-        private ListGroupSeparatorEntry(ListGroup<?> group, Screen screen) {
+        private ListGroupSeparatorEntry(ListOption<?> group, Screen screen) {
             super(group, screen);
 
             this.resetListButton = new TextScaledButtonWidget(getRowRight() - 20, -50, 20, 20, 2f, Text.of("\u21BB"), button -> {

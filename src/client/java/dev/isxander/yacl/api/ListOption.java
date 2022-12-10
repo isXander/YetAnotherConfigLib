@@ -2,10 +2,11 @@ package dev.isxander.yacl.api;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import dev.isxander.yacl.impl.ListGroupImpl;
+import dev.isxander.yacl.impl.ListOptionImpl;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -14,19 +15,28 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public interface ListGroup<T> extends OptionGroup, Option<List<T>> {
+public interface ListOption<T> extends OptionGroup, Option<List<T>> {
     @Override
     @NotNull ImmutableList<ListOptionEntry<T>> options();
 
+    /**
+     * Class of the entry type
+     */
     @NotNull Class<T> elementTypeClass();
 
+    @ApiStatus.Internal
     ListOptionEntry<T> insertNewEntryToTop();
-    ListOptionEntry<T> insertNewEntry(ListOptionEntry<?> after);
+
+    @ApiStatus.Internal
     void insertEntry(int index, ListOptionEntry<?> entry);
+
+    @ApiStatus.Internal
     int indexOf(ListOptionEntry<?> entry);
 
+    @ApiStatus.Internal
     void removeEntry(ListOptionEntry<?> entry);
 
+    @ApiStatus.Internal
     void addRefreshListener(BiConsumer<Option<List<T>>, List<T>> changedListener);
 
     static <T> Builder<T> createBuilder(Class<T> typeClass) {
@@ -51,7 +61,7 @@ public interface ListGroup<T> extends OptionGroup, Option<List<T>> {
         /**
          * Sets name of the group, can be {@link Text#empty()} to just separate options, like sodium.
          *
-         * @see OptionGroup#name()
+         * @see ListOption#name()
          */
         public Builder<T> name(@NotNull Text name) {
             Validate.notNull(name, "`name` must not be null");
@@ -65,7 +75,7 @@ public interface ListGroup<T> extends OptionGroup, Option<List<T>> {
          * Can be invoked twice to append more lines.
          * No need to wrap the text yourself, the gui does this itself.
          *
-         * @param tooltips text lines - merged with a new-line on {@link OptionGroup.Builder#build()}.
+         * @param tooltips text lines - merged with a new-line on {@link Builder#build()}.
          */
         public Builder<T> tooltip(@NotNull Text... tooltips) {
             Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
@@ -74,6 +84,9 @@ public interface ListGroup<T> extends OptionGroup, Option<List<T>> {
             return this;
         }
 
+        /**
+         * Sets the value that is used when creating new entries
+         */
         public Builder<T> initial(@NotNull T initialValue) {
             Validate.notNull(initialValue, "`initialValue` cannot be empty");
 
@@ -169,7 +182,7 @@ public interface ListGroup<T> extends OptionGroup, Option<List<T>> {
             return this;
         }
 
-        public ListGroup<T> build() {
+        public ListOption<T> build() {
             Validate.notNull(initialValue, "`initialValue` must not be null");
 
             MutableText concatenatedTooltip = Text.empty();
@@ -181,7 +194,7 @@ public interface ListGroup<T> extends OptionGroup, Option<List<T>> {
                 concatenatedTooltip.append(line);
             }
 
-            return new ListGroupImpl<>(name, concatenatedTooltip, binding, initialValue, typeClass, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available);
+            return new ListOptionImpl<>(name, concatenatedTooltip, binding, initialValue, typeClass, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available);
         }
     }
 }

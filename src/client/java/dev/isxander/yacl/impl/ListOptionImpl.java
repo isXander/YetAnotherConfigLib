@@ -13,7 +13,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class ListGroupImpl<T> implements ListGroup<T> {
+public class ListOptionImpl<T> implements ListOption<T> {
     private final Text name;
     private final Text tooltip;
     private final Binding<List<T>> binding;
@@ -27,7 +27,7 @@ public class ListGroupImpl<T> implements ListGroup<T> {
     private final List<BiConsumer<Option<List<T>>, List<T>>> listeners;
     private final List<BiConsumer<Option<List<T>>, List<T>>> refreshListeners;
 
-    public ListGroupImpl(@NotNull Text name, @NotNull Text tooltip, @NotNull Binding<List<T>> binding, @NotNull T initialValue, @NotNull Class<T> typeClass, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available) {
+    public ListOptionImpl(@NotNull Text name, @NotNull Text tooltip, @NotNull Binding<List<T>> binding, @NotNull T initialValue, @NotNull Class<T> typeClass, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available) {
         this.name = name;
         this.tooltip = tooltip;
         this.binding = binding;
@@ -103,14 +103,6 @@ public class ListGroupImpl<T> implements ListGroup<T> {
     public ListOptionEntry<T> insertNewEntryToTop() {
         ListOptionEntry<T> newEntry = entryFactory.create(initialValue);
         entries.add(0, newEntry);
-        onRefresh();
-        return newEntry;
-    }
-
-    @Override
-    public ListOptionEntry<T> insertNewEntry(ListOptionEntry<?> after) {
-        ListOptionEntry<T> newEntry = entryFactory.create(initialValue);
-        entries.add(indexOf(after) + 1, newEntry);
         onRefresh();
         return newEntry;
     }
@@ -210,7 +202,7 @@ public class ListGroupImpl<T> implements ListGroup<T> {
         }
 
         public ListOptionEntry<T> create(T initialValue) {
-            return new ListOptionEntryImpl<>(ListGroupImpl.this, initialValue, controllerFunction);
+            return new ListOptionEntryImpl<>(ListOptionImpl.this, initialValue, controllerFunction);
         }
     }
 }

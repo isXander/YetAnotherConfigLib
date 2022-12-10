@@ -13,7 +13,7 @@ public class OptionUtils {
     public static void consumeOptions(YetAnotherConfigLib yacl, Function<Option<?>, Boolean> consumer) {
         for (ConfigCategory category : yacl.categories()) {
             for (OptionGroup group : category.groups()) {
-                if (group instanceof ListGroup<?> list) {
+                if (group instanceof ListOption<?> list) {
                     if (consumer.apply(list)) return;
                 } else {
                     for (Option<?> option : group.options()) {
