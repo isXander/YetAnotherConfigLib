@@ -27,7 +27,7 @@ public interface ListGroup<T> extends OptionGroup, Option<List<T>> {
 
     void removeEntry(ListOptionEntry<?> entry);
 
-    void onRedraw(BiConsumer<Option<List<T>>, List<T>> changedListener);
+    void addRefreshListener(BiConsumer<Option<List<T>>, List<T>> changedListener);
 
     static <T> Builder<T> createBuilder(Class<T> typeClass) {
         return new Builder<>(typeClass);

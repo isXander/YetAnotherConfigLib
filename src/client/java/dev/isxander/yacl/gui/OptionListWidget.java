@@ -17,7 +17,6 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Supplier;
 
 public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entry> {
     private final YACLScreen yaclScreen;
@@ -30,6 +29,14 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         this.yaclScreen = screen;
 
         refreshOptions();
+
+        for (ConfigCategory category : screen.config.categories()) {
+            for (OptionGroup group : category.groups()) {
+                if (group instanceof ListGroup<?> listGroup) {
+                    listGroup.addRefreshListener((opt, val) -> refreshListEntries(listGroup, category));
+                }
+            }
+        }
     }
 
     public void refreshOptions() {
@@ -37,6 +44,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
         List<ConfigCategory> categories = new ArrayList<>();
         if (yaclScreen.getCurrentCategoryIdx() == -1) {
+            // -1 = no category, search in progress, so use all categories for search
             categories.addAll(yaclScreen.config.categories());
         } else {
             categories.add(yaclScreen.config.categories().get(yaclScreen.getCurrentCategoryIdx()));
@@ -45,36 +53,19 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
         for (ConfigCategory category : categories) {
             for (OptionGroup group : category.groups()) {
-                Supplier<Boolean> viewableSupplier;
                 GroupSeparatorEntry groupSeparatorEntry;
                 if (!group.isRoot()) {
-                    groupSeparatorEntry = new GroupSeparatorEntry(group, category, yaclScreen);
-                    viewableSupplier = groupSeparatorEntry::isExpanded;
+                    groupSeparatorEntry = group instanceof ListGroup<?> listGroup
+                            ? new ListGroupSeparatorEntry(listGroup, yaclScreen)
+                            : new GroupSeparatorEntry(group, yaclScreen);
                     addEntry(groupSeparatorEntry);
-
-                    if (group instanceof ListGroup<?> listGroup) {
-                        listGroup.onRedraw((opt, val) -> {
-                            for (OptionEntry entry : groupSeparatorEntry.optionEntries)
-                                removeEntry(entry);
-
-                            groupSeparatorEntry.optionEntries.clear();
-                            Entry lastEntry = groupSeparatorEntry;
-                            for (ListOptionEntry<?> listOptionEntry : listGroup.options()) {
-                                OptionEntry optionEntry = new OptionEntry(listOptionEntry, category, group, groupSeparatorEntry, listOptionEntry.controller().provideWidget(yaclScreen, Dimension.ofInt(getRowLeft(), 0, getRowWidth(), 20)), viewableSupplier);
-                                addEntryBelow(lastEntry, optionEntry);
-                                groupSeparatorEntry.optionEntries.add(optionEntry);
-                                lastEntry = optionEntry;
-                            }
-                        });
-                    }
                 } else {
                     groupSeparatorEntry = null;
-                    viewableSupplier = () -> true;
                 }
 
                 List<OptionEntry> optionEntries = new ArrayList<>();
                 for (Option<?> option : group.options()) {
-                    OptionEntry entry = new OptionEntry(option, category, group, groupSeparatorEntry, option.controller().provideWidget(yaclScreen, Dimension.ofInt(getRowLeft(), 0, getRowWidth(), 20)), viewableSupplier);
+                    OptionEntry entry = new OptionEntry(option, category, group, groupSeparatorEntry, option.controller().provideWidget(yaclScreen, getDefaultEntryPosition()));
                     addEntry(entry);
                     optionEntries.add(entry);
                 }
@@ -88,6 +79,30 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         recacheViewableChildren();
         setScrollAmount(0);
         resetSmoothScrolling();
+    }
+
+    private void refreshListEntries(ListGroup<?> listGroup, ConfigCategory category) {
+        // find group separator for group
+        GroupSeparatorEntry groupSeparator = super.children().stream().filter(e -> e instanceof GroupSeparatorEntry gs && gs.group == listGroup).map(GroupSeparatorEntry.class::cast).findAny().orElse(null);
+
+        if (groupSeparator == null)
+            return;
+
+        for (OptionEntry entry : groupSeparator.optionEntries)
+            super.removeEntry(entry);
+
+        groupSeparator.optionEntries.clear();
+        Entry lastEntry = groupSeparator;
+        for (ListOptionEntry<?> listOptionEntry : listGroup.options()) {
+            OptionEntry optionEntry = new OptionEntry(listOptionEntry, category, listGroup, groupSeparator, listOptionEntry.controller().provideWidget(yaclScreen, getDefaultEntryPosition()));
+            addEntryBelow(lastEntry, optionEntry);
+            groupSeparator.optionEntries.add(optionEntry);
+            lastEntry = optionEntry;
+        }
+    }
+
+    public Dimension<Integer> getDefaultEntryPosition() {
+        return Dimension.ofInt(getRowLeft(), 0, getRowWidth(), 20);
     }
 
     public void expandAllGroups() {
@@ -173,8 +188,12 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     }
 
     public void addEntryBelow(Entry below, Entry entry) {
-        super.children().add(super.children().indexOf(below) + 1, entry);
-        recacheViewableChildren();
+        int idx = super.children().indexOf(below) + 1;
+
+        if (idx == 0)
+            throw new IllegalStateException("The entry to insert below does not exist!");
+
+        addEntry(idx, entry);
     }
 
     public void addEntryBelowWithoutScroll(Entry below, Entry entry) {
@@ -215,22 +234,20 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         public final @Nullable GroupSeparatorEntry groupSeparatorEntry;
 
         public final AbstractWidget widget;
-        public final Supplier<Boolean> viewableSupplier;
 
         private final TextScaledButtonWidget resetButton;
 
         private final String categoryName;
         private final String groupName;
 
-        public OptionEntry(Option<?> option, ConfigCategory category, OptionGroup group, @Nullable GroupSeparatorEntry groupSeparatorEntry, AbstractWidget widget, Supplier<Boolean> viewableSupplier) {
+        public OptionEntry(Option<?> option, ConfigCategory category, OptionGroup group, @Nullable GroupSeparatorEntry groupSeparatorEntry, AbstractWidget widget) {
             this.option = option;
             this.category = category;
             this.group = group;
             this.groupSeparatorEntry = groupSeparatorEntry;
             if (option instanceof ListOptionEntry<?> listOptionEntry)
-                this.widget = new ListEntryWidget(yaclScreen, OptionListWidget.this, this, listOptionEntry, widget);
+                this.widget = new ListEntryWidget(yaclScreen, listOptionEntry, widget);
             else this.widget = widget;
-            this.viewableSupplier = viewableSupplier;
             this.categoryName = category.name().getString().toLowerCase();
             this.groupName = group.name().getString().toLowerCase();
             if (option.canResetToDefault() && this.widget.canReset()) {
@@ -280,7 +297,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         @Override
         public boolean isViewable() {
             String query = yaclScreen.searchFieldWidget.getText();
-            return viewableSupplier.get()
+            return (groupSeparatorEntry == null || groupSeparatorEntry.isExpanded())
                     && (yaclScreen.searchFieldWidget.isEmpty()
                     || (!singleCategory && categoryName.contains(query))
                     || groupName.contains(query)
@@ -310,25 +327,22 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     }
 
     public class GroupSeparatorEntry extends Entry {
-        private final OptionGroup group;
-        private final MultilineText wrappedName;
-        private final MultilineText wrappedTooltip;
+        protected final OptionGroup group;
+        protected final MultilineText wrappedName;
+        protected final MultilineText wrappedTooltip;
 
-        private final LowProfileButtonWidget expandMinimizeButton;
+        protected final LowProfileButtonWidget expandMinimizeButton;
 
-        private final TextScaledButtonWidget resetListButton;
-        private final TooltipButtonWidget addListButton;
+        protected final Screen screen;
+        protected final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
-        private final Screen screen;
-        private final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        protected boolean groupExpanded;
 
-        private boolean groupExpanded;
-
-        private List<OptionEntry> optionEntries;
+        protected List<OptionEntry> optionEntries;
 
         private int y;
 
-        private GroupSeparatorEntry(OptionGroup group, ConfigCategory category, Screen screen) {
+        private GroupSeparatorEntry(OptionGroup group, Screen screen) {
             this.group = group;
             this.screen = screen;
             this.wrappedName = MultilineText.create(textRenderer, group.name(), getRowWidth() - 45);
@@ -338,24 +352,6 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
                 setExpanded(!isExpanded());
                 recacheViewableChildren();
             });
-            if (group instanceof ListGroup<?> listGroup && listGroup.canResetToDefault()) {
-                this.resetListButton = new TextScaledButtonWidget(getRowRight() - 20, -50, 20, 20, 2f, Text.of("\u21BB"), button -> {
-                    listGroup.requestSetDefault();
-                });
-                listGroup.addListener((opt, val) -> this.resetListButton.active = !opt.isPendingValueDefault() && opt.available());
-                this.resetListButton.active = !listGroup.isPendingValueDefault() && listGroup.available();
-
-                this.addListButton = new TooltipButtonWidget(yaclScreen, resetListButton.getX() - 20, -50, 20, 20, Text.of("+"), Text.translatable("yacl.gui.list.add_top"), btn -> {
-                    ListOptionEntry<?> newEntry = listGroup.insertNewEntryToTop();
-                    //OptionListWidget.OptionEntry newOptEntry = new OptionEntry(newEntry, category, group, this, newEntry.controller().provideWidget(yaclScreen, Dimension.ofInt(getRowLeft(), 0, getRowWidth(), 20)), this::isExpanded);
-                    //addEntryBelowWithoutScroll(this, newOptEntry);
-
-                    //optionEntries.add(0, newOptEntry);
-                });
-            } else {
-                this.resetListButton = null;
-                this.addListButton = null;
-            }
             updateExpandMinimizeText();
         }
 
@@ -368,14 +364,6 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             expandMinimizeButton.setY(buttonY);
             expandMinimizeButton.setX(x);
             expandMinimizeButton.render(matrices, mouseX, mouseY, tickDelta);
-
-            if (resetListButton != null && addListButton != null) {
-                resetListButton.setY(buttonY);
-                resetListButton.render(matrices, mouseX, mouseY, tickDelta);
-
-                addListButton.setY(buttonY);
-                addListButton.render(matrices, mouseX, mouseY, tickDelta);
-            }
 
             wrappedName.drawCenterWithShadow(matrices, x + entryWidth / 2, y + getYPadding());
         }
@@ -436,10 +424,51 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
         @Override
         public List<? extends Element> children() {
-            if (resetListButton != null && addListButton != null)
-                return ImmutableList.of(expandMinimizeButton, resetListButton, addListButton);
-            else
-                return ImmutableList.of(expandMinimizeButton);
+            return ImmutableList.of(expandMinimizeButton);
+        }
+    }
+
+    public class ListGroupSeparatorEntry extends GroupSeparatorEntry {
+        private final TextScaledButtonWidget resetListButton;
+        private final TooltipButtonWidget addListButton;
+
+        private ListGroupSeparatorEntry(ListGroup<?> group, Screen screen) {
+            super(group, screen);
+
+            this.resetListButton = new TextScaledButtonWidget(getRowRight() - 20, -50, 20, 20, 2f, Text.of("\u21BB"), button -> {
+                group.requestSetDefault();
+            });
+            group.addListener((opt, val) -> this.resetListButton.active = !opt.isPendingValueDefault() && opt.available());
+            this.resetListButton.active = !group.isPendingValueDefault() && group.available();
+
+            this.addListButton = new TooltipButtonWidget(yaclScreen, resetListButton.getX() - 20, -50, 20, 20, Text.of("+"), Text.translatable("yacl.list.add_top"), btn -> {
+                group.insertNewEntryToTop();
+            });
+        }
+
+        @Override
+        public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            super.render(matrices, index, y, x, entryWidth, entryHeight, mouseX, mouseY, hovered, tickDelta);
+
+            int buttonY = expandMinimizeButton.getY();
+
+            resetListButton.setY(buttonY);
+            addListButton.setY(buttonY);
+
+            resetListButton.render(matrices, mouseX, mouseY, tickDelta);
+            addListButton.render(matrices, mouseX, mouseY, tickDelta);
+        }
+
+        @Override
+        public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+            super.postRender(matrices, mouseX, mouseY, delta);
+            
+            addListButton.renderHoveredTooltip(matrices);
+        }
+
+        @Override
+        public List<? extends Element> children() {
+            return ImmutableList.of(expandMinimizeButton, resetListButton, addListButton);
         }
     }
 }

@@ -24,7 +24,7 @@ public class ListEntryWidget extends AbstractWidget implements ParentElement {
     private Element focused;
     private boolean dragging;
 
-    public ListEntryWidget(YACLScreen screen, OptionListWidget optionListWidget, OptionListWidget.OptionEntry optionEntry, ListOptionEntry<?> listOptionEntry, AbstractWidget entryWidget) {
+    public ListEntryWidget(YACLScreen screen, ListOptionEntry<?> listOptionEntry, AbstractWidget entryWidget) {
         super(entryWidget.getDimension());
         this.listGroup = listOptionEntry.parentGroup();
         this.optionNameString = listOptionEntry.name().getString().toLowerCase();
@@ -33,11 +33,11 @@ public class ListEntryWidget extends AbstractWidget implements ParentElement {
         Dimension<Integer> dim = entryWidget.getDimension();
         entryWidget.setDimension(dim.clone().move(20 * 2, 0).expand(-20 * 3, 0));
 
-        removeButton = new TooltipButtonWidget(screen, dim.xLimit() - 20, dim.y(), dim.height(), dim.height(), Text.of("\u274c"), Text.translatable("yacl.gui.list.remove"), btn -> {
+        removeButton = new TooltipButtonWidget(screen, dim.xLimit() - 20, dim.y(), dim.height(), dim.height(), Text.of("\u274c"), Text.translatable("yacl.list.remove"), btn -> {
             listGroup.removeEntry(listOptionEntry);
         });
 
-        moveUpButton = new TooltipButtonWidget(screen, dim.x(), dim.y(), dim.height(), dim.height(), Text.of("\u2191"), Text.translatable("yacl.gui.list.move_up"), btn -> {
+        moveUpButton = new TooltipButtonWidget(screen, dim.x(), dim.y(), dim.height(), dim.height(), Text.of("\u2191"), Text.translatable("yacl.list.move_up"), btn -> {
             int index = listGroup.indexOf(listOptionEntry) - 1;
             if (index >= 0) {
                 listGroup.removeEntry(listOptionEntry);
@@ -47,7 +47,7 @@ public class ListEntryWidget extends AbstractWidget implements ParentElement {
         });
         moveUpButton.active = listGroup.indexOf(listOptionEntry) > 0;
 
-        moveDownButton = new TooltipButtonWidget(screen, dim.x() + 20, dim.y(), dim.height(), dim.height(), Text.of("\u2193"), Text.translatable("yacl.gui.list.move_down"), btn -> {
+        moveDownButton = new TooltipButtonWidget(screen, dim.x() + 20, dim.y(), dim.height(), dim.height(), Text.of("\u2193"), Text.translatable("yacl.list.move_down"), btn -> {
             int index = listGroup.indexOf(listOptionEntry) + 1;
             if (index < listGroup.options().size()) {
                 listGroup.removeEntry(listOptionEntry);

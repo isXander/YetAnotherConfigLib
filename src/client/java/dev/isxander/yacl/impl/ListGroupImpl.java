@@ -25,7 +25,7 @@ public class ListGroupImpl<T> implements ListGroup<T> {
     private final ImmutableSet<OptionFlag> flags;
     private final EntryFactory entryFactory;
     private final List<BiConsumer<Option<List<T>>, List<T>>> listeners;
-    private final List<BiConsumer<Option<List<T>>, List<T>>> redrawListeners;
+    private final List<BiConsumer<Option<List<T>>, List<T>>> refreshListeners;
 
     public ListGroupImpl(@NotNull Text name, @NotNull Text tooltip, @NotNull Binding<List<T>> binding, @NotNull T initialValue, @NotNull Class<T> typeClass, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available) {
         this.name = name;
@@ -39,7 +39,7 @@ public class ListGroupImpl<T> implements ListGroup<T> {
         this.flags = flags;
         this.available = available;
         this.listeners = new ArrayList<>();
-        this.redrawListeners = new ArrayList<>();
+        this.refreshListeners = new ArrayList<>();
         callListeners();
     }
 
@@ -96,14 +96,14 @@ public class ListGroupImpl<T> implements ListGroup<T> {
     @Override
     public void insertEntry(int index, ListOptionEntry<?> entry) {
         entries.add(index, (ListOptionEntry<T>) entry);
-        redraw();
+        onRefresh();
     }
 
     @Override
     public ListOptionEntry<T> insertNewEntryToTop() {
         ListOptionEntry<T> newEntry = entryFactory.create(initialValue);
         entries.add(0, newEntry);
-        redraw();
+        onRefresh();
         return newEntry;
     }
 
@@ -111,14 +111,14 @@ public class ListGroupImpl<T> implements ListGroup<T> {
     public ListOptionEntry<T> insertNewEntry(ListOptionEntry<?> after) {
         ListOptionEntry<T> newEntry = entryFactory.create(initialValue);
         entries.add(indexOf(after) + 1, newEntry);
-        redraw();
+        onRefresh();
         return newEntry;
     }
 
     @Override
     public void removeEntry(ListOptionEntry<?> entry) {
         entries.remove(entry);
-        redraw();
+        onRefresh();
     }
 
     @Override
@@ -130,12 +130,12 @@ public class ListGroupImpl<T> implements ListGroup<T> {
     public void requestSet(List<T> value) {
         entries.clear();
         entries.addAll(createEntries(value));
-        redraw();
+        onRefresh();
         listeners.forEach(listener -> listener.accept(this, value));
     }
 
-    private void redraw() {
-        redrawListeners.forEach(listener -> listener.accept(this, pendingValue()));
+    private void onRefresh() {
+        refreshListeners.forEach(listener -> listener.accept(this, pendingValue()));
         callListeners();
     }
 
@@ -184,8 +184,8 @@ public class ListGroupImpl<T> implements ListGroup<T> {
     }
 
     @Override
-    public void onRedraw(BiConsumer<Option<List<T>>, List<T>> changedListener) {
-        this.redrawListeners.add(changedListener);
+    public void addRefreshListener(BiConsumer<Option<List<T>>, List<T>> changedListener) {
+        this.refreshListeners.add(changedListener);
     }
 
     @Override
