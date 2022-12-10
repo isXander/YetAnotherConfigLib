@@ -245,7 +245,7 @@ public class GuiTest {
                                             .controller(EnumController::new)
                                             .build())
                                     .build())
-                            .option(ListOption.createBuilder(String.class)
+                            .group(ListOption.createBuilder(String.class)
                                     .name(Text.of("List Option"))
                                     .binding(
                                             defaults.stringList,
