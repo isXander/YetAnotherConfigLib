@@ -10,7 +10,7 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "dev.isxander.yacl.test.config.Entrypoint"
+      "dev.isxander.yacl.test.ExampleMod"
     ]
   },
   "depends": {

@@ -1,10 +1,15 @@
 package dev.isxander.yacl.test.config;
 
 import dev.isxander.yacl.config.ConfigEntry;
+import dev.isxander.yacl.config.ConfigInstance;
+import dev.isxander.yacl.config.GsonConfigInstance;
 
 import java.awt.*;
+import java.nio.file.Path;
 
-public class ConfigData {
+public class ExampleConfig {
+    public static final ConfigInstance<ExampleConfig> INSTANCE = new GsonConfigInstance<>(ExampleConfig.class, Path.of("./config/yacl-test.json"));
+
     @ConfigEntry public boolean booleanToggle = false;
     @ConfigEntry public boolean customBooleanToggle = false;
     @ConfigEntry public boolean tickbox = false;
