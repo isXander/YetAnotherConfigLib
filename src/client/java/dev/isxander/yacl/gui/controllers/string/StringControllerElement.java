@@ -51,10 +51,8 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         Text valueText = getValueText();
         if (!isHovered()) valueText = Text.literal(RenderUtils.shortenString(valueText.getString(), textRenderer, getDimension().width() / 2, "...")).setStyle(valueText.getStyle());
 
-        int overflowWidth = textRenderer.getWidth(inputField.substring(inputField.length() - renderOffset));
-
         matrices.push();
-        int textX = getDimension().xLimit() - textRenderer.getWidth(valueText) + overflowWidth - getXPadding();
+        int textX = getDimension().xLimit() - textRenderer.getWidth(valueText) + renderOffset - getXPadding();
         matrices.translate(textX, getTextY(), 0);
         RenderUtils.enableScissor(inputFieldBounds.x(), inputFieldBounds.y(), inputFieldBounds.width() + 1, inputFieldBounds.height() + 2);
         textRenderer.drawWithShadow(matrices, valueText, 0, 0, getValueColor());
@@ -241,14 +239,17 @@ public class StringControllerElement extends ControllerWidget<IStringController<
             return;
         }
 
-        String inp = inputField.substring(0, inputField.length() - renderOffset);
-        int obstructionWidth = textRenderer.getWidth(inp) - getUnshiftedLength();
-        int length = inp.length() - textRenderer.trimToWidth(inp, obstructionWidth).length();
+        int textX = getDimension().xLimit() - textRenderer.getWidth(inputField) - getXPadding();
+        int caretX = textX + textRenderer.getWidth(inputField.substring(0, caretPos)) - 1;
 
-        if (caretPos < inputField.length() - renderOffset - length)
-            renderOffset = inputField.length() - caretPos - length;
-        if (caretPos > inputField.length() - renderOffset)
-            renderOffset = inputField.length() - caretPos;
+        int minX = getDimension().xLimit() - getXPadding() - getUnshiftedLength();
+        int maxX = minX + getUnshiftedLength();
+
+        if (caretX + renderOffset < minX) {
+            renderOffset = minX - caretX;
+        } else if (caretX + renderOffset > maxX) {
+            renderOffset = maxX - caretX;
+        }
     }
 
     @Override
