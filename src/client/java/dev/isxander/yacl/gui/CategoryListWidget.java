@@ -3,11 +3,10 @@ package dev.isxander.yacl.gui;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.isxander.yacl.api.ConfigCategory;
-import dev.isxander.yacl.gui.utils.RenderUtils;
+import dev.isxander.yacl.gui.utils.GuiUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.util.math.MatrixStack;
 
 import java.util.List;
@@ -28,7 +27,7 @@ public class CategoryListWidget extends ElementListWidgetExt<CategoryListWidget.
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        RenderUtils.enableScissor(0, 0, width, height);
+        GuiUtils.enableScissor(0, 0, width, height);
         super.render(matrices, mouseX, mouseY, delta);
         RenderSystem.disableScissor();
     }

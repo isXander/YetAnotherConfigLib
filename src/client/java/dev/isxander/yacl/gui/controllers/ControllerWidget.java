@@ -4,8 +4,7 @@ import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
-import dev.isxander.yacl.gui.utils.RenderUtils;
-import dev.isxander.yacl.impl.utils.YACLConstants;
+import dev.isxander.yacl.gui.utils.GuiUtils;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
@@ -39,7 +38,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         hovered = isMouseOver(mouseX, mouseY);
 
         Text name = control.option().changed() ? modifiedOptionName : control.option().name();
-        Text shortenedName = Text.literal(RenderUtils.shortenString(name.getString(), textRenderer, getDimension().width() - getControlWidth() - getXPadding() - 7, "...")).fillStyle(name.getStyle());
+        Text shortenedName = Text.literal(GuiUtils.shortenString(name.getString(), textRenderer, getDimension().width() - getControlWidth() - getXPadding() - 7, "...")).fillStyle(name.getStyle());
 
         drawButtonRect(matrices, getDimension().x(), getDimension().y(), getDimension().xLimit(), getDimension().yLimit(), isHovered(), isAvailable());
         matrices.push();

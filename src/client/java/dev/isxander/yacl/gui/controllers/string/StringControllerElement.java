@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.ControllerWidget;
-import dev.isxander.yacl.gui.utils.RenderUtils;
+import dev.isxander.yacl.gui.utils.GuiUtils;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
@@ -49,12 +49,12 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     @Override
     protected void drawValueText(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         Text valueText = getValueText();
-        if (!isHovered()) valueText = Text.literal(RenderUtils.shortenString(valueText.getString(), textRenderer, getDimension().width() / 2, "...")).setStyle(valueText.getStyle());
+        if (!isHovered()) valueText = Text.literal(GuiUtils.shortenString(valueText.getString(), textRenderer, getDimension().width() / 2, "...")).setStyle(valueText.getStyle());
 
         matrices.push();
         int textX = getDimension().xLimit() - textRenderer.getWidth(valueText) + renderOffset - getXPadding();
         matrices.translate(textX, getTextY(), 0);
-        RenderUtils.enableScissor(inputFieldBounds.x(), inputFieldBounds.y(), inputFieldBounds.width() + 1, inputFieldBounds.height() + 2);
+        GuiUtils.enableScissor(inputFieldBounds.x(), inputFieldBounds.y(), inputFieldBounds.width() + 1, inputFieldBounds.height() + 2);
         textRenderer.drawWithShadow(matrices, valueText, 0, 0, getValueColor());
         matrices.pop();
 

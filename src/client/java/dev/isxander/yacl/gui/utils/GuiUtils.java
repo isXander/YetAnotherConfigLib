@@ -3,15 +3,18 @@ package dev.isxander.yacl.gui.utils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.util.TextCollector;
 import net.minecraft.client.util.Window;
-import net.minecraft.text.*;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Language;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+public class GuiUtils {
+    public static MutableText translatableFallback(String key, Text fallback) {
+        if (Language.getInstance().hasTranslation(key))
+            return Text.translatable(key);
+        return fallback.copy();
+    }
 
-public class RenderUtils {
     public static void enableScissor(int x, int y, int width, int height) {
         Window window = MinecraftClient.getInstance().getWindow();
         double d = window.getScaleFactor();
