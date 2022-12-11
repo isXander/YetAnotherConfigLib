@@ -33,7 +33,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         for (ConfigCategory category : screen.config.categories()) {
             for (OptionGroup group : category.groups()) {
                 if (group instanceof ListOption<?> listOption) {
-                    listOption.addRefreshListener((opt, val) -> refreshListEntries(listOption, category));
+                    listOption.addRefreshListener(() -> refreshListEntries(listOption, category));
                 }
             }
         }
@@ -251,8 +251,8 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             this.categoryName = category.name().getString().toLowerCase();
             this.groupName = group.name().getString().toLowerCase();
             if (option.canResetToDefault() && this.widget.canReset()) {
-                this.widget.setDimension(this.widget.getDimension().expanded(-21, 0));
-                this.resetButton = new TextScaledButtonWidget(widget.getDimension().xLimit() + 1, -50, 20, 20, 2f, Text.of("\u21BB"), button -> {
+                this.widget.setDimension(this.widget.getDimension().expanded(-20, 0));
+                this.resetButton = new TextScaledButtonWidget(widget.getDimension().xLimit(), -50, 20, 20, 2f, Text.of("\u21BB"), button -> {
                     option.requestSetDefault();
                 });
                 option.addListener((opt, val) -> this.resetButton.active = !opt.isPendingValueDefault() && opt.available());
@@ -348,10 +348,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             this.wrappedName = MultilineText.create(textRenderer, group.name(), getRowWidth() - 45);
             this.wrappedTooltip = MultilineText.create(textRenderer, group.tooltip(), screen.width / 3 * 2 - 10);
             this.groupExpanded = !group.collapsed();
-            this.expandMinimizeButton = new LowProfileButtonWidget(0, 0, 20, 20, Text.empty(), btn -> {
-                setExpanded(!isExpanded());
-                recacheViewableChildren();
-            });
+            this.expandMinimizeButton = new LowProfileButtonWidget(0, 0, 20, 20, Text.empty(), btn -> onExpandButtonPress());
             updateExpandMinimizeText();
         }
 
@@ -359,7 +356,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             this.y = y;
 
-            int buttonY = y + entryHeight / 2 - expandMinimizeButton.getHeight() / 2;
+            int buttonY = y + entryHeight / 2 - expandMinimizeButton.getHeight() / 2 + 1;
 
             expandMinimizeButton.setY(buttonY);
             expandMinimizeButton.setX(x);
@@ -384,7 +381,12 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             updateExpandMinimizeText();
         }
 
-        private void updateExpandMinimizeText() {
+        protected void onExpandButtonPress() {
+            setExpanded(!isExpanded());
+            recacheViewableChildren();
+        }
+
+        protected void updateExpandMinimizeText() {
             expandMinimizeButton.setMessage(Text.of(isExpanded() ? "▼" : "▶"));
         }
 
@@ -429,11 +431,13 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     }
 
     public class ListGroupSeparatorEntry extends GroupSeparatorEntry {
+        private final ListOption<?> listOption;
         private final TextScaledButtonWidget resetListButton;
         private final TooltipButtonWidget addListButton;
 
         private ListGroupSeparatorEntry(ListOption<?> group, Screen screen) {
             super(group, screen);
+            this.listOption = group;
 
             this.resetListButton = new TextScaledButtonWidget(getRowRight() - 20, -50, 20, 20, 2f, Text.of("\u21BB"), button -> {
                 group.requestSetDefault();
@@ -444,10 +448,15 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             this.addListButton = new TooltipButtonWidget(yaclScreen, resetListButton.getX() - 20, -50, 20, 20, Text.of("+"), Text.translatable("yacl.list.add_top"), btn -> {
                 group.insertNewEntryToTop();
             });
+
+            updateExpandMinimizeText();
+            minimizeIfUnavailable();
         }
 
         @Override
         public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            updateExpandMinimizeText(); // update every render because option could become available/unavailable at any time
+
             super.render(matrices, index, y, x, entryWidth, entryHeight, mouseX, mouseY, hovered, tickDelta);
 
             int buttonY = expandMinimizeButton.getY();
@@ -461,14 +470,31 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
         @Override
         public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+            minimizeIfUnavailable(); // cannot run in render because it *should* cause a ConcurrentModificationException (but doesn't)
+
             super.postRender(matrices, mouseX, mouseY, delta);
             
             addListButton.renderHoveredTooltip(matrices);
         }
 
+        private void minimizeIfUnavailable() {
+            if (!listOption.available() && isExpanded()) {
+                setExpanded(false);
+                recacheViewableChildren();
+            }
+        }
+
+        @Override
+        protected void updateExpandMinimizeText() {
+            super.updateExpandMinimizeText();
+            if (resetListButton != null && addListButton != null)
+                resetListButton.visible = addListButton.visible = isExpanded();
+            expandMinimizeButton.active = listOption == null || listOption.available();
+        }
+
         @Override
         public List<? extends Element> children() {
-            return ImmutableList.of(expandMinimizeButton, resetListButton, addListButton);
+            return ImmutableList.of(expandMinimizeButton, addListButton, resetListButton);
         }
     }
 }

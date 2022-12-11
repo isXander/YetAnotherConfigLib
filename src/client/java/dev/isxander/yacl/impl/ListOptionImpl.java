@@ -25,7 +25,7 @@ public class ListOptionImpl<T> implements ListOption<T> {
     private final ImmutableSet<OptionFlag> flags;
     private final EntryFactory entryFactory;
     private final List<BiConsumer<Option<List<T>>, List<T>>> listeners;
-    private final List<BiConsumer<Option<List<T>>, List<T>>> refreshListeners;
+    private final List<Runnable> refreshListeners;
 
     public ListOptionImpl(@NotNull Text name, @NotNull Text tooltip, @NotNull Binding<List<T>> binding, @NotNull T initialValue, @NotNull Class<T> typeClass, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available) {
         this.name = name;
@@ -126,11 +126,6 @@ public class ListOptionImpl<T> implements ListOption<T> {
         listeners.forEach(listener -> listener.accept(this, value));
     }
 
-    private void onRefresh() {
-        refreshListeners.forEach(listener -> listener.accept(this, pendingValue()));
-        callListeners();
-    }
-
     @Override
     public boolean changed() {
         return !binding().getValue().equals(pendingValue());
@@ -176,7 +171,7 @@ public class ListOptionImpl<T> implements ListOption<T> {
     }
 
     @Override
-    public void addRefreshListener(BiConsumer<Option<List<T>>, List<T>> changedListener) {
+    public void addRefreshListener(Runnable changedListener) {
         this.refreshListeners.add(changedListener);
     }
 
@@ -192,6 +187,11 @@ public class ListOptionImpl<T> implements ListOption<T> {
     void callListeners() {
         List<T> pendingValue = pendingValue();
         this.listeners.forEach(listener -> listener.accept(this, pendingValue));
+    }
+
+    private void onRefresh() {
+        refreshListeners.forEach(Runnable::run);
+        callListeners();
     }
 
     private class EntryFactory {

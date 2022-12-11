@@ -33,12 +33,6 @@ public class CategoryListWidget extends ElementListWidgetExt<CategoryListWidget.
         RenderSystem.disableScissor();
     }
 
-    public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        for (CategoryEntry entry : children()) {
-            entry.postRender(matrices, mouseX, mouseY, delta);
-        }
-    }
-
     @Override
     public int getRowWidth() {
         return Math.min(width - width / 10, 396);

@@ -22,6 +22,7 @@ public class ConfigData {
     @ConfigEntry public Alphabet enumOption = Alphabet.A;
 
     @ConfigEntry public List<String> stringList = List.of("This is quite cool.", "You can add multiple items!", "And it is integrated so well into Option groups!");
+    @ConfigEntry public List<Integer> intList = List.of(1, 2, 3);
 
     @ConfigEntry public boolean groupTestRoot = false;
     @ConfigEntry public boolean groupTestFirstGroup = false;

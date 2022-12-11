@@ -19,7 +19,7 @@ public class LowProfileButtonWidget extends ButtonWidget {
 
     @Override
     public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        if (!isHovered()) {
+        if (!isHovered() || !active) {
             int j = this.active ? 0xFFFFFF : 0xA0A0A0;
             drawCenteredText(matrices, MinecraftClient.getInstance().textRenderer, this.getMessage(), this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, j | MathHelper.ceil(this.alpha * 255.0F) << 24);
         } else {

@@ -96,6 +96,9 @@ public interface OptionGroup {
         public Builder option(@NotNull Option<?> option) {
             Validate.notNull(option, "`option` must not be null");
 
+            if (option instanceof ListOption<?>)
+                throw new UnsupportedOperationException("List options must not be added as an option but a group!");
+
             this.options.add(option);
             return this;
         }
@@ -108,6 +111,9 @@ public interface OptionGroup {
          */
         public Builder options(@NotNull Collection<? extends Option<?>> options) {
             Validate.notEmpty(options, "`options` must not be empty");
+
+            if (options.stream().anyMatch(ListOption.class::isInstance))
+                throw new UnsupportedOperationException("List options must not be added as an option but a group!");
 
             this.options.addAll(options);
             return this;

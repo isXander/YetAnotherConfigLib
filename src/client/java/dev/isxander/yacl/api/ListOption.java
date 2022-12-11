@@ -10,11 +10,22 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+/**
+ * A list option that takes form as an option group for UX.
+ * You add this option through {@link ConfigCategory.Builder#group(OptionGroup)}. Do NOT add as an option.
+ * Users can add remove and reshuffle a list type. You can use any controller you wish, there are no dedicated
+ * controllers for list types. List options do not manipulate your list but get and set the list with a
+ * regular binding for simplicity.
+ *
+ * You may apply option flags like a normal option and collapse like a normal group, it is a merge of them both.
+ * Methods in this interface marked with {@link ApiStatus.Internal} should not be used, and could be subject to
+ * change at any time
+ * @param <T>
+ */
 public interface ListOption<T> extends OptionGroup, Option<List<T>> {
     @Override
     @NotNull ImmutableList<ListOptionEntry<T>> options();
@@ -37,7 +48,7 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
     void removeEntry(ListOptionEntry<?> entry);
 
     @ApiStatus.Internal
-    void addRefreshListener(BiConsumer<Option<List<T>>, List<T>> changedListener);
+    void addRefreshListener(Runnable changedListener);
 
     static <T> Builder<T> createBuilder(Class<T> typeClass) {
         return new Builder<>(typeClass);
@@ -59,7 +70,8 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
         }
 
         /**
-         * Sets name of the group, can be {@link Text#empty()} to just separate options, like sodium.
+         * Sets name of the list, for UX purposes, a name should always be given,
+         * but isn't enforced.
          *
          * @see ListOption#name()
          */
@@ -71,7 +83,9 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
         }
 
         /**
-         * Sets the tooltip to be used by the option group.
+         * Sets the tooltip to be used by the list. It is displayed like a normal
+         * group when you hover over the name. Entries do not allow a tooltip.
+         * <p>
          * Can be invoked twice to append more lines.
          * No need to wrap the text yourself, the gui does this itself.
          *
@@ -173,7 +187,8 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
         }
 
         /**
-         * Dictates if the group should be collapsed by default
+         * Dictates if the group should be collapsed by default.
+         * If not set, it will not be collapsed by default.
          *
          * @see OptionGroup#collapsed()
          */
@@ -183,6 +198,8 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
         }
 
         public ListOption<T> build() {
+            Validate.notNull(controllerFunction, "`controller` must not be null");
+            Validate.notNull(binding, "`binding` must not be null");
             Validate.notNull(initialValue, "`initialValue` must not be null");
 
             MutableText concatenatedTooltip = Text.empty();
