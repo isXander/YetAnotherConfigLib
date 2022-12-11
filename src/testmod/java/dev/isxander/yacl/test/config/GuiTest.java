@@ -1,4 +1,4 @@
-package dev.isxander.yacl.test;
+package dev.isxander.yacl.test.config;
 
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.gui.RequireRestartScreen;
@@ -13,8 +13,7 @@ import dev.isxander.yacl.gui.controllers.string.number.DoubleFieldController;
 import dev.isxander.yacl.gui.controllers.string.number.FloatFieldController;
 import dev.isxander.yacl.gui.controllers.string.number.IntegerFieldController;
 import dev.isxander.yacl.gui.controllers.string.number.LongFieldController;
-import dev.isxander.yacl.test.config.ConfigData;
-import dev.isxander.yacl.test.config.Entrypoint;
+import dev.isxander.yacl.test.ExampleMod;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.option.GraphicsMode;
@@ -28,7 +27,7 @@ import java.util.List;
 
 public class GuiTest {
     public static Screen getModConfigScreenFactory(Screen parent) {
-        return YetAnotherConfigLib.create(Entrypoint.getConfig(), (defaults, config, builder) -> builder
+        return YetAnotherConfigLib.create(ExampleConfig.INSTANCE, (defaults, config, builder) -> builder
                     .title(Text.of("Test Suites"))
                     .category(ConfigCategory.createBuilder()
                             .name(Text.of("Suites"))
@@ -58,7 +57,7 @@ public class GuiTest {
     }
 
     private static Screen getFullTestSuite(Screen parent) {
-        return YetAnotherConfigLib.create(Entrypoint.getConfig(), (defaults, config, builder) -> builder
+        return YetAnotherConfigLib.create(ExampleConfig.INSTANCE, (defaults, config, builder) -> builder
                     .title(Text.of("Test GUI"))
                     .category(ConfigCategory.createBuilder()
                             .name(Text.of("Control Examples"))
@@ -203,7 +202,7 @@ public class GuiTest {
                                     .build())
                             .group(OptionGroup.createBuilder()
                                     .name(Text.of("Enum Controllers"))
-                                    .option(Option.createBuilder(ConfigData.Alphabet.class)
+                                    .option(Option.createBuilder(ExampleConfig.Alphabet.class)
                                             .name(Text.of("Enum Cycler"))
                                             .binding(
                                                     defaults.enumOption,
@@ -405,14 +404,14 @@ public class GuiTest {
                             .build())
                     .save(() -> {
                         MinecraftClient.getInstance().options.write();
-                        Entrypoint.getConfig().save();
+                        ExampleConfig.INSTANCE.save();
                     })
                 )
                 .generateScreen(parent);
     }
 
     private static Screen getDisabledTest(Screen parent) {
-        return YetAnotherConfigLib.create(Entrypoint.getConfig(), (defaults, config, builder) -> builder
+        return YetAnotherConfigLib.create(ExampleConfig.INSTANCE, (defaults, config, builder) -> builder
                     .title(Text.empty())
                     .category(ConfigCategory.createBuilder()
                             .name(Text.of("Disabled Test"))
@@ -445,7 +444,7 @@ public class GuiTest {
     }
 
     private static Screen getWikiBasic(Screen parent) {
-        return YetAnotherConfigLib.create(Entrypoint.getConfig(), (defaults, config, builder) -> builder
+        return YetAnotherConfigLib.create(ExampleConfig.INSTANCE, (defaults, config, builder) -> builder
                     .title(Text.of("Mod Name"))
                     .category(ConfigCategory.createBuilder()
                             .name(Text.of("My Category"))
@@ -466,7 +465,7 @@ public class GuiTest {
     }
 
     private static Screen getWikiGroups(Screen parent) {
-        return YetAnotherConfigLib.create(Entrypoint.getConfig(), (defaults, config, builder) -> builder
+        return YetAnotherConfigLib.create(ExampleConfig.INSTANCE, (defaults, config, builder) -> builder
                     .title(Text.of("Mod Name"))
                     .category(ConfigCategory.createBuilder()
                             .name(Text.of("My Category"))

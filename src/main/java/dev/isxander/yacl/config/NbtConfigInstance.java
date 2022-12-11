@@ -26,7 +26,9 @@ import java.util.stream.Stream;
  * handling fails with {@link NbtSerializer}
  *
  * @param <T> config data type
+ * @deprecated Using NBT for config is not very practical, implementation flawed, does not support upcoming lists.
  */
+@Deprecated
 @SuppressWarnings("unchecked")
 public class NbtConfigInstance<T> extends ConfigInstance<T> {
     private final Path path;

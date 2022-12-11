@@ -1,6 +1,6 @@
 package dev.isxander.yacl.test.mixins;
 
-import dev.isxander.yacl.test.GuiTest;
+import dev.isxander.yacl.test.config.GuiTest;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -10,6 +10,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * For testing purposes! If you are using this as
+ * an example, ignore this class!
+ */
 @Mixin(TitleScreen.class)
 public abstract class TitleScreenMixin extends Screen {
     protected TitleScreenMixin(Text title) {

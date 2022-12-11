@@ -4,7 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.ControllerWidget;
-import dev.isxander.yacl.gui.utils.RenderUtils;
+import dev.isxander.yacl.gui.utils.GuiUtils;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
@@ -49,14 +49,12 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     @Override
     protected void drawValueText(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         Text valueText = getValueText();
-        if (!isHovered()) valueText = Text.literal(RenderUtils.shortenString(valueText.getString(), textRenderer, getMaxUnwrapLength(), "...")).setStyle(valueText.getStyle());
-
-        int overflowWidth = textRenderer.getWidth(inputField.substring(inputField.length() - renderOffset));
+        if (!isHovered()) valueText = Text.literal(GuiUtils.shortenString(valueText.getString(), textRenderer, getMaxUnwrapLength(), "...")).setStyle(valueText.getStyle());
 
         matrices.push();
-        int textX = getDimension().xLimit() - textRenderer.getWidth(valueText) + overflowWidth - getXPadding();
+        int textX = getDimension().xLimit() - textRenderer.getWidth(valueText) + renderOffset - getXPadding();
         matrices.translate(textX, getTextY(), 0);
-        RenderUtils.enableScissor(inputFieldBounds.x(), inputFieldBounds.y(), inputFieldBounds.width() + 1, inputFieldBounds.height() + 2);
+        GuiUtils.enableScissor(inputFieldBounds.x(), inputFieldBounds.y(), inputFieldBounds.width() + 1, inputFieldBounds.height() + 2);
         textRenderer.drawWithShadow(matrices, valueText, 0, 0, getValueColor());
         matrices.pop();
 
@@ -193,26 +191,46 @@ public class StringControllerElement extends ControllerWidget<IStringController<
             }
         }
 
-        if (canUseShortcuts()) {
-            if (Screen.isPaste(keyCode)) {
-                this.write(client.keyboard.getClipboard());
-                return true;
-            } else if (Screen.isCopy(keyCode) && selectionLength != 0) {
-                client.keyboard.setClipboard(getSelection());
-                return true;
-            } else if (Screen.isCut(keyCode) && selectionLength != 0) {
-                client.keyboard.setClipboard(getSelection());
-                this.write("");
-                return true;
-            } else if (Screen.isSelectAll(keyCode)) {
-                caretPos = inputField.length();
-                checkRenderOffset();
-                selectionLength = -caretPos;
-                return true;
-            }
+        if (Screen.isPaste(keyCode)) {
+            return doPaste();
+        } else if (Screen.isCopy(keyCode)) {
+            return  doCopy();
+        } else if (Screen.isCut(keyCode)) {
+            return doCut();
+        } else if (Screen.isSelectAll(keyCode)) {
+            return doSelectAll();
         }
 
         return false;
+    }
+
+    protected boolean doPaste() {
+        this.write(client.keyboard.getClipboard());
+        return true;
+    }
+
+    protected boolean doCopy() {
+        if (selectionLength != 0) {
+            client.keyboard.setClipboard(getSelection());
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean doCut() {
+        if (selectionLength != 0) {
+            client.keyboard.setClipboard(getSelection());
+            this.write("");
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean doSelectAll() {
+        caretPos = inputField.length();
+        checkRenderOffset();
+        selectionLength = -caretPos;
+        return true;
     }
 
     protected void checkRenderOffset() {
@@ -221,14 +239,17 @@ public class StringControllerElement extends ControllerWidget<IStringController<
             return;
         }
 
-        String inp = inputField.substring(0, inputField.length() - renderOffset);
-        int obstructionWidth = textRenderer.getWidth(inp) - getUnshiftedLength();
-        int length = inp.length() - textRenderer.trimToWidth(inp, obstructionWidth).length();
+        int textX = getDimension().xLimit() - textRenderer.getWidth(inputField) - getXPadding();
+        int caretX = textX + textRenderer.getWidth(inputField.substring(0, caretPos)) - 1;
 
-        if (caretPos < inputField.length() - renderOffset - length)
-            renderOffset = inputField.length() - caretPos - length;
-        if (caretPos > inputField.length() - renderOffset)
-            renderOffset = inputField.length() - caretPos;
+        int minX = getDimension().xLimit() - getXPadding() - getUnshiftedLength();
+        int maxX = minX + getUnshiftedLength();
+
+        if (caretX + renderOffset < minX) {
+            renderOffset = minX - caretX;
+        } else if (caretX + renderOffset > maxX) {
+            renderOffset = maxX - caretX;
+        }
     }
 
     @Override
@@ -238,10 +259,6 @@ public class StringControllerElement extends ControllerWidget<IStringController<
 
         write(Character.toString(chr));
 
-        return true;
-    }
-
-    protected boolean canUseShortcuts() {
         return true;
     }
 

@@ -5,6 +5,7 @@ import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.api.utils.MutableDimension;
 import dev.isxander.yacl.api.utils.OptionUtils;
+import dev.isxander.yacl.gui.utils.GuiUtils;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
@@ -161,9 +162,9 @@ public class YACLScreen extends Screen {
         boolean pendingChanges = pendingChanges();
 
         undoButton.active = pendingChanges;
-        finishedSaveButton.setMessage(pendingChanges ? Text.translatable("yacl.gui.save") : ScreenTexts.DONE);
+        finishedSaveButton.setMessage(pendingChanges ? Text.translatable("yacl.gui.save") : GuiUtils.translatableFallback("yacl.gui.done", ScreenTexts.DONE));
         finishedSaveButton.setTooltip(pendingChanges ? Text.translatable("yacl.gui.save.tooltip") : Text.translatable("yacl.gui.finished.tooltip"));
-        cancelResetButton.setMessage(pendingChanges ? ScreenTexts.CANCEL : Text.translatable("controls.reset"));
+        cancelResetButton.setMessage(pendingChanges ? GuiUtils.translatableFallback("yacl.gui.cancel", ScreenTexts.CANCEL) : Text.translatable("controls.reset"));
         cancelResetButton.setTooltip(pendingChanges ? Text.translatable("yacl.gui.cancel.tooltip") : Text.translatable("yacl.gui.reset.tooltip"));
     }
 

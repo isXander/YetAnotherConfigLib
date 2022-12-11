@@ -126,6 +126,7 @@ public class ColorController implements IStringController<Color> {
 
         @Override
         public void write(String string) {
+            if (string.startsWith("0x")) string = string.substring(2);
             for (char chr : string.toCharArray()) {
                 if (!allowedChars.contains(Character.toLowerCase(chr))) {
                     return;
@@ -156,11 +157,25 @@ public class ColorController implements IStringController<Color> {
 
         @Override
         protected void doDelete() {
-
+            if (caretPos >= 1) {
+                if (modifyInput(builder -> builder.setCharAt(caretPos, '0'))) {
+                    updateControl();
+                }
+            }
         }
 
         @Override
-        protected boolean canUseShortcuts() {
+        protected boolean doCut() {
+            return false;
+        }
+
+        @Override
+        protected boolean doCopy() {
+            return false;
+        }
+
+        @Override
+        protected boolean doSelectAll() {
             return false;
         }
 
