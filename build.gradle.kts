@@ -137,7 +137,7 @@ if (modrinthId.isNotEmpty()) {
 }
 
 val curseforgeId: String by project
-if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
+if (hasProperty("CURSEFORGE_TOKEN") && curseforgeId.isNotEmpty()) {
     curseforge {
         apiKey = findProperty("CURSEFORGE_TOKEN")
         project(closureOf<me.hypherionmc.cursegradle.CurseProject> {
