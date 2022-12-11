@@ -16,6 +16,11 @@
   "yacl.gui.save_before_exit": "Save before exiting!",
   "yacl.gui.save_before_exit.tooltip": "Save or cancel to exit the GUI.",
 
+  "yacl.list.move_up": "Move up",
+  "yacl.list.move_down": "Move down",
+  "yacl.list.remove": "Remove",
+  "yacl.list.add_top": "New entry",
+
   "yacl.restart.title": "Config requires restart!",
   "yacl.restart.message": "One or more options needs you to restart the game to apply the changes.",
   "yacl.restart.yes": "Close Minecraft",

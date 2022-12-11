@@ -22,6 +22,9 @@ public class GuiUtils {
     }
 
     public static String shortenString(String string, TextRenderer textRenderer, int maxWidth, String suffix) {
+        if (string.isEmpty())
+            return string;
+
         boolean firstIter = true;
         while (textRenderer.getWidth(string) > maxWidth) {
             string = string.substring(0, Math.max(string.length() - 1 - (firstIter ? 1 : suffix.length() + 1), 0)).trim();

@@ -93,11 +93,6 @@ public class OptionImpl<T> implements Option<T> {
     }
 
     @Override
-    public boolean requiresRestart() {
-        return flags.contains(OptionFlag.GAME_RESTART);
-    }
-
-    @Override
     public boolean changed() {
         return !binding().getValue().equals(pendingValue);
     }

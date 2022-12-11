@@ -3,6 +3,7 @@ package dev.isxander.yacl.api;
 import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl.impl.ConfigCategoryImpl;
 import dev.isxander.yacl.impl.OptionGroupImpl;
+import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.Validate;
@@ -76,6 +77,11 @@ public interface ConfigCategory {
         public Builder option(@NotNull Option<?> option) {
             Validate.notNull(option, "`option` must not be null");
 
+            if (option instanceof ListOption<?> listOption) {
+                YACLConstants.LOGGER.warn("Adding list option as an option is not supported! Rerouting to group!");
+                return group(listOption);
+            }
+
             this.rootOptions.add(option);
             return this;
         }
@@ -90,6 +96,9 @@ public interface ConfigCategory {
          */
         public Builder options(@NotNull Collection<Option<?>> options) {
             Validate.notNull(options, "`options` must not be null");
+
+            if (options.stream().anyMatch(ListOption.class::isInstance))
+                throw new UnsupportedOperationException("List options must not be added as an option but a group!");
 
             this.rootOptions.addAll(options);
             return this;

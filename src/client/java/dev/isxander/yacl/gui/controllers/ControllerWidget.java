@@ -8,6 +8,7 @@ import dev.isxander.yacl.gui.utils.GuiUtils;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -151,6 +152,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
 
     @Override
     public void appendNarrations(NarrationMessageBuilder builder) {
-
+        builder.put(NarrationPart.TITLE, control.option().name());
+        builder.put(NarrationPart.HINT, control.option().tooltip());
     }
 }

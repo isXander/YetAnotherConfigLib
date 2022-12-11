@@ -22,7 +22,8 @@ import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
 
-import java.awt.*;
+import java.awt.Color;
+import java.util.List;
 
 public class GuiTest {
     public static Screen getModConfigScreenFactory(Screen parent) {
@@ -243,6 +244,36 @@ public class GuiTest {
                                             .binding(Binding.minecraft(MinecraftClient.getInstance().options.getGraphicsMode()))
                                             .controller(EnumController::new)
                                             .build())
+                                    .build())
+                            .build())
+                    .category(ConfigCategory.createBuilder()
+                            .name(Text.of("List Test"))
+                            .group(ListOption.createBuilder(String.class)
+                                    .name(Text.of("String List"))
+                                    .binding(
+                                            defaults.stringList,
+                                            () -> config.stringList,
+                                            val -> config.stringList = val
+                                    )
+                                    .controller(StringController::new)
+                                    .initial("")
+                                    .build())
+                            .group(ListOption.createBuilder(Integer.class)
+                                    .name(Text.of("Slider List"))
+                                    .binding(
+                                            defaults.intList,
+                                            () -> config.intList,
+                                            val -> config.intList = val
+                                    )
+                                    .controller(opt -> new IntegerSliderController(opt, 0, 10, 1))
+                                    .initial(0)
+                                    .available(false)
+                                    .build())
+                            .group(ListOption.createBuilder(Text.class)
+                                    .name(Text.of("Useless Label List"))
+                                    .binding(Binding.immutable(List.of(Text.of("It's quite impressive that literally every single controller works, without problem."))))
+                                    .controller(LabelController::new)
+                                    .initial(Text.of("Initial label"))
                                     .build())
                             .build())
                     .category(PlaceholderCategory.createBuilder()

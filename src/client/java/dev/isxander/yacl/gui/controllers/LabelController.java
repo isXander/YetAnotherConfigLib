@@ -64,7 +64,7 @@ public class LabelController implements Controller<Text> {
 
             float y = getDimension().y();
             for (OrderedText text : wrappedText) {
-                textRenderer.drawWithShadow(matrices, text, getDimension().x(), y + getYPadding(), option().available() ? -1 : 0xFFA0A0A0);
+                textRenderer.drawWithShadow(matrices, text, getDimension().x() + getXPadding(), y + getYPadding(), option().available() ? -1 : 0xFFA0A0A0);
                 y += textRenderer.fontHeight;
             }
         }
@@ -123,12 +123,16 @@ public class LabelController implements Controller<Text> {
             return textRenderer.getTextHandler().getStyleAt(wrappedText.get(line), x);
         }
 
+        private int getXPadding() {
+            return 4;
+        }
+
         private int getYPadding() {
             return 3;
         }
 
         private void updateText() {
-            wrappedText = textRenderer.wrapLines(formatValue(), getDimension().width());
+            wrappedText = textRenderer.wrapLines(formatValue(), getDimension().width() - getXPadding() * 2);
             setDimension(getDimension().withHeight(wrappedText.size() * textRenderer.fontHeight + getYPadding() * 2));
         }
 

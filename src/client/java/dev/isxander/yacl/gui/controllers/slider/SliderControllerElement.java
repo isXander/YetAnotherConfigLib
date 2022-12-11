@@ -141,7 +141,11 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     @Override
     public void setDimension(Dimension<Integer> dim) {
         super.setDimension(dim);
-        sliderBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - getThumbWidth() / 2 - dim.width() / 3, dim.centerY() - 5, dim.width() / 3, 10);
+        int trackWidth = dim.width() / 3;
+        if (optionNameString.isEmpty())
+            trackWidth = dim.width() / 2;
+
+        sliderBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - getThumbWidth() / 2 - trackWidth, dim.centerY() - 5, trackWidth, 10);
     }
 
     protected int getThumbX() {
