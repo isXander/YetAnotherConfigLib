@@ -147,9 +147,7 @@ if (hasProperty("CURSEFORGE_TOKEN") && curseforgeId.isNotEmpty()) {
 
             id = curseforgeId
             releaseType = "release"
-            addGameVersion("1.19")
-            addGameVersion("1.19.1")
-            addGameVersion("1.19.2")
+            addGameVersion("1.19.3")
             addGameVersion("Fabric")
             addGameVersion("Java 17")
 

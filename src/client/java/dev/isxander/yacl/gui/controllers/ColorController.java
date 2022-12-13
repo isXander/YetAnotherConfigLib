@@ -184,7 +184,7 @@ public class ColorController implements IStringController<Color> {
         }
 
         @Override
-        protected int getDefaultCarotPos() {
+        protected int getDefaultCaretPos() {
             return colorController.allowAlpha() ? 3 : 1;
         }
 

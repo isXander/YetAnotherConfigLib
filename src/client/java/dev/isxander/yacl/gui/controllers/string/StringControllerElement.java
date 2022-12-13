@@ -54,7 +54,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         matrices.push();
         int textX = getDimension().xLimit() - textRenderer.getWidth(valueText) + renderOffset - getXPadding();
         matrices.translate(textX, getTextY(), 0);
-        GuiUtils.enableScissor(inputFieldBounds.x(), inputFieldBounds.y(), inputFieldBounds.width() + 1, inputFieldBounds.height() + 2);
+        GuiUtils.enableScissor(inputFieldBounds.x(), inputFieldBounds.y() - 2, inputFieldBounds.width() + 1, inputFieldBounds.height() + 4);
         textRenderer.drawWithShadow(matrices, valueText, 0, 0, getValueColor());
         matrices.pop();
 
@@ -90,7 +90,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
             inputFieldFocused = true;
 
             if (!inputFieldBounds.isPointInside((int) mouseX, (int) mouseY)) {
-                caretPos = getDefaultCarotPos();
+                caretPos = getDefaultCaretPos();
             } else {
                 // gets the appropriate caret position for where you click
                 int textX = (int) mouseX - (inputFieldBounds.xLimit() - textRenderer.getWidth(getValueText()));
@@ -99,7 +99,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                 for (char ch : inputField.toCharArray()) {
                     pos++;
                     int charLength = textRenderer.getWidth(String.valueOf(ch));
-                    if (currentWidth + charLength / 2 > textX) { // if more than half way past the characters select in front of that char
+                    if (currentWidth + charLength / 2 > textX) { // if more than halfway past the characters select in front of that char
                         caretPos = pos;
                         break;
                     } else if (pos == inputField.length() - 1) {
@@ -119,7 +119,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         return false;
     }
 
-    protected int getDefaultCarotPos() {
+    protected int getDefaultCaretPos() {
         return inputField.length();
     }
 
