@@ -3,14 +3,21 @@ package dev.isxander.yacl.impl;
 import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.gui.YACLScreen;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ButtonOptionImpl implements ButtonOption {
+@ApiStatus.Internal
+public final class ButtonOptionImpl implements ButtonOption {
     private final Text name;
     private final Text tooltip;
     private final BiConsumer<YACLScreen, ButtonOption> action;
@@ -132,6 +139,80 @@ public class ButtonOptionImpl implements ButtonOption {
         @Override
         public BiConsumer<YACLScreen, ButtonOption> defaultValue() {
             throw new UnsupportedOperationException();
+        }
+    }
+
+    @ApiStatus.Internal
+    public static final class BuilderImpl implements ButtonOption.Builder {
+        private Text name;
+        private final List<Text> tooltipLines = new ArrayList<>();
+        private boolean available = true;
+        private Function<ButtonOption, Controller<BiConsumer<YACLScreen, ButtonOption>>> controlGetter;
+        private BiConsumer<YACLScreen, ButtonOption> action;
+
+        @Override
+        public ButtonOption.Builder name(@NotNull Text name) {
+            Validate.notNull(name, "`name` cannot be null");
+
+            this.name = name;
+            return this;
+        }
+
+        @Override
+        public ButtonOption.Builder tooltip(@NotNull Text... tooltips) {
+            Validate.notNull(tooltips, "`tooltips` cannot be empty");
+
+            tooltipLines.addAll(List.of(tooltips));
+            return this;
+        }
+
+        @Override
+        public ButtonOption.Builder action(@NotNull BiConsumer<YACLScreen, ButtonOption> action) {
+            Validate.notNull(action, "`action` cannot be null");
+
+            this.action = action;
+            return this;
+        }
+
+        @Override
+        @Deprecated
+        public ButtonOption.Builder action(@NotNull Consumer<YACLScreen> action) {
+            Validate.notNull(action, "`action` cannot be null");
+
+            this.action = (screen, button) -> action.accept(screen);
+            return this;
+        }
+
+        @Override
+        public ButtonOption.Builder available(boolean available) {
+            this.available = available;
+            return this;
+        }
+
+        @Override
+        public ButtonOption.Builder controller(@NotNull Function<ButtonOption, Controller<BiConsumer<YACLScreen, ButtonOption>>> control) {
+            Validate.notNull(control, "`control` cannot be null");
+
+            this.controlGetter = control;
+            return this;
+        }
+
+        @Override
+        public ButtonOption build() {
+            Validate.notNull(name, "`name` must not be null when building `Option`");
+            Validate.notNull(controlGetter, "`control` must not be null when building `Option`");
+            Validate.notNull(action, "`action` must not be null when building `Option`");
+
+            MutableText concatenatedTooltip = Text.empty();
+            boolean first = true;
+            for (Text line : tooltipLines) {
+                if (!first) concatenatedTooltip.append("\n");
+                first = false;
+
+                concatenatedTooltip.append(line);
+            }
+
+            return new ButtonOptionImpl(name, concatenatedTooltip, action, available, controlGetter);
         }
     }
 }

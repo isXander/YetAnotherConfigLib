@@ -119,43 +119,16 @@ public interface Option<T> {
      * @param typeClass used to capture the type
      */
     static <T> Builder<T> createBuilder(Class<T> typeClass) {
-        return new Builder<>(typeClass);
+        return new OptionImpl.BuilderImpl<>(typeClass);
     }
 
-    class Builder<T> {
-        private Text name = Text.literal("Name not specified!").formatted(Formatting.RED);
-
-        private final List<Function<T, Text>> tooltipGetters = new ArrayList<>();
-
-        private Function<Option<T>, Controller<T>> controlGetter;
-
-        private Binding<T> binding;
-
-        private boolean available = true;
-
-        private boolean instant = false;
-
-        private final Set<OptionFlag> flags = new HashSet<>();
-
-        private final Class<T> typeClass;
-
-        private final List<BiConsumer<Option<T>, T>> listeners = new ArrayList<>();
-
-        private Builder(Class<T> typeClass) {
-            this.typeClass = typeClass;
-        }
-
+    interface Builder<T> {
         /**
          * Sets the name to be used by the option.
          *
          * @see Option#name()
          */
-        public Builder<T> name(@NotNull Text name) {
-            Validate.notNull(name, "`name` cannot be null");
-
-            this.name = name;
-            return this;
-        }
+        Builder<T> name(@NotNull Text name);
 
         /**
          * Sets the tooltip to be used by the option.
@@ -163,13 +136,7 @@ public interface Option<T> {
          *
          * @param tooltipGetter function to get tooltip depending on value {@link Builder#build()}.
          */
-        @SafeVarargs
-        public final Builder<T> tooltip(@NotNull Function<T, Text>... tooltipGetter) {
-            Validate.notNull(tooltipGetter, "`tooltipGetter` cannot be null");
-
-            this.tooltipGetters.addAll(List.of(tooltipGetter));
-            return this;
-        }
+        Builder<T> tooltip(@NotNull Function<T, Text>... tooltipGetter);
 
         /**
          * Sets the tooltip to be used by the option.
@@ -178,12 +145,7 @@ public interface Option<T> {
          *
          * @param tooltips text lines - merged with a new-line on {@link Builder#build()}.
          */
-        public Builder<T> tooltip(@NotNull Text... tooltips) {
-            Validate.notNull(tooltips, "`tooltips` cannot be empty");
-
-            this.tooltipGetters.addAll(Stream.of(tooltips).map(text -> (Function<T, Text>) t -> text).toList());
-            return this;
-        }
+        Builder<T> tooltip(@NotNull Text... tooltips);
 
         /**
          * Sets the controller for the option.
@@ -191,12 +153,7 @@ public interface Option<T> {
          *
          * @see dev.isxander.yacl.gui.controllers
          */
-        public Builder<T> controller(@NotNull Function<Option<T>, Controller<T>> control) {
-            Validate.notNull(control, "`control` cannot be null");
-
-            this.controlGetter = control;
-            return this;
-        }
+        Builder<T> controller(@NotNull Function<Option<T>, Controller<T>> control);
 
         /**
          * Sets the binding for the option.
@@ -204,12 +161,7 @@ public interface Option<T> {
          *
          * @see Binding
          */
-        public Builder<T> binding(@NotNull Binding<T> binding) {
-            Validate.notNull(binding, "`binding` cannot be null");
-
-            this.binding = binding;
-            return this;
-        }
+        Builder<T> binding(@NotNull Binding<T> binding);
 
         /**
          * Sets the binding for the option.
@@ -220,48 +172,28 @@ public interface Option<T> {
          * @param setter should set the option to the supplied value
          * @see Binding
          */
-        public Builder<T> binding(@NotNull T def, @NotNull Supplier<@NotNull T> getter, @NotNull Consumer<@NotNull T> setter) {
-            Validate.notNull(def, "`def` must not be null");
-            Validate.notNull(getter, "`getter` must not be null");
-            Validate.notNull(setter, "`setter` must not be null");
-
-            this.binding = Binding.generic(def, getter, setter);
-            return this;
-        }
+        Builder<T> binding(@NotNull T def, @NotNull Supplier<@NotNull T> getter, @NotNull Consumer<@NotNull T> setter);
 
         /**
          * Sets if the option can be configured
          *
          * @see Option#available()
          */
-        public Builder<T> available(boolean available) {
-            this.available = available;
-            return this;
-        }
+        Builder<T> available(boolean available);
 
         /**
          * Adds a flag to the option.
          * Upon applying changes, all flags are executed.
          * {@link Option#flags()}
          */
-        public Builder<T> flag(@NotNull OptionFlag... flag) {
-            Validate.notNull(flag, "`flag` must not be null");
-
-            this.flags.addAll(Arrays.asList(flag));
-            return this;
-        }
+        Builder<T> flag(@NotNull OptionFlag... flag);
 
         /**
          * Adds a flag to the option.
          * Upon applying changes, all flags are executed.
          * {@link Option#flags()}
          */
-        public Builder<T> flags(@NotNull Collection<OptionFlag> flags) {
-            Validate.notNull(flags, "`flags` must not be null");
-
-            this.flags.addAll(flags);
-            return this;
-        }
+        Builder<T> flags(@NotNull Collection<OptionFlag> flags);
 
         /**
          * Instantly invokes the binder's setter when modified in the GUI.
@@ -269,66 +201,22 @@ public interface Option<T> {
          * <p>
          * Does not support {@link Option#flags()}!
          */
-        public Builder<T> instant(boolean instant) {
-            this.instant = instant;
-            return this;
-        }
+        Builder<T> instant(boolean instant);
 
         /**
          * Adds a listener to the option. Invoked upon changing the pending value.
          *
          * @see Option#addListener(BiConsumer)
          */
-        public Builder<T> listener(@NotNull BiConsumer<Option<T>, T> listener) {
-            this.listeners.add(listener);
-            return this;
-        }
+        Builder<T> listener(@NotNull BiConsumer<Option<T>, T> listener);
 
         /**
          * Adds multiple listeners to the option. Invoked upon changing the pending value.
          *
          * @see Option#addListener(BiConsumer)
          */
-        public Builder<T> listeners(@NotNull Collection<BiConsumer<Option<T>, T>> listeners) {
-            this.listeners.addAll(listeners);
-            return this;
-        }
+        Builder<T> listeners(@NotNull Collection<BiConsumer<Option<T>, T>> listeners);
 
-        /**
-         * Dictates whether the option should require a restart.
-         * {@link Option#requiresRestart()}
-         */
-        @Deprecated
-        public Builder<T> requiresRestart(boolean requiresRestart) {
-            if (requiresRestart) flag(OptionFlag.GAME_RESTART);
-            else flags.remove(OptionFlag.GAME_RESTART);
-
-            return this;
-        }
-
-        public Option<T> build() {
-            Validate.notNull(controlGetter, "`control` must not be null when building `Option`");
-            Validate.notNull(binding, "`binding` must not be null when building `Option`");
-            Validate.isTrue(!instant || flags.isEmpty(), "instant application does not support option flags");
-
-            Function<T, Text> concatenatedTooltipGetter = value -> {
-                MutableText concatenatedTooltip = Text.empty();
-                boolean first = true;
-                for (Function<T, Text> line : tooltipGetters) {
-                    if (!first) concatenatedTooltip.append("\n");
-                    first = false;
-
-                    concatenatedTooltip.append(line.apply(value));
-                }
-
-                return concatenatedTooltip;
-            };
-
-            if (instant) {
-                listeners.add((opt, pendingValue) -> opt.applyValue());
-            }
-
-            return new OptionImpl<>(name, concatenatedTooltipGetter, controlGetter, binding, available, ImmutableSet.copyOf(flags), typeClass, listeners);
-        }
+        Option<T> build();
     }
 }

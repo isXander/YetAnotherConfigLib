@@ -48,30 +48,16 @@ public interface OptionGroup {
      * Creates a builder to construct a {@link OptionGroup}
      */
     static Builder createBuilder() {
-        return new Builder();
+        return new OptionGroupImpl.BuilderImpl();
     }
 
-    class Builder {
-        private Text name = Text.empty();
-        private final List<Text> tooltipLines = new ArrayList<>();
-        private final List<Option<?>> options = new ArrayList<>();
-        private boolean collapsed = false;
-
-        private Builder() {
-
-        }
-
+    interface Builder {
         /**
          * Sets name of the group, can be {@link Text#empty()} to just separate options, like sodium.
          *
          * @see OptionGroup#name()
          */
-        public Builder name(@NotNull Text name) {
-            Validate.notNull(name, "`name` must not be null");
-
-            this.name = name;
-            return this;
-        }
+        Builder name(@NotNull Text name);
 
         /**
          * Sets the tooltip to be used by the option group.
@@ -80,12 +66,7 @@ public interface OptionGroup {
          *
          * @param tooltips text lines - merged with a new-line on {@link Builder#build()}.
          */
-        public Builder tooltip(@NotNull Text... tooltips) {
-            Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
-
-            tooltipLines.addAll(List.of(tooltips));
-            return this;
-        }
+        Builder tooltip(@NotNull Text... tooltips);
 
         /**
          * Adds an option to group.
@@ -93,15 +74,7 @@ public interface OptionGroup {
          *
          * @see OptionGroup#options()
          */
-        public Builder option(@NotNull Option<?> option) {
-            Validate.notNull(option, "`option` must not be null");
-
-            if (option instanceof ListOption<?>)
-                throw new UnsupportedOperationException("List options must not be added as an option but a group!");
-
-            this.options.add(option);
-            return this;
-        }
+        Builder option(@NotNull Option<?> option);
 
         /**
          * Adds multiple options to group.
@@ -109,39 +82,15 @@ public interface OptionGroup {
          *
          * @see OptionGroup#options()
          */
-        public Builder options(@NotNull Collection<? extends Option<?>> options) {
-            Validate.notEmpty(options, "`options` must not be empty");
-
-            if (options.stream().anyMatch(ListOption.class::isInstance))
-                throw new UnsupportedOperationException("List options must not be added as an option but a group!");
-
-            this.options.addAll(options);
-            return this;
-        }
+        Builder options(@NotNull Collection<? extends Option<?>> options);
 
         /**
          * Dictates if the group should be collapsed by default
          *
          * @see OptionGroup#collapsed()
          */
-        public Builder collapsed(boolean collapsible) {
-            this.collapsed = collapsible;
-            return this;
-        }
+        Builder collapsed(boolean collapsible);
 
-        public OptionGroup build() {
-            Validate.notEmpty(options, "`options` must not be empty to build `OptionGroup`");
-
-            MutableText concatenatedTooltip = Text.empty();
-            boolean first = true;
-            for (Text line : tooltipLines) {
-                if (!first) concatenatedTooltip.append("\n");
-                first = false;
-
-                concatenatedTooltip.append(line);
-            }
-
-            return new OptionGroupImpl(name, concatenatedTooltip, ImmutableList.copyOf(options), collapsed, false);
-        }
+        OptionGroup build();
     }
 }

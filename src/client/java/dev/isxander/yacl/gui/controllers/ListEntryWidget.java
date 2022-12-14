@@ -27,7 +27,7 @@ public class ListEntryWidget extends AbstractWidget implements ParentElement {
     private boolean dragging;
 
     public ListEntryWidget(YACLScreen screen, ListOptionEntry<?> listOptionEntry, AbstractWidget entryWidget) {
-        super(entryWidget.getDimension());
+        super(entryWidget.getDimension().withHeight(Math.max(entryWidget.getDimension().height(), 20) - ((listOptionEntry.parentGroup().indexOf(listOptionEntry) == listOptionEntry.parentGroup().options().size() - 1) ? 0 : 2))); // -2 to remove the padding
         this.listOptionEntry = listOptionEntry;
         this.listOption = listOptionEntry.parentGroup();
         this.optionNameString = listOptionEntry.name().getString().toLowerCase();
@@ -38,6 +38,7 @@ public class ListEntryWidget extends AbstractWidget implements ParentElement {
 
         removeButton = new TooltipButtonWidget(screen, dim.xLimit() - 20, dim.y(), 20, 20, Text.of("\u274c"), Text.translatable("yacl.list.remove"), btn -> {
             listOption.removeEntry(listOptionEntry);
+            updateButtonStates();
         });
 
         moveUpButton = new TooltipButtonWidget(screen, dim.x(), dim.y(), 20, 20, Text.of("\u2191"), Text.translatable("yacl.list.move_up"), btn -> {

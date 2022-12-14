@@ -5,7 +5,7 @@ import dev.isxander.yacl.api.Binding;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class GenericBindingImpl<T> implements Binding<T> {
+public final class GenericBindingImpl<T> implements Binding<T> {
     private final T def;
     private final Supplier<T> getter;
     private final Consumer<T> setter;

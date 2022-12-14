@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.controllers.ListEntryWidget;
+import dev.isxander.yacl.impl.ListOptionEntryImpl;
+import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.font.TextRenderer;
@@ -65,7 +67,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
                 List<OptionEntry> optionEntries = new ArrayList<>();
                 for (Option<?> option : group.options()) {
-                    OptionEntry entry = new OptionEntry(option, category, group, groupSeparatorEntry, option.controller().provideWidget(yaclScreen, getDefaultEntryPosition()));
+                    OptionEntry entry = new OptionEntry(option, category, group, groupSeparatorEntry, option.controller().provideWidget(yaclScreen, getDefaultEntryDimension()));
                     addEntry(entry);
                     optionEntries.add(entry);
                 }
@@ -85,23 +87,31 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         // find group separator for group
         GroupSeparatorEntry groupSeparator = super.children().stream().filter(e -> e instanceof GroupSeparatorEntry gs && gs.group == listOption).map(GroupSeparatorEntry.class::cast).findAny().orElse(null);
 
-        if (groupSeparator == null)
+        if (groupSeparator == null) {
+            YACLConstants.LOGGER.warn("Can't find group seperator to refresh list option entries for list option " + listOption.name());
             return;
+        }
 
         for (OptionEntry entry : groupSeparator.optionEntries)
             super.removeEntry(entry);
-
         groupSeparator.optionEntries.clear();
+
+        // if no entries, below loop won't run where addEntryBelow() recaches viewable children
+        if (listOption.options().isEmpty()) {
+            recacheViewableChildren();
+            return;
+        }
+
         Entry lastEntry = groupSeparator;
         for (ListOptionEntry<?> listOptionEntry : listOption.options()) {
-            OptionEntry optionEntry = new OptionEntry(listOptionEntry, category, listOption, groupSeparator, listOptionEntry.controller().provideWidget(yaclScreen, getDefaultEntryPosition()));
+            OptionEntry optionEntry = new OptionEntry(listOptionEntry, category, listOption, groupSeparator, listOptionEntry.controller().provideWidget(yaclScreen, getDefaultEntryDimension()));
             addEntryBelow(lastEntry, optionEntry);
             groupSeparator.optionEntries.add(optionEntry);
             lastEntry = optionEntry;
         }
     }
 
-    public Dimension<Integer> getDefaultEntryPosition() {
+    public Dimension<Integer> getDefaultEntryDimension() {
         return Dimension.ofInt(getRowLeft(), 0, getRowWidth(), 20);
     }
 
@@ -245,9 +255,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             this.category = category;
             this.group = group;
             this.groupSeparatorEntry = groupSeparatorEntry;
-            if (option instanceof ListOptionEntry<?> listOptionEntry)
-                this.widget = new ListEntryWidget(yaclScreen, listOptionEntry, widget);
-            else this.widget = widget;
+            this.widget = widget;
             this.categoryName = category.name().getString().toLowerCase();
             this.groupName = group.name().getString().toLowerCase();
             if (option.canResetToDefault() && this.widget.canReset()) {
@@ -306,7 +314,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
         @Override
         public int getItemHeight() {
-            return widget.getDimension().height() + 2;
+            return Math.max(widget.getDimension().height(), resetButton != null ? resetButton.getHeight() : 0) + 2;
         }
 
         @Override
@@ -377,13 +385,16 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         public void setExpanded(boolean expanded) {
+            if (this.groupExpanded == expanded)
+                return;
+
             this.groupExpanded = expanded;
             updateExpandMinimizeText();
+            recacheViewableChildren();
         }
 
         protected void onExpandButtonPress() {
             setExpanded(!isExpanded());
-            recacheViewableChildren();
         }
 
         protected void updateExpandMinimizeText() {
@@ -447,6 +458,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
             this.addListButton = new TooltipButtonWidget(yaclScreen, resetListButton.getX() - 20, -50, 20, 20, Text.of("+"), Text.translatable("yacl.list.add_top"), btn -> {
                 group.insertNewEntryToTop();
+                setExpanded(true);
             });
 
             updateExpandMinimizeText();
@@ -480,15 +492,12 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         private void minimizeIfUnavailable() {
             if (!listOption.available() && isExpanded()) {
                 setExpanded(false);
-                recacheViewableChildren();
             }
         }
 
         @Override
         protected void updateExpandMinimizeText() {
             super.updateExpandMinimizeText();
-            if (resetListButton != null && addListButton != null)
-                resetListButton.visible = addListButton.visible = isExpanded();
             expandMinimizeButton.active = listOption == null || listOption.available();
         }
 

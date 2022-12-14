@@ -51,36 +51,17 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
     void addRefreshListener(Runnable changedListener);
 
     static <T> Builder<T> createBuilder(Class<T> typeClass) {
-        return new Builder<>(typeClass);
+        return new ListOptionImpl.BuilderImpl<>(typeClass);
     }
 
-    class Builder<T> {
-        private Text name = Text.empty();
-        private final List<Text> tooltipLines = new ArrayList<>();
-        private Function<ListOptionEntry<T>, Controller<T>> controllerFunction;
-        private Binding<List<T>> binding = null;
-        private final Set<OptionFlag> flags = new HashSet<>();
-        private T initialValue;
-        private boolean collapsed = false;
-        private boolean available = true;
-        private final Class<T> typeClass;
-
-        private Builder(Class<T> typeClass) {
-            this.typeClass = typeClass;
-        }
-
+    interface Builder<T> {
         /**
          * Sets name of the list, for UX purposes, a name should always be given,
          * but isn't enforced.
          *
          * @see ListOption#name()
          */
-        public Builder<T> name(@NotNull Text name) {
-            Validate.notNull(name, "`name` must not be null");
-
-            this.name = name;
-            return this;
-        }
+        Builder<T> name(@NotNull Text name);
 
         /**
          * Sets the tooltip to be used by the list. It is displayed like a normal
@@ -91,22 +72,12 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
          *
          * @param tooltips text lines - merged with a new-line on {@link Builder#build()}.
          */
-        public Builder<T> tooltip(@NotNull Text... tooltips) {
-            Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
-
-            tooltipLines.addAll(List.of(tooltips));
-            return this;
-        }
+        Builder<T> tooltip(@NotNull Text... tooltips);
 
         /**
          * Sets the value that is used when creating new entries
          */
-        public Builder<T> initial(@NotNull T initialValue) {
-            Validate.notNull(initialValue, "`initialValue` cannot be empty");
-
-            this.initialValue = initialValue;
-            return this;
-        }
+        Builder<T> initial(@NotNull T initialValue);
 
         /**
          * Sets the controller for the option.
@@ -114,12 +85,7 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
          *
          * @see dev.isxander.yacl.gui.controllers
          */
-        public Builder<T> controller(@NotNull Function<ListOptionEntry<T>, Controller<T>> control) {
-            Validate.notNull(control, "`control` cannot be null");
-
-            this.controllerFunction = control;
-            return this;
-        }
+        Builder<T> controller(@NotNull Function<ListOptionEntry<T>, Controller<T>> control);
 
         /**
          * Sets the binding for the option.
@@ -127,12 +93,7 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
          *
          * @see Binding
          */
-        public Builder<T> binding(@NotNull Binding<List<T>> binding) {
-            Validate.notNull(binding, "`binding` cannot be null");
-
-            this.binding = binding;
-            return this;
-        }
+        Builder<T> binding(@NotNull Binding<List<T>> binding);
 
         /**
          * Sets the binding for the option.
@@ -143,48 +104,28 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
          * @param setter should set the option to the supplied value
          * @see Binding
          */
-        public Builder<T> binding(@NotNull List<T> def, @NotNull Supplier<@NotNull List<T>> getter, @NotNull Consumer<@NotNull List<T>> setter) {
-            Validate.notNull(def, "`def` must not be null");
-            Validate.notNull(getter, "`getter` must not be null");
-            Validate.notNull(setter, "`setter` must not be null");
-
-            this.binding = Binding.generic(def, getter, setter);
-            return this;
-        }
+        Builder<T> binding(@NotNull List<T> def, @NotNull Supplier<@NotNull List<T>> getter, @NotNull Consumer<@NotNull List<T>> setter);
 
         /**
          * Sets if the option can be configured
          *
          * @see Option#available()
          */
-        public Builder<T> available(boolean available) {
-            this.available = available;
-            return this;
-        }
+        Builder<T> available(boolean available);
 
         /**
          * Adds a flag to the option.
          * Upon applying changes, all flags are executed.
          * {@link Option#flags()}
          */
-        public Builder<T> flag(@NotNull OptionFlag... flag) {
-            Validate.notNull(flag, "`flag` must not be null");
-
-            this.flags.addAll(Arrays.asList(flag));
-            return this;
-        }
+        Builder<T> flag(@NotNull OptionFlag... flag);
 
         /**
          * Adds a flag to the option.
          * Upon applying changes, all flags are executed.
          * {@link Option#flags()}
          */
-        public Builder<T> flags(@NotNull Collection<OptionFlag> flags) {
-            Validate.notNull(flags, "`flags` must not be null");
-
-            this.flags.addAll(flags);
-            return this;
-        }
+        Builder<T> flags(@NotNull Collection<OptionFlag> flags);
 
         /**
          * Dictates if the group should be collapsed by default.
@@ -192,26 +133,8 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
          *
          * @see OptionGroup#collapsed()
          */
-        public Builder<T> collapsed(boolean collapsible) {
-            this.collapsed = collapsible;
-            return this;
-        }
+        Builder<T> collapsed(boolean collapsible);
 
-        public ListOption<T> build() {
-            Validate.notNull(controllerFunction, "`controller` must not be null");
-            Validate.notNull(binding, "`binding` must not be null");
-            Validate.notNull(initialValue, "`initialValue` must not be null");
-
-            MutableText concatenatedTooltip = Text.empty();
-            boolean first = true;
-            for (Text line : tooltipLines) {
-                if (!first) concatenatedTooltip.append("\n");
-                first = false;
-
-                concatenatedTooltip.append(line);
-            }
-
-            return new ListOptionImpl<>(name, concatenatedTooltip, binding, initialValue, typeClass, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available);
-        }
+        ListOption<T> build();
     }
 }

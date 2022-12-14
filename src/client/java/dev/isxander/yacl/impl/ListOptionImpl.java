@@ -3,17 +3,21 @@ package dev.isxander.yacl.impl;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.api.*;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class ListOptionImpl<T> implements ListOption<T> {
+@ApiStatus.Internal
+public final class ListOptionImpl<T> implements ListOption<T> {
     private final Text name;
     private final Text tooltip;
     private final Binding<List<T>> binding;
@@ -109,8 +113,8 @@ public class ListOptionImpl<T> implements ListOption<T> {
 
     @Override
     public void removeEntry(ListOptionEntry<?> entry) {
-        entries.remove(entry);
-        onRefresh();
+        if (entries.remove(entry))
+            onRefresh();
     }
 
     @Override
@@ -123,7 +127,6 @@ public class ListOptionImpl<T> implements ListOption<T> {
         entries.clear();
         entries.addAll(createEntries(value));
         onRefresh();
-        listeners.forEach(listener -> listener.accept(this, value));
     }
 
     @Override
@@ -203,6 +206,119 @@ public class ListOptionImpl<T> implements ListOption<T> {
 
         public ListOptionEntry<T> create(T initialValue) {
             return new ListOptionEntryImpl<>(ListOptionImpl.this, initialValue, controllerFunction);
+        }
+    }
+
+    @ApiStatus.Internal
+    public static final class BuilderImpl<T> implements ListOption.Builder<T> {
+        private Text name = Text.empty();
+        private final List<Text> tooltipLines = new ArrayList<>();
+        private Function<ListOptionEntry<T>, Controller<T>> controllerFunction;
+        private Binding<List<T>> binding = null;
+        private final Set<OptionFlag> flags = new HashSet<>();
+        private T initialValue;
+        private boolean collapsed = false;
+        private boolean available = true;
+        private final Class<T> typeClass;
+
+        public BuilderImpl(Class<T> typeClass) {
+            this.typeClass = typeClass;
+        }
+
+        @Override
+        public ListOption.Builder<T> name(@NotNull Text name) {
+            Validate.notNull(name, "`name` must not be null");
+
+            this.name = name;
+            return this;
+        }
+
+        @Override
+        public ListOption.Builder<T> tooltip(@NotNull Text... tooltips) {
+            Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
+
+            tooltipLines.addAll(List.of(tooltips));
+            return this;
+        }
+
+        @Override
+        public ListOption.Builder<T> initial(@NotNull T initialValue) {
+            Validate.notNull(initialValue, "`initialValue` cannot be empty");
+
+            this.initialValue = initialValue;
+            return this;
+        }
+
+        @Override
+        public ListOption.Builder<T> controller(@NotNull Function<ListOptionEntry<T>, Controller<T>> control) {
+            Validate.notNull(control, "`control` cannot be null");
+
+            this.controllerFunction = control;
+            return this;
+        }
+
+        @Override
+        public ListOption.Builder<T> binding(@NotNull Binding<List<T>> binding) {
+            Validate.notNull(binding, "`binding` cannot be null");
+
+            this.binding = binding;
+            return this;
+        }
+
+        @Override
+        public ListOption.Builder<T> binding(@NotNull List<T> def, @NotNull Supplier<@NotNull List<T>> getter, @NotNull Consumer<@NotNull List<T>> setter) {
+            Validate.notNull(def, "`def` must not be null");
+            Validate.notNull(getter, "`getter` must not be null");
+            Validate.notNull(setter, "`setter` must not be null");
+
+            this.binding = Binding.generic(def, getter, setter);
+            return this;
+        }
+
+        @Override
+        public ListOption.Builder<T> available(boolean available) {
+            this.available = available;
+            return this;
+        }
+
+        @Override
+        public ListOption.Builder<T> flag(@NotNull OptionFlag... flag) {
+            Validate.notNull(flag, "`flag` must not be null");
+
+            this.flags.addAll(Arrays.asList(flag));
+            return this;
+        }
+
+        @Override
+        public ListOption.Builder<T> flags(@NotNull Collection<OptionFlag> flags) {
+            Validate.notNull(flags, "`flags` must not be null");
+
+            this.flags.addAll(flags);
+            return this;
+        }
+
+        @Override
+        public ListOption.Builder<T> collapsed(boolean collapsible) {
+            this.collapsed = collapsible;
+            return this;
+        }
+
+        @Override
+        public ListOption<T> build() {
+            Validate.notNull(controllerFunction, "`controller` must not be null");
+            Validate.notNull(binding, "`binding` must not be null");
+            Validate.notNull(initialValue, "`initialValue` must not be null");
+
+            MutableText concatenatedTooltip = Text.empty();
+            boolean first = true;
+            for (Text line : tooltipLines) {
+                if (!first) concatenatedTooltip.append("\n");
+                first = false;
+
+                concatenatedTooltip.append(line);
+            }
+
+            return new ListOptionImpl<>(name, concatenatedTooltip, binding, initialValue, typeClass, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available);
         }
     }
 }

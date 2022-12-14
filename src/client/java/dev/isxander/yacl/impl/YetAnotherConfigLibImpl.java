@@ -2,15 +2,23 @@ package dev.isxander.yacl.impl;
 
 import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl.api.ConfigCategory;
+import dev.isxander.yacl.api.PlaceholderCategory;
 import dev.isxander.yacl.api.YetAnotherConfigLib;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+@ApiStatus.Internal
 public final class YetAnotherConfigLibImpl implements YetAnotherConfigLib {
     private final Text title;
     private final ImmutableList<ConfigCategory> categories;
@@ -56,29 +64,60 @@ public final class YetAnotherConfigLibImpl implements YetAnotherConfigLib {
         return initConsumer;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (YetAnotherConfigLibImpl) obj;
-        return Objects.equals(this.title, that.title) &&
-                Objects.equals(this.categories, that.categories) &&
-                Objects.equals(this.saveFunction, that.saveFunction) &&
-                Objects.equals(this.initConsumer, that.initConsumer);
-    }
+    @ApiStatus.Internal
+    public static final class BuilderImpl implements YetAnotherConfigLib.Builder {
+        private Text title;
+        private final List<ConfigCategory> categories = new ArrayList<>();
+        private Runnable saveFunction = () -> {};
+        private Consumer<YACLScreen> initConsumer = screen -> {};
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(title, categories, saveFunction, initConsumer);
-    }
+        @Override
+        public YetAnotherConfigLib.Builder title(@NotNull Text title) {
+            Validate.notNull(title, "`title` cannot be null");
 
-    @Override
-    public String toString() {
-        return "YetAnotherConfigLibImpl[" +
-                "title=" + title + ", " +
-                "categories=" + categories + ", " +
-                "saveFunction=" + saveFunction + ", " +
-                "initConsumer=" + initConsumer + ']';
-    }
+            this.title = title;
+            return this;
+        }
 
+        @Override
+        public YetAnotherConfigLib.Builder category(@NotNull ConfigCategory category) {
+            Validate.notNull(category, "`category` cannot be null");
+
+            this.categories.add(category);
+            return this;
+        }
+
+        @Override
+        public YetAnotherConfigLib.Builder categories(@NotNull Collection<? extends ConfigCategory> categories) {
+            Validate.notNull(categories, "`categories` cannot be null");
+
+            this.categories.addAll(categories);
+            return this;
+        }
+
+        @Override
+        public YetAnotherConfigLib.Builder save(@NotNull Runnable saveFunction) {
+            Validate.notNull(saveFunction, "`saveFunction` cannot be null");
+
+            this.saveFunction = saveFunction;
+            return this;
+        }
+
+        @Override
+        public YetAnotherConfigLib.Builder screenInit(@NotNull Consumer<YACLScreen> initConsumer) {
+            Validate.notNull(initConsumer, "`initConsumer` cannot be null");
+
+            this.initConsumer = initConsumer;
+            return this;
+        }
+
+        @Override
+        public YetAnotherConfigLib build() {
+            Validate.notNull(title, "`title must not be null to build `YetAnotherConfigLib`");
+            Validate.notEmpty(categories, "`categories` must not be empty to build `YetAnotherConfigLib`");
+            Validate.isTrue(!categories.stream().allMatch(category -> category instanceof PlaceholderCategory), "At least one regular category is required to build `YetAnotherConfigLib`");
+
+            return new YetAnotherConfigLibImpl(title, ImmutableList.copyOf(categories), saveFunction, initConsumer);
+        }
+    }
 }

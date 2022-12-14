@@ -24,31 +24,16 @@ public interface PlaceholderCategory extends ConfigCategory {
     BiFunction<MinecraftClient, YACLScreen, Screen> screen();
 
     static Builder createBuilder() {
-        return new Builder();
+        return new PlaceholderCategoryImpl.BuilderImpl();
     }
 
-    class Builder {
-        private Text name;
-
-        private final List<Text> tooltipLines = new ArrayList<>();
-
-        private BiFunction<MinecraftClient, YACLScreen, Screen> screenFunction;
-
-        private Builder() {
-
-        }
-
+    interface Builder {
         /**
          * Sets name of the category
          *
          * @see ConfigCategory#name()
          */
-        public Builder name(@NotNull Text name) {
-            Validate.notNull(name, "`name` cannot be null");
-
-            this.name = name;
-            return this;
-        }
+        Builder name(@NotNull Text name);
 
         /**
          * Sets the tooltip to be used by the category.
@@ -57,38 +42,15 @@ public interface PlaceholderCategory extends ConfigCategory {
          *
          * @param tooltips text lines - merged with a new-line on {@link Builder#build()}.
          */
-        public Builder tooltip(@NotNull Text... tooltips) {
-            Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
-
-            tooltipLines.addAll(List.of(tooltips));
-            return this;
-        }
+        Builder tooltip(@NotNull Text... tooltips);
 
         /**
          * Screen to open upon selecting this category
          *
          * @see PlaceholderCategory#screen()
          */
-        public Builder screen(@NotNull BiFunction<MinecraftClient, YACLScreen, Screen> screenFunction) {
-            Validate.notNull(screenFunction, "`screenFunction` cannot be null");
+        Builder screen(@NotNull BiFunction<MinecraftClient, YACLScreen, Screen> screenFunction);
 
-            this.screenFunction = screenFunction;
-            return this;
-        }
-
-        public PlaceholderCategory build() {
-            Validate.notNull(name, "`name` must not be null to build `ConfigCategory`");
-
-            MutableText concatenatedTooltip = Text.empty();
-            boolean first = true;
-            for (Text line : tooltipLines) {
-                if (!first) concatenatedTooltip.append("\n");
-                first = false;
-
-                concatenatedTooltip.append(line);
-            }
-
-            return new PlaceholderCategoryImpl(name, screenFunction, concatenatedTooltip);
-        }
+        PlaceholderCategory build();
     }
 }
