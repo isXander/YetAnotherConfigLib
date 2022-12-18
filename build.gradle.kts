@@ -1,7 +1,7 @@
 plugins {
     java
 
-    id("fabric-loom") version "1.0.+"
+    id("fabric-loom") version "[1.0.16, 1.1.0)" // 1.0.+ but patch must be 16 or higher
     id("io.github.juuxel.loom-quiltflower") version "1.8.+"
 
     id("com.modrinth.minotaur") version "2.4.+"
@@ -68,7 +68,7 @@ dependencies {
     mappings("net.fabricmc:yarn:$minecraftVersion+build.$yarnBuild:v2")
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 
-    "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.68.1+1.19.3"))
+    "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.69.1+1.19.3"))
 
     "testmodImplementation"(sourceSets.main.get().output)
     "testmodImplementation"(sourceSets["client"].output)
