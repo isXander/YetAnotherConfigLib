@@ -136,6 +136,7 @@ public interface Option<T> {
          *
          * @param tooltipGetter function to get tooltip depending on value {@link Builder#build()}.
          */
+        @SuppressWarnings("unchecked")
         Builder<T> tooltip(@NotNull Function<T, Text>... tooltipGetter);
 
         /**

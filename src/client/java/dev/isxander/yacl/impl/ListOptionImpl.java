@@ -93,7 +93,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     }
 
     @Override
-    public ImmutableList<T> pendingValue() {
+    public @NotNull ImmutableList<T> pendingValue() {
         return ImmutableList.copyOf(entries.stream().map(Option::pendingValue).toList());
     }
 

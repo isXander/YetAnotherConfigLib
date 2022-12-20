@@ -36,20 +36,13 @@ public class GuiTest {
                                     .controller(ActionController::new)
                                     .action((screen, opt) -> MinecraftClient.getInstance().setScreen(getFullTestSuite(screen)))
                                     .build())
-                            .option(ButtonOption.createBuilder()
-                                    .name(Text.of("Basic Wiki Suite"))
-                                    .controller(ActionController::new)
-                                    .action((screen, opt) -> MinecraftClient.getInstance().setScreen(getWikiBasic(screen)))
-                                    .build())
-                            .option(ButtonOption.createBuilder()
-                                    .name(Text.of("Group Wiki Suite"))
-                                    .controller(ActionController::new)
-                                    .action((screen, opt) -> MinecraftClient.getInstance().setScreen(getWikiGroups(screen)))
-                                    .build())
-                            .option(ButtonOption.createBuilder()
-                                    .name(Text.of("Unavailable Test Suite"))
-                                    .controller(ActionController::new)
-                                    .action((screen, opt) -> MinecraftClient.getInstance().setScreen(getDisabledTest(screen)))
+                            .group(OptionGroup.createBuilder()
+                                    .name(Text.of("Wiki"))
+                                    .option(ButtonOption.createBuilder()
+                                            .name(Text.of("Get Started"))
+                                            .controller(ActionController::new)
+                                            .action((screen, opt) -> MinecraftClient.getInstance().setScreen(getWikiGetStarted(screen)))
+                                            .build())
                                     .build())
                             .build())
                 )
@@ -76,7 +69,6 @@ public class GuiTest {
                                             )
                                             .controller(BooleanController::new)
                                             .flag(OptionFlag.GAME_RESTART)
-                                            .available(false)
                                             .build())
                                     .option(Option.createBuilder(boolean.class)
                                             .name(Text.of("Custom Boolean Toggle"))
@@ -89,7 +81,7 @@ public class GuiTest {
                                             .controller(opt -> new BooleanController(opt, state -> state ? Text.of("Amazing") : Text.of("Not Amazing"), true))
                                             .build())
                                     .option(Option.createBuilder(boolean.class)
-                                            .name(Text.of("Tick Box aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
+                                            .name(Text.of("Tick Box"))
                                             .tooltip(Text.of("There are even alternate methods of displaying the same data type!"))
                                             .binding(
                                                     defaults.tickbox,
@@ -102,7 +94,7 @@ public class GuiTest {
                             .group(OptionGroup.createBuilder()
                                     .name(Text.of("Slider Controllers"))
                                     .option(Option.createBuilder(int.class)
-                                            .name(Text.of("Int Slider that is cut off because the slider"))
+                                            .name(Text.of("Int Slider"))
                                             .instant(true)
                                             .binding(
                                                     defaults.intSlider,
@@ -219,16 +211,14 @@ public class GuiTest {
                                             .action((screen, opt) -> SystemToast.add(MinecraftClient.getInstance().getToastManager(), SystemToast.Type.TUTORIAL_HINT, Text.of("Button Pressed"), Text.of("Button option was invoked!")))
                                             .controller(ActionController::new)
                                             .build())
-                                    .option(Option.createBuilder(Text.class)
-                                            .binding(Binding.immutable(Text.empty()
+                                    .option(LabelOption.create(
+                                            Text.empty()
                                                     .append(Text.literal("a").styled(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("a")))))
                                                     .append(Text.literal("b").styled(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("b")))))
                                                     .append(Text.literal("c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c").styled(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("c")))))
                                                     .append(Text.literal("e").styled(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("e")))))
-                                                    .styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://isxander.dev")))
-                                            ))
-                                            .controller(LabelController::new)
-                                            .build())
+                                                    .styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://isxander.dev"))))
+                                    )
                                     .build())
                             .group(OptionGroup.createBuilder()
                                     .name(Text.of("Minecraft Bindings"))
@@ -410,81 +400,26 @@ public class GuiTest {
                 .generateScreen(parent);
     }
 
-    private static Screen getDisabledTest(Screen parent) {
-        return YetAnotherConfigLib.create(ExampleConfig.INSTANCE, (defaults, config, builder) -> builder
-                    .title(Text.empty())
-                    .category(ConfigCategory.createBuilder()
-                            .name(Text.of("Disabled Test"))
-                            .option(Option.createBuilder(int.class)
-                                    .name(Text.of("Slider"))
-                                    .binding(Binding.immutable(0))
-                                    .controller(opt -> new IntegerSliderController(opt, 0, 5, 1))
-                                    .available(false)
-                                    .build())
-                            .option(Option.createBuilder(boolean.class)
-                                    .name(Text.of("Tick Box"))
-                                    .binding(Binding.immutable(true))
-                                    .controller(TickBoxController::new)
-                                    .available(false)
-                                    .build())
-                            .option(Option.createBuilder(boolean.class)
-                                    .name(Text.of("Tick Box (Enabled)"))
-                                    .binding(Binding.immutable(true))
-                                    .controller(TickBoxController::new)
-                                    .build())
-                            .option(Option.createBuilder(String.class)
-                                    .name(Text.of("Text Field"))
-                                    .binding(Binding.immutable("hi"))
-                                    .controller(StringController::new)
-                                    .available(false)
-                                    .build())
-                            .build())
-                )
-                .generateScreen(parent);
-    }
+    private static boolean myBooleanOption = true;
 
-    private static Screen getWikiBasic(Screen parent) {
-        return YetAnotherConfigLib.create(ExampleConfig.INSTANCE, (defaults, config, builder) -> builder
-                    .title(Text.of("Mod Name"))
-                    .category(ConfigCategory.createBuilder()
-                            .name(Text.of("My Category"))
-                            .tooltip(Text.of("This displays when you hover over a category button")) // optional
-                            .option(Option.createBuilder(boolean.class)
-                                    .name(Text.of("My Boolean Option"))
-                                    .tooltip(Text.of("This option displays the basic capabilities of YetAnotherConfigLib")) // optional
-                                    .binding(
-                                            defaults.booleanToggle, // default
-                                            () -> config.booleanToggle, // getter
-                                            newValue -> config.booleanToggle = newValue // setter
-                                    )
-                                    .controller(BooleanController::new)
-                                    .build())
-                            .build())
-                )
-                .generateScreen(parent);
-    }
-
-    private static Screen getWikiGroups(Screen parent) {
-        return YetAnotherConfigLib.create(ExampleConfig.INSTANCE, (defaults, config, builder) -> builder
-                    .title(Text.of("Mod Name"))
-                    .category(ConfigCategory.createBuilder()
-                            .name(Text.of("My Category"))
-                            .tooltip(Text.of("This displays when you hover over a category button")) // optional
-                            .group(OptionGroup.createBuilder()
-                                    .name(Text.of("Option Group"))
-                                    .option(Option.createBuilder(boolean.class)
-                                            .name(Text.of("My Boolean Option"))
-                                            .tooltip(Text.of("This option displays the basic capabilities of YetAnotherConfigLib")) // optional
-                                            .binding(
-                                                    defaults.booleanToggle, // default
-                                                    () -> config.booleanToggle, // getter
-                                                    newValue -> config.booleanToggle = newValue // setter
-                                            )
-                                            .controller(BooleanController::new)
-                                            .build())
-                                    .build())
-                            .build())
-                )
+    private static Screen getWikiGetStarted(Screen parent) {
+        return YetAnotherConfigLib.createBuilder()
+                .title(Text.literal("Used for narration. Could be used to render a title in the future."))
+                .category(ConfigCategory.createBuilder()
+                        .name(Text.literal("Name of the category"))
+                        .tooltip(Text.literal("This text will appear as a tooltip when you hover or focus the button with Tab. There is no need to add \n to wrap as YACL will do it for you."))
+                        .group(OptionGroup.createBuilder()
+                                .name(Text.literal("Name of the group"))
+                                .tooltip(Text.literal("This text will appear when you hover over the name or focus on the collapse button with Tab."))
+                                .option(Option.createBuilder(boolean.class)
+                                        .name(Text.literal("Boolean Option"))
+                                        .tooltip(Text.literal("This text will appear as a tooltip when you hover over the option."))
+                                        .binding(true, () -> myBooleanOption, newVal -> myBooleanOption = newVal)
+                                        .controller(TickBoxController::new)
+                                        .build())
+                                .build())
+                        .build())
+                .build()
                 .generateScreen(parent);
     }
 }

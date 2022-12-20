@@ -48,6 +48,10 @@ public class SearchFieldWidget extends TextFieldWidget {
         yaclScreen.categoryList.setScrollAmount(0);
     }
 
+    public String getQuery() {
+        return getText().toLowerCase();
+    }
+
     public boolean isEmpty() {
         return isEmpty;
     }

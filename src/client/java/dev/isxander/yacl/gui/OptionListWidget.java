@@ -3,8 +3,6 @@ package dev.isxander.yacl.gui;
 import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.api.utils.Dimension;
-import dev.isxander.yacl.gui.controllers.ListEntryWidget;
-import dev.isxander.yacl.impl.ListOptionEntryImpl;
 import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.MultilineText;
@@ -16,6 +14,7 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -27,7 +26,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     private ImmutableList<Entry> viewableChildren;
 
     public OptionListWidget(YACLScreen screen, MinecraftClient client, int width, int height) {
-        super(client, width / 3, 0, width / 3 * 2, height, true);
+        super(client, width / 3, 0, width / 3 * 2 + 1, height, true);
         this.yaclScreen = screen;
 
         refreshOptions();
@@ -65,7 +64,17 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
                     groupSeparatorEntry = null;
                 }
 
-                List<OptionEntry> optionEntries = new ArrayList<>();
+                List<Entry> optionEntries = new ArrayList<>();
+
+                // add empty entry to make sure users know it's empty not just bugging out
+                if (groupSeparatorEntry instanceof ListGroupSeparatorEntry listGroupSeparatorEntry) {
+                    if (listGroupSeparatorEntry.listOption.options().isEmpty()) {
+                        EmptyListLabel emptyListLabel = new EmptyListLabel(listGroupSeparatorEntry, category);
+                        addEntry(emptyListLabel);
+                        optionEntries.add(emptyListLabel);
+                    }
+                }
+
                 for (Option<?> option : group.options()) {
                     OptionEntry entry = new OptionEntry(option, category, group, groupSeparatorEntry, option.controller().provideWidget(yaclScreen, getDefaultEntryDimension()));
                     addEntry(entry);
@@ -73,7 +82,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
                 }
 
                 if (groupSeparatorEntry != null) {
-                    groupSeparatorEntry.setOptionEntries(optionEntries);
+                    groupSeparatorEntry.setChildEntries(optionEntries);
                 }
             }
         }
@@ -85,20 +94,22 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
     private void refreshListEntries(ListOption<?> listOption, ConfigCategory category) {
         // find group separator for group
-        GroupSeparatorEntry groupSeparator = super.children().stream().filter(e -> e instanceof GroupSeparatorEntry gs && gs.group == listOption).map(GroupSeparatorEntry.class::cast).findAny().orElse(null);
+        ListGroupSeparatorEntry groupSeparator = super.children().stream().filter(e -> e instanceof ListGroupSeparatorEntry gs && gs.group == listOption).map(ListGroupSeparatorEntry.class::cast).findAny().orElse(null);
 
         if (groupSeparator == null) {
             YACLConstants.LOGGER.warn("Can't find group seperator to refresh list option entries for list option " + listOption.name());
             return;
         }
 
-        for (OptionEntry entry : groupSeparator.optionEntries)
+        for (Entry entry : groupSeparator.childEntries)
             super.removeEntry(entry);
-        groupSeparator.optionEntries.clear();
+        groupSeparator.childEntries.clear();
 
         // if no entries, below loop won't run where addEntryBelow() recaches viewable children
         if (listOption.options().isEmpty()) {
-            recacheViewableChildren();
+            EmptyListLabel emptyListLabel;
+            addEntryBelow(groupSeparator, emptyListLabel = new EmptyListLabel(groupSeparator, category));
+            groupSeparator.childEntries.add(emptyListLabel);
             return;
         }
 
@@ -106,7 +117,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         for (ListOptionEntry<?> listOptionEntry : listOption.options()) {
             OptionEntry optionEntry = new OptionEntry(listOptionEntry, category, listOption, groupSeparator, listOptionEntry.controller().provideWidget(yaclScreen, getDefaultEntryDimension()));
             addEntryBelow(lastEntry, optionEntry);
-            groupSeparator.optionEntries.add(optionEntry);
+            groupSeparator.childEntries.add(optionEntry);
             lastEntry = optionEntry;
         }
     }
@@ -304,7 +315,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
         @Override
         public boolean isViewable() {
-            String query = yaclScreen.searchFieldWidget.getText();
+            String query = yaclScreen.searchFieldWidget.getQuery();
             return (groupSeparatorEntry == null || groupSeparatorEntry.isExpanded())
                     && (yaclScreen.searchFieldWidget.isEmpty()
                     || (!singleCategory && categoryName.contains(query))
@@ -346,7 +357,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
         protected boolean groupExpanded;
 
-        protected List<OptionEntry> optionEntries;
+        protected List<Entry> childEntries = new ArrayList<>();
 
         private int y;
 
@@ -401,13 +412,14 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             expandMinimizeButton.setMessage(Text.of(isExpanded() ? "▼" : "▶"));
         }
 
-        public void setOptionEntries(List<OptionEntry> optionEntries) {
-            this.optionEntries = optionEntries;
+        public void setChildEntries(List<? extends Entry> childEntries) {
+            this.childEntries.clear();
+            this.childEntries.addAll(childEntries);
         }
 
         @Override
         public boolean isViewable() {
-            return yaclScreen.searchFieldWidget.isEmpty() || optionEntries.stream().anyMatch(OptionEntry::isViewable);
+            return yaclScreen.searchFieldWidget.isEmpty() || childEntries.stream().anyMatch(Entry::isViewable);
         }
 
         @Override
@@ -504,6 +516,46 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         @Override
         public List<? extends Element> children() {
             return ImmutableList.of(expandMinimizeButton, addListButton, resetListButton);
+        }
+    }
+
+    public class EmptyListLabel extends Entry {
+        private final ListGroupSeparatorEntry parent;
+        private final String groupName;
+        private final String categoryName;
+
+        public EmptyListLabel(ListGroupSeparatorEntry parent, ConfigCategory category) {
+            this.parent = parent;
+            this.groupName = parent.group.name().getString().toLowerCase();
+            this.categoryName = category.name().getString().toLowerCase();
+        }
+
+        @Override
+        public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            drawCenteredText(matrices, MinecraftClient.getInstance().textRenderer, Text.translatable("yacl.list.empty").formatted(Formatting.DARK_GRAY, Formatting.ITALIC), x + entryWidth / 2, y, -1);
+        }
+
+        @Override
+        public boolean isViewable() {
+            String query = yaclScreen.searchFieldWidget.getQuery();
+            return parent.isExpanded() && (yaclScreen.searchFieldWidget.isEmpty()
+                    || (!singleCategory && categoryName.contains(query))
+                    || groupName.contains(query));
+        }
+
+        @Override
+        public int getItemHeight() {
+            return 11;
+        }
+
+        @Override
+        public List<? extends Element> children() {
+            return ImmutableList.of();
+        }
+
+        @Override
+        public List<? extends Selectable> selectableChildren() {
+            return ImmutableList.of();
         }
     }
 }

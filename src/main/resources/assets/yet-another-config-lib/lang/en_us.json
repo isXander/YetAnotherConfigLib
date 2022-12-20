@@ -20,6 +20,7 @@
   "yacl.list.move_down": "Move down",
   "yacl.list.remove": "Remove",
   "yacl.list.add_top": "New entry",
+  "yacl.list.empty": "List is empty",
 
   "yacl.restart.title": "Config requires restart!",
   "yacl.restart.message": "One or more options needs you to restart the game to apply the changes.",
