@@ -6,6 +6,7 @@ import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.api.utils.MutableDimension;
 import dev.isxander.yacl.api.utils.OptionUtils;
 import dev.isxander.yacl.gui.utils.GuiUtils;
+import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
@@ -53,42 +54,48 @@ public class YACLScreen extends Screen {
         int paddedWidth = columnWidth - padding * 2;
 
         MutableDimension<Integer> actionDim = Dimension.ofInt(width / 3 / 2, height - padding - 20, paddedWidth, 20);
-        finishedSaveButton = new TooltipButtonWidget(this, actionDim.x() - actionDim.width() / 2, actionDim.y(), actionDim.width(), actionDim.height(), Text.empty(), Text.empty(), (btn) -> {
-            saveButtonMessage = null;
-
-            if (pendingChanges()) {
-                Set<OptionFlag> flags = new HashSet<>();
-                OptionUtils.forEachOptions(config, option -> {
-                    if (option.applyValue()) {
-                        flags.addAll(option.flags());
-                    }
-                });
-                OptionUtils.forEachOptions(config, option -> {
-                    if (option.changed()) {
-                        option.forgetPendingValue();
-                    }
-                });
-                config.saveFunction().run();
-
-                flags.forEach(flag -> flag.accept(client));
-            } else close();
-        });
+        finishedSaveButton = new TooltipButtonWidget(
+                this,
+                actionDim.x() - actionDim.width() / 2,
+                actionDim.y(),
+                actionDim.width(),
+                actionDim.height(),
+                Text.empty(),
+                Text.empty(),
+                btn -> finishOrSave()
+        );
         actionDim.expand(-actionDim.width() / 2 - 2, 0).move(-actionDim.width() / 2 - 2, -22);
-        cancelResetButton = new TooltipButtonWidget(this, actionDim.x() - actionDim.width() / 2, actionDim.y(), actionDim.width(), actionDim.height(), Text.empty(), Text.empty(), (btn) -> {
-            if (pendingChanges()) { // if pending changes, button acts as a cancel button
-                OptionUtils.forEachOptions(config, Option::forgetPendingValue);
-                close();
-            } else { // if not, button acts as a reset button
-                OptionUtils.forEachOptions(config, Option::requestSetDefault);
-            }
-
-        });
+        cancelResetButton = new TooltipButtonWidget(
+                this,
+                actionDim.x() - actionDim.width() / 2,
+                actionDim.y(),
+                actionDim.width(),
+                actionDim.height(),
+                Text.empty(),
+                Text.empty(),
+                btn -> cancelOrReset()
+        );
         actionDim.move(actionDim.width() + 4, 0);
-        undoButton = new TooltipButtonWidget(this, actionDim.x() - actionDim.width() / 2, actionDim.y(), actionDim.width(), actionDim.height(), Text.translatable("yacl.gui.undo"), Text.translatable("yacl.gui.undo.tooltip"), (btn) -> {
-            OptionUtils.forEachOptions(config, Option::forgetPendingValue);
-        });
+        undoButton = new TooltipButtonWidget(
+                this,
+                actionDim.x() - actionDim.width() / 2,
+                actionDim.y(),
+                actionDim.width(),
+                actionDim.height(),
+                Text.translatable("yacl.gui.undo"),
+                Text.translatable("yacl.gui.undo.tooltip"),
+                btn -> undo()
+        );
 
-        searchFieldWidget = new SearchFieldWidget(this, textRenderer, width / 3 / 2 - paddedWidth / 2 + 1, undoButton.getY() - 22, paddedWidth - 2, 18, Text.translatable("gui.recipebook.search_hint"), Text.translatable("gui.recipebook.search_hint"));
+        searchFieldWidget = new SearchFieldWidget(
+                this,
+                textRenderer,
+                width / 3 / 2 - paddedWidth / 2 + 1,
+                undoButton.getY() - 22,
+                paddedWidth - 2, 18,
+                Text.translatable("gui.recipebook.search_hint"),
+                Text.translatable("gui.recipebook.search_hint")
+        );
 
         categoryList = new CategoryListWidget(client, this, width, height);
         addSelectableChild(categoryList);
@@ -122,6 +129,43 @@ public class YACLScreen extends Screen {
                 tooltipButtonWidget.renderHoveredTooltip(matrices);
             }
         }
+    }
+
+    private void finishOrSave() {
+        saveButtonMessage = null;
+
+        if (pendingChanges()) {
+            Set<OptionFlag> flags = new HashSet<>();
+            OptionUtils.forEachOptions(config, option -> {
+                if (option.applyValue()) {
+                    flags.addAll(option.flags());
+                }
+            });
+            OptionUtils.forEachOptions(config, option -> {
+                if (option.changed()) {
+                    // if still changed after applying, reset to the current value from binding
+                    // as something has gone wrong.
+                    option.forgetPendingValue();
+                    YACLConstants.LOGGER.error("Option '{}' value mismatch after applying! Reset to binding's getter.", option.name().getString());
+                }
+            });
+            config.saveFunction().run();
+
+            flags.forEach(flag -> flag.accept(client));
+        } else close();
+    }
+
+    private void cancelOrReset() {
+        if (pendingChanges()) { // if pending changes, button acts as a cancel button
+            OptionUtils.forEachOptions(config, Option::forgetPendingValue);
+            close();
+        } else { // if not, button acts as a reset button
+            OptionUtils.forEachOptions(config, Option::requestSetDefault);
+        }
+    }
+
+    private void undo() {
+        OptionUtils.forEachOptions(config, Option::forgetPendingValue);
     }
 
     @Override
