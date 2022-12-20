@@ -17,9 +17,34 @@ import java.util.Collection;
 import java.util.List;
 
 @ApiStatus.Internal
-public record ConfigCategoryImpl(Text name, ImmutableList<OptionGroup> groups, Text tooltip) implements ConfigCategory {
+public class ConfigCategoryImpl implements ConfigCategory {
+    private final Text name;
+    private final ImmutableList<OptionGroup> groups;
+    private final Text tooltip;
+
+    public ConfigCategoryImpl(Text name, ImmutableList<OptionGroup> groups, Text tooltip) {
+        this.name = name;
+        this.groups = groups;
+        this.tooltip = tooltip;
+    }
+
+    @Override
+    public @NotNull Text name() {
+        return name;
+    }
+
+    @Override
+    public @NotNull ImmutableList<OptionGroup> groups() {
+        return groups;
+    }
+
+    @Override
+    public @NotNull Text tooltip() {
+        return tooltip;
+    }
+
     @ApiStatus.Internal
-    public static final class BuilderImpl implements ConfigCategory.Builder {
+    public static final class BuilderImpl implements Builder {
         private Text name;
 
         private final List<Option<?>> rootOptions = new ArrayList<>();
@@ -28,7 +53,7 @@ public record ConfigCategoryImpl(Text name, ImmutableList<OptionGroup> groups, T
         private final List<Text> tooltipLines = new ArrayList<>();
 
         @Override
-        public ConfigCategory.Builder name(@NotNull Text name) {
+        public Builder name(@NotNull Text name) {
             Validate.notNull(name, "`name` cannot be null");
 
             this.name = name;
@@ -36,7 +61,7 @@ public record ConfigCategoryImpl(Text name, ImmutableList<OptionGroup> groups, T
         }
 
         @Override
-        public ConfigCategory.Builder option(@NotNull Option<?> option) {
+        public Builder option(@NotNull Option<?> option) {
             Validate.notNull(option, "`option` must not be null");
 
             if (option instanceof ListOption<?> listOption) {
@@ -49,7 +74,7 @@ public record ConfigCategoryImpl(Text name, ImmutableList<OptionGroup> groups, T
         }
 
         @Override
-        public ConfigCategory.Builder options(@NotNull Collection<Option<?>> options) {
+        public Builder options(@NotNull Collection<Option<?>> options) {
             Validate.notNull(options, "`options` must not be null");
 
             if (options.stream().anyMatch(ListOption.class::isInstance))
@@ -60,7 +85,7 @@ public record ConfigCategoryImpl(Text name, ImmutableList<OptionGroup> groups, T
         }
 
         @Override
-        public ConfigCategory.Builder group(@NotNull OptionGroup group) {
+        public Builder group(@NotNull OptionGroup group) {
             Validate.notNull(group, "`group` must not be null");
 
             this.groups.add(group);
@@ -68,7 +93,7 @@ public record ConfigCategoryImpl(Text name, ImmutableList<OptionGroup> groups, T
         }
 
         @Override
-        public ConfigCategory.Builder groups(@NotNull Collection<OptionGroup> groups) {
+        public Builder groups(@NotNull Collection<OptionGroup> groups) {
             Validate.notEmpty(groups, "`groups` must not be empty");
 
             this.groups.addAll(groups);
@@ -76,7 +101,7 @@ public record ConfigCategoryImpl(Text name, ImmutableList<OptionGroup> groups, T
         }
 
         @Override
-        public ConfigCategory.Builder tooltip(@NotNull Text... tooltips) {
+        public Builder tooltip(@NotNull Text... tooltips) {
             Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
 
             tooltipLines.addAll(List.of(tooltips));

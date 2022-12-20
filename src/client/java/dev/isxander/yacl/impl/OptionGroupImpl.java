@@ -15,16 +15,55 @@ import java.util.Collection;
 import java.util.List;
 
 @ApiStatus.Internal
-public record OptionGroupImpl(@NotNull Text name, @NotNull Text tooltip, ImmutableList<? extends Option<?>> options, boolean collapsed, boolean isRoot) implements OptionGroup {
+public class OptionGroupImpl implements OptionGroup {
+    private final @NotNull Text name;
+    private final @NotNull Text tooltip;
+    private final ImmutableList<? extends Option<?>> options;
+    private final boolean collapsed;
+    private final boolean isRoot;
+
+    public OptionGroupImpl(@NotNull Text name, @NotNull Text tooltip, ImmutableList<? extends Option<?>> options, boolean collapsed, boolean isRoot) {
+        this.name = name;
+        this.tooltip = tooltip;
+        this.options = options;
+        this.collapsed = collapsed;
+        this.isRoot = isRoot;
+    }
+
+    @Override
+    public @NotNull Text name() {
+        return name;
+    }
+
+    @Override
+    public @NotNull Text tooltip() {
+        return tooltip;
+    }
+
+    @Override
+    public @NotNull ImmutableList<? extends Option<?>> options() {
+        return options;
+    }
+
+    @Override
+    public boolean collapsed() {
+        return collapsed;
+    }
+
+    @Override
+    public boolean isRoot() {
+        return isRoot;
+    }
+
     @ApiStatus.Internal
-    public static final class BuilderImpl implements OptionGroup.Builder {
+    public static final class BuilderImpl implements Builder {
         private Text name = Text.empty();
         private final List<Text> tooltipLines = new ArrayList<>();
         private final List<Option<?>> options = new ArrayList<>();
         private boolean collapsed = false;
 
         @Override
-        public OptionGroup.Builder name(@NotNull Text name) {
+        public Builder name(@NotNull Text name) {
             Validate.notNull(name, "`name` must not be null");
 
             this.name = name;
@@ -32,7 +71,7 @@ public record OptionGroupImpl(@NotNull Text name, @NotNull Text tooltip, Immutab
         }
 
         @Override
-        public OptionGroup.Builder tooltip(@NotNull Text... tooltips) {
+        public Builder tooltip(@NotNull Text... tooltips) {
             Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
 
             tooltipLines.addAll(List.of(tooltips));
@@ -40,7 +79,7 @@ public record OptionGroupImpl(@NotNull Text name, @NotNull Text tooltip, Immutab
         }
 
         @Override
-        public OptionGroup.Builder option(@NotNull Option<?> option) {
+        public Builder option(@NotNull Option<?> option) {
             Validate.notNull(option, "`option` must not be null");
 
             if (option instanceof ListOption<?>)
@@ -51,7 +90,7 @@ public record OptionGroupImpl(@NotNull Text name, @NotNull Text tooltip, Immutab
         }
 
         @Override
-        public OptionGroup.Builder options(@NotNull Collection<? extends Option<?>> options) {
+        public Builder options(@NotNull Collection<? extends Option<?>> options) {
             Validate.notEmpty(options, "`options` must not be empty");
 
             if (options.stream().anyMatch(ListOption.class::isInstance))
@@ -62,7 +101,7 @@ public record OptionGroupImpl(@NotNull Text name, @NotNull Text tooltip, Immutab
         }
 
         @Override
-        public OptionGroup.Builder collapsed(boolean collapsible) {
+        public Builder collapsed(boolean collapsible) {
             this.collapsed = collapsible;
             return this;
         }

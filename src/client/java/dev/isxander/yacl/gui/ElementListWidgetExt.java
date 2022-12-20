@@ -73,32 +73,32 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
         }
     }
 
+    @Nullable
+    @Override
+    protected E getEntryAtPosition(double x, double y) {
+        y += getScrollAmount();
+
+        if (x < this.left || x > this.right)
+            return null;
+
+        int currentY = this.top - headerHeight + 4;
+        for (E entry : children()) {
+            if (y >= currentY && y <= currentY + entry.getItemHeight()) {
+                return entry;
+            }
+
+            currentY += entry.getItemHeight();
+        }
+
+        return null;
+    }
+
     /*
       below code is licensed from cloth-config under LGPL3
       modified to inherit vanilla's EntryListWidget and use yarn mappings
 
       code is responsible for having dynamic item heights
     */
-
-    @Nullable
-    @Override
-    protected E getEntryAtPosition(double x, double y) {
-        int listMiddleX = this.left + this.width / 2;
-        int minX = listMiddleX - this.getRowWidth() / 2;
-        int maxX = listMiddleX + this.getRowWidth() / 2;
-        int currentY = MathHelper.floor(y - (double) this.top) - this.headerHeight + (int) this.getScrollAmount() - 4;
-        int itemY = 0;
-        int itemIndex = -1;
-        for (int i = 0; i < children().size(); i++) {
-            E item = children().get(i);
-            itemY += item.getItemHeight();
-            if (itemY > currentY) {
-                itemIndex = i;
-                break;
-            }
-        }
-        return x < (double) this.getScrollbarPositionX() && x >= minX && y <= maxX && itemIndex >= 0 && currentY >= 0 && itemIndex < this.getEntryCount() ? this.children().get(itemIndex) : null;
-    }
 
     @Override
     protected int getMaxPosition() {
