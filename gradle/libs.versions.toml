@@ -1,0 +1,25 @@
+[versions]
+architectury_plugin = "3.4.+"
+architectury_loom = "1.0.+"
+loom_quiltflower = "1.8.+"
+
+minecraft = "1.19.3"
+yarn = "4"
+
+fabric_loader = "0.14.12"
+fabric_api = "0.69.1+1.19.3"
+
+forge = "1.19.3-44.0.37"
+
+[libraries]
+minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+
+fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_loader" }
+fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
+
+forge = { module = "net.minecraftforge:forge", version.ref = "forge" }
+
+[plugins]
+architectury_plugin = { id = "architectury-plugin", version.ref = "architectury_plugin" }
+architectury_loom = { id = "dev.architectury.loom", version.ref = "architectury_loom" }
+quiltflower = { id = "io.github.juuxel.loom-quiltflower", version.ref = "loom_quiltflower" }

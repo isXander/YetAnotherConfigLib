@@ -7,5 +7,14 @@ pluginManagement {
     }
 }
 
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs")
+    }
+}
+
 rootProject.name = "YetAnotherConfigLib"
 
+include("common")
+include("fabric")
+include("forge")
