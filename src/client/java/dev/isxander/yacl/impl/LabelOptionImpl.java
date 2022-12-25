@@ -3,12 +3,20 @@ package dev.isxander.yacl.impl;
 import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.gui.controllers.LabelController;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.function.BiConsumer;
 
-public class LabelOptionImpl implements LabelOption {
+@ApiStatus.Internal
+public final class LabelOptionImpl implements LabelOption {
     private final Text label;
     private final Text name = Text.literal("Label Option");
     private final Text tooltip = Text.empty();
@@ -22,7 +30,7 @@ public class LabelOptionImpl implements LabelOption {
     }
 
     @Override
-    public Text label() {
+    public @NotNull Text label() {
         return label;
     }
 
@@ -109,5 +117,38 @@ public class LabelOptionImpl implements LabelOption {
     @Override
     public void addListener(BiConsumer<Option<Text>, Text> changedListener) {
 
+    }
+
+    @ApiStatus.Internal
+    public static final class BuilderImpl implements LabelOption.Builder {
+        private final List<Text> lines = new ArrayList<>();
+
+        @Override
+        public Builder line(@NotNull Text line) {
+            Validate.notNull(line, "`line` must not be null");
+
+            this.lines.add(line);
+            return this;
+        }
+
+        @Override
+        public Builder lines(@NotNull Collection<? extends Text> lines) {
+            this.lines.addAll(lines);
+            return this;
+        }
+
+        @Override
+        public LabelOption build() {
+            MutableText text = Text.empty();
+            Iterator<Text> iterator = lines.iterator();
+            while (iterator.hasNext()) {
+                text.append(iterator.next());
+
+                if (iterator.hasNext())
+                    text.append("\n");
+            }
+
+            return new LabelOptionImpl(text);
+        }
     }
 }
