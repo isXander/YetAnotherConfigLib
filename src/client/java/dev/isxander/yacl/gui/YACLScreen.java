@@ -131,7 +131,7 @@ public class YACLScreen extends Screen {
         }
     }
 
-    private void finishOrSave() {
+    protected void finishOrSave() {
         saveButtonMessage = null;
 
         if (pendingChanges()) {
@@ -155,7 +155,7 @@ public class YACLScreen extends Screen {
         } else close();
     }
 
-    private void cancelOrReset() {
+    protected void cancelOrReset() {
         if (pendingChanges()) { // if pending changes, button acts as a cancel button
             OptionUtils.forEachOptions(config, Option::forgetPendingValue);
             close();
@@ -164,7 +164,7 @@ public class YACLScreen extends Screen {
         }
     }
 
-    private void undo() {
+    protected void undo() {
         OptionUtils.forEachOptions(config, Option::forgetPendingValue);
     }
 
