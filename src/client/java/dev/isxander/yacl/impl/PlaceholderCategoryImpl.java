@@ -50,7 +50,7 @@ public final class PlaceholderCategoryImpl implements PlaceholderCategory {
     }
 
     @ApiStatus.Internal
-    public static final class BuilderImpl implements Builder {
+    public static final class BuilderImpl implements PlaceholderCategory.Builder {
         private Text name;
 
         private final List<Text> tooltipLines = new ArrayList<>();

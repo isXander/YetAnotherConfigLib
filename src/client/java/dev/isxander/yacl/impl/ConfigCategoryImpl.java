@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 @ApiStatus.Internal
-public class ConfigCategoryImpl implements ConfigCategory {
+public final class ConfigCategoryImpl implements ConfigCategory {
     private final Text name;
     private final ImmutableList<OptionGroup> groups;
     private final Text tooltip;

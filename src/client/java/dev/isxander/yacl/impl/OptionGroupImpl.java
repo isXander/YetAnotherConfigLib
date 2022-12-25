@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 @ApiStatus.Internal
-public class OptionGroupImpl implements OptionGroup {
+public final class OptionGroupImpl implements OptionGroup {
     private final @NotNull Text name;
     private final @NotNull Text tooltip;
     private final ImmutableList<? extends Option<?>> options;
@@ -56,7 +56,7 @@ public class OptionGroupImpl implements OptionGroup {
     }
 
     @ApiStatus.Internal
-    public static final class BuilderImpl implements Builder {
+    public static final class BuilderImpl implements OptionGroup.Builder {
         private Text name = Text.empty();
         private final List<Text> tooltipLines = new ArrayList<>();
         private final List<Option<?>> options = new ArrayList<>();

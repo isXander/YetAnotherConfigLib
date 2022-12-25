@@ -4,7 +4,7 @@ plugins {
     id("fabric-loom") version "[1.0.16, 1.1.0)" // 1.0.+ but patch must be 16 or higher
     id("io.github.juuxel.loom-quiltflower") version "1.8.+"
 
-    id("com.modrinth.minotaur") version "2.4.+"
+    id("com.modrinth.minotaur") version "2.5.+"
     id("me.hypherionmc.cursegradle") version "2.+"
     id("com.github.breadmoirai.github-release") version "2.+"
     `maven-publish`
@@ -16,7 +16,7 @@ plugins {
 val ciRun = System.getenv().containsKey("GITHUB_ACTIONS")
 
 group = "dev.isxander"
-version = "2.1.1"
+version = "2.2.0"
 
 if (ciRun)
     version = "$version+${grgit.branch.current().name.replace('/', '.')}-SNAPSHOT"
@@ -49,6 +49,9 @@ loom {
             name("Test Mod")
             source(testmod.get())
         }
+
+        named("client") { ideConfigGenerated(false) }
+        named("server") { ideConfigGenerated(false) }
     }
 
     createRemapConfigurations(testmod.get())
