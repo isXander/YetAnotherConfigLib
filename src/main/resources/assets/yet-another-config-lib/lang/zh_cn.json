@@ -5,19 +5,25 @@
   "yacl.control.action.execute": "执行",
 
   "yacl.gui.save": "保存更改",
-  "yacl.gui.save.tooltip": "使所做更改变为永久性的。",
-  "yacl.gui.finished.tooltip": "关闭GUI。",
-  "yacl.gui.cancel.tooltip": "忽略犹豫不决的更改然后关闭GUI。",
-  "yacl.gui.reset.tooltip": "将所有选项重置为默认值。(这是可逆的！)",
+  "yacl.gui.save.tooltip": "永久保存所做更改。",
+  "yacl.gui.finished.tooltip": "关闭 GUI。",
+  "yacl.gui.cancel.tooltip": "忽略犹豫不决的更改然后关闭 GUI。",
+  "yacl.gui.reset.tooltip": "将所有选项重置为默认值。（这是可逆的！）",
   "yacl.gui.undo": "撤销",
   "yacl.gui.undo.tooltip": "将所有选项恢复到编辑前的状态。",
   "yacl.gui.fail_apply": "应用失败",
   "yacl.gui.fail_apply.tooltip": "有一个错误以至于更改不能被应用。",
   "yacl.gui.save_before_exit": "退出前保存！",
-  "yacl.gui.save_before_exit.tooltip": "保存或取消以退出GUI。",
+  "yacl.gui.save_before_exit.tooltip": "保存或取消以退出 GUI。",
 
-  "yacl.restart.title": "配置需要重启！",
-  "yacl.restart.message": "一个或多个选项需要你重新启动游戏才能应用更改。",
-  "yacl.restart.yes": "关闭Minecraft",
+  "yacl.list.move_up": "上移",
+  "yacl.list.move_down": "下移",
+  "yacl.list.remove": "移除",
+  "yacl.list.add_top": "新条目",
+  "yacl.list.empty": "列表为空",
+
+  "yacl.restart.title": "配置需要重新启动！",
+  "yacl.restart.message": "一个或多个选项需要你重新启动游戏来应用这些更改。",
+  "yacl.restart.yes": "关闭 Minecraft",
   "yacl.restart.no": "忽略"
 }
