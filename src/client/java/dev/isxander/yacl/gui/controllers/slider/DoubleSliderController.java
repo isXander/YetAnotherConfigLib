@@ -1,7 +1,7 @@
 package dev.isxander.yacl.gui.controllers.slider;
 
 import dev.isxander.yacl.api.Option;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.Validate;
 
 import java.util.function.Function;
@@ -13,13 +13,13 @@ public class DoubleSliderController implements ISliderController<Double> {
     /**
      * Formats doubles to two decimal places
      */
-    public static final Function<Double, Text> DEFAULT_FORMATTER = value -> Text.of(String.format("%,.2f", value).replaceAll("[\u00a0\u202F]", " "));
+    public static final Function<Double, Component> DEFAULT_FORMATTER = value -> Component.literal(String.format("%,.2f", value).replaceAll("[\u00a0\u202F]", " "));
 
     private final Option<Double> option;
 
     private final double min, max, interval;
 
-    private final Function<Double, Text> valueFormatter;
+    private final Function<Double, Component> valueFormatter;
 
     /**
      * Constructs a {@link ISliderController} for doubles
@@ -41,9 +41,9 @@ public class DoubleSliderController implements ISliderController<Double> {
      * @param min minimum slider value
      * @param max maximum slider value
      * @param interval step size (or increments) for the slider
-     * @param valueFormatter format the value into any {@link Text}
+     * @param valueFormatter format the value into any {@link Component}
      */
-    public DoubleSliderController(Option<Double> option, double min, double max, double interval, Function<Double, Text> valueFormatter) {
+    public DoubleSliderController(Option<Double> option, double min, double max, double interval, Function<Double, Component> valueFormatter) {
         Validate.isTrue(max > min, "`max` cannot be smaller than `min`");
         Validate.isTrue(interval > 0, "`interval` must be more than 0");
         Validate.notNull(valueFormatter, "`valueFormatter` must not be null");
@@ -67,7 +67,7 @@ public class DoubleSliderController implements ISliderController<Double> {
      * {@inheritDoc}
      */
     @Override
-    public Text formatValue() {
+    public Component formatValue() {
         return valueFormatter.apply(option().pendingValue());
     }
 

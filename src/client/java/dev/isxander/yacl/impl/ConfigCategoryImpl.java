@@ -6,8 +6,8 @@ import dev.isxander.yacl.api.ListOption;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.OptionGroup;
 import dev.isxander.yacl.impl.utils.YACLConstants;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -18,18 +18,18 @@ import java.util.List;
 
 @ApiStatus.Internal
 public final class ConfigCategoryImpl implements ConfigCategory {
-    private final Text name;
+    private final Component name;
     private final ImmutableList<OptionGroup> groups;
-    private final Text tooltip;
+    private final Component tooltip;
 
-    public ConfigCategoryImpl(Text name, ImmutableList<OptionGroup> groups, Text tooltip) {
+    public ConfigCategoryImpl(Component name, ImmutableList<OptionGroup> groups, Component tooltip) {
         this.name = name;
         this.groups = groups;
         this.tooltip = tooltip;
     }
 
     @Override
-    public @NotNull Text name() {
+    public @NotNull Component name() {
         return name;
     }
 
@@ -39,21 +39,21 @@ public final class ConfigCategoryImpl implements ConfigCategory {
     }
 
     @Override
-    public @NotNull Text tooltip() {
+    public @NotNull Component tooltip() {
         return tooltip;
     }
 
     @ApiStatus.Internal
     public static final class BuilderImpl implements Builder {
-        private Text name;
+        private Component name;
 
         private final List<Option<?>> rootOptions = new ArrayList<>();
         private final List<OptionGroup> groups = new ArrayList<>();
 
-        private final List<Text> tooltipLines = new ArrayList<>();
+        private final List<Component> tooltipLines = new ArrayList<>();
 
         @Override
-        public Builder name(@NotNull Text name) {
+        public Builder name(@NotNull Component name) {
             Validate.notNull(name, "`name` cannot be null");
 
             this.name = name;
@@ -101,7 +101,7 @@ public final class ConfigCategoryImpl implements ConfigCategory {
         }
 
         @Override
-        public Builder tooltip(@NotNull Text... tooltips) {
+        public Builder tooltip(@NotNull Component... tooltips) {
             Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
 
             tooltipLines.addAll(List.of(tooltips));
@@ -113,14 +113,14 @@ public final class ConfigCategoryImpl implements ConfigCategory {
             Validate.notNull(name, "`name` must not be null to build `ConfigCategory`");
 
             List<OptionGroup> combinedGroups = new ArrayList<>();
-            combinedGroups.add(new OptionGroupImpl(Text.empty(), Text.empty(), ImmutableList.copyOf(rootOptions), false, true));
+            combinedGroups.add(new OptionGroupImpl(Component.empty(), Component.empty(), ImmutableList.copyOf(rootOptions), false, true));
             combinedGroups.addAll(groups);
 
             Validate.notEmpty(combinedGroups, "at least one option must be added to build `ConfigCategory`");
 
-            MutableText concatenatedTooltip = Text.empty();
+            MutableComponent concatenatedTooltip = Component.empty();
             boolean first = true;
-            for (Text line : tooltipLines) {
+            for (Component line : tooltipLines) {
                 if (!first) concatenatedTooltip.append("\n");
                 first = false;
 

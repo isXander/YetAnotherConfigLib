@@ -1,13 +1,13 @@
 package dev.isxander.yacl.gui.controllers.slider;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.ControllerWidget;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.util.Mth;
 
 public class SliderControllerElement extends ControllerWidget<ISliderController<?>> {
     private final double min, max, interval;
@@ -27,32 +27,32 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
         super.render(matrices, mouseX, mouseY, delta);
 
         calculateInterpolation();
     }
 
     @Override
-    protected void drawHoveredControl(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    protected void drawHoveredControl(PoseStack matrices, int mouseX, int mouseY, float delta) {
         // track
-        DrawableHelper.fill(matrices, sliderBounds.x(), sliderBounds.centerY() - 1, sliderBounds.xLimit(), sliderBounds.centerY(), -1);
+        GuiComponent.fill(matrices, sliderBounds.x(), sliderBounds.centerY() - 1, sliderBounds.xLimit(), sliderBounds.centerY(), -1);
         // track shadow
-        DrawableHelper.fill(matrices, sliderBounds.x() + 1, sliderBounds.centerY(), sliderBounds.xLimit() + 1, sliderBounds.centerY() + 1, 0xFF404040);
+        GuiComponent.fill(matrices, sliderBounds.x() + 1, sliderBounds.centerY(), sliderBounds.xLimit() + 1, sliderBounds.centerY() + 1, 0xFF404040);
 
         // thumb shadow
-        DrawableHelper.fill(matrices, getThumbX() - getThumbWidth() / 2 + 1, sliderBounds.y() + 1, getThumbX() + getThumbWidth() / 2 + 1, sliderBounds.yLimit() + 1, 0xFF404040);
+        GuiComponent.fill(matrices, getThumbX() - getThumbWidth() / 2 + 1, sliderBounds.y() + 1, getThumbX() + getThumbWidth() / 2 + 1, sliderBounds.yLimit() + 1, 0xFF404040);
         // thumb
-        DrawableHelper.fill(matrices, getThumbX() - getThumbWidth() / 2, sliderBounds.y(), getThumbX() + getThumbWidth() / 2, sliderBounds.yLimit(), -1);
+        GuiComponent.fill(matrices, getThumbX() - getThumbWidth() / 2, sliderBounds.y(), getThumbX() + getThumbWidth() / 2, sliderBounds.yLimit(), -1);
     }
 
     @Override
-    protected void drawValueText(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        matrices.push();
+    protected void drawValueText(PoseStack matrices, int mouseX, int mouseY, float delta) {
+        matrices.pushPose();
         if (isHovered())
             matrices.translate(-(sliderBounds.width() + 6 + getThumbWidth() / 2f), 0, 0);
         super.drawValueText(matrices, mouseX, mouseY, delta);
-        matrices.pop();
+        matrices.popPose();
     }
 
     @Override
@@ -76,7 +76,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     public void incrementValue(double amount) {
-        control.setPendingValue(MathHelper.clamp(control.pendingValue() + interval * amount, min, max));
+        control.setPendingValue(Mth.clamp(control.pendingValue() + interval * amount, min, max));
         calculateInterpolation();
     }
 
@@ -104,8 +104,8 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
             return false;
 
         switch (keyCode) {
-            case InputUtil.GLFW_KEY_LEFT, InputUtil.GLFW_KEY_DOWN -> incrementValue(-1);
-            case InputUtil.GLFW_KEY_RIGHT, InputUtil.GLFW_KEY_UP -> incrementValue(1);
+            case InputConstants.KEY_LEFT, InputConstants.KEY_DOWN -> incrementValue(-1);
+            case InputConstants.KEY_RIGHT, InputConstants.KEY_UP -> incrementValue(1);
             default -> {
                 return false;
             }
@@ -126,7 +126,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     protected double roundToInterval(double value) {
-        return MathHelper.clamp(min + (interval * Math.round(value / interval)), min, max); // extremely imprecise, requires clamping
+        return Mth.clamp(min + (interval * Math.round(value / interval)), min, max); // extremely imprecise, requires clamping
     }
 
     @Override
@@ -135,7 +135,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     protected void calculateInterpolation() {
-        interpolation = MathHelper.clamp((float) ((control.pendingValue() - control.min()) * 1 / control.range()), 0f, 1f);
+        interpolation = Mth.clamp((float) ((control.pendingValue() - control.min()) * 1 / control.range()), 0f, 1f);
     }
 
     @Override
@@ -157,7 +157,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     @Override
-    public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
         if (super.isMouseOver(mouseX, mouseY))
             super.postRender(matrices, mouseX, mouseY, delta);
     }

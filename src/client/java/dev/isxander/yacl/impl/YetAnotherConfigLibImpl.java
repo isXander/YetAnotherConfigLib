@@ -6,8 +6,8 @@ import dev.isxander.yacl.api.PlaceholderCategory;
 import dev.isxander.yacl.api.YetAnotherConfigLib;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.impl.utils.YACLConstants;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -15,19 +15,18 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 @ApiStatus.Internal
 public final class YetAnotherConfigLibImpl implements YetAnotherConfigLib {
-    private final Text title;
+    private final Component title;
     private final ImmutableList<ConfigCategory> categories;
     private final Runnable saveFunction;
     private final Consumer<YACLScreen> initConsumer;
 
     private boolean generated = false;
 
-    public YetAnotherConfigLibImpl(Text title, ImmutableList<ConfigCategory> categories, Runnable saveFunction, Consumer<YACLScreen> initConsumer) {
+    public YetAnotherConfigLibImpl(Component title, ImmutableList<ConfigCategory> categories, Runnable saveFunction, Consumer<YACLScreen> initConsumer) {
         this.title = title;
         this.categories = categories;
         this.saveFunction = saveFunction;
@@ -45,7 +44,7 @@ public final class YetAnotherConfigLibImpl implements YetAnotherConfigLib {
     }
 
     @Override
-    public Text title() {
+    public Component title() {
         return title;
     }
 
@@ -66,13 +65,13 @@ public final class YetAnotherConfigLibImpl implements YetAnotherConfigLib {
 
     @ApiStatus.Internal
     public static final class BuilderImpl implements YetAnotherConfigLib.Builder {
-        private Text title;
+        private Component title;
         private final List<ConfigCategory> categories = new ArrayList<>();
         private Runnable saveFunction = () -> {};
         private Consumer<YACLScreen> initConsumer = screen -> {};
 
         @Override
-        public YetAnotherConfigLib.Builder title(@NotNull Text title) {
+        public YetAnotherConfigLib.Builder title(@NotNull Component title) {
             Validate.notNull(title, "`title` cannot be null");
 
             this.title = title;

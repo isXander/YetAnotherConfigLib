@@ -5,9 +5,9 @@ import dev.isxander.yacl.api.Binding;
 import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.OptionFlag;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -22,8 +22,8 @@ import java.util.stream.Stream;
 
 @ApiStatus.Internal
 public final class OptionImpl<T> implements Option<T> {
-    private final Text name;
-    private Text tooltip;
+    private final Component name;
+    private Component tooltip;
     private final Controller<T> controller;
     private final Binding<T> binding;
     private boolean available;
@@ -37,8 +37,8 @@ public final class OptionImpl<T> implements Option<T> {
     private final List<BiConsumer<Option<T>, T>> listeners;
 
     public OptionImpl(
-            @NotNull Text name,
-            @Nullable Function<T, Text> tooltipGetter,
+            @NotNull Component name,
+            @Nullable Function<T, Component> tooltipGetter,
             @NotNull Function<Option<T>, Controller<T>> controlGetter,
             @NotNull Binding<T> binding,
             boolean available,
@@ -59,12 +59,12 @@ public final class OptionImpl<T> implements Option<T> {
     }
 
     @Override
-    public @NotNull Text name() {
+    public @NotNull Component name() {
         return name;
     }
 
     @Override
-    public @NotNull Text tooltip() {
+    public @NotNull Component tooltip() {
         return tooltip;
     }
 
@@ -145,9 +145,9 @@ public final class OptionImpl<T> implements Option<T> {
 
     @ApiStatus.Internal
     public static class BuilderImpl<T> implements Option.Builder<T> {
-        private Text name = Text.literal("Name not specified!").formatted(Formatting.RED);
+        private Component name = Component.literal("Name not specified!").withStyle(ChatFormatting.RED);
 
-        private final List<Function<T, Text>> tooltipGetters = new ArrayList<>();
+        private final List<Function<T, Component>> tooltipGetters = new ArrayList<>();
 
         private Function<Option<T>, Controller<T>> controlGetter;
 
@@ -168,7 +168,7 @@ public final class OptionImpl<T> implements Option<T> {
         }
 
         @Override
-        public Option.Builder<T> name(@NotNull Text name) {
+        public Option.Builder<T> name(@NotNull Component name) {
             Validate.notNull(name, "`name` cannot be null");
 
             this.name = name;
@@ -177,7 +177,7 @@ public final class OptionImpl<T> implements Option<T> {
 
         @Override
         @SafeVarargs
-        public final Option.Builder<T> tooltip(@NotNull Function<T, Text>... tooltipGetter) {
+        public final Option.Builder<T> tooltip(@NotNull Function<T, Component>... tooltipGetter) {
             Validate.notNull(tooltipGetter, "`tooltipGetter` cannot be null");
 
             this.tooltipGetters.addAll(List.of(tooltipGetter));
@@ -185,10 +185,10 @@ public final class OptionImpl<T> implements Option<T> {
         }
 
         @Override
-        public Option.Builder<T> tooltip(@NotNull Text... tooltips) {
+        public Option.Builder<T> tooltip(@NotNull Component... tooltips) {
             Validate.notNull(tooltips, "`tooltips` cannot be empty");
 
-            this.tooltipGetters.addAll(Stream.of(tooltips).map(text -> (Function<T, Text>) t -> text).toList());
+            this.tooltipGetters.addAll(Stream.of(tooltips).map(Component -> (Function<T, Component>) t -> Component).toList());
             return this;
         }
 
@@ -264,10 +264,10 @@ public final class OptionImpl<T> implements Option<T> {
             Validate.notNull(binding, "`binding` must not be null when building `Option`");
             Validate.isTrue(!instant || flags.isEmpty(), "instant application does not support option flags");
 
-            Function<T, Text> concatenatedTooltipGetter = value -> {
-                MutableText concatenatedTooltip = Text.empty();
+            Function<T, Component> concatenatedTooltipGetter = value -> {
+                MutableComponent concatenatedTooltip = Component.empty();
                 boolean first = true;
-                for (Function<T, Text> line : tooltipGetters) {
+                for (Function<T, Component> line : tooltipGetters) {
                     if (!first) concatenatedTooltip.append("\n");
                     first = false;
 

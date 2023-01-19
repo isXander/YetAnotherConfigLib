@@ -7,8 +7,8 @@ import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.slider.ISliderController;
 import dev.isxander.yacl.gui.controllers.string.IStringController;
 import dev.isxander.yacl.gui.controllers.string.StringControllerElement;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
 import java.text.DecimalFormatSymbols;
 import java.util.function.Function;
@@ -20,9 +20,9 @@ import java.util.function.Function;
  */
 public abstract class NumberFieldController<T extends Number> implements ISliderController<T>, IStringController<T> {
     private final Option<T> option;
-    private final Function<T, Text> displayFormatter;
+    private final Function<T, Component> displayFormatter;
 
-    public NumberFieldController(Option<T> option, Function<T, Text> displayFormatter) {
+    public NumberFieldController(Option<T> option, Function<T, Component> displayFormatter) {
         this.option = option;
         this.displayFormatter = displayFormatter;
     }
@@ -35,7 +35,7 @@ public abstract class NumberFieldController<T extends Number> implements ISlider
     @Override
     public void setFromString(String value) {
         if (value.isEmpty() || value.equals(".") || value.equals("-")) value = "0";
-        setPendingValue(MathHelper.clamp(Double.parseDouble(cleanupNumberString(value)), min(), max()));
+        setPendingValue(Mth.clamp(Double.parseDouble(cleanupNumberString(value)), min(), max()));
     }
 
     @Override
@@ -49,7 +49,7 @@ public abstract class NumberFieldController<T extends Number> implements ISlider
     }
 
     @Override
-    public Text formatValue() {
+    public Component formatValue() {
         return displayFormatter.apply(option().pendingValue());
     }
 

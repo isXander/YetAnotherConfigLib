@@ -1,8 +1,8 @@
 package dev.isxander.yacl.api;
 
 import dev.isxander.yacl.impl.GenericBindingImpl;
-import dev.isxander.yacl.mixin.client.SimpleOptionAccessor;
-import net.minecraft.client.option.SimpleOption;
+import dev.isxander.yacl.mixin.client.OptionInstanceAccessor;
+import net.minecraft.client.OptionInstance;
 import org.apache.commons.lang3.Validate;
 
 import java.util.function.Consumer;
@@ -35,15 +35,15 @@ public interface Binding<T> {
     }
 
     /**
-     * Creates a {@link Binding} for Minecraft's {@link SimpleOption}
+     * Creates a {@link Binding} for Minecraft's {@link OptionInstance}
      */
-    static <T> Binding<T> minecraft(SimpleOption<T> minecraftOption) {
+    static <T> Binding<T> minecraft(OptionInstance<T> minecraftOption) {
         Validate.notNull(minecraftOption, "`minecraftOption` must not be null");
 
         return new GenericBindingImpl<>(
-                ((SimpleOptionAccessor<T>) (Object) minecraftOption).getDefaultValue(),
-                minecraftOption::getValue,
-                minecraftOption::setValue
+                ((OptionInstanceAccessor<T>) (Object) minecraftOption).getInitialValue(),
+                minecraftOption::get,
+                minecraftOption::set
         );
     }
 

@@ -3,8 +3,8 @@ package dev.isxander.yacl.impl;
 import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.gui.YACLScreen;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -18,16 +18,16 @@ import java.util.function.Function;
 
 @ApiStatus.Internal
 public final class ButtonOptionImpl implements ButtonOption {
-    private final Text name;
-    private final Text tooltip;
+    private final Component name;
+    private final Component tooltip;
     private final BiConsumer<YACLScreen, ButtonOption> action;
     private boolean available;
     private final Controller<BiConsumer<YACLScreen, ButtonOption>> controller;
     private final Binding<BiConsumer<YACLScreen, ButtonOption>> binding;
 
     public ButtonOptionImpl(
-            @NotNull Text name,
-            @Nullable Text tooltip,
+            @NotNull Component name,
+            @Nullable Component tooltip,
             @NotNull BiConsumer<YACLScreen, ButtonOption> action,
             boolean available,
             @NotNull Function<ButtonOption, Controller<BiConsumer<YACLScreen, ButtonOption>>> controlGetter
@@ -41,12 +41,12 @@ public final class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
-    public @NotNull Text name() {
+    public @NotNull Component name() {
         return name;
     }
 
     @Override
-    public @NotNull Text tooltip() {
+    public @NotNull Component tooltip() {
         return tooltip;
     }
 
@@ -144,14 +144,14 @@ public final class ButtonOptionImpl implements ButtonOption {
 
     @ApiStatus.Internal
     public static final class BuilderImpl implements ButtonOption.Builder {
-        private Text name;
-        private final List<Text> tooltipLines = new ArrayList<>();
+        private Component name;
+        private final List<Component> tooltipLines = new ArrayList<>();
         private boolean available = true;
         private Function<ButtonOption, Controller<BiConsumer<YACLScreen, ButtonOption>>> controlGetter;
         private BiConsumer<YACLScreen, ButtonOption> action;
 
         @Override
-        public ButtonOption.Builder name(@NotNull Text name) {
+        public ButtonOption.Builder name(@NotNull Component name) {
             Validate.notNull(name, "`name` cannot be null");
 
             this.name = name;
@@ -159,7 +159,7 @@ public final class ButtonOptionImpl implements ButtonOption {
         }
 
         @Override
-        public ButtonOption.Builder tooltip(@NotNull Text... tooltips) {
+        public ButtonOption.Builder tooltip(@NotNull Component... tooltips) {
             Validate.notNull(tooltips, "`tooltips` cannot be empty");
 
             tooltipLines.addAll(List.of(tooltips));
@@ -203,9 +203,9 @@ public final class ButtonOptionImpl implements ButtonOption {
             Validate.notNull(controlGetter, "`control` must not be null when building `Option`");
             Validate.notNull(action, "`action` must not be null when building `Option`");
 
-            MutableText concatenatedTooltip = Text.empty();
+            MutableComponent concatenatedTooltip = Component.empty();
             boolean first = true;
-            for (Text line : tooltipLines) {
+            for (Component line : tooltipLines) {
                 if (!first) concatenatedTooltip.append("\n");
                 first = false;
 

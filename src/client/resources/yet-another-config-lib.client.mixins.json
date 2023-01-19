@@ -6,6 +6,6 @@
     "defaultRequire": 1
   },
   "client": [
-    "SimpleOptionAccessor"
+    "OptionInstanceAccessor"
   ]
 }

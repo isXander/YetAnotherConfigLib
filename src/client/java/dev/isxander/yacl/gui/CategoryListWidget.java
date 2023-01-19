@@ -2,23 +2,23 @@ package dev.isxander.yacl.gui;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl.api.ConfigCategory;
 import dev.isxander.yacl.gui.utils.GuiUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
 
 import java.util.List;
 
 public class CategoryListWidget extends ElementListWidgetExt<CategoryListWidget.CategoryEntry> {
     private final YACLScreen yaclScreen;
 
-    public CategoryListWidget(MinecraftClient client, YACLScreen yaclScreen, int screenWidth, int screenHeight) {
+    public CategoryListWidget(Minecraft client, YACLScreen yaclScreen, int screenWidth, int screenHeight) {
         super(client, 0, 0, screenWidth / 3, yaclScreen.searchFieldWidget.getY() - 5, true);
         this.yaclScreen = yaclScreen;
         setRenderBackground(false);
-        setRenderHorizontalShadows(false);
+        setRenderTopAndBottom(false);
 
         for (ConfigCategory category : yaclScreen.config.categories()) {
             addEntry(new CategoryEntry(category));
@@ -26,7 +26,7 @@ public class CategoryListWidget extends ElementListWidgetExt<CategoryListWidget.
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
         GuiUtils.enableScissor(0, 0, width, height);
         super.render(matrices, mouseX, mouseY, delta);
         RenderSystem.disableScissor();
@@ -43,12 +43,12 @@ public class CategoryListWidget extends ElementListWidgetExt<CategoryListWidget.
     }
 
     @Override
-    protected int getScrollbarPositionX() {
+    protected int getScrollbarPosition() {
         return width - 2;
     }
 
     @Override
-    protected void renderBackground(MatrixStack matrices) {
+    protected void renderBackground(PoseStack matrices) {
 
     }
 
@@ -68,8 +68,8 @@ public class CategoryListWidget extends ElementListWidgetExt<CategoryListWidget.
         }
 
         @Override
-        public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            if (mouseY > bottom) {
+        public void render(PoseStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            if (mouseY > y1) {
                 mouseY = -20;
             }
 
@@ -77,7 +77,7 @@ public class CategoryListWidget extends ElementListWidgetExt<CategoryListWidget.
             categoryButton.render(matrices, mouseX, mouseY, tickDelta);
         }
 
-        public void postRender(MatrixStack matrices, int mouseX, int mouseY, float tickDelta) {
+        public void postRender(PoseStack matrices, int mouseX, int mouseY, float tickDelta) {
             categoryButton.renderHoveredTooltip(matrices);
         }
 
@@ -87,12 +87,12 @@ public class CategoryListWidget extends ElementListWidgetExt<CategoryListWidget.
         }
 
         @Override
-        public List<? extends Element> children() {
+        public List<? extends GuiEventListener> children() {
             return ImmutableList.of(categoryButton);
         }
 
         @Override
-        public List<? extends Selectable> selectableChildren() {
+        public List<? extends NarratableEntry> narratables() {
             return ImmutableList.of(categoryButton);
         }
     }

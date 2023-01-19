@@ -1,24 +1,23 @@
 package dev.isxander.yacl.gui;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.widget.ElementListWidget;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.MathHelper;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
-public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> extends ElementListWidget<E> {
+public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> extends ContainerObjectSelectionList<E> {
     protected final int x, y;
 
     private double smoothScrollAmount = getScrollAmount();
     private boolean returnSmoothAmount = false;
     private final boolean doSmoothScrolling;
 
-    public ElementListWidgetExt(MinecraftClient client, int x, int y, int width, int height, boolean smoothScrolling) {
+    public ElementListWidgetExt(Minecraft client, int x, int y, int width, int height, boolean smoothScrolling) {
         super(client, width, height, y, y + height, 22);
-        this.x = x;
+        this.x = this.x0 = x;
         this.y = y;
-        this.left = x;
-        this.right = this.left + width;
+        this.x1 = this.x0 + width;
         this.doSmoothScrolling = smoothScrolling;
     }
 
@@ -30,22 +29,22 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     }
 
     @Override
-    protected void renderBackground(MatrixStack matrices) {
+    protected void renderBackground(PoseStack matrices) {
         // render transparent background if in-game.
-        setRenderBackground(client.world == null);
-        if (client.world != null)
-            fill(matrices, left, top, right, bottom, 0x6B000000);
+        setRenderBackground(minecraft.level == null);
+        if (minecraft.level != null)
+            fill(matrices, x0, y0, x1, y1, 0x6B000000);
     }
 
     @Override
-    protected int getScrollbarPositionX() {
+    protected int getScrollbarPosition() {
         // default implementation does not respect left/right
-        return this.right - 2;
+        return this.x1 - 2;
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        smoothScrollAmount = MathHelper.lerp(MinecraftClient.getInstance().getLastFrameDuration() * 0.5, smoothScrollAmount, getScrollAmount());
+    public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
+        smoothScrollAmount = Mth.lerp(Minecraft.getInstance().getDeltaFrameTime() * 0.5, smoothScrollAmount, getScrollAmount());
         returnSmoothAmount = true;
         super.render(matrices, mouseX, mouseY, delta);
         returnSmoothAmount = false;
@@ -67,7 +66,7 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
         this.smoothScrollAmount = getScrollAmount();
     }
 
-    public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
         for (E entry : children()) {
             entry.postRender(matrices, mouseX, mouseY, delta);
         }
@@ -78,10 +77,10 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     protected E getEntryAtPosition(double x, double y) {
         y += getScrollAmount();
 
-        if (x < this.left || x > this.right)
+        if (x < this.x0 || x > this.x1)
             return null;
 
-        int currentY = this.top - headerHeight + 4;
+        int currentY = this.y0 - headerHeight + 4;
         for (E entry : children()) {
             if (y >= currentY && y <= currentY + entry.getItemHeight()) {
                 return entry;
@@ -107,41 +106,41 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
 
     @Override
     protected void centerScrollOn(E entry) {
-        double d = (this.bottom - this.top) / -2d;
-        for (int i = 0; i < this.children().indexOf(entry) && i < this.getEntryCount(); i++)
+        double d = (this.height) / -2d;
+        for (int i = 0; i < this.children().indexOf(entry) && i < this.getItemCount(); i++)
             d += children().get(i).getItemHeight();
         this.setScrollAmount(d);
     }
 
     @Override
     protected int getRowTop(int index) {
-        int integer = top + 4 - (int) this.getScrollAmount() + headerHeight;
+        int integer = y0 + 4 - (int) this.getScrollAmount() + headerHeight;
         for (int i = 0; i < children().size() && i < index; i++)
             integer += children().get(i).getItemHeight();
         return integer;
     }
 
     @Override
-    protected void renderList(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    protected void renderList(PoseStack matrices, int mouseX, int mouseY, float delta) {
         int left = this.getRowLeft();
         int right = this.getRowWidth();
-        int count = this.getEntryCount();
+        int count = this.getItemCount();
 
         for(int i = 0; i < count; ++i) {
             E entry = children().get(i);
             int top = this.getRowTop(i);
             int bottom = top + entry.getItemHeight();
             int entryHeight = entry.getItemHeight() - 4;
-            if (bottom >= this.top && top <= this.bottom) {
-                this.renderEntry(matrices, mouseX, mouseY, delta, i, left, top, right, entryHeight);
+            if (bottom >= this.y0 && top <= this.y1) {
+                this.renderItem(matrices, mouseX, mouseY, delta, i, left, top, right, entryHeight);
             }
         }
     }
 
     /* END cloth config code */
 
-    public abstract static class Entry<E extends ElementListWidgetExt.Entry<E>> extends ElementListWidget.Entry<E> {
-        public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public abstract static class Entry<E extends ElementListWidgetExt.Entry<E>> extends ContainerObjectSelectionList.Entry<E> {
+        public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
 
         }
 

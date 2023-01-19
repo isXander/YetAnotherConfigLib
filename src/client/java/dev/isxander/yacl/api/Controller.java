@@ -3,7 +3,7 @@ package dev.isxander.yacl.api;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 /**
  * Provides a widget to control the option.
@@ -17,7 +17,7 @@ public interface Controller<T> {
     /**
      * Gets the formatted value based on {@link Option#pendingValue()}
      */
-    Text formatValue();
+    Component formatValue();
 
     /**
      * Provides a widget to display

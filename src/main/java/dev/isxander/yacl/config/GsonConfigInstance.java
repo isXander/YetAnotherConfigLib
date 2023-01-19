@@ -2,8 +2,8 @@ package dev.isxander.yacl.config;
 
 import com.google.gson.*;
 import dev.isxander.yacl.impl.utils.YACLConstants;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 
 import java.awt.*;
 import java.io.IOException;
@@ -17,7 +17,7 @@ import java.util.function.UnaryOperator;
  * Uses GSON to serialize and deserialize config data from JSON to a file.
  *
  * Only fields annotated with {@link ConfigEntry} are included in the JSON.
- * {@link Text}, {@link Style} and {@link Color} have default type adapters, so there is no need to provide them in your GSON instance.
+ * {@link Component}, {@link Style} and {@link Color} have default type adapters, so there is no need to provide them in your GSON instance.
  * GSON is automatically configured to format fields as {@code lower_camel_case}.
  *
  * @param <T> config data type
@@ -43,7 +43,7 @@ public class GsonConfigInstance<T> extends ConfigInstance<T> {
         this.path = path;
         this.gson = builder
                 .setExclusionStrategies(new ConfigExclusionStrategy())
-                .registerTypeHierarchyAdapter(Text.class, new Text.Serializer())
+                .registerTypeHierarchyAdapter(Component.class, new Component.Serializer())
                 .registerTypeHierarchyAdapter(Style.class, new Style.Serializer())
                 .registerTypeHierarchyAdapter(Color.class, new ColorTypeAdapter())
                 .serializeNulls()

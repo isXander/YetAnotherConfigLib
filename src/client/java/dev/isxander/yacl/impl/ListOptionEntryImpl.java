@@ -5,7 +5,7 @@ import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.ListEntryWidget;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,13 +29,13 @@ public final class ListOptionEntryImpl<T> implements ListOptionEntry<T> {
     }
 
     @Override
-    public @NotNull Text name() {
-        return Text.empty();
+    public @NotNull Component name() {
+        return Component.empty();
     }
 
     @Override
-    public @NotNull Text tooltip() {
-        return Text.empty();
+    public @NotNull Component tooltip() {
+        return Component.empty();
     }
 
     @Override
@@ -119,7 +119,7 @@ public final class ListOptionEntryImpl<T> implements ListOptionEntry<T> {
         }
 
         @Override
-        public Text formatValue() {
+        public Component formatValue() {
             return controller.formatValue();
         }
 

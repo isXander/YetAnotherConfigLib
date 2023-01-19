@@ -1,20 +1,20 @@
 package dev.isxander.yacl.gui;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.impl.utils.YACLConstants;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.MultilineText;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.screen.narration.NarrationPart;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.MultiLineLabel;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -23,9 +23,9 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     private final YACLScreen yaclScreen;
     private boolean singleCategory = false;
 
-    private ImmutableList<Entry> viewableChildren;
+    private ImmutableList<dev.isxander.yacl.gui.OptionListWidget.Entry> viewableChildren;
 
-    public OptionListWidget(YACLScreen screen, MinecraftClient client, int width, int height) {
+    public OptionListWidget(YACLScreen screen, Minecraft client, int width, int height) {
         super(client, width / 3, 0, width / 3 * 2 + 1, height, true);
         this.yaclScreen = screen;
 
@@ -64,7 +64,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
                     groupSeparatorEntry = null;
                 }
 
-                List<Entry> optionEntries = new ArrayList<>();
+                List<dev.isxander.yacl.gui.OptionListWidget.Entry> optionEntries = new ArrayList<>();
 
                 // add empty entry to make sure users know it's empty not just bugging out
                 if (groupSeparatorEntry instanceof ListGroupSeparatorEntry listGroupSeparatorEntry) {
@@ -101,7 +101,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             return;
         }
 
-        for (Entry entry : groupSeparator.childEntries)
+        for (dev.isxander.yacl.gui.OptionListWidget.Entry entry : groupSeparator.childEntries)
             super.removeEntry(entry);
         groupSeparator.childEntries.clear();
 
@@ -113,7 +113,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             return;
         }
 
-        Entry lastEntry = groupSeparator;
+        dev.isxander.yacl.gui.OptionListWidget.Entry lastEntry = groupSeparator;
         for (ListOptionEntry<?> listOptionEntry : listOption.options()) {
             OptionEntry optionEntry = new OptionEntry(listOptionEntry, category, listOption, groupSeparator, listOptionEntry.controller().provideWidget(yaclScreen, getDefaultEntryDimension()));
             addEntryBelow(lastEntry, optionEntry);
@@ -127,7 +127,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     }
 
     public void expandAllGroups() {
-        for (Entry entry : super.children()) {
+        for (dev.isxander.yacl.gui.OptionListWidget.Entry entry : super.children()) {
             if (entry instanceof GroupSeparatorEntry groupSeparatorEntry) {
                 groupSeparatorEntry.setExpanded(true);
             }
@@ -141,7 +141,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        for (Entry child : children()) {
+        for (dev.isxander.yacl.gui.OptionListWidget.Entry child : children()) {
             if (child != getEntryAtPosition(mouseX, mouseY) && child instanceof OptionEntry optionEntry)
                 optionEntry.widget.unfocus();
         }
@@ -153,7 +153,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
         super.mouseScrolled(mouseX, mouseY, amount);
 
-        for (Entry child : children()) {
+        for (dev.isxander.yacl.gui.OptionListWidget.Entry child : children()) {
             if (child.mouseScrolled(mouseX, mouseY, amount))
                 break;
         }
@@ -163,7 +163,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        for (Entry child : children()) {
+        for (dev.isxander.yacl.gui.OptionListWidget.Entry child : children()) {
             if (child.keyPressed(keyCode, scanCode, modifiers))
                 return true;
         }
@@ -173,7 +173,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
     @Override
     public boolean charTyped(char chr, int modifiers) {
-        for (Entry child : children()) {
+        for (dev.isxander.yacl.gui.OptionListWidget.Entry child : children()) {
             if (child.charTyped(chr, modifiers))
                 return true;
         }
@@ -182,16 +182,16 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     }
 
     @Override
-    protected int getScrollbarPositionX() {
-        return right - (int)(width * 0.05f);
+    protected int getScrollbarPosition() {
+        return x1 - (int)(width * 0.05f);
     }
 
     public void recacheViewableChildren() {
-        this.viewableChildren = ImmutableList.copyOf(super.children().stream().filter(Entry::isViewable).toList());
+        this.viewableChildren = ImmutableList.copyOf(super.children().stream().filter(dev.isxander.yacl.gui.OptionListWidget.Entry::isViewable).toList());
 
         // update y positions before they need to be rendered are rendered
         int i = 0;
-        for (Entry entry : viewableChildren) {
+        for (dev.isxander.yacl.gui.OptionListWidget.Entry entry : viewableChildren) {
             if (entry instanceof OptionEntry optionEntry)
                 optionEntry.widget.setDimension(optionEntry.widget.getDimension().withY(getRowTop(i)));
             i++;
@@ -224,8 +224,8 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     }
 
     @Override
-    public boolean removeEntryWithoutScrolling(Entry entry) {
-        boolean ret = super.removeEntryWithoutScrolling(entry);
+    public boolean removeEntryFromTop(Entry entry) {
+        boolean ret = super.removeEntryFromTop(entry);
         recacheViewableChildren();
         return ret;
     }
@@ -243,7 +243,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         protected boolean isHovered() {
-            return Objects.equals(getHoveredEntry(), this);
+            return Objects.equals(getHovered(), this);
         }
     }
 
@@ -271,7 +271,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             this.groupName = group.name().getString().toLowerCase();
             if (option.canResetToDefault() && this.widget.canReset()) {
                 this.widget.setDimension(this.widget.getDimension().expanded(-20, 0));
-                this.resetButton = new TextScaledButtonWidget(widget.getDimension().xLimit(), -50, 20, 20, 2f, Text.of("\u21BB"), button -> {
+                this.resetButton = new TextScaledButtonWidget(widget.getDimension().xLimit(), -50, 20, 20, 2f, Component.literal("\u21BB"), button -> {
                     option.requestSetDefault();
                 });
                 option.addListener((opt, val) -> this.resetButton.active = !opt.isPendingValueDefault() && opt.available());
@@ -282,7 +282,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
-        public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        public void render(PoseStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             widget.setDimension(widget.getDimension().withY(y));
 
             widget.render(matrices, mouseX, mouseY, tickDelta);
@@ -294,7 +294,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
-        public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
             widget.postRender(matrices, mouseX, mouseY, delta);
         }
 
@@ -329,7 +329,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
-        public List<? extends Selectable> selectableChildren() {
+        public List<? extends NarratableEntry> narratables() {
             if (resetButton == null)
                 return ImmutableList.of(widget);
 
@@ -337,7 +337,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
-        public List<? extends Element> children() {
+        public List<? extends GuiEventListener> children() {
             if (resetButton == null)
                 return ImmutableList.of(widget);
 
@@ -347,13 +347,13 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
     public class GroupSeparatorEntry extends Entry {
         protected final OptionGroup group;
-        protected final MultilineText wrappedName;
-        protected final MultilineText wrappedTooltip;
+        protected final MultiLineLabel wrappedName;
+        protected final MultiLineLabel wrappedTooltip;
 
         protected final LowProfileButtonWidget expandMinimizeButton;
 
         protected final Screen screen;
-        protected final TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        protected final Font font = Minecraft.getInstance().font;
 
         protected boolean groupExpanded;
 
@@ -364,15 +364,15 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         private GroupSeparatorEntry(OptionGroup group, Screen screen) {
             this.group = group;
             this.screen = screen;
-            this.wrappedName = MultilineText.create(textRenderer, group.name(), getRowWidth() - 45);
-            this.wrappedTooltip = MultilineText.create(textRenderer, group.tooltip(), screen.width / 3 * 2 - 10);
+            this.wrappedName = MultiLineLabel.create(font, group.name(), getRowWidth() - 45);
+            this.wrappedTooltip = MultiLineLabel.create(font, group.tooltip(), screen.width / 3 * 2 - 10);
             this.groupExpanded = !group.collapsed();
-            this.expandMinimizeButton = new LowProfileButtonWidget(0, 0, 20, 20, Text.empty(), btn -> onExpandButtonPress());
+            this.expandMinimizeButton = new LowProfileButtonWidget(0, 0, 20, 20, Component.empty(), btn -> onExpandButtonPress());
             updateExpandMinimizeText();
         }
 
         @Override
-        public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        public void render(PoseStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             this.y = y;
 
             int buttonY = y + entryHeight / 2 - expandMinimizeButton.getHeight() / 2 + 1;
@@ -381,13 +381,13 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             expandMinimizeButton.setX(x);
             expandMinimizeButton.render(matrices, mouseX, mouseY, tickDelta);
 
-            wrappedName.drawCenterWithShadow(matrices, x + entryWidth / 2, y + getYPadding());
+            wrappedName.renderCentered(matrices, x + entryWidth / 2, y + getYPadding());
         }
 
         @Override
-        public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
             if ((isHovered() && !expandMinimizeButton.isMouseOver(mouseX, mouseY)) || expandMinimizeButton.isFocused()) {
-                YACLScreen.renderMultilineTooltip(matrices, textRenderer, wrappedTooltip, getRowLeft() + getRowWidth() / 2, y - 3, y + getItemHeight() + 3, screen.width, screen.height);
+                YACLScreen.renderMultilineTooltip(matrices, font, wrappedTooltip, getRowLeft() + getRowWidth() / 2, y - 3, y + getItemHeight() + 3, screen.width, screen.height);
             }
         }
 
@@ -409,7 +409,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         protected void updateExpandMinimizeText() {
-            expandMinimizeButton.setMessage(Text.of(isExpanded() ? "▼" : "▶"));
+            expandMinimizeButton.setMessage(Component.literal(isExpanded() ? "▼" : "▶"));
         }
 
         public void setChildEntries(List<? extends Entry> childEntries) {
@@ -424,7 +424,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
         @Override
         public int getItemHeight() {
-            return Math.max(wrappedName.count(), 1) * textRenderer.fontHeight + getYPadding() * 2;
+            return Math.max(wrappedName.getLineCount(), 1) * font.lineHeight + getYPadding() * 2;
         }
 
         private int getYPadding() {
@@ -432,23 +432,23 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
-        public List<? extends Selectable> selectableChildren() {
-            return ImmutableList.of(new Selectable() {
+        public List<? extends NarratableEntry> narratables() {
+            return ImmutableList.of(new NarratableEntry() {
                 @Override
-                public Selectable.SelectionType getType() {
-                    return Selectable.SelectionType.HOVERED;
+                public NarratableEntry.NarrationPriority narrationPriority() {
+                    return NarrationPriority.HOVERED;
                 }
 
                 @Override
-                public void appendNarrations(NarrationMessageBuilder builder) {
-                    builder.put(NarrationPart.TITLE, group.name());
-                    builder.put(NarrationPart.HINT, group.tooltip());
+                public void updateNarration(NarrationElementOutput builder) {
+                    builder.add(NarratedElementType.TITLE, group.name());
+                    builder.add(NarratedElementType.HINT, group.tooltip());
                 }
             });
         }
 
         @Override
-        public List<? extends Element> children() {
+        public List<? extends GuiEventListener> children() {
             return ImmutableList.of(expandMinimizeButton);
         }
     }
@@ -462,13 +462,13 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             super(group, screen);
             this.listOption = group;
 
-            this.resetListButton = new TextScaledButtonWidget(getRowRight() - 20, -50, 20, 20, 2f, Text.of("\u21BB"), button -> {
+            this.resetListButton = new TextScaledButtonWidget(getRowRight() - 20, -50, 20, 20, 2f, Component.literal("\u21BB"), button -> {
                 group.requestSetDefault();
             });
             group.addListener((opt, val) -> this.resetListButton.active = !opt.isPendingValueDefault() && opt.available());
             this.resetListButton.active = !group.isPendingValueDefault() && group.available();
 
-            this.addListButton = new TooltipButtonWidget(yaclScreen, resetListButton.getX() - 20, -50, 20, 20, Text.of("+"), Text.translatable("yacl.list.add_top"), btn -> {
+            this.addListButton = new TooltipButtonWidget(yaclScreen, resetListButton.getX() - 20, -50, 20, 20, Component.literal("+"), Component.translatable("yacl.list.add_top"), btn -> {
                 group.insertNewEntryToTop();
                 setExpanded(true);
             });
@@ -478,7 +478,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
-        public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        public void render(PoseStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             updateExpandMinimizeText(); // update every render because option could become available/unavailable at any time
 
             super.render(matrices, index, y, x, entryWidth, entryHeight, mouseX, mouseY, hovered, tickDelta);
@@ -493,7 +493,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
-        public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
             minimizeIfUnavailable(); // cannot run in render because it *should* cause a ConcurrentModificationException (but doesn't)
 
             super.postRender(matrices, mouseX, mouseY, delta);
@@ -516,7 +516,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
-        public List<? extends Element> children() {
+        public List<? extends GuiEventListener> children() {
             return ImmutableList.of(expandMinimizeButton, addListButton, resetListButton);
         }
     }
@@ -533,8 +533,8 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
-        public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            drawCenteredText(matrices, MinecraftClient.getInstance().textRenderer, Text.translatable("yacl.list.empty").formatted(Formatting.DARK_GRAY, Formatting.ITALIC), x + entryWidth / 2, y, -1);
+        public void render(PoseStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            drawCenteredString(matrices, Minecraft.getInstance().font, Component.translatable("yacl.list.empty").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), x + entryWidth / 2, y, -1);
         }
 
         @Override
@@ -551,12 +551,12 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
-        public List<? extends Element> children() {
+        public List<? extends GuiEventListener> children() {
             return ImmutableList.of();
         }
 
         @Override
-        public List<? extends Selectable> selectableChildren() {
+        public List<? extends NarratableEntry> narratables() {
             return ImmutableList.of();
         }
     }

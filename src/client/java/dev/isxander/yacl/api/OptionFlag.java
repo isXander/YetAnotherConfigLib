@@ -1,7 +1,7 @@
 package dev.isxander.yacl.api;
 
 import dev.isxander.yacl.gui.RequireRestartScreen;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 import java.util.function.Consumer;
 
@@ -10,14 +10,14 @@ import java.util.function.Consumer;
  * Each flag is executed only once per save, no matter the amount of options with the flag.
  */
 @FunctionalInterface
-public interface OptionFlag extends Consumer<MinecraftClient> {
+public interface OptionFlag extends Consumer<Minecraft> {
     /** Warns the user that a game restart is required for the changes to take effect */
-    OptionFlag GAME_RESTART = client -> client.setScreen(new RequireRestartScreen(client.currentScreen));
+    OptionFlag GAME_RESTART = client -> client.setScreen(new RequireRestartScreen(client.screen));
 
     /** Reloads chunks upon applying (F3+A) */
-    OptionFlag RELOAD_CHUNKS = client -> client.worldRenderer.reload();
+    OptionFlag RELOAD_CHUNKS = client -> client.levelRenderer.allChanged();
 
-    OptionFlag WORLD_RENDER_UPDATE = client -> client.worldRenderer.scheduleTerrainUpdate();
+    OptionFlag WORLD_RENDER_UPDATE = client -> client.levelRenderer.needsUpdate();
 
-    OptionFlag ASSET_RELOAD = MinecraftClient::reloadResourcesConcurrently;
+    OptionFlag ASSET_RELOAD = Minecraft::delayTextureReload;
 }

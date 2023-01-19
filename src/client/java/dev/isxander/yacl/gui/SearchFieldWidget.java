@@ -1,37 +1,37 @@
 package dev.isxander.yacl.gui;
 
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.network.chat.Component;
 
-public class SearchFieldWidget extends TextFieldWidget {
-    private Text emptyText;
+public class SearchFieldWidget extends EditBox {
+    private Component emptyText;
     private final YACLScreen yaclScreen;
-    private final TextRenderer textRenderer;
+    private final Font font;
 
     private boolean isEmpty = true;
 
-    public SearchFieldWidget(YACLScreen yaclScreen, TextRenderer textRenderer, int x, int y, int width, int height, Text text, Text emptyText) {
-        super(textRenderer, x, y, width, height, text);
-        setChangedListener(string -> update());
-        setTextPredicate(string -> !string.endsWith(" ") && !string.startsWith(" "));
+    public SearchFieldWidget(YACLScreen yaclScreen, Font font, int x, int y, int width, int height, Component text, Component emptyText) {
+        super(font, x, y, width, height, text);
+        setResponder(string -> update());
+        setFilter(string -> !string.endsWith(" ") && !string.startsWith(" "));
         this.yaclScreen = yaclScreen;
-        this.textRenderer = textRenderer;
+        this.font = font;
         this.emptyText = emptyText;
     }
 
     @Override
-    public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void renderButton(PoseStack matrices, int mouseX, int mouseY, float delta) {
         super.renderButton(matrices, mouseX, mouseY, delta);
         if (isVisible() && isEmpty()) {
-            textRenderer.drawWithShadow(matrices, emptyText, getX() + 4, this.getY() + (this.height - 8) / 2f, 0x707070);
+            font.drawShadow(matrices, emptyText, getX() + 4, this.getY() + (this.height - 8) / 2f, 0x707070);
         }
     }
 
     private void update() {
         boolean wasEmpty = isEmpty;
-        isEmpty = getText().isEmpty();
+        isEmpty = getValue().isEmpty();
 
         if (isEmpty && wasEmpty)
             return;
@@ -49,18 +49,18 @@ public class SearchFieldWidget extends TextFieldWidget {
     }
 
     public String getQuery() {
-        return getText().toLowerCase();
+        return getValue().toLowerCase();
     }
 
     public boolean isEmpty() {
         return isEmpty;
     }
 
-    public Text getEmptyText() {
+    public Component getEmptyText() {
         return emptyText;
     }
 
-    public void setEmptyText(Text emptyText) {
+    public void setEmptyText(Component emptyText) {
         this.emptyText = emptyText;
     }
 }

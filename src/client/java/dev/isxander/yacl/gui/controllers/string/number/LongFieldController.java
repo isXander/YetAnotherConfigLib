@@ -2,7 +2,7 @@ package dev.isxander.yacl.gui.controllers.string.number;
 
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.gui.controllers.slider.LongSliderController;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.util.function.Function;
 
@@ -20,7 +20,7 @@ public class LongFieldController extends NumberFieldController<Long> {
      * @param max maximum allowed value (clamped on apply)
      * @param formatter display text, not used whilst editing
      */
-    public LongFieldController(Option<Long> option, long min, long max, Function<Long, Text> formatter) {
+    public LongFieldController(Option<Long> option, long min, long max, Function<Long, Component> formatter) {
         super(option, formatter);
         this.min = min;
         this.max = max;
@@ -46,7 +46,7 @@ public class LongFieldController extends NumberFieldController<Long> {
      * @param option option to bind controller to
      * @param formatter display text, not used whilst editing
      */
-    public LongFieldController(Option<Long> option, Function<Long, Text> formatter) {
+    public LongFieldController(Option<Long> option, Function<Long, Component> formatter) {
         this(option, -Long.MAX_VALUE, Long.MAX_VALUE, formatter);
     }
 

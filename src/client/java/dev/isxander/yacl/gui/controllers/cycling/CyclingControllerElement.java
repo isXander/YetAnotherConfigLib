@@ -1,10 +1,10 @@
 package dev.isxander.yacl.gui.controllers.cycling;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.ControllerWidget;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.gui.screens.Screen;
 
 public class CyclingControllerElement extends ControllerWidget<ICyclingController<?>> {
 
@@ -39,11 +39,11 @@ public class CyclingControllerElement extends ControllerWidget<ICyclingControlle
             return false;
 
         switch (keyCode) {
-            case InputUtil.GLFW_KEY_LEFT, InputUtil.GLFW_KEY_DOWN ->
+            case InputConstants.KEY_LEFT, InputConstants.KEY_DOWN ->
                     cycleValue(-1);
-            case InputUtil.GLFW_KEY_RIGHT, InputUtil.GLFW_KEY_UP ->
+            case InputConstants.KEY_RIGHT, InputConstants.KEY_UP ->
                     cycleValue(1);
-            case InputUtil.GLFW_KEY_ENTER, InputUtil.GLFW_KEY_SPACE, InputUtil.GLFW_KEY_KP_ENTER ->
+            case InputConstants.KEY_RETURN, InputConstants.KEY_SPACE, InputConstants.KEY_NUMPADENTER ->
                     cycleValue(Screen.hasControlDown() || Screen.hasShiftDown() ? -1 : 1);
             default -> {
                 return false;

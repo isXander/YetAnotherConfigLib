@@ -1,12 +1,12 @@
 package dev.isxander.yacl.gui.controllers;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.isxander.yacl.api.ButtonOption;
 import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.util.function.BiConsumer;
 
@@ -15,10 +15,10 @@ import java.util.function.BiConsumer;
  * and renders a {@link} Text on the right.
  */
 public class ActionController implements Controller<BiConsumer<YACLScreen, ButtonOption>> {
-    public static final Text DEFAULT_TEXT = Text.translatable("yacl.control.action.execute");
+    public static final Component DEFAULT_TEXT = Component.translatable("yacl.control.action.execute");
 
     private final ButtonOption option;
-    private final Text text;
+    private final Component text;
 
     /**
      * Constructs an action controller
@@ -36,7 +36,7 @@ public class ActionController implements Controller<BiConsumer<YACLScreen, Butto
      * @param option bound option
      * @param text text to display
      */
-    public ActionController(ButtonOption option, Text text) {
+    public ActionController(ButtonOption option, Component text) {
         this.option = option;
         this.text = text;
 
@@ -54,7 +54,7 @@ public class ActionController implements Controller<BiConsumer<YACLScreen, Butto
      * {@inheritDoc}
      */
     @Override
-    public Text formatValue() {
+    public Component formatValue() {
         return text;
     }
 
@@ -94,7 +94,7 @@ public class ActionController implements Controller<BiConsumer<YACLScreen, Butto
                 return false;
             }
 
-            if (keyCode == InputUtil.GLFW_KEY_ENTER || keyCode == InputUtil.GLFW_KEY_SPACE || keyCode == InputUtil.GLFW_KEY_KP_ENTER) {
+            if (keyCode == InputConstants.KEY_RETURN || keyCode == InputConstants.KEY_SPACE || keyCode == InputConstants.KEY_NUMPADENTER) {
                 executeAction();
                 return true;
             }

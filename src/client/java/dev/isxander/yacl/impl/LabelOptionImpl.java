@@ -3,8 +3,8 @@ package dev.isxander.yacl.impl;
 import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.gui.controllers.LabelController;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -17,40 +17,40 @@ import java.util.function.BiConsumer;
 
 @ApiStatus.Internal
 public final class LabelOptionImpl implements LabelOption {
-    private final Text label;
-    private final Text name = Text.literal("Label Option");
-    private final Text tooltip = Text.empty();
+    private final Component label;
+    private final Component name = Component.literal("Label Option");
+    private final Component tooltip = Component.empty();
     private final LabelController labelController;
-    private final Binding<Text> binding;
+    private final Binding<Component> binding;
 
-    public LabelOptionImpl(Text label) {
+    public LabelOptionImpl(Component label) {
         this.label = label;
         this.labelController = new LabelController(this);
         this.binding = Binding.immutable(label);
     }
 
     @Override
-    public @NotNull Text label() {
+    public @NotNull Component label() {
         return label;
     }
 
     @Override
-    public @NotNull Text name() {
+    public @NotNull Component name() {
         return name;
     }
 
     @Override
-    public @NotNull Text tooltip() {
+    public @NotNull Component tooltip() {
         return tooltip;
     }
 
     @Override
-    public @NotNull Controller<Text> controller() {
+    public @NotNull Controller<Component> controller() {
         return labelController;
     }
 
     @Override
-    public @NotNull Binding<Text> binding() {
+    public @NotNull Binding<Component> binding() {
         return binding;
     }
 
@@ -65,8 +65,8 @@ public final class LabelOptionImpl implements LabelOption {
     }
 
     @Override
-    public @NotNull Class<Text> typeClass() {
-        return Text.class;
+    public @NotNull Class<Component> typeClass() {
+        return Component.class;
     }
 
     @Override
@@ -80,12 +80,12 @@ public final class LabelOptionImpl implements LabelOption {
     }
 
     @Override
-    public @NotNull Text pendingValue() {
+    public @NotNull Component pendingValue() {
         return label;
     }
 
     @Override
-    public void requestSet(Text value) {
+    public void requestSet(Component value) {
 
     }
 
@@ -115,16 +115,16 @@ public final class LabelOptionImpl implements LabelOption {
     }
 
     @Override
-    public void addListener(BiConsumer<Option<Text>, Text> changedListener) {
+    public void addListener(BiConsumer<Option<Component>, Component> changedListener) {
 
     }
 
     @ApiStatus.Internal
     public static final class BuilderImpl implements LabelOption.Builder {
-        private final List<Text> lines = new ArrayList<>();
+        private final List<Component> lines = new ArrayList<>();
 
         @Override
-        public Builder line(@NotNull Text line) {
+        public dev.isxander.yacl.api.LabelOption.Builder line(@NotNull Component line) {
             Validate.notNull(line, "`line` must not be null");
 
             this.lines.add(line);
@@ -132,15 +132,15 @@ public final class LabelOptionImpl implements LabelOption {
         }
 
         @Override
-        public Builder lines(@NotNull Collection<? extends Text> lines) {
+        public dev.isxander.yacl.api.LabelOption.Builder lines(@NotNull Collection<? extends Component> lines) {
             this.lines.addAll(lines);
             return this;
         }
 
         @Override
         public LabelOption build() {
-            MutableText text = Text.empty();
-            Iterator<Text> iterator = lines.iterator();
+            MutableComponent text = Component.empty();
+            Iterator<Component> iterator = lines.iterator();
             while (iterator.hasNext()) {
                 text.append(iterator.next());
 

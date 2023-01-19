@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl.api.ListOption;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.OptionGroup;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -16,13 +16,13 @@ import java.util.List;
 
 @ApiStatus.Internal
 public final class OptionGroupImpl implements OptionGroup {
-    private final @NotNull Text name;
-    private final @NotNull Text tooltip;
+    private final @NotNull Component name;
+    private final @NotNull Component tooltip;
     private final ImmutableList<? extends Option<?>> options;
     private final boolean collapsed;
     private final boolean isRoot;
 
-    public OptionGroupImpl(@NotNull Text name, @NotNull Text tooltip, ImmutableList<? extends Option<?>> options, boolean collapsed, boolean isRoot) {
+    public OptionGroupImpl(@NotNull Component name, @NotNull Component tooltip, ImmutableList<? extends Option<?>> options, boolean collapsed, boolean isRoot) {
         this.name = name;
         this.tooltip = tooltip;
         this.options = options;
@@ -31,12 +31,12 @@ public final class OptionGroupImpl implements OptionGroup {
     }
 
     @Override
-    public @NotNull Text name() {
+    public @NotNull Component name() {
         return name;
     }
 
     @Override
-    public @NotNull Text tooltip() {
+    public @NotNull Component tooltip() {
         return tooltip;
     }
 
@@ -57,13 +57,13 @@ public final class OptionGroupImpl implements OptionGroup {
 
     @ApiStatus.Internal
     public static final class BuilderImpl implements OptionGroup.Builder {
-        private Text name = Text.empty();
-        private final List<Text> tooltipLines = new ArrayList<>();
+        private Component name = Component.empty();
+        private final List<Component> tooltipLines = new ArrayList<>();
         private final List<Option<?>> options = new ArrayList<>();
         private boolean collapsed = false;
 
         @Override
-        public Builder name(@NotNull Text name) {
+        public Builder name(@NotNull Component name) {
             Validate.notNull(name, "`name` must not be null");
 
             this.name = name;
@@ -71,7 +71,7 @@ public final class OptionGroupImpl implements OptionGroup {
         }
 
         @Override
-        public Builder tooltip(@NotNull Text... tooltips) {
+        public Builder tooltip(@NotNull Component... tooltips) {
             Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
 
             tooltipLines.addAll(List.of(tooltips));
@@ -110,9 +110,9 @@ public final class OptionGroupImpl implements OptionGroup {
         public OptionGroup build() {
             Validate.notEmpty(options, "`options` must not be empty to build `OptionGroup`");
 
-            MutableText concatenatedTooltip = Text.empty();
+            MutableComponent concatenatedTooltip = Component.empty();
             boolean first = true;
-            for (Text line : tooltipLines) {
+            for (Component line : tooltipLines) {
                 if (!first) concatenatedTooltip.append("\n");
                 first = false;
 

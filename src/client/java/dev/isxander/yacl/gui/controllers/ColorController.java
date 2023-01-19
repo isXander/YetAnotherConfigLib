@@ -1,6 +1,7 @@
 package dev.isxander.yacl.gui.controllers;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.api.utils.MutableDimension;
@@ -8,11 +9,10 @@ import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.string.IStringController;
 import dev.isxander.yacl.gui.controllers.string.StringControllerElement;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import java.awt.Color;
 import java.util.List;
@@ -62,11 +62,11 @@ public class ColorController implements IStringController<Color> {
     }
 
     @Override
-    public Text formatValue() {
-        MutableText text = Text.literal("#");
-        text.append(Text.literal(toHex(option().pendingValue().getRed())).formatted(Formatting.RED));
-        text.append(Text.literal(toHex(option().pendingValue().getGreen())).formatted(Formatting.GREEN));
-        text.append(Text.literal(toHex(option().pendingValue().getBlue())).formatted(Formatting.BLUE));
+    public Component formatValue() {
+        MutableComponent text = Component.literal("#");
+        text.append(Component.literal(toHex(option().pendingValue().getRed())).withStyle(ChatFormatting.RED));
+        text.append(Component.literal(toHex(option().pendingValue().getGreen())).withStyle(ChatFormatting.GREEN));
+        text.append(Component.literal(toHex(option().pendingValue().getBlue())).withStyle(ChatFormatting.BLUE));
         if (allowAlpha()) text.append(toHex(option().pendingValue().getAlpha()));
         return text;
     }
@@ -114,13 +114,13 @@ public class ColorController implements IStringController<Color> {
         }
 
         @Override
-        protected void drawValueText(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        protected void drawValueText(PoseStack matrices, int mouseX, int mouseY, float delta) {
             if (isHovered()) {
                 colorPreviewDim.move(-inputFieldBounds.width() - 5, 0);
                 super.drawValueText(matrices, mouseX, mouseY, delta);
             }
 
-            DrawableHelper.fill(matrices, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), colorController.option().pendingValue().getRGB());
+            GuiComponent.fill(matrices, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), colorController.option().pendingValue().getRGB());
             drawOutline(matrices, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), 1, 0xFF000000);
         }
 

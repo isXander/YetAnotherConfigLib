@@ -2,16 +2,10 @@ package dev.isxander.yacl.api;
 
 import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl.impl.ConfigCategoryImpl;
-import dev.isxander.yacl.impl.OptionGroupImpl;
-import dev.isxander.yacl.impl.utils.YACLConstants;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import org.apache.commons.lang3.Validate;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Separates {@link Option}s or {@link OptionGroup}s into multiple distinct sections.
@@ -22,7 +16,7 @@ public interface ConfigCategory {
     /**
      * Name of category, displayed as a button on the left column.
      */
-    @NotNull Text name();
+    @NotNull Component name();
 
     /**
      * Gets every {@link OptionGroup} in this category.
@@ -33,7 +27,7 @@ public interface ConfigCategory {
      * Tooltip (or description) of the category.
      * Rendered on hover.
      */
-    @NotNull Text tooltip();
+    @NotNull Component tooltip();
 
     /**
      * Creates a builder to construct a {@link ConfigCategory}
@@ -48,7 +42,7 @@ public interface ConfigCategory {
          *
          * @see ConfigCategory#name()
          */
-        Builder name(@NotNull Text name);
+        Builder name(@NotNull Component name);
 
         /**
          * Adds an option to the root group of the category.
@@ -91,7 +85,7 @@ public interface ConfigCategory {
          *
          * @param tooltips text lines - merged with a new-line on {@link Builder#build()}.
          */
-        Builder tooltip(@NotNull Text... tooltips);
+        Builder tooltip(@NotNull Component... tooltips);
 
         ConfigCategory build();
     }

@@ -4,16 +4,12 @@ import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl.config.ConfigInstance;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.impl.YetAnotherConfigLibImpl;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
-import org.apache.commons.lang3.Validate;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 /**
@@ -24,7 +20,7 @@ public interface YetAnotherConfigLib {
     /**
      * Title of the GUI. Only used for Minecraft narration.
      */
-    Text title();
+    Component title();
 
     /**
      * Gets all config categories.
@@ -69,7 +65,7 @@ public interface YetAnotherConfigLib {
          *
          * @see YetAnotherConfigLib#title()
          */
-        Builder title(@NotNull Text title);
+        Builder title(@NotNull Component title);
 
         /**
          * Adds a new category.

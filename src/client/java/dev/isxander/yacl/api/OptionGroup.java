@@ -2,14 +2,10 @@ package dev.isxander.yacl.api;
 
 import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl.impl.OptionGroupImpl;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import org.apache.commons.lang3.Validate;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Serves as a separator between multiple chunks of options
@@ -21,12 +17,12 @@ public interface OptionGroup {
      * Name of the option group, displayed as a separator in the option lists.
      * Can be empty.
      */
-    Text name();
+    Component name();
 
     /**
      * Tooltip displayed on hover.
      */
-    Text tooltip();
+    Component tooltip();
 
     /**
      * List of all options in the group
@@ -53,20 +49,20 @@ public interface OptionGroup {
 
     interface Builder {
         /**
-         * Sets name of the group, can be {@link Text#empty()} to just separate options, like sodium.
+         * Sets name of the group, can be {@link Component#empty()} to just separate options, like sodium.
          *
          * @see OptionGroup#name()
          */
-        Builder name(@NotNull Text name);
+        Builder name(@NotNull Component name);
 
         /**
          * Sets the tooltip to be used by the option group.
          * Can be invoked twice to append more lines.
-         * No need to wrap the text yourself, the gui does this itself.
+         * No need to wrap the Component yourself, the gui does this itself.
          *
-         * @param tooltips text lines - merged with a new-line on {@link Builder#build()}.
+         * @param tooltips Component lines - merged with a new-line on {@link Builder#build()}.
          */
-        Builder tooltip(@NotNull Text... tooltips);
+        Builder tooltip(@NotNull Component... tooltips);
 
         /**
          * Adds an option to group.

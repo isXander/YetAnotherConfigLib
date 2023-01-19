@@ -2,7 +2,7 @@ package dev.isxander.yacl.gui.controllers.string.number;
 
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.gui.controllers.slider.IntegerSliderController;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.util.function.Function;
 
@@ -20,7 +20,7 @@ public class IntegerFieldController extends NumberFieldController<Integer> {
      * @param max maximum allowed value (clamped on apply)
      * @param formatter display text, not used whilst editing
      */
-    public IntegerFieldController(Option<Integer> option, int min, int max, Function<Integer, Text> formatter) {
+    public IntegerFieldController(Option<Integer> option, int min, int max, Function<Integer, Component> formatter) {
         super(option, formatter);
         this.min = min;
         this.max = max;
@@ -46,7 +46,7 @@ public class IntegerFieldController extends NumberFieldController<Integer> {
      * @param option option to bind controller to
      * @param formatter display text, not used whilst editing
      */
-    public IntegerFieldController(Option<Integer> option, Function<Integer, Text> formatter) {
+    public IntegerFieldController(Option<Integer> option, Function<Integer, Component> formatter) {
         this(option, -Integer.MAX_VALUE, Integer.MAX_VALUE, formatter);
     }
 

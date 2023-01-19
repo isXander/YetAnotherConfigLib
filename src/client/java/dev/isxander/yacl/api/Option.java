@@ -2,10 +2,7 @@ package dev.isxander.yacl.api;
 
 import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.impl.OptionImpl;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import org.apache.commons.lang3.Validate;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -13,19 +10,18 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 public interface Option<T> {
     /**
      * Name of the option
      */
-    @NotNull Text name();
+    @NotNull Component name();
 
     /**
      * Tooltip (or description) of the option.
      * Rendered on hover.
      */
-    @NotNull Text tooltip();
+    @NotNull Component tooltip();
 
     /**
      * Widget provider for a type of option.
@@ -128,7 +124,7 @@ public interface Option<T> {
          *
          * @see Option#name()
          */
-        Builder<T> name(@NotNull Text name);
+        Builder<T> name(@NotNull Component name);
 
         /**
          * Sets the tooltip to be used by the option.
@@ -137,7 +133,7 @@ public interface Option<T> {
          * @param tooltipGetter function to get tooltip depending on value {@link Builder#build()}.
          */
         @SuppressWarnings("unchecked")
-        Builder<T> tooltip(@NotNull Function<T, Text>... tooltipGetter);
+        Builder<T> tooltip(@NotNull Function<T, Component>... tooltipGetter);
 
         /**
          * Sets the tooltip to be used by the option.
@@ -146,7 +142,7 @@ public interface Option<T> {
          *
          * @param tooltips text lines - merged with a new-line on {@link Builder#build()}.
          */
-        Builder<T> tooltip(@NotNull Text... tooltips);
+        Builder<T> tooltip(@NotNull Component... tooltips);
 
         /**
          * Sets the controller for the option.

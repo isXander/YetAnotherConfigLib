@@ -1,27 +1,27 @@
 package dev.isxander.yacl.gui;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
-public class LowProfileButtonWidget extends ButtonWidget {
-    public LowProfileButtonWidget(int x, int y, int width, int height, Text message, PressAction onPress) {
-        super(x, y, width, height, message, onPress, DEFAULT_NARRATION_SUPPLIER);
+public class LowProfileButtonWidget extends Button {
+    public LowProfileButtonWidget(int x, int y, int width, int height, Component message, OnPress onPress) {
+        super(x, y, width, height, message, onPress, DEFAULT_NARRATION);
     }
 
-    public LowProfileButtonWidget(int x, int y, int width, int height, Text message, PressAction onPress, Tooltip tooltip) {
+    public LowProfileButtonWidget(int x, int y, int width, int height, Component message, OnPress onPress, Tooltip tooltip) {
         this(x, y, width, height, message, onPress);
         setTooltip(tooltip);
     }
 
     @Override
-    public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        if (!isHovered() || !active) {
+    public void renderButton(PoseStack matrices, int mouseX, int mouseY, float delta) {
+        if (!isHoveredOrFocused() || !active) {
             int j = this.active ? 0xFFFFFF : 0xA0A0A0;
-            drawCenteredText(matrices, MinecraftClient.getInstance().textRenderer, this.getMessage(), this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, j | MathHelper.ceil(this.alpha * 255.0F) << 24);
+            drawCenteredString(matrices, Minecraft.getInstance().font, this.getMessage(), this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
         } else {
             super.renderButton(matrices, mouseX, mouseY, delta);
         }

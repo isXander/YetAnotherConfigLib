@@ -2,7 +2,7 @@ package dev.isxander.yacl.gui.controllers.cycling;
 
 import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl.api.Option;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.util.function.Function;
 
@@ -12,7 +12,7 @@ import java.util.function.Function;
  */
 public class CyclingListController<T> implements ICyclingController<T> {
     private final Option<T> option;
-    private final Function<T, Text> valueFormatter;
+    private final Function<T, Component> valueFormatter;
     private final ImmutableList<T> values;
 
     /**
@@ -22,7 +22,7 @@ public class CyclingListController<T> implements ICyclingController<T> {
      * @param values the values to cycle through
      */
     public CyclingListController(Option<T> option, Iterable<T> values) {
-        this(option, values, value -> Text.of(value.toString()));
+        this(option, values, value -> Component.literal(value.toString()));
     }
 
     /**
@@ -31,7 +31,7 @@ public class CyclingListController<T> implements ICyclingController<T> {
      * @param values the values to cycle through
      * @param valueFormatter function of how to convert each value to a string to display
      */
-    public CyclingListController(Option<T> option, Iterable<T> values, Function<T, Text> valueFormatter) {
+    public CyclingListController(Option<T> option, Iterable<T> values, Function<T, Component> valueFormatter) {
         this.option = option;
         this.valueFormatter = valueFormatter;
         this.values = ImmutableList.copyOf(values);
@@ -49,7 +49,7 @@ public class CyclingListController<T> implements ICyclingController<T> {
      * {@inheritDoc}
      */
     @Override
-    public Text formatValue() {
+    public Component formatValue() {
         return valueFormatter.apply(option().pendingValue());
     }
 

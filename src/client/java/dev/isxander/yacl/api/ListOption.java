@@ -1,11 +1,8 @@
 package dev.isxander.yacl.api;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.impl.ListOptionImpl;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import org.apache.commons.lang3.Validate;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,7 +58,7 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
          *
          * @see ListOption#name()
          */
-        Builder<T> name(@NotNull Text name);
+        Builder<T> name(@NotNull Component name);
 
         /**
          * Sets the tooltip to be used by the list. It is displayed like a normal
@@ -70,9 +67,9 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
          * Can be invoked twice to append more lines.
          * No need to wrap the text yourself, the gui does this itself.
          *
-         * @param tooltips text lines - merged with a new-line on {@link Builder#build()}.
+         * @param tooltips text lines - merged with a new-line on {@link dev.isxander.yacl.api.ListOption.Builder#build()}.
          */
-        Builder<T> tooltip(@NotNull Text... tooltips);
+        Builder<T> tooltip(@NotNull Component... tooltips);
 
         /**
          * Sets the value that is used when creating new entries

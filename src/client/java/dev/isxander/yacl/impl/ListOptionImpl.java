@@ -3,8 +3,8 @@ package dev.isxander.yacl.impl;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.api.*;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 
 @ApiStatus.Internal
 public final class ListOptionImpl<T> implements ListOption<T> {
-    private final Text name;
-    private final Text tooltip;
+    private final Component name;
+    private final Component tooltip;
     private final Binding<List<T>> binding;
     private final T initialValue;
     private final List<ListOptionEntry<T>> entries;
@@ -31,7 +31,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     private final List<BiConsumer<Option<List<T>>, List<T>>> listeners;
     private final List<Runnable> refreshListeners;
 
-    public ListOptionImpl(@NotNull Text name, @NotNull Text tooltip, @NotNull Binding<List<T>> binding, @NotNull T initialValue, @NotNull Class<T> typeClass, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available) {
+    public ListOptionImpl(@NotNull Component name, @NotNull Component tooltip, @NotNull Binding<List<T>> binding, @NotNull T initialValue, @NotNull Class<T> typeClass, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available) {
         this.name = name;
         this.tooltip = tooltip;
         this.binding = binding;
@@ -48,12 +48,12 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     }
 
     @Override
-    public @NotNull Text name() {
+    public @NotNull Component name() {
         return this.name;
     }
 
     @Override
-    public @NotNull Text tooltip() {
+    public @NotNull Component tooltip() {
         return this.tooltip;
     }
 
@@ -211,8 +211,8 @@ public final class ListOptionImpl<T> implements ListOption<T> {
 
     @ApiStatus.Internal
     public static final class BuilderImpl<T> implements ListOption.Builder<T> {
-        private Text name = Text.empty();
-        private final List<Text> tooltipLines = new ArrayList<>();
+        private Component name = Component.empty();
+        private final List<Component> tooltipLines = new ArrayList<>();
         private Function<ListOptionEntry<T>, Controller<T>> controllerFunction;
         private Binding<List<T>> binding = null;
         private final Set<OptionFlag> flags = new HashSet<>();
@@ -226,7 +226,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         }
 
         @Override
-        public ListOption.Builder<T> name(@NotNull Text name) {
+        public ListOption.Builder<T> name(@NotNull Component name) {
             Validate.notNull(name, "`name` must not be null");
 
             this.name = name;
@@ -234,7 +234,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         }
 
         @Override
-        public ListOption.Builder<T> tooltip(@NotNull Text... tooltips) {
+        public ListOption.Builder<T> tooltip(@NotNull Component... tooltips) {
             Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
 
             tooltipLines.addAll(List.of(tooltips));
@@ -309,9 +309,9 @@ public final class ListOptionImpl<T> implements ListOption<T> {
             Validate.notNull(binding, "`binding` must not be null");
             Validate.notNull(initialValue, "`initialValue` must not be null");
 
-            MutableText concatenatedTooltip = Text.empty();
+            MutableComponent concatenatedTooltip = Component.empty();
             boolean first = true;
-            for (Text line : tooltipLines) {
+            for (Component line : tooltipLines) {
                 if (!first) concatenatedTooltip.append("\n");
                 first = false;
 

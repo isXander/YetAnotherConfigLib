@@ -1,25 +1,24 @@
 package dev.isxander.yacl.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl.api.utils.Dimension;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 
 import java.awt.Color;
 
-public abstract class AbstractWidget implements Element, Drawable, Selectable {
-    protected final MinecraftClient client = MinecraftClient.getInstance();
-    protected final TextRenderer textRenderer = client.textRenderer;
+public abstract class AbstractWidget implements GuiEventListener, Renderable, NarratableEntry {
+    protected final Minecraft client = Minecraft.getInstance();
+    protected final Font textRenderer = client.font;
     protected final int inactiveColor = 0xFFA0A0A0;
 
     private Dimension<Integer> dim;
@@ -28,7 +27,7 @@ public abstract class AbstractWidget implements Element, Drawable, Selectable {
         this.dim = dim;
     }
 
-    public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
 
     }
 
@@ -51,8 +50,8 @@ public abstract class AbstractWidget implements Element, Drawable, Selectable {
     }
 
     @Override
-    public SelectionType getType() {
-        return SelectionType.NONE;
+    public NarrationPriority narrationPriority() {
+        return NarrationPriority.NONE;
     }
 
     public void unfocus() {
@@ -64,11 +63,11 @@ public abstract class AbstractWidget implements Element, Drawable, Selectable {
     }
 
     @Override
-    public void appendNarrations(NarrationMessageBuilder builder) {
+    public void updateNarration(NarrationElementOutput builder) {
 
     }
 
-    protected void drawButtonRect(MatrixStack matrices, int x1, int y1, int x2, int y2, boolean hovered, boolean enabled) {
+    protected void drawButtonRect(PoseStack matrices, int x1, int y1, int x2, int y2, boolean hovered, boolean enabled) {
         if (x1 > x2) {
             int xx1 = x1;
             x1 = x2;
@@ -82,15 +81,15 @@ public abstract class AbstractWidget implements Element, Drawable, Selectable {
         int width = x2 - x1;
         int height = y2 - y1;
 
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-        RenderSystem.setShaderTexture(0, ClickableWidget.WIDGETS_TEXTURE);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATION);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         int i = !enabled ? 0 : hovered ? 2 : 1;
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
-        DrawableHelper.drawTexture(matrices, x1, y1, 0, 0, 46 + i * 20, width / 2, height, 256, 256);
-        DrawableHelper.drawTexture(matrices, x1 + width / 2, y1, 0, 200 - width / 2f, 46 + i * 20, width / 2, height, 256, 256);
+        GuiComponent.blit(matrices, x1, y1, 0, 0, 46 + i * 20, width / 2, height, 256, 256);
+        GuiComponent.blit(matrices, x1 + width / 2, y1, 0, 200 - width / 2f, 46 + i * 20, width / 2, height, 256, 256);
     }
 
     protected int multiplyColor(int hex, float amount) {
@@ -103,6 +102,6 @@ public abstract class AbstractWidget implements Element, Drawable, Selectable {
     }
 
     public void playDownSound() {
-        MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 }

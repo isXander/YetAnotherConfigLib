@@ -2,13 +2,9 @@ package dev.isxander.yacl.api;
 
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.impl.ButtonOptionImpl;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import org.apache.commons.lang3.Validate;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -19,7 +15,7 @@ public interface ButtonOption extends Option<BiConsumer<YACLScreen, ButtonOption
      */
     BiConsumer<YACLScreen, ButtonOption> action();
 
-    static Builder createBuilder() {
+    static dev.isxander.yacl.api.ButtonOption.Builder createBuilder() {
         return new ButtonOptionImpl.BuilderImpl();
     }
 
@@ -29,7 +25,7 @@ public interface ButtonOption extends Option<BiConsumer<YACLScreen, ButtonOption
          *
          * @see Option#name()
          */
-        Builder name(@NotNull Text name);
+        dev.isxander.yacl.api.ButtonOption.Builder name(@NotNull Component name);
 
         /**
          * Sets the tooltip to be used by the option.
@@ -38,9 +34,9 @@ public interface ButtonOption extends Option<BiConsumer<YACLScreen, ButtonOption
          *
          * @param tooltips text lines - merged with a new-line on {@link Option.Builder#build()}.
          */
-        Builder tooltip(@NotNull Text... tooltips);
+        dev.isxander.yacl.api.ButtonOption.Builder tooltip(@NotNull Component... tooltips);
 
-        Builder action(@NotNull BiConsumer<YACLScreen, ButtonOption> action);
+        dev.isxander.yacl.api.ButtonOption.Builder action(@NotNull BiConsumer<YACLScreen, ButtonOption> action);
 
         /**
          * Action to be executed upon button press
@@ -48,14 +44,14 @@ public interface ButtonOption extends Option<BiConsumer<YACLScreen, ButtonOption
          * @see ButtonOption#action()
          */
         @Deprecated
-        Builder action(@NotNull Consumer<YACLScreen> action);
+        dev.isxander.yacl.api.ButtonOption.Builder action(@NotNull Consumer<YACLScreen> action);
 
         /**
          * Sets if the option can be configured
          *
          * @see Option#available()
          */
-        Builder available(boolean available);
+        dev.isxander.yacl.api.ButtonOption.Builder available(boolean available);
 
         /**
          * Sets the controller for the option.
@@ -63,7 +59,7 @@ public interface ButtonOption extends Option<BiConsumer<YACLScreen, ButtonOption
          *
          * @see dev.isxander.yacl.gui.controllers
          */
-        Builder controller(@NotNull Function<ButtonOption, Controller<BiConsumer<YACLScreen, ButtonOption>>> control);
+        dev.isxander.yacl.api.ButtonOption.Builder controller(@NotNull Function<ButtonOption, Controller<BiConsumer<YACLScreen, ButtonOption>>> control);
 
         ButtonOption build();
     }

@@ -2,9 +2,8 @@ package dev.isxander.yacl.gui.controllers.string.number;
 
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.gui.controllers.slider.DoubleSliderController;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
-import java.math.BigDecimal;
 import java.util.function.Function;
 
 /**
@@ -21,7 +20,7 @@ public class DoubleFieldController extends NumberFieldController<Double> {
      * @param max maximum allowed value (clamped on apply)
      * @param formatter display text, not used whilst editing
      */
-    public DoubleFieldController(Option<Double> option, double min, double max, Function<Double, Text> formatter) {
+    public DoubleFieldController(Option<Double> option, double min, double max, Function<Double, Component> formatter) {
         super(option, formatter);
         this.min = min;
         this.max = max;
@@ -47,7 +46,7 @@ public class DoubleFieldController extends NumberFieldController<Double> {
      * @param option option to bind controller to
      * @param formatter display text, not used whilst editing
      */
-    public DoubleFieldController(Option<Double> option, Function<Double, Text> formatter) {
+    public DoubleFieldController(Option<Double> option, Function<Double, Component> formatter) {
         this(option, -Double.MAX_VALUE, Double.MAX_VALUE, formatter);
     }
 

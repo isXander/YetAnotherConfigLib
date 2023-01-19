@@ -1,28 +1,31 @@
 package dev.isxander.yacl.gui.controllers;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
-import net.minecraft.client.font.MultilineText;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.*;
+import net.minecraft.client.gui.components.MultiLineLabel;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
 /**
  * Simply renders some text as a label.
  */
-public class LabelController implements Controller<Text> {
-    private final Option<Text> option;
+public class LabelController implements Controller<Component> {
+    private final Option<Component> option;
     /**
      * Constructs a label controller
      *
      * @param option bound option
      */
-    public LabelController(Option<Text> option) {
+    public LabelController(Option<Component> option) {
         this.option = option;
     }
 
@@ -30,12 +33,12 @@ public class LabelController implements Controller<Text> {
      * {@inheritDoc}
      */
     @Override
-    public Option<Text> option() {
+    public Option<Component> option() {
         return option;
     }
 
     @Override
-    public Text formatValue() {
+    public Component formatValue() {
         return option().pendingValue();
     }
 
@@ -45,8 +48,8 @@ public class LabelController implements Controller<Text> {
     }
 
     public class LabelControllerElement extends AbstractWidget {
-        private List<OrderedText> wrappedText;
-        protected MultilineText wrappedTooltip;
+        private List<FormattedCharSequence> wrappedText;
+        protected MultiLineLabel wrappedTooltip;
 
         protected final YACLScreen screen;
 
@@ -59,38 +62,38 @@ public class LabelController implements Controller<Text> {
         }
 
         @Override
-        public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
             updateText();
 
             float y = getDimension().y();
-            for (OrderedText text : wrappedText) {
-                textRenderer.drawWithShadow(matrices, text, getDimension().x() + getXPadding(), y + getYPadding(), option().available() ? -1 : 0xFFA0A0A0);
-                y += textRenderer.fontHeight;
+            for (FormattedCharSequence text : wrappedText) {
+                textRenderer.drawShadow(matrices, text, getDimension().x() + getXPadding(), y + getYPadding(), option().available() ? -1 : 0xFFA0A0A0);
+                y += textRenderer.lineHeight;
             }
         }
 
         @Override
-        public void postRender(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
             if (isMouseOver(mouseX, mouseY)) {
                 YACLScreen.renderMultilineTooltip(matrices, textRenderer, wrappedTooltip, getDimension().centerX(), getDimension().y() - 5, getDimension().yLimit() + 5, screen.width, screen.height);
 
                 Style style = getStyle(mouseX, mouseY);
                 if (style != null && style.getHoverEvent() != null) {
                     HoverEvent hoverEvent = style.getHoverEvent();
-                    HoverEvent.ItemStackContent itemStackContent = hoverEvent.getValue(HoverEvent.Action.SHOW_ITEM);
+                    HoverEvent.ItemStackInfo itemStackContent = hoverEvent.getValue(HoverEvent.Action.SHOW_ITEM);
                     if (itemStackContent != null) {
-                        ItemStack stack = itemStackContent.asStack();
-                        screen.renderTooltip(matrices, screen.getTooltipFromItem(stack), stack.getTooltipData(), mouseX, mouseY);
+                        ItemStack stack = itemStackContent.getItemStack();
+                        screen.renderTooltip(matrices, screen.getTooltipFromItem(stack), stack.getTooltipImage(), mouseX, mouseY);
                     } else {
-                        HoverEvent.EntityContent entityContent = hoverEvent.getValue(HoverEvent.Action.SHOW_ENTITY);
+                        HoverEvent.EntityTooltipInfo entityContent = hoverEvent.getValue(HoverEvent.Action.SHOW_ENTITY);
                         if (entityContent != null) {
                             if (this.client.options.advancedItemTooltips) {
-                                screen.renderTooltip(matrices, entityContent.asTooltip(), mouseX, mouseY);
+                                screen.renderComponentTooltip(matrices, entityContent.getTooltipLines(), mouseX, mouseY);
                             }
                         } else {
-                            Text text = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
+                            Component text = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
                             if (text != null) {
-                                MultilineText multilineText = MultilineText.create(textRenderer, text, getDimension().width());
+                                MultiLineLabel multilineText = MultiLineLabel.create(textRenderer, text, getDimension().width());
                                 YACLScreen.renderMultilineTooltip(matrices, textRenderer, multilineText, getDimension().centerX(), getDimension().y(), getDimension().yLimit(), screen.width, screen.height);
                             }
                         }
@@ -105,7 +108,7 @@ public class LabelController implements Controller<Text> {
                 return false;
 
             Style style = getStyle((int) mouseX, (int) mouseY);
-            return screen.handleTextClick(style);
+            return screen.handleComponentClicked(style);
         }
 
         protected Style getStyle(int mouseX, int mouseY) {
@@ -114,13 +117,13 @@ public class LabelController implements Controller<Text> {
 
             int x = mouseX - getDimension().x();
             int y = mouseY - getDimension().y() - getYPadding();
-            int line = y / textRenderer.fontHeight;
+            int line = y / textRenderer.lineHeight;
 
             if (x < 0 || x > getDimension().xLimit()) return null;
             if (y < 0 || y > getDimension().yLimit()) return null;
             if (line < 0 || line >= wrappedText.size()) return null;
 
-            return textRenderer.getTextHandler().getStyleAt(wrappedText.get(line), x);
+            return textRenderer.getSplitter().componentStyleAtWidth(wrappedText.get(line), x);
         }
 
         private int getXPadding() {
@@ -132,12 +135,12 @@ public class LabelController implements Controller<Text> {
         }
 
         private void updateText() {
-            wrappedText = textRenderer.wrapLines(formatValue(), getDimension().width() - getXPadding() * 2);
-            setDimension(getDimension().withHeight(wrappedText.size() * textRenderer.fontHeight + getYPadding() * 2));
+            wrappedText = textRenderer.split(formatValue(), getDimension().width() - getXPadding() * 2);
+            setDimension(getDimension().withHeight(wrappedText.size() * textRenderer.lineHeight + getYPadding() * 2));
         }
 
         private void updateTooltip() {
-            this.wrappedTooltip = MultilineText.create(textRenderer, option().tooltip(), screen.width / 3 * 2 - 10);
+            this.wrappedTooltip = MultiLineLabel.create(textRenderer, option().tooltip(), screen.width / 3 * 2 - 10);
         }
 
         @Override

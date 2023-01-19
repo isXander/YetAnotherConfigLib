@@ -1,14 +1,14 @@
 package dev.isxander.yacl.gui.controllers;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.network.chat.Component;
 
 /**
  * This controller renders a tickbox
@@ -37,8 +37,8 @@ public class TickBoxController implements Controller<Boolean> {
      * {@inheritDoc}
      */
     @Override
-    public Text formatValue() {
-        return Text.empty();
+    public Component formatValue() {
+        return Component.empty();
     }
 
     /**
@@ -55,7 +55,7 @@ public class TickBoxController implements Controller<Boolean> {
         }
 
         @Override
-        protected void drawHoveredControl(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        protected void drawHoveredControl(PoseStack matrices, int mouseX, int mouseY, float delta) {
             int outlineSize = 10;
             int outlineX1 = getDimension().xLimit() - getXPadding() - outlineSize;
             int outlineY1 = getDimension().centerY() - outlineSize / 2;
@@ -68,13 +68,13 @@ public class TickBoxController implements Controller<Boolean> {
             drawOutline(matrices, outlineX1 + 1, outlineY1 + 1, outlineX2 + 1, outlineY2 + 1, 1, shadowColor);
             drawOutline(matrices, outlineX1, outlineY1, outlineX2, outlineY2, 1, color);
             if (control.option().pendingValue()) {
-                DrawableHelper.fill(matrices, outlineX1 + 3, outlineY1 + 3, outlineX2 - 1, outlineY2 - 1, shadowColor);
-                DrawableHelper.fill(matrices, outlineX1 + 2, outlineY1 + 2, outlineX2 - 2, outlineY2 - 2, color);
+                GuiComponent.fill(matrices, outlineX1 + 3, outlineY1 + 3, outlineX2 - 1, outlineY2 - 1, shadowColor);
+                GuiComponent.fill(matrices, outlineX1 + 2, outlineY1 + 2, outlineX2 - 2, outlineY2 - 2, color);
             }
         }
 
         @Override
-        protected void drawValueText(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        protected void drawValueText(PoseStack matrices, int mouseX, int mouseY, float delta) {
             if (!isHovered())
                 drawHoveredControl(matrices, mouseX, mouseY, delta);
         }
@@ -109,7 +109,7 @@ public class TickBoxController implements Controller<Boolean> {
                 return false;
             }
 
-            if (keyCode == InputUtil.GLFW_KEY_ENTER || keyCode == InputUtil.GLFW_KEY_SPACE || keyCode == InputUtil.GLFW_KEY_KP_ENTER) {
+            if (keyCode == InputConstants.KEY_RETURN || keyCode == InputConstants.KEY_SPACE || keyCode == InputConstants.KEY_NUMPADENTER) {
                 toggleSetting();
                 return true;
             }

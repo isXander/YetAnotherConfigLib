@@ -1,41 +1,40 @@
 package dev.isxander.yacl.gui.controllers;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import org.lwjgl.glfw.GLFW;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 
 import java.util.function.Function;
 
 /**
- * This controller renders a simple formatted {@link Text}
+ * This controller renders a simple formatted {@link Component}
  */
 public class BooleanController implements Controller<Boolean> {
 
-    public static final Function<Boolean, Text> ON_OFF_FORMATTER = (state) ->
+    public static final Function<Boolean, Component> ON_OFF_FORMATTER = (state) ->
             state
-                    ? ScreenTexts.ON
-                    : ScreenTexts.OFF;
+                    ? CommonComponents.OPTION_ON
+                    : CommonComponents.OPTION_OFF;
 
-    public static final Function<Boolean, Text> TRUE_FALSE_FORMATTER = (state) ->
+    public static final Function<Boolean, Component> TRUE_FALSE_FORMATTER = (state) ->
             state
-                    ? Text.translatable("yacl.control.boolean.true")
-                    : Text.translatable("yacl.control.boolean.false");
+                    ? Component.translatable("yacl.control.boolean.true")
+                    : Component.translatable("yacl.control.boolean.false");
 
-    public static final Function<Boolean, Text> YES_NO_FORMATTER = (state) ->
+    public static final Function<Boolean, Component> YES_NO_FORMATTER = (state) ->
             state
-                    ? ScreenTexts.YES
-                    : ScreenTexts.NO;
+                    ? CommonComponents.GUI_YES
+                    : CommonComponents.GUI_NO;
 
     private final Option<Boolean> option;
-    private final Function<Boolean, Text> valueFormatter;
+    private final Function<Boolean, Component> valueFormatter;
     private final boolean coloured;
 
     /**
@@ -63,10 +62,10 @@ public class BooleanController implements Controller<Boolean> {
      * Constructs a tickbox controller
      *
      * @param option bound option
-     * @param valueFormatter format value into any {@link Text}
+     * @param valueFormatter format value into any {@link Component}
      * @param coloured value format is green or red depending on the state
      */
-    public BooleanController(Option<Boolean> option, Function<Boolean, Text> valueFormatter, boolean coloured) {
+    public BooleanController(Option<Boolean> option, Function<Boolean, Component> valueFormatter, boolean coloured) {
         this.option = option;
         this.valueFormatter = valueFormatter;
         this.coloured = coloured;
@@ -84,7 +83,7 @@ public class BooleanController implements Controller<Boolean> {
      * {@inheritDoc}
      */
     @Override
-    public Text formatValue() {
+    public Component formatValue() {
         return valueFormatter.apply(option().pendingValue());
     }
 
@@ -109,7 +108,7 @@ public class BooleanController implements Controller<Boolean> {
         }
 
         @Override
-        protected void drawHoveredControl(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        protected void drawHoveredControl(PoseStack matrices, int mouseX, int mouseY, float delta) {
 
         }
 
@@ -133,9 +132,9 @@ public class BooleanController implements Controller<Boolean> {
         }
 
         @Override
-        protected Text getValueText() {
+        protected Component getValueText() {
             if (control.coloured()) {
-                return super.getValueText().copy().formatted(control.option().pendingValue() ? Formatting.GREEN : Formatting.RED);
+                return super.getValueText().copy().withStyle(control.option().pendingValue() ? ChatFormatting.GREEN : ChatFormatting.RED);
             }
 
             return super.getValueText();
@@ -147,7 +146,7 @@ public class BooleanController implements Controller<Boolean> {
                 return false;
             }
 
-            if (keyCode == InputUtil.GLFW_KEY_ENTER || keyCode == InputUtil.GLFW_KEY_SPACE || keyCode == InputUtil.GLFW_KEY_KP_ENTER) {
+            if (keyCode == InputConstants.KEY_RETURN || keyCode == InputConstants.KEY_SPACE || keyCode == InputConstants.KEY_NUMPADENTER) {
                 toggleSetting();
                 return true;
             }

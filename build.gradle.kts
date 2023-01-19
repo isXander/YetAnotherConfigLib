@@ -60,15 +60,19 @@ loom {
 repositories {
     mavenCentral()
     maven("https://maven.terraformersmc.com")
+    maven("https://maven.quiltmc.org/repository/release")
 }
 
 val minecraftVersion: String by project
 val fabricLoaderVersion: String by project
-val yarnBuild: String by project
+val qmBuild: String by project
 
 dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
-    mappings("net.fabricmc:yarn:$minecraftVersion+build.$yarnBuild:v2")
+    mappings(loom.layered {
+        mappings("org.quiltmc:quilt-mappings:$minecraftVersion+build.$qmBuild:intermediary-v2")
+        officialMojangMappings()
+    })
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 
     "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.69.1+1.19.3"))

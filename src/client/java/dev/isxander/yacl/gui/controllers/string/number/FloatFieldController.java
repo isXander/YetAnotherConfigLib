@@ -2,9 +2,8 @@ package dev.isxander.yacl.gui.controllers.string.number;
 
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.gui.controllers.slider.FloatSliderController;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
-import java.math.BigDecimal;
 import java.util.function.Function;
 
 /**
@@ -21,7 +20,7 @@ public class FloatFieldController extends NumberFieldController<Float> {
      * @param max maximum allowed value (clamped on apply)
      * @param formatter display text, not used whilst editing
      */
-    public FloatFieldController(Option<Float> option, float min, float max, Function<Float, Text> formatter) {
+    public FloatFieldController(Option<Float> option, float min, float max, Function<Float, Component> formatter) {
         super(option, formatter);
         this.min = min;
         this.max = max;
@@ -47,7 +46,7 @@ public class FloatFieldController extends NumberFieldController<Float> {
      * @param option option to bind controller to
      * @param formatter display text, not used whilst editing
      */
-    public FloatFieldController(Option<Float> option, Function<Float, Text> formatter) {
+    public FloatFieldController(Option<Float> option, Function<Float, Component> formatter) {
         this(option, -Float.MAX_VALUE, Float.MAX_VALUE, formatter);
     }
 
