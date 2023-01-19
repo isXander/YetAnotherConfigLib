@@ -75,7 +75,7 @@ dependencies {
     })
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 
-    "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.69.1+1.19.3"))
+    "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.72.1+1.19.4"))
 
     "testmodImplementation"(sourceSets.main.get().output)
     "testmodImplementation"(sourceSets["client"].output)

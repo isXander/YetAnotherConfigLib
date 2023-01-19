@@ -7,11 +7,14 @@ import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.utils.GuiUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.navigation.FocusNavigationEvent;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class ControllerWidget<T extends Controller<?>> extends AbstractWidget {
     protected final T control;
@@ -126,13 +129,22 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         return getDimension().y() + getDimension().height() / 2f - textRenderer.lineHeight / 2f;
     }
 
+    @Nullable
     @Override
-    public boolean changeFocus(boolean lookForwards) {
-        if (!isAvailable())
-            return false;
+    public ComponentPath nextFocusPath(FocusNavigationEvent focusNavigationEvent) {
+        if (!this.isAvailable())
+            return null;
+        return !this.isFocused() ? ComponentPath.leaf(this) : null;
+    }
 
-        this.focused = !this.focused;
-        return this.focused;
+    @Override
+    public boolean isFocused() {
+        return focused;
+    }
+
+    @Override
+    public void setFocused(boolean focused) {
+        this.focused = focused;
     }
 
     @Override
