@@ -6,7 +6,7 @@ import dev.isxander.yacl.api.utils.Dimension;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -16,7 +16,7 @@ import net.minecraft.sounds.SoundEvents;
 
 import java.awt.Color;
 
-public abstract class AbstractWidget implements GuiEventListener, Renderable, NarratableEntry {
+public abstract class AbstractWidget implements GuiEventListener, Widget, NarratableEntry {
     protected final Minecraft client = Minecraft.getInstance();
     protected final Font textRenderer = client.font;
     protected final int inactiveColor = 0xFFA0A0A0;

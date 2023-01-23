@@ -22,9 +22,11 @@ public abstract class TitleScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("RETURN"))
     private void injectTestButton(CallbackInfo ci) {
-        addRenderableWidget(Button.builder(Component.literal("YACL"), button -> minecraft.setScreen(GuiTest.getModConfigScreenFactory(minecraft.screen)))
-                .pos(0, 0)
-                .width(50)
-                .build());
+        addRenderableWidget(new Button(
+                0, 0,
+                50, 20,
+                Component.literal("YACL"),
+                button -> minecraft.setScreen(GuiTest.getModConfigScreenFactory(minecraft.screen))
+        ));
     }
 }

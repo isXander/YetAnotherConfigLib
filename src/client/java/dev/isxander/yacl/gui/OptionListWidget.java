@@ -288,7 +288,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             widget.render(matrices, mouseX, mouseY, tickDelta);
 
             if (resetButton != null) {
-                resetButton.setY(y);
+                resetButton.y = y;
                 resetButton.render(matrices, mouseX, mouseY, tickDelta);
             }
         }
@@ -377,8 +377,8 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
             int buttonY = y + entryHeight / 2 - expandMinimizeButton.getHeight() / 2 + 1;
 
-            expandMinimizeButton.setY(buttonY);
-            expandMinimizeButton.setX(x);
+            expandMinimizeButton.y = buttonY;
+            expandMinimizeButton.x = x;
             expandMinimizeButton.render(matrices, mouseX, mouseY, tickDelta);
 
             wrappedName.renderCentered(matrices, x + entryWidth / 2, y + getYPadding());
@@ -468,7 +468,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             group.addListener((opt, val) -> this.resetListButton.active = !opt.isPendingValueDefault() && opt.available());
             this.resetListButton.active = !group.isPendingValueDefault() && group.available();
 
-            this.addListButton = new TooltipButtonWidget(yaclScreen, resetListButton.getX() - 20, -50, 20, 20, Component.literal("+"), Component.translatable("yacl.list.add_top"), btn -> {
+            this.addListButton = new TooltipButtonWidget(yaclScreen, resetListButton.x - 20, -50, 20, 20, Component.literal("+"), Component.translatable("yacl.list.add_top"), btn -> {
                 group.insertNewEntryToTop();
                 setExpanded(true);
             });
@@ -483,10 +483,10 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
             super.render(matrices, index, y, x, entryWidth, entryHeight, mouseX, mouseY, hovered, tickDelta);
 
-            int buttonY = expandMinimizeButton.getY();
+            int buttonY = expandMinimizeButton.y;
 
-            resetListButton.setY(buttonY);
-            addListButton.setY(buttonY);
+            resetListButton.y = buttonY;
+            addListButton.y = buttonY;
 
             resetListButton.render(matrices, mouseX, mouseY, tickDelta);
             addListButton.render(matrices, mouseX, mouseY, tickDelta);

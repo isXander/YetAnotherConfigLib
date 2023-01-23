@@ -1,7 +1,7 @@
 plugins {
     java
 
-    id("fabric-loom") version "[1.0.16, 1.1.0)" // 1.0.+ but patch must be 16 or higher
+    id("fabric-loom") version "1.0.+" // 1.0.+ but patch must be 16 or higher
     id("io.github.juuxel.loom-quiltflower") version "1.8.+"
 
     id("com.modrinth.minotaur") version "2.5.+"
@@ -16,7 +16,7 @@ plugins {
 val ciRun = System.getenv().containsKey("GITHUB_ACTIONS")
 
 group = "dev.isxander"
-version = "2.2.0"
+version = "2.2.0-for-1.19.2"
 
 if (ciRun)
     version = "$version+${grgit.branch.current().name.replace('/', '.')}-SNAPSHOT"
@@ -75,7 +75,7 @@ dependencies {
     })
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 
-    "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.69.1+1.19.3"))
+    "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.73.0+1.19.2"))
 
     "testmodImplementation"(sourceSets.main.get().output)
     "testmodImplementation"(sourceSets["client"].output)
@@ -133,7 +133,7 @@ if (modrinthId.isNotEmpty()) {
         versionNumber.set("${project.version}")
         versionType.set("release")
         uploadFile.set(tasks["remapJar"])
-        gameVersions.set(listOf("1.19.3"))
+        gameVersions.set(listOf("1.19.2"))
         loaders.set(listOf("fabric", "quilt"))
         dependencies {
             required.project("fabric-api")
@@ -154,7 +154,7 @@ if (hasProperty("CURSEFORGE_TOKEN") && curseforgeId.isNotEmpty()) {
 
             id = curseforgeId
             releaseType = "release"
-            addGameVersion("1.19.3")
+            addGameVersion("1.19.2")
             addGameVersion("Fabric")
             addGameVersion("Java 17")
 

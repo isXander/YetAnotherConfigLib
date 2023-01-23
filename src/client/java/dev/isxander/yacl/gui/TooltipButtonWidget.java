@@ -24,7 +24,7 @@ public class TooltipButtonWidget extends TextScaledButtonWidget {
 
     public void renderHoveredTooltip(PoseStack matrices) {
         if (isHoveredOrFocused()) {
-            YACLScreen.renderMultilineTooltip(matrices, Minecraft.getInstance().font, wrappedDescription, getX() + width / 2, getY() - 4, getY() + height + 4, screen.width, screen.height);
+            YACLScreen.renderMultilineTooltip(matrices, Minecraft.getInstance().font, wrappedDescription, x + width / 2, y - 4, y + height + 4, screen.width, screen.height);
         }
     }
 

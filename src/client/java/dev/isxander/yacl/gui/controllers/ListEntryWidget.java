@@ -66,9 +66,9 @@ public class ListEntryWidget extends AbstractWidget implements ContainerEventHan
     public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
         updateButtonStates(); // update every render in case option becomes available/unavailable
 
-        removeButton.setY(getDimension().y());
-        moveUpButton.setY(getDimension().y());
-        moveDownButton.setY(getDimension().y());
+        removeButton.y = getDimension().y();
+        moveUpButton.y = getDimension().y();
+        moveDownButton.y = getDimension().y();
         entryWidget.setDimension(entryWidget.getDimension().withY(getDimension().y()));
 
         removeButton.render(matrices, mouseX, mouseY, delta);

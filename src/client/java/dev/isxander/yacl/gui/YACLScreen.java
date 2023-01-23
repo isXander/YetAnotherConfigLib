@@ -2,6 +2,7 @@ package dev.isxander.yacl.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Matrix4f;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.api.utils.MutableDimension;
@@ -14,11 +15,9 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import org.joml.Matrix4f;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -91,7 +90,7 @@ public class YACLScreen extends Screen {
                 this,
                 font,
                 width / 3 / 2 - paddedWidth / 2 + 1,
-                undoButton.getY() - 22,
+                undoButton.y - 22,
                 paddedWidth - 2, 18,
                 Component.translatable("gui.recipebook.search_hint"),
                 Component.translatable("gui.recipebook.search_hint")
@@ -291,16 +290,15 @@ public class YACLScreen extends Screen {
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
             bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
             Matrix4f matrix4f = matrices.last().pose();
-            TooltipRenderUtil.renderTooltipBackground(
-                    GuiComponent::fillGradient,
-                    matrix4f,
-                    bufferBuilder,
-                    drawX,
-                    drawY,
-                    maxWidth,
-                    height,
-                    400
-            );
+            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY - 4, drawX + maxWidth + 3, drawY - 3, 400, -267386864, -267386864);
+            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY + height + 3, drawX + maxWidth + 3, drawY + height + 4, 400, -267386864, -267386864);
+            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY - 3, drawX + maxWidth + 3, drawY + height + 3, 400, -267386864, -267386864);
+            fillGradient(matrix4f, bufferBuilder, drawX - 4, drawY - 3, drawX - 3, drawY + height + 3, 400, -267386864, -267386864);
+            fillGradient(matrix4f, bufferBuilder, drawX + maxWidth + 3, drawY - 3, drawX + maxWidth + 4, drawY + height + 3, 400, -267386864, -267386864);
+            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY - 3 + 1, drawX - 3 + 1, drawY + height + 3 - 1, 400, 1347420415, 1344798847);
+            fillGradient(matrix4f, bufferBuilder, drawX + maxWidth + 2, drawY - 3 + 1, drawX + maxWidth + 3, drawY + height + 3 - 1, 400, 1347420415, 1344798847);
+            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY - 3, drawX + maxWidth + 3, drawY - 3 + 1, 400, 1347420415, 1347420415);
+            fillGradient(matrix4f, bufferBuilder, drawX - 3, drawY + height + 2, drawX + maxWidth + 3, drawY + height + 3, 400, 1344798847, 1344798847);
             RenderSystem.enableDepthTest();
             RenderSystem.disableTexture();
             RenderSystem.enableBlend();
