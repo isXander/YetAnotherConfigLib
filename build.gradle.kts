@@ -1,7 +1,7 @@
 plugins {
     java
 
-    id("fabric-loom") version "[1.0.16, 1.1.0)" // 1.0.+ but patch must be 16 or higher
+    id("fabric-loom") version "1.1.+"
     id("io.github.juuxel.loom-quiltflower") version "1.8.+"
 
     id("com.modrinth.minotaur") version "2.5.+"
