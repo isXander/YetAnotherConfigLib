@@ -1,10 +1,10 @@
 plugins {
     java
 
-    id("fabric-loom") version "[1.0.16, 1.1.0)" // 1.0.+ but patch must be 16 or higher
+    id("fabric-loom") version "1.1.+" // 1.0.+ but patch must be 16 or higher
     id("io.github.juuxel.loom-quiltflower") version "1.8.+"
 
-    id("com.modrinth.minotaur") version "2.5.+"
+    id("com.modrinth.minotaur") version "2.6.+"
     id("me.hypherionmc.cursegradle") version "2.+"
     id("com.github.breadmoirai.github-release") version "2.+"
     `maven-publish`
@@ -75,7 +75,7 @@ dependencies {
     })
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 
-    "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.72.1+1.19.4"))
+    "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.73.1+1.19.4"))
 
     "testmodImplementation"(sourceSets.main.get().output)
     "testmodImplementation"(sourceSets["client"].output)

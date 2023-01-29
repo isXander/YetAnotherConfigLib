@@ -79,10 +79,10 @@ public class LabelController implements Controller<Component> {
             }
 
             if (isFocused()) {
-                GuiComponent.fill(matrices, getDimension().x() - 2, getDimension().y() - 2, getDimension().xLimit() + 2, getDimension().y(), -1);
-                GuiComponent.fill(matrices, getDimension().x() - 2, getDimension().y() - 2, getDimension().x(), getDimension().yLimit() + 2, -1);
-                GuiComponent.fill(matrices, getDimension().x() - 2, getDimension().yLimit(), getDimension().xLimit() + 2, getDimension().yLimit() + 2, -1);
-                GuiComponent.fill(matrices, getDimension().xLimit(), getDimension().y() - 2, getDimension().xLimit() + 2, getDimension().yLimit() + 2, -1);
+                GuiComponent.fill(matrices, getDimension().x() - 1, getDimension().y() - 1, getDimension().xLimit() + 1, getDimension().y(), -1);
+                GuiComponent.fill(matrices, getDimension().x() - 1, getDimension().y() - 1, getDimension().x(), getDimension().yLimit() + 1, -1);
+                GuiComponent.fill(matrices, getDimension().x() - 1, getDimension().yLimit(), getDimension().xLimit() + 1, getDimension().yLimit() + 1, -1);
+                GuiComponent.fill(matrices, getDimension().xLimit(), getDimension().y() - 1, getDimension().xLimit() + 1, getDimension().yLimit() + 1, -1);
             }
         }
 
