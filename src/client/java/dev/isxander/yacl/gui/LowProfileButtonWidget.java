@@ -18,12 +18,12 @@ public class LowProfileButtonWidget extends Button {
     }
 
     @Override
-    public void renderButton(PoseStack matrices, int mouseX, int mouseY, float delta) {
+    public void renderButton(PoseStack matrices, int mouseX, int mouseY) {
         if (!isHoveredOrFocused() || !active) {
             int j = this.active ? 0xFFFFFF : 0xA0A0A0;
-            drawCenteredString(matrices, Minecraft.getInstance().font, this.getMessage(), this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
+            this.renderString(matrices, Minecraft.getInstance().font, this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, j);
         } else {
-            super.renderButton(matrices, mouseX, mouseY, delta);
+            super.renderButton(matrices, mouseX, mouseY);
         }
     }
 }

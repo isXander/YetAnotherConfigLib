@@ -23,22 +23,13 @@ public class TextScaledButtonWidget extends Button {
     }
 
     @Override
-    public void renderButton(PoseStack matrices, int mouseX, int mouseY, float delta) {
-        // prevents super from rendering text
-        Component message = getMessage();
-        setMessage(Component.empty());
-
-        super.renderButton(matrices, mouseX, mouseY, delta);
-
-        setMessage(message);
-        int j = this.active ? 16777215 : 10526880;
-        FormattedCharSequence orderedText = getMessage().getVisualOrderText();
+    public void renderString(PoseStack matrices, Font textRenderer, int x, int y, int color) {
         Font font = Minecraft.getInstance().font;
 
         matrices.pushPose();
-        matrices.translate(((this.getX() + this.width / 2f) - font.width(orderedText) * textScale / 2), (float)this.getY() + (this.height - 8 * textScale) / 2f / textScale, 0);
+        matrices.translate(((this.getX() + this.width / 2f) - font.width(getMessage()) * textScale / 2), (float)this.getY() + (this.height - 8 * textScale) / 2f / textScale, 0);
         matrices.scale(textScale, textScale, 1);
-        font.drawShadow(matrices, orderedText, 0, 0, j | Mth.ceil(this.alpha * 255.0F) << 24);
+        font.drawShadow(matrices, getMessage(), 0, 0, color | Mth.ceil(this.alpha * 255.0F) << 24);
         matrices.popPose();
     }
 }

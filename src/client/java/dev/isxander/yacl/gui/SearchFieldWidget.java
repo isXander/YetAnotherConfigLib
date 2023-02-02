@@ -22,8 +22,8 @@ public class SearchFieldWidget extends EditBox {
     }
 
     @Override
-    public void renderButton(PoseStack matrices, int mouseX, int mouseY, float delta) {
-        super.renderButton(matrices, mouseX, mouseY, delta);
+    public void renderWidget(PoseStack matrices, int mouseX, int mouseY, float delta) {
+        super.renderWidget(matrices, mouseX, mouseY, delta);
         if (isVisible() && isEmpty()) {
             font.drawShadow(matrices, emptyText, getX() + 4, this.getY() + (this.height - 8) / 2f, 0x707070);
         }
