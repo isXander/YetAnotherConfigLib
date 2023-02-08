@@ -158,7 +158,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
 
     @Override
     public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
-        if (super.isMouseOver(mouseX, mouseY))
+        if (super.isMouseOver(mouseX, mouseY) || focused)
             super.postRender(matrices, mouseX, mouseY, delta);
     }
 }
