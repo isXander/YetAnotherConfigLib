@@ -16,7 +16,7 @@ plugins {
 val ciRun = System.getenv().containsKey("GITHUB_ACTIONS")
 
 group = "dev.isxander"
-version = "2.2.0"
+version = "2.3.0"
 
 if (ciRun)
     version = "$version+${grgit.branch.current().name.replace('/', '.')}-SNAPSHOT"
