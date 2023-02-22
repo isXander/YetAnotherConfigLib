@@ -6,7 +6,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 
 public class TextScaledButtonWidget extends Button {
@@ -23,7 +22,7 @@ public class TextScaledButtonWidget extends Button {
     }
 
     @Override
-    public void renderString(PoseStack matrices, Font textRenderer, int x, int y, int color) {
+    public void renderString(PoseStack matrices, Font textRenderer, int color) {
         Font font = Minecraft.getInstance().font;
 
         matrices.pushPose();

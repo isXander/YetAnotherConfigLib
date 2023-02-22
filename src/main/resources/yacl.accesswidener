@@ -3,3 +3,4 @@ accessWidener v1 named
 extendable method net/minecraft/client/gui/components/AbstractSelectionList children ()Ljava/util/List;
 extendable method net/minecraft/client/gui/components/AbstractSelectionList getEntryAtPosition (DD)Lnet/minecraft/client/gui/components/AbstractSelectionList$Entry;
 accessible class net/minecraft/client/gui/components/AbstractSelectionList$Entry
+extendable method net/minecraft/client/gui/components/AbstractButton getTextureY ()I

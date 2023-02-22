@@ -16,7 +16,7 @@ plugins {
 val ciRun = System.getenv().containsKey("GITHUB_ACTIONS")
 
 group = "dev.isxander"
-version = "2.3.0+beta.2"
+version = "2.3.0+beta.3"
 
 if (ciRun)
     version = "$version+${grgit.branch.current().name.replace('/', '.')}-SNAPSHOT"
@@ -75,7 +75,7 @@ dependencies {
     })
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 
-    "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.73.1+1.19.4"))
+    "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.74.2+1.19.4"))
 
     "testmodImplementation"(sourceSets.main.get().output)
     "testmodImplementation"(sourceSets["client"].output)
