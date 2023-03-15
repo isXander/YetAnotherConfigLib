@@ -355,8 +355,9 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     }
 
     @Override
-    public boolean changeFocus(boolean lookForwards) {
-        return inputFieldFocused = super.changeFocus(lookForwards);
+    public void setFocused(boolean focused) {
+        super.setFocused(focused);
+        inputFieldFocused = focused;
     }
 
     @Override

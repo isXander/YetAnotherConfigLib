@@ -1,10 +1,10 @@
 plugins {
     java
 
-    id("fabric-loom") version "1.1.+"
+    id("fabric-loom") version "1.1.+" // 1.0.+ but patch must be 16 or higher
     id("io.github.juuxel.loom-quiltflower") version "1.8.+"
 
-    id("com.modrinth.minotaur") version "2.5.+"
+    id("com.modrinth.minotaur") version "2.6.+"
     id("me.hypherionmc.cursegradle") version "2.+"
     id("com.github.breadmoirai.github-release") version "2.+"
     `maven-publish`
@@ -16,7 +16,7 @@ plugins {
 val ciRun = System.getenv().containsKey("GITHUB_ACTIONS")
 
 group = "dev.isxander"
-version = "2.2.0"
+version = "2.3.0"
 
 if (ciRun)
     version = "$version+${grgit.branch.current().name.replace('/', '.')}-SNAPSHOT"
@@ -75,7 +75,7 @@ dependencies {
     })
     modImplementation("net.fabricmc:fabric-loader:$fabricLoaderVersion")
 
-    "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.69.1+1.19.3"))
+    "modClientImplementation"(fabricApi.module("fabric-resource-loader-v0", "0.76.0+1.19.4"))
 
     "testmodImplementation"(sourceSets.main.get().output)
     "testmodImplementation"(sourceSets["client"].output)
@@ -133,7 +133,7 @@ if (modrinthId.isNotEmpty()) {
         versionNumber.set("${project.version}")
         versionType.set("release")
         uploadFile.set(tasks["remapJar"])
-        gameVersions.set(listOf("1.19.3"))
+        gameVersions.set(listOf("1.19.4"))
         loaders.set(listOf("fabric", "quilt"))
         dependencies {
             required.project("fabric-api")
@@ -154,7 +154,7 @@ if (hasProperty("CURSEFORGE_TOKEN") && curseforgeId.isNotEmpty()) {
 
             id = curseforgeId
             releaseType = "release"
-            addGameVersion("1.19.3")
+            addGameVersion("1.19.4")
             addGameVersion("Fabric")
             addGameVersion("Java 17")
 

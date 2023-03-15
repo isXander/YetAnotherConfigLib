@@ -302,12 +302,10 @@ public class YACLScreen extends Screen {
                     400
             );
             RenderSystem.enableDepthTest();
-            RenderSystem.disableTexture();
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             BufferUploader.drawWithShader(bufferBuilder.end());
             RenderSystem.disableBlend();
-            RenderSystem.enableTexture();
             matrices.translate(0.0, 0.0, 400.0);
 
             text.renderLeftAligned(matrices, drawX, drawY, lineHeight, -1);

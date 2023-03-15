@@ -39,9 +39,9 @@ public class CyclingControllerElement extends ControllerWidget<ICyclingControlle
             return false;
 
         switch (keyCode) {
-            case InputConstants.KEY_LEFT, InputConstants.KEY_DOWN ->
+            case InputConstants.KEY_LEFT ->
                     cycleValue(-1);
-            case InputConstants.KEY_RIGHT, InputConstants.KEY_UP ->
+            case InputConstants.KEY_RIGHT ->
                     cycleValue(1);
             case InputConstants.KEY_RETURN, InputConstants.KEY_SPACE, InputConstants.KEY_NUMPADENTER ->
                     cycleValue(Screen.hasControlDown() || Screen.hasShiftDown() ? -1 : 1);

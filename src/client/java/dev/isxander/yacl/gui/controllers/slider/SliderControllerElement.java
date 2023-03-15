@@ -104,8 +104,8 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
             return false;
 
         switch (keyCode) {
-            case InputConstants.KEY_LEFT, InputConstants.KEY_DOWN -> incrementValue(-1);
-            case InputConstants.KEY_RIGHT, InputConstants.KEY_UP -> incrementValue(1);
+            case InputConstants.KEY_LEFT -> incrementValue(-1);
+            case InputConstants.KEY_RIGHT -> incrementValue(1);
             default -> {
                 return false;
             }
@@ -158,7 +158,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
 
     @Override
     public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
-        if (super.isMouseOver(mouseX, mouseY))
+        if (super.isMouseOver(mouseX, mouseY) || focused)
             super.postRender(matrices, mouseX, mouseY, delta);
     }
 }

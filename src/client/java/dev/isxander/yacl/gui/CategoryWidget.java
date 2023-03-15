@@ -19,8 +19,15 @@ public class CategoryWidget extends TooltipButtonWidget {
     }
 
     @Override
-    protected int getYImage(boolean hovered) {
-        return super.getYImage(hovered || isCurrentCategory());
+    protected int getTextureY() {
+        int i = 1;
+        if (!this.active) {
+            i = 0;
+        } else if (this.isHoveredOrFocused() || isCurrentCategory()) {
+            i = 2;
+        }
+
+        return 46 + i * 20;
     }
 
     @Override
