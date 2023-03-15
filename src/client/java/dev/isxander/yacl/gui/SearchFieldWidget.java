@@ -15,7 +15,7 @@ public class SearchFieldWidget extends EditBox {
     public SearchFieldWidget(YACLScreen yaclScreen, Font font, int x, int y, int width, int height, Component text, Component emptyText) {
         super(font, x, y, width, height, text);
         setResponder(string -> update());
-        setFilter(string -> !string.endsWith(" ") && !string.startsWith(" "));
+        setFilter(string -> !string.endsWith("  ") && !string.startsWith(" "));
         this.yaclScreen = yaclScreen;
         this.font = font;
         this.emptyText = emptyText;
