@@ -3,6 +3,7 @@ package dev.isxander.yacl.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,6 +91,17 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
         }
 
         return null;
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        // on mouseClicked, the clicked element becomes focused so you can drag. on release, we should clear the focus
+        boolean clicked = super.mouseReleased(mouseX, mouseY, button);
+        if (getFocused() != null) {
+            this.getFocused().setFocused(null);
+            this.setFocused(null);
+        }
+        return clicked;
     }
 
     /*

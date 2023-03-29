@@ -150,6 +150,13 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     }
 
     @Override
+    public void mouseMoved(double mouseX, double mouseY) {
+        if (getFocused() instanceof OptionEntry optionEntry)
+            optionEntry.widget.unfocus();
+        setFocused(null);
+    }
+
+    @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
         super.mouseScrolled(mouseX, mouseY, amount);
 

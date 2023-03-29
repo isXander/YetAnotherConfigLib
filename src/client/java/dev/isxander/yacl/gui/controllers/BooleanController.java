@@ -142,7 +142,7 @@ public class BooleanController implements Controller<Boolean> {
 
         @Override
         public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-            if (!focused) {
+            if (!isFocused()) {
                 return false;
             }
 
