@@ -67,6 +67,9 @@ public class StringControllerElement extends ControllerWidget<IStringController<
             GuiComponent.fill(matrices, inputFieldBounds.x() + 1, inputFieldBounds.yLimit() + 1, inputFieldBounds.xLimit() + 1, inputFieldBounds.yLimit() + 2, 0xFF404040);
 
             if (inputFieldFocused || focused) {
+                if (caretPos > text.length())
+                    caretPos = text.length();
+
                 int caretX = textX + textRenderer.width(text.substring(0, caretPos)) - 1;
                 if (text.isEmpty())
                     caretX = inputFieldBounds.x() + inputFieldBounds.width() / 2;
