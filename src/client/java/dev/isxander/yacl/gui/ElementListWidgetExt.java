@@ -1,11 +1,14 @@
 package dev.isxander.yacl.gui;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Iterator;
 
 public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> extends ContainerObjectSelectionList<E> {
     protected final int x, y;
@@ -97,10 +100,10 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         // on mouseClicked, the clicked element becomes focused so you can drag. on release, we should clear the focus
         boolean clicked = super.mouseReleased(mouseX, mouseY, button);
-        if (getFocused() != null) {
-            this.getFocused().setFocused(null);
-            this.setFocused(null);
-        }
+//        if (getFocused() != null) {
+//            this.getFocused().setFocused(null);
+////            this.setFocused(null);
+//        }
         return clicked;
     }
 
@@ -152,6 +155,30 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     /* END cloth config code */
 
     public abstract static class Entry<E extends ElementListWidgetExt.Entry<E>> extends ContainerObjectSelectionList.Entry<E> {
+        @Override
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            for (GuiEventListener child : this.children()) {
+                if (child.mouseClicked(mouseX, mouseY, button)) {
+                    if (button == InputConstants.MOUSE_BUTTON_LEFT)
+                        this.setDragging(true);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        @Override
+        public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+            if (isDragging() && button == InputConstants.MOUSE_BUTTON_LEFT) {
+                for (GuiEventListener child : this.children()) {
+                    if (child.mouseDragged(mouseX, mouseY, button, deltaX, deltaY))
+                        return true;
+                }
+            }
+            return false;
+        }
+
         public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
 
         }
