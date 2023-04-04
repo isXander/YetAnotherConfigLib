@@ -31,7 +31,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     private final List<BiConsumer<Option<List<T>>, List<T>>> listeners;
     private final List<Runnable> refreshListeners;
 
-    public ListOptionImpl(@NotNull Component name, @NotNull Component tooltip, @NotNull Binding<List<T>> binding, @NotNull T initialValue, @NotNull Class<T> typeClass, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available) {
+    public ListOptionImpl(@NotNull Component name, @NotNull Component tooltip, @NotNull Binding<List<T>> binding, @NotNull T initialValue, @NotNull Class<T> typeClass, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available, Collection<BiConsumer<Option<List<T>>, List<T>>> listeners) {
         this.name = name;
         this.tooltip = tooltip;
         this.binding = binding;
@@ -43,6 +43,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         this.flags = flags;
         this.available = available;
         this.listeners = new ArrayList<>();
+        this.listeners.addAll(listeners);
         this.refreshListeners = new ArrayList<>();
         callListeners();
     }
@@ -219,6 +220,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         private T initialValue;
         private boolean collapsed = false;
         private boolean available = true;
+        private final List<BiConsumer<Option<List<T>>, List<T>>> listeners = new ArrayList<>();
         private final Class<T> typeClass;
 
         public BuilderImpl(Class<T> typeClass) {
@@ -304,6 +306,18 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         }
 
         @Override
+        public ListOption.Builder<T> listener(@NotNull BiConsumer<Option<List<T>>, List<T>> listener) {
+            this.listeners.add(listener);
+            return this;
+        }
+
+        @Override
+        public ListOption.Builder<T> listeners(@NotNull Collection<BiConsumer<Option<List<T>>, List<T>>> listeners) {
+            this.listeners.addAll(listeners);
+            return this;
+        }
+
+        @Override
         public ListOption<T> build() {
             Validate.notNull(controllerFunction, "`controller` must not be null");
             Validate.notNull(binding, "`binding` must not be null");
@@ -318,7 +332,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
                 concatenatedTooltip.append(line);
             }
 
-            return new ListOptionImpl<>(name, concatenatedTooltip, binding, initialValue, typeClass, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available);
+            return new ListOptionImpl<>(name, concatenatedTooltip, binding, initialValue, typeClass, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available, listeners);
         }
     }
 }
