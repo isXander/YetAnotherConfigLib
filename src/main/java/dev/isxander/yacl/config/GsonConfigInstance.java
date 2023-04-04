@@ -26,18 +26,22 @@ public class GsonConfigInstance<T> extends ConfigInstance<T> {
     private final Gson gson;
     private final Path path;
 
+    @Deprecated
     public GsonConfigInstance(Class<T> configClass, Path path) {
         this(configClass, path, new GsonBuilder());
     }
 
+    @Deprecated
     public GsonConfigInstance(Class<T> configClass, Path path, Gson gson) {
         this(configClass, path, gson.newBuilder());
     }
 
+    @Deprecated
     public GsonConfigInstance(Class<T> configClass, Path path, UnaryOperator<GsonBuilder> builder) {
         this(configClass, path, builder.apply(new GsonBuilder()));
     }
 
+    @Deprecated
     public GsonConfigInstance(Class<T> configClass, Path path, GsonBuilder builder) {
         super(configClass);
         this.path = path;
@@ -49,6 +53,12 @@ public class GsonConfigInstance<T> extends ConfigInstance<T> {
                 .serializeNulls()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
+    }
+
+    private GsonConfigInstance(Class<T> configClass, Path path, Gson gson, boolean fromBuilder) {
+        super(configClass);
+        this.path = path;
+        this.gson = gson;
     }
 
     @Override
@@ -101,6 +111,102 @@ public class GsonConfigInstance<T> extends ConfigInstance<T> {
         @Override
         public JsonElement serialize(Color color, Type type, JsonSerializationContext jsonSerializationContext) {
             return new JsonPrimitive(color.getRGB());
+        }
+    }
+
+    /**
+     * Creates a builder for a GSON config instance.
+     * @param configClass the config class
+     * @return a new builder
+     * @param <T> the config type
+     */
+    public static <T> Builder<T> createBuilder(Class<T> configClass) {
+        return new Builder<>(configClass);
+    }
+
+    public static class Builder<T> {
+        private final Class<T> configClass;
+        private Path path;
+        private UnaryOperator<GsonBuilder> gsonBuilder = builder -> builder
+                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                .serializeNulls()
+                .registerTypeHierarchyAdapter(Component.class, new Component.Serializer())
+                .registerTypeHierarchyAdapter(Style.class, new Style.Serializer())
+                .registerTypeHierarchyAdapter(Color.class, new ColorTypeAdapter());
+
+        private Builder(Class<T> configClass) {
+            this.configClass = configClass;
+        }
+
+        /**
+         * Sets the file path to save and load the config from.
+         */
+        public Builder<T> setPath(Path path) {
+            this.path = path;
+            return this;
+        }
+
+        /**
+         * Sets the GSON instance to use. Overrides all YACL defaults such as:
+         * <ul>
+         *     <li>lower_camel_case field naming policy</li>
+         *     <li>null serialization</li>
+         *     <li>{@link Component}, {@link Style} and {@link Color} type adapters</li>
+         * </ul>
+         * Still respects the exclusion strategy to only serialize {@link ConfigEntry}
+         * but these can be added to with setExclusionStrategies.
+         *
+         * @param gsonBuilder gson builder to use
+         */
+        public Builder<T> overrideGsonBuilder(GsonBuilder gsonBuilder) {
+            this.gsonBuilder = builder -> gsonBuilder;
+            return this;
+        }
+
+        /**
+         * Sets the GSON instance to use. Overrides all YACL defaults such as:
+         * <ul>
+         *     <li>lower_camel_case field naming policy</li>
+         *     <li>null serialization</li>
+         *     <li>{@link Component}, {@link Style} and {@link Color} type adapters</li>
+         * </ul>
+         * Still respects the exclusion strategy to only serialize {@link ConfigEntry}
+         * but these can be added to with setExclusionStrategies.
+         *
+         * @param gson gson instance to be converted to a builder
+         */
+        public Builder<T> overrideGsonBuilder(Gson gson) {
+            return this.overrideGsonBuilder(gson.newBuilder());
+        }
+
+        /**
+         * Appends extra configuration to a GSON builder.
+         * This is the intended way to add functionality to the GSON instance.
+         * <p>
+         * By default, YACL sets the GSON with the following options:
+         * <ul>
+         *     <li>lower_camel_case field naming policy</li>
+         *     <li>null serialization</li>
+         *     <li>{@link Component}, {@link Style} and {@link Color} type adapters</li>
+         * </ul>
+         *
+         * @param gsonBuilder the function to apply to the builder
+         */
+        public Builder<T> appendGsonBuilder(UnaryOperator<GsonBuilder> gsonBuilder) {
+            this.gsonBuilder = builder -> gsonBuilder.apply(this.gsonBuilder.apply(builder));
+            return this;
+        }
+
+        /**
+         * Builds the config instance.
+         * @return the built config instance
+         */
+        public GsonConfigInstance<T> build() {
+            UnaryOperator<GsonBuilder> gsonBuilder = builder -> this.gsonBuilder.apply(builder)
+                    .addSerializationExclusionStrategy(new ConfigExclusionStrategy())
+                    .addDeserializationExclusionStrategy(new ConfigExclusionStrategy());
+
+            return new GsonConfigInstance<>(configClass, path, gsonBuilder.apply(new GsonBuilder()).create(), true);
         }
     }
 }

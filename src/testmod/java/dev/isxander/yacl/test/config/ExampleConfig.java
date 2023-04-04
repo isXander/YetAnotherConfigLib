@@ -9,7 +9,9 @@ import java.util.List;
 import java.nio.file.Path;
 
 public class ExampleConfig {
-    public static final ConfigInstance<ExampleConfig> INSTANCE = new GsonConfigInstance<>(ExampleConfig.class, Path.of("./config/yacl-test.json"));
+    public static final ConfigInstance<ExampleConfig> INSTANCE = GsonConfigInstance.createBuilder(ExampleConfig.class)
+            .setPath(Path.of("./config/yacl-test.json"))
+            .build();
 
     @ConfigEntry public boolean booleanToggle = false;
     @ConfigEntry public boolean customBooleanToggle = false;
