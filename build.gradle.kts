@@ -16,7 +16,7 @@ plugins {
 val ciRun = System.getenv().containsKey("GITHUB_ACTIONS")
 
 group = "dev.isxander"
-version = "2.4.0"
+version = "2.4.1"
 
 if (ciRun)
     version = "$version+${grgit.branch.current().name.replace('/', '.')}-SNAPSHOT"
@@ -192,6 +192,7 @@ publishing {
             artifactId = "yet-another-config-lib"
 
             from(components["java"])
+            artifact(tasks["remapSourcesJar"])
         }
     }
 

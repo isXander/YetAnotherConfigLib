@@ -47,7 +47,7 @@ public interface OptionGroup {
         return new OptionGroupImpl.BuilderImpl();
     }
 
-    interface Builder {
+    interface Builder extends OptionAddable {
         /**
          * Sets name of the group, can be {@link Component#empty()} to just separate options, like sodium.
          *
@@ -70,6 +70,7 @@ public interface OptionGroup {
          *
          * @see OptionGroup#options()
          */
+        @Override
         Builder option(@NotNull Option<?> option);
 
         /**
@@ -78,6 +79,7 @@ public interface OptionGroup {
          *
          * @see OptionGroup#options()
          */
+        @Override
         Builder options(@NotNull Collection<? extends Option<?>> options);
 
         /**

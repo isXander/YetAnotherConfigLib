@@ -74,7 +74,7 @@ public final class ConfigCategoryImpl implements ConfigCategory {
         }
 
         @Override
-        public Builder options(@NotNull Collection<Option<?>> options) {
+        public Builder options(@NotNull Collection<? extends Option<?>> options) {
             Validate.notNull(options, "`options` must not be null");
 
             if (options.stream().anyMatch(ListOption.class::isInstance))

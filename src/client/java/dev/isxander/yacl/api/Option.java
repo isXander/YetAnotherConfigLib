@@ -132,7 +132,15 @@ public interface Option<T> {
          *
          * @param tooltipGetter function to get tooltip depending on value {@link Builder#build()}.
          */
-        @SuppressWarnings("unchecked")
+        Builder<T> tooltip(@NotNull Function<T, Component> tooltipGetter);
+
+        /**
+         * Sets the tooltip to be used by the option.
+         * No need to wrap the text yourself, the gui does this itself.
+         *
+         * @param tooltipGetter function to get tooltip depending on value {@link Builder#build()}.
+         */
+        @Deprecated
         Builder<T> tooltip(@NotNull Function<T, Component>... tooltipGetter);
 
         /**

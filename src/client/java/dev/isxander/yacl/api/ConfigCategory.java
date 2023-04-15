@@ -36,7 +36,7 @@ public interface ConfigCategory {
         return new ConfigCategoryImpl.BuilderImpl();
     }
 
-    interface Builder {
+    interface Builder extends OptionAddable {
         /**
          * Sets name of the category
          *
@@ -52,6 +52,7 @@ public interface ConfigCategory {
          * @see ConfigCategory#groups()
          * @see OptionGroup#isRoot()
          */
+        @Override
         Builder option(@NotNull Option<?> option);
 
         /**
@@ -62,7 +63,8 @@ public interface ConfigCategory {
          * @see ConfigCategory#groups()
          * @see OptionGroup#isRoot()
          */
-        Builder options(@NotNull Collection<Option<?>> options);
+        @Override
+        Builder options(@NotNull Collection<? extends Option<?>> options);
 
         /**
          * Adds an option group.

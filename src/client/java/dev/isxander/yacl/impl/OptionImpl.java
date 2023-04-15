@@ -176,7 +176,16 @@ public final class OptionImpl<T> implements Option<T> {
         }
 
         @Override
+        public Builder<T> tooltip(@NotNull Function<T, Component> tooltipGetter) {
+            Validate.notNull(tooltipGetter, "`tooltipGetter` cannot be null");
+
+            this.tooltipGetters.add(tooltipGetter);
+            return this;
+        }
+
+        @Override
         @SafeVarargs
+        @Deprecated
         public final Option.Builder<T> tooltip(@NotNull Function<T, Component>... tooltipGetter) {
             Validate.notNull(tooltipGetter, "`tooltipGetter` cannot be null");
 
