@@ -7,6 +7,7 @@ import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.OptionGroup;
 import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
@@ -121,6 +122,9 @@ public final class ConfigCategoryImpl implements ConfigCategory {
             MutableComponent concatenatedTooltip = Component.empty();
             boolean first = true;
             for (Component line : tooltipLines) {
+                if (line.getContents() == ComponentContents.EMPTY)
+                    continue;
+
                 if (!first) concatenatedTooltip.append("\n");
                 first = false;
 

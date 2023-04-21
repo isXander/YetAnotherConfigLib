@@ -276,8 +276,8 @@ public class YACLScreen extends Screen {
             int aboveY = yAbove - height + 12;
             int maxBelow = screenHeight - (belowY + height);
             int minAbove = aboveY - height;
-            int y = belowY;
-            if (maxBelow < -8)
+            int y = aboveY;
+            if (minAbove < 8)
                 y = maxBelow > minAbove ? belowY : aboveY;
 
             int x = Math.max(centerX - text.getWidth() / 2 - 12, -6);

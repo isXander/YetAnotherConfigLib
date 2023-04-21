@@ -7,6 +7,7 @@ import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.OptionFlag;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
@@ -195,9 +196,11 @@ public final class OptionImpl<T> implements Option<T> {
 
         @Override
         public Option.Builder<T> tooltip(@NotNull Component... tooltips) {
-            Validate.notNull(tooltips, "`tooltips` cannot be empty");
+            var tooltipFunctions = Arrays.stream(tooltips)
+                    .map(t -> (Function<T, Component>) opt -> t)
+                    .toList();
 
-            this.tooltipGetters.addAll(Stream.of(tooltips).map(Component -> (Function<T, Component>) t -> Component).toList());
+            this.tooltipGetters.addAll(tooltipFunctions);
             return this;
         }
 
@@ -277,10 +280,15 @@ public final class OptionImpl<T> implements Option<T> {
                 MutableComponent concatenatedTooltip = Component.empty();
                 boolean first = true;
                 for (Function<T, Component> line : tooltipGetters) {
+                    Component lineComponent = line.apply(value);
+
+                    if (lineComponent.getContents() == ComponentContents.EMPTY)
+                        continue;
+
                     if (!first) concatenatedTooltip.append("\n");
                     first = false;
 
-                    concatenatedTooltip.append(line.apply(value));
+                    concatenatedTooltip.append(lineComponent);
                 }
 
                 return concatenatedTooltip;

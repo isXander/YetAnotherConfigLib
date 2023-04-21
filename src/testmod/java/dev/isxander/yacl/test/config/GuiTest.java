@@ -57,7 +57,6 @@ public class GuiTest {
                             .group(OptionGroup.createBuilder()
                                     .name(Component.literal("Boolean Controllers"))
                                     .tooltip(Component.literal("Test!"))
-                                    .collapsed(true)
                                     .option(Option.createBuilder(boolean.class)
                                             .name(Component.literal("Boolean Toggle"))
                                             .tooltip(value -> Component.literal("A simple toggle button that contains the value '" + value + "'"))
@@ -72,6 +71,8 @@ public class GuiTest {
                                     .option(Option.createBuilder(boolean.class)
                                             .name(Component.literal("Custom Boolean Toggle"))
                                             .tooltip(Component.literal("You can customize these controllers like this!"))
+                                            .tooltip(Component.empty())
+                                            .tooltip(opt -> Component.empty())
                                             .binding(
                                                     defaults.customBooleanToggle,
                                                     () -> config.customBooleanToggle,

@@ -96,17 +96,6 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
         return null;
     }
 
-    @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        // on mouseClicked, the clicked element becomes focused so you can drag. on release, we should clear the focus
-        boolean clicked = super.mouseReleased(mouseX, mouseY, button);
-//        if (getFocused() != null) {
-//            this.getFocused().setFocused(null);
-////            this.setFocused(null);
-//        }
-        return clicked;
-    }
-
     /*
       below code is licensed from cloth-config under LGPL3
       modified to inherit vanilla's EntryListWidget and use yarn mappings
