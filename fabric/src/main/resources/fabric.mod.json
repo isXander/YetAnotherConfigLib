@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "provides": [
+    "yet-another-config-lib"
+  ],
+  "version": "${version}",
+  "name": "${name}",
+  "description": "${description}",
+  "authors": [
+    "isXander"
+  ],
+  "contact": {
+    "homepage": "https://isxander.dev",
+    "issues": "https://github.com/${github}/issues",
+    "sources": "https://github.com/${github}"
+  },
+  "icon": "yacl-128x.png",
+  "license": "LGPL-3.0-or-later",
+  "environment": "*",
+  "entrypoints": {
+    "modmenu": [
+      "dev.isxander.yacl.fabric.compat.modmenu.ModMenuEntrypoint"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.14.0",
+    "minecraft": "~1.19.4",
+    "java": ">=17",
+    "fabric-resource-loader-v0": "*"
+  },
+  "mixins": [
+    "yacl.mixins.json"
+  ],
+  "custom": {
+    "modmenu": {
+      "badges": ["library"]
+    }
+  }
+}

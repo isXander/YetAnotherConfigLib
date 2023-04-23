@@ -1,0 +1,48 @@
+[versions]
+# Plugins
+architectury_loom = "1.1.+"
+architectury_plugin = "3.4.+"
+shadow = "7.1.+"
+quilt_quiltflower = "1.8.+"
+unified_publishing = "0.1.+"
+github_release = "2.+"
+machete = "2.+"
+grgit = "5.0.+"
+
+minecraft = "1.19.4"
+quilt_mappings = "10"
+fabric_loader = "0.14.19"
+
+# Common Dependencies
+mixin_extras = "0.2.0-beta.6"
+
+# Fabric-like Dependencies
+fabric_api = "0.79.0+1.19.4"
+mod_menu = "6.2.1"
+
+# Forge Dependencies
+forge = "1.19.4-45.0.47"
+
+[libraries]
+minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_loader" }
+
+# Common Dependencies
+mixin_extras_common = { module = "com.github.llamalad7.mixinextras:mixinextras-common", version.ref = "mixin_extras" }
+
+# Fabric-like Dependencies
+fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
+mod_menu = { module = "com.terraformersmc:modmenu", version.ref = "mod_menu" }
+
+# Forge Dependencies
+forge = { module = "net.minecraftforge:forge", version.ref = "forge" }
+
+[plugins]
+architectury_loom = { id = "dev.architectury.loom", version.ref = "architectury_loom" }
+architectury_plugin = { id = "architectury-plugin", version.ref = "architectury_plugin" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
+
+unified_publishing = { id = "me.shedaniel.unified-publishing", version.ref = "unified_publishing" }
+github_release = { id = "com.github.breadmoirai.github-release", version.ref = "github_release" }
+machete = { id = "io.github.p03w.machete", version.ref = "machete" }
+grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }
