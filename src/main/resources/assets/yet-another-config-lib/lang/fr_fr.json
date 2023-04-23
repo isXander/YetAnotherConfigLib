@@ -20,6 +20,7 @@
   "yacl.list.move_down": "Monter en bas",
   "yacl.list.remove": "Retirer",
   "yacl.list.add_top": "Nouvelle entrée",
+  "yacl.list.empty": "La liste est vide",
 
   "yacl.restart.title": "La configuration nécessite un redémarrage !",
   "yacl.restart.message": "Une ou plusieurs options nécessitent que vous redémarriez le jeu pour appliquer les changements.",
