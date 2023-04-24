@@ -82,7 +82,7 @@ tasks {
         injectAccessWidener.set(true)
         inputFile.set(shadowJar.get().archiveFile)
         dependsOn(shadowJar)
-        archiveClassifier.set("fabric")
+        archiveClassifier.set(null as String?)
 
         from(rootProject.file("LICENSE"))
     }
@@ -95,7 +95,7 @@ tasks {
     }
 
     remapSourcesJar {
-        archiveClassifier.set("fabric-sources")
+        archiveClassifier.set("sources")
     }
 
     jar {

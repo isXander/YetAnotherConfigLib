@@ -88,7 +88,7 @@ tasks {
         injectAccessWidener.set(true)
         inputFile.set(shadowJar.get().archiveFile)
         dependsOn(shadowJar)
-        archiveClassifier.set("forge")
+        archiveClassifier.set(null as String?)
 
         from(rootProject.file("LICENSE"))
     }
@@ -98,6 +98,10 @@ tasks {
         val commonSources = project(":common").tasks.named<Jar>("sourcesJar")
         dependsOn(commonSources)
         from(commonSources.get().archiveFile.map { zipTree(it) })
+    }
+
+    remapSourcesJar {
+        archiveClassifier.set("sources")
     }
 
     jar {
