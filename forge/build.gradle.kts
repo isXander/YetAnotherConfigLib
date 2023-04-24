@@ -114,13 +114,15 @@ components["java"].withGroovyBuilder {
     }
 }
 
+val changelogText: String by ext
+
 unifiedPublishing {
     project {
         displayName.set("${project.version} (Forge)")
         releaseType.set("release")
         gameVersions.set(listOf("1.19.3", "1.19.4"))
         gameLoaders.set(listOf("forge"))
-        changelog.set(file("changelogs/${project.version}.md").takeIf { it.exists() }?.readText() ?: "No changelog provided.")
+        changelog.set(changelogText)
 
         mainPublication(tasks.remapJar.get())
         secondaryPublication(tasks.remapSourcesJar.get().archiveFile)
@@ -144,5 +146,19 @@ unifiedPublishing {
         }
     }
 }
-
 rootProject.tasks["releaseMod"].dependsOn(tasks["publishUnified"])
+
+publishing {
+    publications {
+        create<MavenPublication>("forge") {
+            groupId = "dev.isxander.yacl"
+            artifactId = "yet-another-config-lib-forge"
+
+            from(components["java"])
+            artifact(tasks.remapSourcesJar.get())
+        }
+    }
+}
+tasks.findByPath("publishForgePublicationToReleasesRepository")?.let {
+    rootProject.tasks["releaseMod"].dependsOn(it)
+}

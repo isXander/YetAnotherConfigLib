@@ -28,3 +28,18 @@ dependencies {
 java {
     withSourcesJar()
 }
+
+publishing {
+    publications {
+        create<MavenPublication>("common") {
+            groupId = "dev.isxander.yacl"
+            artifactId = "yet-another-config-lib-common"
+
+            from(components["java"])
+            artifact(tasks.remapSourcesJar.get())
+        }
+    }
+}
+tasks.findByPath("publishCommonPublicationToReleasesRepository")?.let {
+    rootProject.tasks["releaseMod"].dependsOn(it)
+}
