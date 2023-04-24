@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "yacl_test",
+  "version": "1",
+  "name": "YACL Test",
+  "license": "LGPL-3.0-or-later",
+  "environment": "*",
+  "entrypoints": {
+    "modmenu": [
+      "dev.isxander.yacl.test.fabric.ModMenuEntrypoint"
+    ]
+  }
+}

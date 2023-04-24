@@ -2,10 +2,6 @@ plugins {
     alias(libs.plugins.architectury.loom)
 }
 
-base {
-    archivesName.set("yet-another-config-lib")
-}
-
 architectury {
     common("fabric", "forge")
 }
@@ -13,7 +9,7 @@ architectury {
 loom {
     silentMojangMappingsLicense()
 
-    accessWidenerPath.set(file("src/main/resources/yacl.accesswidener"))
+    accessWidenerPath.set(project(":common").loom.accessWidenerPath)
 }
 
 dependencies {
@@ -23,8 +19,6 @@ dependencies {
         officialMojangMappings()
     })
     modImplementation(libs.fabric.loader)
-}
 
-java {
-    withSourcesJar()
+    implementation(project(path = ":common", configuration = "namedElements"))
 }

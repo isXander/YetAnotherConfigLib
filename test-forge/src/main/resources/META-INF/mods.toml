@@ -1,26 +1,26 @@
 modLoader = "javafml"
-loaderVersion = "[${major_forge},)"
+loaderVersion = "[45,)"
 #issueTrackerURL = ""
 license = "LGPL-3.0-or-later"
 
 [[mods]]
-modId = "${id}"
-version = "${version}"
-displayName = "${name}"
+modId = "yacl_test"
+version = "1"
+displayName = "YACL Test"
 authors = "isXander"
 description = '''
-${description}
+Test mod for YACL
 '''
-logoFile = "yacl-128x.png"
+#logoFile = ""
 
-[["dependencies.${id}"]]
+[[dependencies.yacl_test]]
 modId = "forge"
 mandatory = true
-versionRange = "[${major_forge},)"
+versionRange = "[45,)"
 ordering = "NONE"
 side = "BOTH"
 
-[["dependencies.${id}"]]
+[[dependencies.yacl_test]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.19.4,)"

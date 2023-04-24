@@ -16,6 +16,12 @@ allprojects {
     version = "1.0.0+1.19.4"
     group = "dev.isxander"
 
+    pluginManager.withPlugin("base") {
+        val base = the<BasePluginExtension>()
+
+        base.archivesName.set("yet-another-config-lib")
+    }
+
     repositories {
         mavenCentral()
         maven("https://maven.terraformersmc.com/releases")
@@ -34,4 +40,10 @@ allprojects {
 
 tasks.register("releaseMod") {
     group = "mod"
+}
+tasks.register("buildAll") {
+    group = "mod"
+
+    dependsOn(project(":fabric").tasks["build"])
+    dependsOn(project(":forge").tasks["build"])
 }

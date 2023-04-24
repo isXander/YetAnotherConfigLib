@@ -83,7 +83,7 @@ tasks {
         inputFile.set(shadowJar.get().archiveFile)
         dependsOn(shadowJar)
 
-        archiveClassifier.set("fabric-$minecraftVersion")
+        archiveClassifier.set("fabric")
     }
 
     named<Jar>("sourcesJar") {
@@ -94,7 +94,7 @@ tasks {
     }
 
     remapSourcesJar {
-        archiveClassifier.set("fabric-$minecraftVersion-sources")
+        archiveClassifier.set("fabric-sources")
     }
 
     jar {

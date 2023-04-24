@@ -20,3 +20,6 @@ rootProject.name = "YetAnotherConfigLib"
 include("common")
 include("fabric")
 include("forge")
+include("test-common")
+include("test-fabric")
+include("test-forge")

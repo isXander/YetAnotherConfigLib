@@ -89,7 +89,7 @@ tasks {
         inputFile.set(shadowJar.get().archiveFile)
         dependsOn(shadowJar)
 
-        archiveClassifier.set("forge-$minecraftVersion")
+        archiveClassifier.set("forge")
     }
 
     named<Jar>("sourcesJar") {
@@ -100,7 +100,7 @@ tasks {
     }
 
     remapSourcesJar {
-        archiveClassifier.set("forge-$minecraftVersion-sources")
+        archiveClassifier.set("forge-sources")
     }
 
     jar {
