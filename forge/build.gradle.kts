@@ -88,8 +88,9 @@ tasks {
         injectAccessWidener.set(true)
         inputFile.set(shadowJar.get().archiveFile)
         dependsOn(shadowJar)
-
         archiveClassifier.set("forge")
+
+        from(rootProject.file("LICENSE"))
     }
 
     named<Jar>("sourcesJar") {
@@ -97,10 +98,6 @@ tasks {
         val commonSources = project(":common").tasks.named<Jar>("sourcesJar")
         dependsOn(commonSources)
         from(commonSources.get().archiveFile.map { zipTree(it) })
-    }
-
-    remapSourcesJar {
-        archiveClassifier.set("forge-sources")
     }
 
     jar {
@@ -155,7 +152,6 @@ publishing {
             artifactId = "yet-another-config-lib-forge"
 
             from(components["java"])
-            artifact(tasks.remapSourcesJar.get())
         }
     }
 }

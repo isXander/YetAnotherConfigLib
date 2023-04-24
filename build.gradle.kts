@@ -12,6 +12,7 @@ architectury {
 }
 
 val changelogText = file("changelogs/${project.version}.md").takeIf { it.exists() }?.readText() ?: "No changelog provided."
+val snapshotVer = "${grgit.branch.current().name.replace('/', '.')}-SNAPSHOT"
 
 allprojects {
     apply(plugin = "java")
@@ -21,10 +22,14 @@ allprojects {
     version = "2.5.0+1.19.4"
     group = "dev.isxander"
 
+    if (System.getenv().containsKey("GITHUB_ACTIONS")) {
+        version = "$version+$snapshotVer"
+    }
+
     pluginManager.withPlugin("base") {
         val base = the<BasePluginExtension>()
 
-        base.archivesName.set("yet-another-config-lib")
+        base.archivesName.set("yet-another-config-lib-${project.name}")
     }
 
     ext["changelogText"] = changelogText

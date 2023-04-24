@@ -29,6 +29,14 @@ java {
     withSourcesJar()
 }
 
+tasks {
+    remapJar {
+        archiveClassifier.set(null as String?)
+
+        from(rootProject.file("LICENSE"))
+    }
+}
+
 publishing {
     publications {
         create<MavenPublication>("common") {
@@ -36,7 +44,6 @@ publishing {
             artifactId = "yet-another-config-lib-common"
 
             from(components["java"])
-            artifact(tasks.remapSourcesJar.get())
         }
     }
 }
