@@ -2,7 +2,8 @@ plugins {
     alias(libs.plugins.architectury.plugin)
     alias(libs.plugins.architectury.loom) apply false
 
-    alias(libs.plugins.unified.publishing) apply false
+    alias(libs.plugins.minotaur) apply false
+    alias(libs.plugins.cursegradle) apply false
     alias(libs.plugins.github.release)
     alias(libs.plugins.grgit)
 }

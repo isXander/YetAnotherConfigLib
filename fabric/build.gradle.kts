@@ -3,7 +3,8 @@ import org.gradle.jvm.tasks.Jar
 plugins {
     alias(libs.plugins.architectury.loom)
     alias(libs.plugins.shadow)
-    alias(libs.plugins.unified.publishing)
+    alias(libs.plugins.minotaur)
+    alias(libs.plugins.cursegradle)
 }
 
 architectury {
@@ -111,37 +112,49 @@ components["java"].withGroovyBuilder {
 
 val changelogText: String by ext
 
-unifiedPublishing {
-    project {
-        displayName.set("${project.version} (Fabric)")
-        releaseType.set("release")
-        gameVersions.set(listOf("1.19.3", "1.19.4"))
-        gameLoaders.set(listOf("fabric", "quilt"))
+val modrinthId: String by project
+if (modrinthId.isNotEmpty()) {
+    modrinth {
+        token.set(findProperty("modrinth.token")?.toString())
+        projectId.set(modrinthId)
+        versionName.set("${project.version} (Fabric)")
+        versionNumber.set("${project.version}-fabric")
+        versionType.set("release")
+        uploadFile.set(tasks["remapJar"])
+        gameVersions.set(listOf("1.19.4", "1.19.3"))
+        loaders.set(listOf("fabric", "quilt"))
         changelog.set(changelogText)
-
-        mainPublication(tasks.remapJar.get())
-        secondaryPublication(tasks.remapSourcesJar.get().archiveFile)
-
-        val modrinthId: String? by rootProject
-        if (modrinthId?.isNotEmpty() == true) {
-            modrinth {
-                token.set(findProperty("modrinth.token")?.toString() ?: "Modrinth publishing token not found")
-                id.set(modrinthId)
-                version.set("${project.version}-fabric")
-            }
-        }
-
-        val curseforgeId: String? by rootProject
-        if (curseforgeId?.isNotEmpty() == true) {
-            curseforge {
-                token.set(findProperty("curseforge.token")?.toString() ?: "Curseforge publishing token not found")
-                id.set(curseforgeId)
-                gameVersions.add("Java 17")
-            }
-        }
+        syncBodyFrom.set(rootProject.file("README.md").readText())
     }
 }
-rootProject.tasks["releaseMod"].dependsOn(tasks["publishUnified"])
+rootProject.tasks["releaseMod"].dependsOn(tasks["modrinth"])
+
+val curseforgeId: String by project
+if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
+    curseforge {
+        apiKey = findProperty("curseforge.token")
+        project(closureOf<me.hypherionmc.cursegradle.CurseProject> {
+            mainArtifact(tasks["remapJar"], closureOf<me.hypherionmc.cursegradle.CurseArtifact> {
+                displayName = "[Fabric] ${project.version}"
+            })
+
+            id = curseforgeId
+            releaseType = "release"
+            addGameVersion("1.19.4")
+            addGameVersion("1.19.3")
+            addGameVersion("Fabric")
+            addGameVersion("Java 17")
+
+            changelog = changelogText
+            changelogType = "markdown"
+        })
+
+        options(closureOf<me.hypherionmc.cursegradle.Options> {
+            forgeGradleIntegration = false
+        })
+    }
+}
+rootProject.tasks["releaseMod"].dependsOn(tasks["curseforge"])
 
 publishing {
     publications {

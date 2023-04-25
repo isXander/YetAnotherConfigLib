@@ -4,7 +4,8 @@ architectury_loom = "1.1.+"
 architectury_plugin = "3.4.+"
 shadow = "7.1.+"
 quilt_quiltflower = "1.8.+"
-unified_publishing = "0.1.+"
+minotaur = "2.7.+"
+cursegradle = "2.+"
 github_release = "2.+"
 machete = "2.+"
 grgit = "5.0.+"
@@ -42,7 +43,8 @@ architectury_loom = { id = "dev.architectury.loom", version.ref = "architectury_
 architectury_plugin = { id = "architectury-plugin", version.ref = "architectury_plugin" }
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 
-unified_publishing = { id = "me.shedaniel.unified-publishing", version.ref = "unified_publishing" }
+minotaur = { id = "com.modrinth.minotaur", version.ref = "minotaur" }
+cursegradle = { id = "me.hypherionmc.cursegradle", version.ref = "cursegradle" }
 github_release = { id = "com.github.breadmoirai.github-release", version.ref = "github_release" }
 machete = { id = "io.github.p03w.machete", version.ref = "machete" }
 grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }
