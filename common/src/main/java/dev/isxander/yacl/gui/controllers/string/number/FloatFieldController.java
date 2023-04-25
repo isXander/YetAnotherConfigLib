@@ -13,7 +13,7 @@ public class FloatFieldController extends NumberFieldController<Float> {
     private final float min, max;
 
     /**
-     * Constructs a double field controller
+     * Constructs a float field controller
      *
      * @param option option to bind controller to
      * @param min minimum allowed value (clamped on apply)
@@ -27,7 +27,7 @@ public class FloatFieldController extends NumberFieldController<Float> {
     }
 
     /**
-     * Constructs a double field controller.
+     * Constructs a float field controller.
      * Uses {@link FloatSliderController#DEFAULT_FORMATTER} as display text,
      * not used whilst editing.
      *
@@ -40,7 +40,7 @@ public class FloatFieldController extends NumberFieldController<Float> {
     }
 
     /**
-     * Constructs a double field controller.
+     * Constructs a float field controller.
      * Does not have a minimum or a maximum range.
      *
      * @param option option to bind controller to
@@ -51,7 +51,7 @@ public class FloatFieldController extends NumberFieldController<Float> {
     }
 
     /**
-     * Constructs a double field controller.
+     * Constructs a float field controller.
      * Uses {@link FloatSliderController#DEFAULT_FORMATTER} as display text,
      * not used whilst editing.
      * Does not have a minimum or a maximum range.

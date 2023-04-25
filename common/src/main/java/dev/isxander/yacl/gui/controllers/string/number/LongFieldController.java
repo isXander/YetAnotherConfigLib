@@ -13,7 +13,7 @@ public class LongFieldController extends NumberFieldController<Long> {
     private final long min, max;
 
     /**
-     * Constructs a double field controller
+     * Constructs a long field controller
      *
      * @param option option to bind controller to
      * @param min minimum allowed value (clamped on apply)
@@ -27,7 +27,7 @@ public class LongFieldController extends NumberFieldController<Long> {
     }
 
     /**
-     * Constructs a double field controller.
+     * Constructs a long field controller.
      * Uses {@link LongSliderController#DEFAULT_FORMATTER} as display text,
      * not used whilst editing.
      *
@@ -40,7 +40,7 @@ public class LongFieldController extends NumberFieldController<Long> {
     }
 
     /**
-     * Constructs a double field controller.
+     * Constructs a long field controller.
      * Does not have a minimum or a maximum range.
      *
      * @param option option to bind controller to
@@ -51,7 +51,7 @@ public class LongFieldController extends NumberFieldController<Long> {
     }
 
     /**
-     * Constructs a double field controller.
+     * Constructs a long field controller.
      * Uses {@link LongSliderController#DEFAULT_FORMATTER} as display text,
      * not used whilst editing.
      * Does not have a minimum or a maximum range.
