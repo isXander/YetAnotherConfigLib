@@ -3,22 +3,20 @@ package dev.isxander.yacl.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
-public class TextScaledButtonWidget extends Button {
+public class TextScaledButtonWidget extends TooltipButtonWidget {
     public float textScale;
 
-    public TextScaledButtonWidget(int x, int y, int width, int height, float textScale, Component message, OnPress onPress) {
-        super(x, y, width, height, message, onPress, DEFAULT_NARRATION);
+    public TextScaledButtonWidget(Screen screen, int x, int y, int width, int height, float textScale, Component message, Component tooltip, OnPress onPress) {
+        super(screen, x, y, width, height, message, tooltip, onPress);
         this.textScale = textScale;
     }
 
-    public TextScaledButtonWidget(int x, int y, int width, int height, float textScale, Component message, OnPress onPress, Tooltip tooltip) {
-        this(x, y, width, height, textScale, message, onPress);
-        setTooltip(tooltip);
+    public TextScaledButtonWidget(Screen screen, int x, int y, int width, int height, float textScale, Component message, OnPress onPress) {
+        this(screen, x, y, width, height, textScale, message, null, onPress);
     }
 
     @Override

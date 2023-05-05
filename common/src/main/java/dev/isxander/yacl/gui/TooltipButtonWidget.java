@@ -2,27 +2,25 @@ package dev.isxander.yacl.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-public class TooltipButtonWidget extends TextScaledButtonWidget {
+public class TooltipButtonWidget extends Button {
 
     protected final Screen screen;
-    protected MultiLineLabel wrappedDescription;
-
-    public TooltipButtonWidget(Screen screen, int x, int y, int width, int height, Component message, float textScale, Component tooltip, OnPress onPress) {
-        super(x, y, width, height, textScale, message, onPress);
-        this.screen = screen;
-        setTooltip(tooltip);
-    }
+    protected MultiLineLabel wrappedDescription = null;
 
     public TooltipButtonWidget(Screen screen, int x, int y, int width, int height, Component message, Component tooltip, OnPress onPress) {
-        this(screen, x, y, width, height, message, 1, tooltip, onPress);
+        super(x, y, width, height, message, onPress, DEFAULT_NARRATION);
+        this.screen = screen;
+        if (tooltip != null)
+            setTooltip(tooltip);
     }
 
     public void renderHoveredTooltip(PoseStack matrices) {
-        if (isHoveredOrFocused()) {
+        if (isHoveredOrFocused() && wrappedDescription != null) {
             YACLScreen.renderMultilineTooltip(matrices, Minecraft.getInstance().font, wrappedDescription, getX() + width / 2, getY() - 4, getY() + height + 4, screen.width, screen.height);
         }
     }

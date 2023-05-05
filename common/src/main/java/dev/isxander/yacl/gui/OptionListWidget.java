@@ -273,7 +273,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             this.groupName = group.name().getString().toLowerCase();
             if (option.canResetToDefault() && this.widget.canReset()) {
                 this.widget.setDimension(this.widget.getDimension().expanded(-20, 0));
-                this.resetButton = new TextScaledButtonWidget(widget.getDimension().xLimit(), -50, 20, 20, 2f, Component.literal("\u21BB"), button -> {
+                this.resetButton = new TextScaledButtonWidget(yaclScreen, widget.getDimension().xLimit(), -50, 20, 20, 2f, Component.literal("\u21BB"), button -> {
                     option.requestSetDefault();
                 });
                 option.addListener((opt, val) -> this.resetButton.active = !opt.isPendingValueDefault() && opt.available());
@@ -469,7 +469,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             super(group, screen);
             this.listOption = group;
 
-            this.resetListButton = new TextScaledButtonWidget(getRowRight() - 20, -50, 20, 20, 2f, Component.literal("\u21BB"), button -> {
+            this.resetListButton = new TextScaledButtonWidget(screen, getRowRight() - 20, -50, 20, 20, 2f, Component.literal("\u21BB"), button -> {
                 group.requestSetDefault();
             });
             group.addListener((opt, val) -> this.resetListButton.active = !opt.isPendingValueDefault() && opt.available());
