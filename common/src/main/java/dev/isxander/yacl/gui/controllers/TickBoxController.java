@@ -7,7 +7,7 @@ import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -55,7 +55,7 @@ public class TickBoxController implements Controller<Boolean> {
         }
 
         @Override
-        protected void drawHoveredControl(PoseStack matrices, int mouseX, int mouseY, float delta) {
+        protected void drawHoveredControl(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
             int outlineSize = 10;
             int outlineX1 = getDimension().xLimit() - getXPadding() - outlineSize;
             int outlineY1 = getDimension().centerY() - outlineSize / 2;
@@ -65,18 +65,18 @@ public class TickBoxController implements Controller<Boolean> {
             int color = getValueColor();
             int shadowColor = multiplyColor(color, 0.25f);
 
-            drawOutline(matrices, outlineX1 + 1, outlineY1 + 1, outlineX2 + 1, outlineY2 + 1, 1, shadowColor);
-            drawOutline(matrices, outlineX1, outlineY1, outlineX2, outlineY2, 1, color);
+            drawOutline(graphics, outlineX1 + 1, outlineY1 + 1, outlineX2 + 1, outlineY2 + 1, 1, shadowColor);
+            drawOutline(graphics, outlineX1, outlineY1, outlineX2, outlineY2, 1, color);
             if (control.option().pendingValue()) {
-                GuiComponent.fill(matrices, outlineX1 + 3, outlineY1 + 3, outlineX2 - 1, outlineY2 - 1, shadowColor);
-                GuiComponent.fill(matrices, outlineX1 + 2, outlineY1 + 2, outlineX2 - 2, outlineY2 - 2, color);
+                graphics.fill(outlineX1 + 3, outlineY1 + 3, outlineX2 - 1, outlineY2 - 1, shadowColor);
+                graphics.fill(outlineX1 + 2, outlineY1 + 2, outlineX2 - 2, outlineY2 - 2, color);
             }
         }
 
         @Override
-        protected void drawValueText(PoseStack matrices, int mouseX, int mouseY, float delta) {
+        protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
             if (!isHovered())
-                drawHoveredControl(matrices, mouseX, mouseY, delta);
+                drawHoveredControl(graphics, mouseX, mouseY, delta);
         }
 
         @Override

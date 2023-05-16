@@ -2,6 +2,7 @@ package dev.isxander.yacl.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 
@@ -22,10 +23,10 @@ public class SearchFieldWidget extends EditBox {
     }
 
     @Override
-    public void renderWidget(PoseStack matrices, int mouseX, int mouseY, float delta) {
-        super.renderWidget(matrices, mouseX, mouseY, delta);
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        super.renderWidget(graphics, mouseX, mouseY, delta);
         if (isVisible() && isEmpty()) {
-            font.drawShadow(matrices, emptyText, getX() + 4, this.getY() + (this.height - 8) / 2f, 0x707070);
+            graphics.drawString(font, emptyText, getX() + 4, this.getY() + (this.height - 8) / 2, 0x707070, true);
         }
     }
 

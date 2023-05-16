@@ -2,13 +2,12 @@ package dev.isxander.yacl.gui.controllers.string;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.ControllerWidget;
 import dev.isxander.yacl.gui.utils.GuiUtils;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -42,29 +41,26 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     }
 
     @Override
-    protected void drawHoveredControl(PoseStack matrices, int mouseX, int mouseY, float delta) {
+    protected void drawHoveredControl(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
 
     }
 
     @Override
-    protected void drawValueText(PoseStack matrices, int mouseX, int mouseY, float delta) {
+    protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         Component valueText = getValueText();
         if (!isHovered()) valueText = Component.literal(GuiUtils.shortenString(valueText.getString(), textRenderer, getMaxUnwrapLength(), "...")).setStyle(valueText.getStyle());
 
-        matrices.pushPose();
         int textX = getDimension().xLimit() - textRenderer.width(valueText) + renderOffset - getXPadding();
-        matrices.translate(textX, getTextY(), 0);
         GuiUtils.enableScissor(inputFieldBounds.x(), inputFieldBounds.y() - 2, inputFieldBounds.width() + 1, inputFieldBounds.height() + 4);
-        textRenderer.drawShadow(matrices, valueText, 0, 0, getValueColor());
-        matrices.popPose();
+        graphics.drawString(textRenderer, valueText, textX, getTextY(), getValueColor(), true);
 
         if (isHovered()) {
             ticks += delta;
 
             String text = getValueText().getString();
 
-            GuiComponent.fill(matrices, inputFieldBounds.x(), inputFieldBounds.yLimit(), inputFieldBounds.xLimit(), inputFieldBounds.yLimit() + 1, -1);
-            GuiComponent.fill(matrices, inputFieldBounds.x() + 1, inputFieldBounds.yLimit() + 1, inputFieldBounds.xLimit() + 1, inputFieldBounds.yLimit() + 2, 0xFF404040);
+            graphics.fill(inputFieldBounds.x(), inputFieldBounds.yLimit(), inputFieldBounds.xLimit(), inputFieldBounds.yLimit() + 1, -1);
+            graphics.fill(inputFieldBounds.x() + 1, inputFieldBounds.yLimit() + 1, inputFieldBounds.xLimit() + 1, inputFieldBounds.yLimit() + 2, 0xFF404040);
 
             if (inputFieldFocused || focused) {
                 if (caretPos > text.length())
@@ -75,12 +71,12 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                     caretX = inputFieldBounds.x() + inputFieldBounds.width() / 2;
 
                 if (ticks % 20 <= 10) {
-                    GuiComponent.fill(matrices, caretX, inputFieldBounds.y(), caretX + 1, inputFieldBounds.yLimit(), -1);
+                    graphics.fill(caretX, inputFieldBounds.y(), caretX + 1, inputFieldBounds.yLimit(), -1);
                 }
 
                 if (selectionLength != 0) {
                     int selectionX = textX + textRenderer.width(text.substring(0, caretPos + selectionLength));
-                    GuiComponent.fill(matrices, caretX, inputFieldBounds.y() - 1, selectionX, inputFieldBounds.yLimit(), 0x803030FF);
+                    graphics.fill(caretX, inputFieldBounds.y() - 1, selectionX, inputFieldBounds.yLimit(), 0x803030FF);
                 }
             }
         }

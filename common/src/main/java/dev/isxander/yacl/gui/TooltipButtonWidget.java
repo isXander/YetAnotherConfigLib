@@ -2,6 +2,7 @@ package dev.isxander.yacl.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
@@ -19,9 +20,9 @@ public class TooltipButtonWidget extends Button {
             setTooltip(tooltip);
     }
 
-    public void renderHoveredTooltip(PoseStack matrices) {
+    public void renderHoveredTooltip(GuiGraphics graphics) {
         if (isHoveredOrFocused() && wrappedDescription != null) {
-            YACLScreen.renderMultilineTooltip(matrices, Minecraft.getInstance().font, wrappedDescription, getX() + width / 2, getY() - 4, getY() + height + 4, screen.width, screen.height);
+            YACLScreen.renderMultilineTooltip(graphics, Minecraft.getInstance().font, wrappedDescription, getX() + width / 2, getY() - 4, getY() + height + 4, screen.width, screen.height);
         }
     }
 

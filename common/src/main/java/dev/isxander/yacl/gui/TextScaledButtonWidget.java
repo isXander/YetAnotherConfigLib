@@ -3,6 +3,7 @@ package dev.isxander.yacl.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -20,13 +21,14 @@ public class TextScaledButtonWidget extends TooltipButtonWidget {
     }
 
     @Override
-    public void renderString(PoseStack matrices, Font textRenderer, int color) {
+    public void renderString(GuiGraphics graphics, Font textRenderer, int color) {
         Font font = Minecraft.getInstance().font;
+        PoseStack pose = graphics.pose();
 
-        matrices.pushPose();
-        matrices.translate(((this.getX() + this.width / 2f) - font.width(getMessage()) * textScale / 2), (float)this.getY() + (this.height - 8 * textScale) / 2f / textScale, 0);
-        matrices.scale(textScale, textScale, 1);
-        font.drawShadow(matrices, getMessage(), 0, 0, color | Mth.ceil(this.alpha * 255.0F) << 24);
-        matrices.popPose();
+        pose.pushPose();
+        pose.translate(((this.getX() + this.width / 2f) - font.width(getMessage()) * textScale / 2), (float)this.getY() + (this.height - 8 * textScale) / 2f / textScale, 0);
+        pose.scale(textScale, textScale, 1);
+        graphics.drawString(font, getMessage(), 0, 0, color | Mth.ceil(this.alpha * 255.0F) << 24, true);
+        pose.popPose();
     }
 }

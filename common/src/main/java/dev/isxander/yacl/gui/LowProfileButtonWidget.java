@@ -2,6 +2,7 @@ package dev.isxander.yacl.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
@@ -17,12 +18,12 @@ public class LowProfileButtonWidget extends Button {
     }
 
     @Override
-    public void renderWidget(PoseStack matrices, int mouseX, int mouseY, float deltaTicks) {
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
         if (!isHoveredOrFocused() || !active) {
             int j = this.active ? 0xFFFFFF : 0xA0A0A0;
-            this.renderString(matrices, Minecraft.getInstance().font, j);
+            this.renderString(graphics, Minecraft.getInstance().font, j);
         } else {
-            super.renderWidget(matrices, mouseX, mouseY, deltaTicks);
+            super.renderWidget(graphics, mouseX, mouseY, deltaTicks);
         }
     }
 }

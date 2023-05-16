@@ -8,6 +8,7 @@ import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.TooltipButtonWidget;
 import dev.isxander.yacl.gui.YACLScreen;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -65,7 +66,7 @@ public class ListEntryWidget extends AbstractWidget implements ContainerEventHan
     }
 
     @Override
-    public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         updateButtonStates(); // update every render in case option becomes available/unavailable
 
         removeButton.setY(getDimension().y());
@@ -73,17 +74,17 @@ public class ListEntryWidget extends AbstractWidget implements ContainerEventHan
         moveDownButton.setY(getDimension().y());
         entryWidget.setDimension(entryWidget.getDimension().withY(getDimension().y()));
 
-        removeButton.render(matrices, mouseX, mouseY, delta);
-        moveUpButton.render(matrices, mouseX, mouseY, delta);
-        moveDownButton.render(matrices, mouseX, mouseY, delta);
-        entryWidget.render(matrices, mouseX, mouseY, delta);
+        removeButton.render(graphics, mouseX, mouseY, delta);
+        moveUpButton.render(graphics, mouseX, mouseY, delta);
+        moveDownButton.render(graphics, mouseX, mouseY, delta);
+        entryWidget.render(graphics, mouseX, mouseY, delta);
     }
 
     @Override
-    public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
-        removeButton.renderHoveredTooltip(matrices);
-        moveUpButton.renderHoveredTooltip(matrices);
-        moveDownButton.renderHoveredTooltip(matrices);
+    public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        removeButton.renderHoveredTooltip(graphics);
+        moveUpButton.renderHoveredTooltip(graphics);
+        moveDownButton.renderHoveredTooltip(graphics);
     }
 
     protected void updateButtonStates() {

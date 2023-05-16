@@ -1,16 +1,13 @@
 package dev.isxander.yacl.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl.api.utils.Dimension;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
 
@@ -27,7 +24,7 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
         this.dim = dim;
     }
 
-    public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
+    public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
 
     }
 
@@ -67,7 +64,7 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
 
     }
 
-    protected void drawButtonRect(PoseStack matrices, int x1, int y1, int x2, int y2, boolean hovered, boolean enabled) {
+    protected void drawButtonRect(GuiGraphics graphics, int x1, int y1, int x2, int y2, boolean hovered, boolean enabled) {
         if (x1 > x2) {
             int xx1 = x1;
             x1 = x2;
@@ -81,15 +78,9 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
         int width = x2 - x1;
         int height = y2 - y1;
 
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATION);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         int i = !enabled ? 0 : hovered ? 2 : 1;
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.enableDepthTest();
-        GuiComponent.blit(matrices, x1, y1, 0, 0, 46 + i * 20, width / 2, height, 256, 256);
-        GuiComponent.blit(matrices, x1 + width / 2, y1, 0, 200 - width / 2f, 46 + i * 20, width / 2, height, 256, 256);
+        graphics.blit(net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATION, x1, y1, 0, 0, 46 + i * 20, width / 2, height, 256, 256);
+        graphics.blit(net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATION, x1 + width / 2, y1, 0, 200 - width / 2f, 46 + i * 20, width / 2, height, 256, 256);
     }
 
     protected int multiplyColor(int hex, float amount) {

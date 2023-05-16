@@ -1,8 +1,8 @@
 package dev.isxander.yacl.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.util.Mth;
@@ -31,11 +31,11 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     }
 
     @Override
-    protected void renderBackground(PoseStack matrices) {
+    protected void renderBackground(GuiGraphics graphics) {
         // render transparent background if in-game.
         setRenderBackground(minecraft.level == null);
         if (minecraft.level != null)
-            fill(matrices, x0, y0, x1, y1, 0x6B000000);
+            graphics.fill(x0, y0, x1, y1, 0x6B000000);
     }
 
     @Override
@@ -45,10 +45,10 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     }
 
     @Override
-    public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         smoothScrollAmount = Mth.lerp(Minecraft.getInstance().getDeltaFrameTime() * 0.5, smoothScrollAmount, getScrollAmount());
         returnSmoothAmount = true;
-        super.render(matrices, mouseX, mouseY, delta);
+        super.render(graphics, mouseX, mouseY, delta);
         returnSmoothAmount = false;
     }
 
@@ -68,9 +68,9 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
         this.smoothScrollAmount = getScrollAmount();
     }
 
-    public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
+    public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         for (E entry : children()) {
-            entry.postRender(matrices, mouseX, mouseY, delta);
+            entry.postRender(graphics, mouseX, mouseY, delta);
         }
     }
 
@@ -123,7 +123,7 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     }
 
     @Override
-    protected void renderList(PoseStack matrices, int mouseX, int mouseY, float delta) {
+    protected void renderList(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         int left = this.getRowLeft();
         int right = this.getRowWidth();
         int count = this.getItemCount();
@@ -134,7 +134,7 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
             int bottom = top + entry.getItemHeight();
             int entryHeight = entry.getItemHeight() - 4;
             if (bottom >= this.y0 && top <= this.y1) {
-                this.renderItem(matrices, mouseX, mouseY, delta, i, left, top, right, entryHeight);
+                this.renderItem(graphics, mouseX, mouseY, delta, i, left, top, right, entryHeight);
             }
         }
     }
@@ -166,7 +166,7 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
             return false;
         }
 
-        public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
+        public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
 
         }
 

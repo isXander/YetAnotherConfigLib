@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.ControllerWidget;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
 
@@ -27,32 +27,32 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     @Override
-    public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
-        super.render(matrices, mouseX, mouseY, delta);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        super.render(graphics, mouseX, mouseY, delta);
 
         calculateInterpolation();
     }
 
     @Override
-    protected void drawHoveredControl(PoseStack matrices, int mouseX, int mouseY, float delta) {
+    protected void drawHoveredControl(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         // track
-        GuiComponent.fill(matrices, sliderBounds.x(), sliderBounds.centerY() - 1, sliderBounds.xLimit(), sliderBounds.centerY(), -1);
+        graphics.fill(sliderBounds.x(), sliderBounds.centerY() - 1, sliderBounds.xLimit(), sliderBounds.centerY(), -1);
         // track shadow
-        GuiComponent.fill(matrices, sliderBounds.x() + 1, sliderBounds.centerY(), sliderBounds.xLimit() + 1, sliderBounds.centerY() + 1, 0xFF404040);
+        graphics.fill(sliderBounds.x() + 1, sliderBounds.centerY(), sliderBounds.xLimit() + 1, sliderBounds.centerY() + 1, 0xFF404040);
 
         // thumb shadow
-        GuiComponent.fill(matrices, getThumbX() - getThumbWidth() / 2 + 1, sliderBounds.y() + 1, getThumbX() + getThumbWidth() / 2 + 1, sliderBounds.yLimit() + 1, 0xFF404040);
+        graphics.fill(getThumbX() - getThumbWidth() / 2 + 1, sliderBounds.y() + 1, getThumbX() + getThumbWidth() / 2 + 1, sliderBounds.yLimit() + 1, 0xFF404040);
         // thumb
-        GuiComponent.fill(matrices, getThumbX() - getThumbWidth() / 2, sliderBounds.y(), getThumbX() + getThumbWidth() / 2, sliderBounds.yLimit(), -1);
+        graphics.fill(getThumbX() - getThumbWidth() / 2, sliderBounds.y(), getThumbX() + getThumbWidth() / 2, sliderBounds.yLimit(), -1);
     }
 
     @Override
-    protected void drawValueText(PoseStack matrices, int mouseX, int mouseY, float delta) {
-        matrices.pushPose();
+    protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        graphics.pose().pushPose();
         if (isHovered())
-            matrices.translate(-(sliderBounds.width() + 6 + getThumbWidth() / 2f), 0, 0);
-        super.drawValueText(matrices, mouseX, mouseY, delta);
-        matrices.popPose();
+            graphics.pose().translate(-(sliderBounds.width() + 6 + getThumbWidth() / 2f), 0, 0);
+        super.drawValueText(graphics, mouseX, mouseY, delta);
+        graphics.pose().popPose();
     }
 
     @Override
@@ -157,8 +157,8 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     @Override
-    public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
+    public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         if (super.isMouseOver(mouseX, mouseY) || focused)
-            super.postRender(matrices, mouseX, mouseY, delta);
+            super.postRender(graphics, mouseX, mouseY, delta);
     }
 }

@@ -8,6 +8,7 @@ import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -284,20 +285,20 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
-        public void render(PoseStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             widget.setDimension(widget.getDimension().withY(y));
 
-            widget.render(matrices, mouseX, mouseY, tickDelta);
+            widget.render(graphics, mouseX, mouseY, tickDelta);
 
             if (resetButton != null) {
                 resetButton.setY(y);
-                resetButton.render(matrices, mouseX, mouseY, tickDelta);
+                resetButton.render(graphics, mouseX, mouseY, tickDelta);
             }
         }
 
         @Override
-        public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
-            widget.postRender(matrices, mouseX, mouseY, delta);
+        public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+            widget.postRender(graphics, mouseX, mouseY, delta);
         }
 
         @Override
@@ -379,22 +380,22 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
-        public void render(PoseStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             this.y = y;
 
             int buttonY = y + entryHeight / 2 - expandMinimizeButton.getHeight() / 2 + 1;
 
             expandMinimizeButton.setY(buttonY);
             expandMinimizeButton.setX(x);
-            expandMinimizeButton.render(matrices, mouseX, mouseY, tickDelta);
+            expandMinimizeButton.render(graphics, mouseX, mouseY, tickDelta);
 
-            wrappedName.renderCentered(matrices, x + entryWidth / 2, y + getYPadding());
+            wrappedName.renderCentered(graphics, x + entryWidth / 2, y + getYPadding());
         }
 
         @Override
-        public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
+        public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
             if ((isHovered() && !expandMinimizeButton.isMouseOver(mouseX, mouseY)) || expandMinimizeButton.isFocused()) {
-                YACLScreen.renderMultilineTooltip(matrices, font, wrappedTooltip, getRowLeft() + getRowWidth() / 2, y - 3, y + getItemHeight() + 3, screen.width, screen.height);
+                YACLScreen.renderMultilineTooltip(graphics, font, wrappedTooltip, getRowLeft() + getRowWidth() / 2, y - 3, y + getItemHeight() + 3, screen.width, screen.height);
             }
         }
 
@@ -485,27 +486,27 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
-        public void render(PoseStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             updateExpandMinimizeText(); // update every render because option could become available/unavailable at any time
 
-            super.render(matrices, index, y, x, entryWidth, entryHeight, mouseX, mouseY, hovered, tickDelta);
+            super.render(graphics, index, y, x, entryWidth, entryHeight, mouseX, mouseY, hovered, tickDelta);
 
             int buttonY = expandMinimizeButton.getY();
 
             resetListButton.setY(buttonY);
             addListButton.setY(buttonY);
 
-            resetListButton.render(matrices, mouseX, mouseY, tickDelta);
-            addListButton.render(matrices, mouseX, mouseY, tickDelta);
+            resetListButton.render(graphics, mouseX, mouseY, tickDelta);
+            addListButton.render(graphics, mouseX, mouseY, tickDelta);
         }
 
         @Override
-        public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
+        public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
             minimizeIfUnavailable(); // cannot run in render because it *should* cause a ConcurrentModificationException (but doesn't)
 
-            super.postRender(matrices, mouseX, mouseY, delta);
+            super.postRender(graphics, mouseX, mouseY, delta);
             
-            addListButton.renderHoveredTooltip(matrices);
+            addListButton.renderHoveredTooltip(graphics);
         }
 
         private void minimizeIfUnavailable() {
@@ -540,8 +541,8 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
-        public void render(PoseStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            drawCenteredString(matrices, Minecraft.getInstance().font, Component.translatable("yacl.list.empty").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), x + entryWidth / 2, y, -1);
+        public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            graphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable("yacl.list.empty").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), x + entryWidth / 2, y, -1);
         }
 
         @Override

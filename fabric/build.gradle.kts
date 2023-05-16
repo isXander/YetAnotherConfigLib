@@ -28,7 +28,9 @@ val minecraftVersion = libs.versions.minecraft.get()
 dependencies {
     minecraft(libs.minecraft)
     mappings(loom.layered {
-        mappings("org.quiltmc:quilt-mappings:$minecraftVersion+build.${libs.versions.quilt.mappings.get()}:intermediary-v2")
+        val qm = libs.versions.quilt.mappings.get()
+        if (qm != "0")
+            mappings("org.quiltmc:quilt-mappings:${libs.versions.minecraft.get()}+build.${libs.versions.quilt.mappings.get()}:intermediary-v2")
         officialMojangMappings()
     })
     modImplementation(libs.fabric.loader)

@@ -1,13 +1,13 @@
 package dev.isxander.yacl.gui.controllers;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
@@ -108,7 +108,7 @@ public class BooleanController implements Controller<Boolean> {
         }
 
         @Override
-        protected void drawHoveredControl(PoseStack matrices, int mouseX, int mouseY, float delta) {
+        protected void drawHoveredControl(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
 
         }
 

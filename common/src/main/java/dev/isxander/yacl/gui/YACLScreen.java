@@ -13,7 +13,7 @@ import dev.isxander.yacl.gui.utils.GuiUtils;
 import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
@@ -21,7 +21,6 @@ import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import org.joml.Matrix4f;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -116,20 +115,20 @@ public class YACLScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
-        renderBackground(matrices);
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        renderBackground(graphics);
 
-        super.render(matrices, mouseX, mouseY, delta);
-        categoryList.render(matrices, mouseX, mouseY, delta);
-        searchFieldWidget.render(matrices, mouseX, mouseY, delta);
-        optionList.render(matrices, mouseX, mouseY, delta);
+        super.render(graphics, mouseX, mouseY, delta);
+        categoryList.render(graphics, mouseX, mouseY, delta);
+        searchFieldWidget.render(graphics, mouseX, mouseY, delta);
+        optionList.render(graphics, mouseX, mouseY, delta);
 
-        categoryList.postRender(matrices, mouseX, mouseY, delta);
-        optionList.postRender(matrices, mouseX, mouseY, delta);
+        categoryList.postRender(graphics, mouseX, mouseY, delta);
+        optionList.postRender(graphics, mouseX, mouseY, delta);
 
         for (GuiEventListener child : children()) {
             if (child instanceof TooltipButtonWidget tooltipButtonWidget) {
-                tooltipButtonWidget.renderHoveredTooltip(matrices);
+                tooltipButtonWidget.renderHoveredTooltip(graphics);
             }
         }
     }
@@ -269,7 +268,7 @@ public class YACLScreen extends Screen {
         minecraft.setScreen(parent);
     }
 
-    public static void renderMultilineTooltip(PoseStack matrices, Font font, MultiLineLabel text, int centerX, int yAbove, int yBelow, int screenWidth, int screenHeight) {
+    public static void renderMultilineTooltip(GuiGraphics graphics, Font font, MultiLineLabel text, int centerX, int yAbove, int yBelow, int screenWidth, int screenHeight) {
         if (text.getLineCount() > 0) {
             int maxWidth = text.getWidth();
             int lineHeight = font.lineHeight + 1;
@@ -288,16 +287,13 @@ public class YACLScreen extends Screen {
             int drawX = x + 12;
             int drawY = y - 12;
 
-            matrices.pushPose();
+            graphics.pose().pushPose();
             Tesselator tesselator = Tesselator.getInstance();
             BufferBuilder bufferBuilder = tesselator.getBuilder();
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
             bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-            Matrix4f matrix4f = matrices.last().pose();
             TooltipRenderUtil.renderTooltipBackground(
-                    GuiComponent::fillGradient,
-                    matrix4f,
-                    bufferBuilder,
+                    graphics,
                     drawX,
                     drawY,
                     maxWidth,
@@ -309,11 +305,11 @@ public class YACLScreen extends Screen {
             RenderSystem.defaultBlendFunc();
             BufferUploader.drawWithShader(bufferBuilder.end());
             RenderSystem.disableBlend();
-            matrices.translate(0.0, 0.0, 400.0);
+            graphics.pose().translate(0.0, 0.0, 400.0);
 
-            text.renderLeftAligned(matrices, drawX, drawY, lineHeight, -1);
+            text.renderLeftAligned(graphics, drawX, drawY, lineHeight, -1);
 
-            matrices.popPose();
+            graphics.pose().popPose();
         }
     }
 }

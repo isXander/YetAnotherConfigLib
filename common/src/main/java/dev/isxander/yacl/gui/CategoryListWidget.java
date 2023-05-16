@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl.api.ConfigCategory;
 import dev.isxander.yacl.gui.utils.GuiUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 
@@ -26,9 +27,9 @@ public class CategoryListWidget extends ElementListWidgetExt<CategoryListWidget.
     }
 
     @Override
-    public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         GuiUtils.enableScissor(0, 0, width, height);
-        super.render(matrices, mouseX, mouseY, delta);
+        super.render(graphics, mouseX, mouseY, delta);
         RenderSystem.disableScissor();
     }
 
@@ -48,7 +49,7 @@ public class CategoryListWidget extends ElementListWidgetExt<CategoryListWidget.
     }
 
     @Override
-    protected void renderBackground(PoseStack matrices) {
+    protected void renderBackground(GuiGraphics graphics) {
 
     }
 
@@ -68,17 +69,17 @@ public class CategoryListWidget extends ElementListWidgetExt<CategoryListWidget.
         }
 
         @Override
-        public void render(PoseStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             if (mouseY > y1) {
                 mouseY = -20;
             }
 
             categoryButton.setY(y);
-            categoryButton.render(matrices, mouseX, mouseY, tickDelta);
+            categoryButton.render(graphics, mouseX, mouseY, tickDelta);
         }
 
-        public void postRender(PoseStack matrices, int mouseX, int mouseY, float tickDelta) {
-            categoryButton.renderHoveredTooltip(matrices);
+        public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float tickDelta) {
+            categoryButton.renderHoveredTooltip(graphics);
         }
 
         @Override

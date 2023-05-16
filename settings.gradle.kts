@@ -17,9 +17,17 @@ dependencyResolutionManagement {
 
 rootProject.name = "YetAnotherConfigLib"
 
+val enabledLoaders = settings.extra.properties["loaders"].toString().split(",").map { it.trim() }
+
 include("common")
-include("fabric")
-include("forge")
 include("test-common")
-include("test-fabric")
-include("test-forge")
+
+if ("fabric" in enabledLoaders) {
+    include("fabric")
+    include("test-fabric")
+}
+
+if ("forge" in enabledLoaders) {
+    include("forge")
+    include("test-forge")
+}

@@ -1,6 +1,5 @@
 package dev.isxander.yacl.gui.controllers;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl.api.Controller;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
@@ -8,7 +7,7 @@ import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.utils.GuiUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.ComponentPath;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -38,41 +37,36 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     }
 
     @Override
-    public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         hovered = isMouseOver(mouseX, mouseY);
 
         Component name = control.option().changed() ? modifiedOptionName : control.option().name();
         Component shortenedName = Component.literal(GuiUtils.shortenString(name.getString(), textRenderer, getDimension().width() - getControlWidth() - getXPadding() - 7, "...")).setStyle(name.getStyle());
 
-        drawButtonRect(matrices, getDimension().x(), getDimension().y(), getDimension().xLimit(), getDimension().yLimit(), isHovered(), isAvailable());
-        matrices.pushPose();
-        matrices.translate(getDimension().x() + getXPadding(), getTextY(), 0);
-        textRenderer.drawShadow(matrices, shortenedName, 0, 0, getValueColor());
-        matrices.popPose();
+        drawButtonRect(graphics, getDimension().x(), getDimension().y(), getDimension().xLimit(), getDimension().yLimit(), isHovered(), isAvailable());
+        graphics.drawString(textRenderer, shortenedName, getDimension().x() + getXPadding(), getTextY(), getValueColor(), true);
 
-        drawValueText(matrices, mouseX, mouseY, delta);
+
+        drawValueText(graphics, mouseX, mouseY, delta);
         if (isHovered()) {
-            drawHoveredControl(matrices, mouseX, mouseY, delta);
+            drawHoveredControl(graphics, mouseX, mouseY, delta);
         }
     }
 
     @Override
-    public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
+    public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         if (hovered || focused) {
-            YACLScreen.renderMultilineTooltip(matrices, textRenderer, wrappedTooltip, getDimension().centerX(), getDimension().y() - 5, getDimension().yLimit() + 5, screen.width, screen.height);
+            YACLScreen.renderMultilineTooltip(graphics, textRenderer, wrappedTooltip, getDimension().centerX(), getDimension().y() - 5, getDimension().yLimit() + 5, screen.width, screen.height);
         }
     }
 
-    protected void drawHoveredControl(PoseStack matrices, int mouseX, int mouseY, float delta) {
+    protected void drawHoveredControl(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
 
     }
 
-    protected void drawValueText(PoseStack matrices, int mouseX, int mouseY, float delta) {
+    protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         Component valueText = getValueText();
-        matrices.pushPose();
-        matrices.translate(getDimension().xLimit() - textRenderer.width(valueText) - getXPadding(), getTextY(), 0);
-        textRenderer.drawShadow(matrices, valueText, 0, 0, getValueColor());
-        matrices.popPose();
+        graphics.drawString(textRenderer, valueText, getDimension().xLimit() - textRenderer.width(valueText) - getXPadding(), getTextY(), getValueColor(), true);
     }
 
     private void updateTooltip() {
@@ -118,15 +112,15 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         return true;
     }
 
-    protected void drawOutline(PoseStack matrices, int x1, int y1, int x2, int y2, int width, int color) {
-        GuiComponent.fill(matrices, x1, y1, x2, y1 + width, color);
-        GuiComponent.fill(matrices, x2, y1, x2 - width, y2, color);
-        GuiComponent.fill(matrices, x1, y2, x2, y2 - width, color);
-        GuiComponent.fill(matrices, x1, y1, x1 + width, y2, color);
+    protected void drawOutline(GuiGraphics graphics, int x1, int y1, int x2, int y2, int width, int color) {
+        graphics.fill(x1, y1, x2, y1 + width, color);
+        graphics.fill(x2, y1, x2 - width, y2, color);
+        graphics.fill(x1, y2, x2, y2 - width, color);
+        graphics.fill(x1, y1, x1 + width, y2, color);
     }
 
-    protected float getTextY() {
-        return getDimension().y() + getDimension().height() / 2f - textRenderer.lineHeight / 2f;
+    protected int getTextY() {
+        return (int)(getDimension().y() + getDimension().height() / 2f - textRenderer.lineHeight / 2f);
     }
 
     @Nullable

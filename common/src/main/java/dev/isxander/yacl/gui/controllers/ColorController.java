@@ -1,7 +1,6 @@
 package dev.isxander.yacl.gui.controllers;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.api.utils.MutableDimension;
@@ -10,7 +9,7 @@ import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.string.IStringController;
 import dev.isxander.yacl.gui.controllers.string.StringControllerElement;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
@@ -114,14 +113,14 @@ public class ColorController implements IStringController<Color> {
         }
 
         @Override
-        protected void drawValueText(PoseStack matrices, int mouseX, int mouseY, float delta) {
+        protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
             if (isHovered()) {
                 colorPreviewDim.move(-inputFieldBounds.width() - 5, 0);
-                super.drawValueText(matrices, mouseX, mouseY, delta);
+                super.drawValueText(graphics, mouseX, mouseY, delta);
             }
 
-            GuiComponent.fill(matrices, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), colorController.option().pendingValue().getRGB());
-            drawOutline(matrices, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), 1, 0xFF000000);
+            graphics.fill(colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), colorController.option().pendingValue().getRGB());
+            drawOutline(graphics, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), 1, 0xFF000000);
         }
 
         @Override

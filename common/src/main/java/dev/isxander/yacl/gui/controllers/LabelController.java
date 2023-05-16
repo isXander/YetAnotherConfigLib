@@ -7,11 +7,12 @@ import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.gui.AbstractWidget;
 import dev.isxander.yacl.gui.YACLScreen;
 import net.minecraft.client.gui.ComponentPath;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.FocusNavigationEvent;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
@@ -69,27 +70,27 @@ public class LabelController implements Controller<Component> {
         }
 
         @Override
-        public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
+        public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
             updateText();
 
-            float y = getDimension().y();
+            int y = getDimension().y();
             for (FormattedCharSequence text : wrappedText) {
-                textRenderer.drawShadow(matrices, text, getDimension().x() + getXPadding(), y + getYPadding(), option().available() ? -1 : 0xFFA0A0A0);
+                graphics.drawString(textRenderer, text, getDimension().x() + getXPadding(), y + getYPadding(), option().available() ? -1 : 0xFFA0A0A0, true);
                 y += textRenderer.lineHeight;
             }
 
             if (isFocused()) {
-                GuiComponent.fill(matrices, getDimension().x() - 1, getDimension().y() - 1, getDimension().xLimit() + 1, getDimension().y(), -1);
-                GuiComponent.fill(matrices, getDimension().x() - 1, getDimension().y() - 1, getDimension().x(), getDimension().yLimit() + 1, -1);
-                GuiComponent.fill(matrices, getDimension().x() - 1, getDimension().yLimit(), getDimension().xLimit() + 1, getDimension().yLimit() + 1, -1);
-                GuiComponent.fill(matrices, getDimension().xLimit(), getDimension().y() - 1, getDimension().xLimit() + 1, getDimension().yLimit() + 1, -1);
+                graphics.fill(getDimension().x() - 1, getDimension().y() - 1, getDimension().xLimit() + 1, getDimension().y(), -1);
+                graphics.fill(getDimension().x() - 1, getDimension().y() - 1, getDimension().x(), getDimension().yLimit() + 1, -1);
+                graphics.fill(getDimension().x() - 1, getDimension().yLimit(), getDimension().xLimit() + 1, getDimension().yLimit() + 1, -1);
+                graphics.fill(getDimension().xLimit(), getDimension().y() - 1, getDimension().xLimit() + 1, getDimension().yLimit() + 1, -1);
             }
         }
 
         @Override
-        public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
+        public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
             if (isMouseOver(mouseX, mouseY)) {
-                YACLScreen.renderMultilineTooltip(matrices, textRenderer, wrappedTooltip, getDimension().centerX(), getDimension().y() - 5, getDimension().yLimit() + 5, screen.width, screen.height);
+                YACLScreen.renderMultilineTooltip(graphics, textRenderer, wrappedTooltip, getDimension().centerX(), getDimension().y() - 5, getDimension().yLimit() + 5, screen.width, screen.height);
 
                 Style style = getStyle(mouseX, mouseY);
                 if (style != null && style.getHoverEvent() != null) {
@@ -97,18 +98,18 @@ public class LabelController implements Controller<Component> {
                     HoverEvent.ItemStackInfo itemStackContent = hoverEvent.getValue(HoverEvent.Action.SHOW_ITEM);
                     if (itemStackContent != null) {
                         ItemStack stack = itemStackContent.getItemStack();
-                        screen.renderTooltip(matrices, screen.getTooltipFromItem(stack), stack.getTooltipImage(), mouseX, mouseY);
+                        graphics.renderTooltip(textRenderer, Screen.getTooltipFromItem(client, stack), stack.getTooltipImage(), mouseX, mouseY);
                     } else {
                         HoverEvent.EntityTooltipInfo entityContent = hoverEvent.getValue(HoverEvent.Action.SHOW_ENTITY);
                         if (entityContent != null) {
                             if (this.client.options.advancedItemTooltips) {
-                                screen.renderComponentTooltip(matrices, entityContent.getTooltipLines(), mouseX, mouseY);
+                                graphics.renderComponentTooltip(textRenderer, entityContent.getTooltipLines(), mouseX, mouseY);
                             }
                         } else {
                             Component text = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
                             if (text != null) {
                                 MultiLineLabel multilineText = MultiLineLabel.create(textRenderer, text, getDimension().width());
-                                YACLScreen.renderMultilineTooltip(matrices, textRenderer, multilineText, getDimension().centerX(), getDimension().y(), getDimension().yLimit(), screen.width, screen.height);
+                                YACLScreen.renderMultilineTooltip(graphics, textRenderer, multilineText, getDimension().centerX(), getDimension().y(), getDimension().yLimit(), screen.width, screen.height);
                             }
                         }
                     }
