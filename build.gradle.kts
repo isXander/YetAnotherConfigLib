@@ -91,10 +91,10 @@ githubRelease {
     targetCommitish(grgit.branch.current().name)
     body(changelogText)
     releaseAssets(
-        { project(":fabric").tasks["remapJar"].outputs.files },
-        { project(":fabric").tasks["remapSourcesJar"].outputs.files },
-        { project(":forge").tasks["remapJar"].outputs.files },
-        { project(":forge").tasks["remapSourcesJar"].outputs.files },
+        { findProject(":fabric")?.tasks?.get("remapJar")?.outputs?.files },
+        { findProject(":fabric")?.tasks?.get("remapSourcesJar")?.outputs?.files },
+        { findProject(":forge")?.tasks?.get("remapJar")?.outputs?.files },
+        { findProject(":forge")?.tasks?.get("remapSourcesJar")?.outputs?.files },
     )
 }
 
