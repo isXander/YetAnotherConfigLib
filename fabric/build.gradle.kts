@@ -113,6 +113,7 @@ components["java"].withGroovyBuilder {
 }
 
 val changelogText: String by ext
+val isBeta: Boolean by ext
 
 val modrinthId: String by project
 if (modrinthId.isNotEmpty()) {
@@ -121,7 +122,7 @@ if (modrinthId.isNotEmpty()) {
         projectId.set(modrinthId)
         versionName.set("${project.version} (Fabric)")
         versionNumber.set("${project.version}-fabric")
-        versionType.set("release")
+        versionType.set(if (isBeta) "beta" else "release")
         uploadFile.set(tasks["remapJar"])
         gameVersions.set(listOf("1.20-pre2"))
         loaders.set(listOf("fabric", "quilt"))
@@ -141,7 +142,7 @@ if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
             })
 
             id = curseforgeId
-            releaseType = "release"
+            releaseType = if (isBeta) "beta" else "release"
             addGameVersion("1.20-Snapshot")
             addGameVersion("Fabric")
             addGameVersion("Java 17")
@@ -152,6 +153,7 @@ if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
 
         options(closureOf<me.hypherionmc.cursegradle.Options> {
             forgeGradleIntegration = false
+            fabricIntegration = false
         })
     }
 }

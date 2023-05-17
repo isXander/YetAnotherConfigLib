@@ -120,6 +120,7 @@ components["java"].withGroovyBuilder {
 }
 
 val changelogText: String by ext
+val isBeta: Boolean by ext
 
 val modrinthId: String by project
 if (modrinthId.isNotEmpty()) {
@@ -128,7 +129,7 @@ if (modrinthId.isNotEmpty()) {
         projectId.set(modrinthId)
         versionName.set("${project.version} (Forge)")
         versionNumber.set("${project.version}-forge")
-        versionType.set("release")
+        versionType.set(if (isBeta) "beta" else "release")
         uploadFile.set(tasks["remapJar"])
         gameVersions.set(listOf("1.19.4"))
         loaders.set(listOf("forge"))
@@ -148,7 +149,7 @@ if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
             })
 
             id = curseforgeId
-            releaseType = "release"
+            releaseType = if (isBeta) "beta" else "release"
             addGameVersion("1.19.4")
             addGameVersion("Forge")
             addGameVersion("Java 17")

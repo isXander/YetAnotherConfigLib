@@ -12,8 +12,9 @@ architectury {
     minecraft = libs.versions.minecraft.get()
 }
 
-version = "2.5.1+1.20"
+version = "2.5.1-beta.1+1.20"
 
+val isBeta = "beta" in version.toString()
 val changelogText = rootProject.file("changelogs/${project.version}.md").takeIf { it.exists() }?.readText() ?: "No changelog provided."
 val snapshotVer = "${grgit.branch.current().name.replace('/', '.')}-SNAPSHOT"
 
@@ -36,6 +37,7 @@ allprojects {
     }
 
     ext["changelogText"] = changelogText
+    ext["isBeta"] = isBeta
 
     repositories {
         mavenCentral()
