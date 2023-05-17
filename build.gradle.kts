@@ -12,7 +12,7 @@ architectury {
     minecraft = libs.versions.minecraft.get()
 }
 
-version = "2.5.1+1.19.4"
+version = "2.5.1+1.20"
 
 val changelogText = rootProject.file("changelogs/${project.version}.md").takeIf { it.exists() }?.readText() ?: "No changelog provided."
 val snapshotVer = "${grgit.branch.current().name.replace('/', '.')}-SNAPSHOT"
