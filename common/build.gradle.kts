@@ -23,6 +23,11 @@ dependencies {
         officialMojangMappings()
     })
     modImplementation(libs.fabric.loader)
+
+    implementation(libs.twelvemonkeys.imageio.core)
+    implementation(libs.twelvemonkeys.imageio.webp)
+    include(libs.twelvemonkeys.imageio.core)
+    include(libs.twelvemonkeys.imageio.webp)
 }
 
 java {

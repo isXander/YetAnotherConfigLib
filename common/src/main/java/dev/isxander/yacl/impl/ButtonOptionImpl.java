@@ -19,7 +19,7 @@ import java.util.function.Function;
 @ApiStatus.Internal
 public final class ButtonOptionImpl implements ButtonOption {
     private final Component name;
-    private final Component tooltip;
+    private final OptionDescription description;
     private final BiConsumer<YACLScreen, ButtonOption> action;
     private boolean available;
     private final Controller<BiConsumer<YACLScreen, ButtonOption>> controller;
@@ -27,13 +27,13 @@ public final class ButtonOptionImpl implements ButtonOption {
 
     public ButtonOptionImpl(
             @NotNull Component name,
-            @Nullable Component tooltip,
+            @Nullable OptionDescription description,
             @NotNull BiConsumer<YACLScreen, ButtonOption> action,
             boolean available,
             @NotNull Function<ButtonOption, Controller<BiConsumer<YACLScreen, ButtonOption>>> controlGetter
     ) {
         this.name = name;
-        this.tooltip = tooltip;
+        this.description = description;
         this.action = action;
         this.available = available;
         this.controller = controlGetter.apply(this);
@@ -46,8 +46,13 @@ public final class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
+    public @NotNull OptionDescription description() {
+        return description;
+    }
+
+    @Override
     public @NotNull Component tooltip() {
-        return tooltip;
+        return description().description();
     }
 
     @Override
@@ -162,7 +167,7 @@ public final class ButtonOptionImpl implements ButtonOption {
         public Builder tooltip(@NotNull Component... tooltips) {
             Validate.notNull(tooltips, "`tooltips` cannot be empty");
 
-            tooltipLines.addAll(List.of(tooltips));
+            //tooltipLines.addAll(List.of(tooltips));
             return this;
         }
 
@@ -212,7 +217,7 @@ public final class ButtonOptionImpl implements ButtonOption {
                 concatenatedTooltip.append(line);
             }
 
-            return new ButtonOptionImpl(name, concatenatedTooltip, action, available, controlGetter);
+            return new ButtonOptionImpl(name, OptionDescription.createBuilder().name(name).description(concatenatedTooltip).build(), action, available, controlGetter);
         }
     }
 }

@@ -1,15 +1,20 @@
 package dev.isxander.yacl.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.layouts.LayoutElement;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
-public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> extends ContainerObjectSelectionList<E> {
-    protected final int x, y;
+import java.util.function.Consumer;
+
+public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> extends ContainerObjectSelectionList<E> implements LayoutElement {
+    protected int x, y;
 
     private double smoothScrollAmount = getScrollAmount();
     private boolean returnSmoothAmount = false;
@@ -33,9 +38,8 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     @Override
     protected void renderBackground(PoseStack matrices) {
         // render transparent background if in-game.
-        setRenderBackground(minecraft.level == null);
-        if (minecraft.level != null)
-            fill(matrices, x0, y0, x1, y1, 0x6B000000);
+        setRenderBackground(true);
+        setRenderTopAndBottom(false);
     }
 
     @Override
@@ -48,8 +52,21 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
         smoothScrollAmount = Mth.lerp(Minecraft.getInstance().getDeltaFrameTime() * 0.5, smoothScrollAmount, getScrollAmount());
         returnSmoothAmount = true;
+
+        RenderSystem.enableScissor(x0, y0, x1, y1);
+
         super.render(matrices, mouseX, mouseY, delta);
+
+        RenderSystem.disableScissor();
+
         returnSmoothAmount = false;
+    }
+
+    public void updateDimensions(ScreenRectangle rectangle) {
+        this.x0 = rectangle.left();
+        this.y0 = rectangle.top();
+        this.x1 = rectangle.right();
+        this.y1 = rectangle.bottom();
     }
 
     /**
@@ -140,6 +157,43 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     }
 
     /* END cloth config code */
+
+    @Override
+    public void setX(int i) {
+        this.x = x0 = i;
+        this.x1 = x0 + width;
+    }
+
+    @Override
+    public void setY(int i) {
+        this.y = y0 = i;
+        this.y1 = y0 + height;
+    }
+
+    @Override
+    public int getX() {
+        return x;
+    }
+
+    @Override
+    public int getY() {
+        return y;
+    }
+
+    @Override
+    public int getWidth() {
+        return width;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
+    }
+
+    @Override
+    public void visitWidgets(Consumer<net.minecraft.client.gui.components.AbstractWidget> widget) {
+
+    }
 
     public abstract static class Entry<E extends Entry<E>> extends ContainerObjectSelectionList.Entry<E> {
         @Override

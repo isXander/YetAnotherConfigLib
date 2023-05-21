@@ -1,0 +1,124 @@
+package dev.isxander.yacl.impl;
+
+import dev.isxander.yacl.api.OptionDescription;
+import dev.isxander.yacl.gui.ImageRenderer;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import org.apache.commons.lang3.Validate;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+public record OptionDescriptionImpl(Component descriptiveName, Component description, CompletableFuture<Optional<ImageRenderer>> image) implements OptionDescription {
+    public static class BuilderImpl implements Builder {
+        private Component name;
+        private Component description;
+        private CompletableFuture<Optional<ImageRenderer>> image = CompletableFuture.completedFuture(Optional.empty());
+        private boolean imageUnset = true;
+
+        @Override
+        public Builder name(Component name) {
+            this.name = name;
+            return this;
+        }
+
+        @Override
+        public Builder description(Component description) {
+            this.description = description;
+            return this;
+        }
+
+        @Override
+        public Builder image(ResourceLocation image, int width, int height) {
+            Validate.isTrue(imageUnset, "Image already set!");
+            Validate.isTrue(width > 0, "Width must be greater than 0!");
+            Validate.isTrue(height > 0, "Height must be greater than 0!");
+
+            this.image = CompletableFuture.completedFuture(Optional.of(new ImageRenderer.TextureBacked(image, width, height)));
+            imageUnset = false;
+            return this;
+        }
+
+        @Override
+        public Builder image(Path path, ResourceLocation uniqueLocation) {
+            Validate.isTrue(imageUnset, "Image already set!");
+            this.image = CompletableFuture.supplyAsync(() -> ImageRenderer.NativeImageBacked.createFromPath(path, uniqueLocation));
+            imageUnset = false;
+            return this;
+        }
+
+        @Override
+        public Builder gifImage(ResourceLocation image) {
+            Validate.isTrue(imageUnset, "Image already set!");
+            this.image = CompletableFuture.supplyAsync(() -> {
+                try {
+                    return Optional.of(ImageRenderer.AnimatedNativeImageBacked.createGIFFromTexture(image));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return Optional.empty();
+                }
+            });
+            imageUnset = false;
+            return this;
+        }
+
+        @Override
+        public Builder gifImage(Path path, ResourceLocation uniqueLocation) {
+            Validate.isTrue(imageUnset, "Image already set!");
+            this.image = CompletableFuture.supplyAsync(() -> {
+                try {
+                    return Optional.of(ImageRenderer.AnimatedNativeImageBacked.createGIF(new FileInputStream(path.toFile()), uniqueLocation));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return Optional.empty();
+                }
+            });
+            imageUnset = false;
+            return this;
+        }
+
+        @Override
+        public Builder webpImage(ResourceLocation image, int frameDelayMS) {
+            Validate.isTrue(imageUnset, "Image already set!");
+            this.image = CompletableFuture.supplyAsync(() -> {
+                try {
+                    return Optional.of(ImageRenderer.AnimatedNativeImageBacked.createWEBPFromTexture(image, frameDelayMS));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return Optional.empty();
+                }
+            });
+            imageUnset = false;
+            return this;
+        }
+
+        @Override
+        public Builder webpImage(Path path, ResourceLocation uniqueLocation, int frameDelayMS) {
+            Validate.isTrue(imageUnset, "Image already set!");
+            this.image = CompletableFuture.supplyAsync(() -> {
+                try {
+                    return Optional.of(ImageRenderer.AnimatedNativeImageBacked.createWEBP(new FileInputStream(path.toFile()), uniqueLocation, frameDelayMS));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return Optional.empty();
+                }
+            });
+            imageUnset = false;
+            return this;
+        }
+
+        @Override
+        public OptionDescription build() {
+            Validate.notNull(name, "Name must be set!");
+
+            if (description == null)
+                description = Component.empty();
+
+            return new OptionDescriptionImpl(name.copy().withStyle(ChatFormatting.BOLD), description, image);
+        }
+    }
+}

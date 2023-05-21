@@ -34,6 +34,11 @@ public final class ListOptionEntryImpl<T> implements ListOptionEntry<T> {
     }
 
     @Override
+    public @NotNull OptionDescription description() {
+        return group.description();
+    }
+
+    @Override
     public @NotNull Component tooltip() {
         return Component.empty();
     }

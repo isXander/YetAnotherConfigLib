@@ -5,20 +5,24 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 
+import java.util.function.Consumer;
+
 public class SearchFieldWidget extends EditBox {
     private Component emptyText;
     private final YACLScreen yaclScreen;
     private final Font font;
+    private final Consumer<String> updateConsumer;
 
     private boolean isEmpty = true;
 
-    public SearchFieldWidget(YACLScreen yaclScreen, Font font, int x, int y, int width, int height, Component text, Component emptyText) {
+    public SearchFieldWidget(YACLScreen yaclScreen, Font font, int x, int y, int width, int height, Component text, Component emptyText, Consumer<String> updateConsumer) {
         super(font, x, y, width, height, text);
-        setResponder(string -> update());
+        setResponder(this::update);
         setFilter(string -> !string.endsWith("  ") && !string.startsWith(" "));
         this.yaclScreen = yaclScreen;
         this.font = font;
         this.emptyText = emptyText;
+        this.updateConsumer = updateConsumer;
     }
 
     @Override
@@ -29,23 +33,14 @@ public class SearchFieldWidget extends EditBox {
         }
     }
 
-    private void update() {
+    private void update(String query) {
         boolean wasEmpty = isEmpty;
-        isEmpty = getValue().isEmpty();
+        isEmpty = query.isEmpty();
 
         if (isEmpty && wasEmpty)
             return;
 
-        if (!isEmpty && yaclScreen.getCurrentCategoryIdx() != -1)
-            yaclScreen.changeCategory(-1);
-        if (isEmpty && yaclScreen.getCurrentCategoryIdx() == -1)
-            yaclScreen.changeCategory(0);
-
-        yaclScreen.optionList.expandAllGroups();
-        yaclScreen.optionList.recacheViewableChildren();
-
-        yaclScreen.optionList.setScrollAmount(0);
-        yaclScreen.categoryList.setScrollAmount(0);
+        updateConsumer.accept(query);
     }
 
     public String getQuery() {

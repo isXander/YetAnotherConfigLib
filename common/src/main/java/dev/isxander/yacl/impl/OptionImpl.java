@@ -1,11 +1,9 @@
 package dev.isxander.yacl.impl;
 
 import com.google.common.collect.ImmutableSet;
-import dev.isxander.yacl.api.Binding;
-import dev.isxander.yacl.api.Controller;
-import dev.isxander.yacl.api.Option;
-import dev.isxander.yacl.api.OptionFlag;
+import dev.isxander.yacl.api.*;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
@@ -23,7 +21,7 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 public final class OptionImpl<T> implements Option<T> {
     private final Component name;
-    private Component tooltip;
+    private OptionDescription description;
     private final Controller<T> controller;
     private final Binding<T> binding;
     private boolean available;
@@ -38,7 +36,7 @@ public final class OptionImpl<T> implements Option<T> {
 
     public OptionImpl(
             @NotNull Component name,
-            @Nullable Function<T, Component> tooltipGetter,
+            @NotNull Function<T, OptionDescription> descriptionFunction,
             @NotNull Function<Option<T>, Controller<T>> controlGetter,
             @NotNull Binding<T> binding,
             boolean available,
@@ -54,7 +52,9 @@ public final class OptionImpl<T> implements Option<T> {
         this.listeners = new ArrayList<>(listeners);
         this.controller = controlGetter.apply(this);
 
-        addListener((opt, pending) -> tooltip = tooltipGetter.apply(pending));
+        var memoizedDescriptionFunction = Util.memoize(descriptionFunction);
+        addListener((opt, pending) -> description = memoizedDescriptionFunction.apply(pending));
+
         requestSet(binding().getValue());
     }
 
@@ -64,8 +64,13 @@ public final class OptionImpl<T> implements Option<T> {
     }
 
     @Override
+    public @NotNull OptionDescription description() {
+        return this.description;
+    }
+
+    @Override
     public @NotNull Component tooltip() {
-        return tooltip;
+        return description.description();
     }
 
     @Override
@@ -147,6 +152,7 @@ public final class OptionImpl<T> implements Option<T> {
     public static class BuilderImpl<T> implements Builder<T> {
         private Component name = Component.literal("Name not specified!").withStyle(ChatFormatting.RED);
 
+        private Function<T, OptionDescription> descriptionFunction = null;
         private final List<Function<T, Component>> tooltipGetters = new ArrayList<>();
 
         private Function<Option<T>, Controller<T>> controlGetter;
@@ -172,6 +178,17 @@ public final class OptionImpl<T> implements Option<T> {
             Validate.notNull(name, "`name` cannot be null");
 
             this.name = name;
+            return this;
+        }
+
+        @Override
+        public Builder<T> description(@NotNull OptionDescription description) {
+            return description(opt -> description);
+        }
+
+        @Override
+        public Builder<T> description(@NotNull Function<T, OptionDescription> descriptionFunction) {
+            this.descriptionFunction = descriptionFunction;
             return this;
         }
 
@@ -292,12 +309,11 @@ public final class OptionImpl<T> implements Option<T> {
 
                 return concatenatedTooltip;
             };
-
-            if (instant) {
-                listeners.add((opt, pendingValue) -> opt.applyValue());
+            if (descriptionFunction == null) {
+                descriptionFunction = opt -> OptionDescription.createBuilder().name(name).description(concatenatedTooltipGetter.apply(opt)).build();
             }
 
-            return new OptionImpl<>(name, concatenatedTooltipGetter, controlGetter, binding, available, ImmutableSet.copyOf(flags), typeClass, listeners);
+            return new OptionImpl<>(name, descriptionFunction, controlGetter, binding, available, ImmutableSet.copyOf(flags), typeClass, listeners);
         }
     }
 }

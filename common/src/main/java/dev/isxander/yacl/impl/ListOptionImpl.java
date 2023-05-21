@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @ApiStatus.Internal
 public final class ListOptionImpl<T> implements ListOption<T> {
     private final Component name;
-    private final Component tooltip;
+    private final OptionDescription description;
     private final Binding<List<T>> binding;
     private final T initialValue;
     private final List<ListOptionEntry<T>> entries;
@@ -31,9 +31,9 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     private final List<BiConsumer<Option<List<T>>, List<T>>> listeners;
     private final List<Runnable> refreshListeners;
 
-    public ListOptionImpl(@NotNull Component name, @NotNull Component tooltip, @NotNull Binding<List<T>> binding, @NotNull T initialValue, @NotNull Class<T> typeClass, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available, Collection<BiConsumer<Option<List<T>>, List<T>>> listeners) {
+    public ListOptionImpl(@NotNull Component name, @NotNull OptionDescription description, @NotNull Binding<List<T>> binding, @NotNull T initialValue, @NotNull Class<T> typeClass, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available, Collection<BiConsumer<Option<List<T>>, List<T>>> listeners) {
         this.name = name;
-        this.tooltip = tooltip;
+        this.description = description;
         this.binding = binding;
         this.initialValue = initialValue;
         this.entryFactory = new EntryFactory(controllerFunction);
@@ -54,8 +54,13 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     }
 
     @Override
+    public @NotNull OptionDescription description() {
+        return this.description;
+    }
+
+    @Override
     public @NotNull Component tooltip() {
-        return this.tooltip;
+        return description().description();
     }
 
     @Override
@@ -332,7 +337,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
                 concatenatedTooltip.append(line);
             }
 
-            return new ListOptionImpl<>(name, concatenatedTooltip, binding, initialValue, typeClass, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available, listeners);
+            return new ListOptionImpl<>(name, OptionDescription.createBuilder().name(name).description(concatenatedTooltip).build(), binding, initialValue, typeClass, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available, listeners);
         }
     }
 }

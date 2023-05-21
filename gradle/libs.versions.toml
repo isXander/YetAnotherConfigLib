@@ -15,7 +15,8 @@ quilt_mappings = "10"
 fabric_loader = "0.14.19"
 
 # Common Dependencies
-mixin_extras = "0.2.0-beta.6"
+mixin_extras = "0.2.0-beta.8"
+twelvemonkeys_imageio = "3.9.4"
 
 # Fabric-like Dependencies
 fabric_api = "0.79.0+1.19.4"
@@ -30,6 +31,8 @@ fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_l
 
 # Common Dependencies
 mixin_extras_common = { module = "com.github.llamalad7.mixinextras:mixinextras-common", version.ref = "mixin_extras" }
+twelvemonkeys_imageio_core = { module = "com.twelvemonkeys.imageio:imageio-core", version.ref = "twelvemonkeys_imageio" }
+twelvemonkeys_imageio_webp = { module = "com.twelvemonkeys.imageio:imageio-webp", version.ref = "twelvemonkeys_imageio" }
 
 # Fabric-like Dependencies
 fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
