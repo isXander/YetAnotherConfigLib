@@ -57,10 +57,6 @@ public class YACLScreen extends Screen {
 
     @Override
     protected void init() {
-        if (tabs != null) {
-            closeTabs();
-        }
-
         tabNavigationBar = TabNavigationBar.builder(tabManager, this.width)
                 .addTabs(tabs = config.categories()
                         .stream()
@@ -182,19 +178,6 @@ public class YACLScreen extends Screen {
     @Override
     public void onClose() {
         minecraft.setScreen(parent);
-        closeTabs();
-    }
-
-    private void closeTabs() {
-        for (Tab tab : tabs) {
-            if (tab instanceof Closeable closeable) {
-                try {
-                    closeable.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
     }
 
     public static void renderMultilineTooltip(PoseStack matrices, Font font, MultiLineLabel text, int centerX, int yAbove, int yBelow, int screenWidth, int screenHeight) {
@@ -245,7 +228,7 @@ public class YACLScreen extends Screen {
         }
     }
 
-    private class CategoryTab implements Tab, Closeable {
+    private class CategoryTab implements Tab {
         private final ConfigCategory category;
 
         private final TabListWidget<OptionListWidget> optionList;
@@ -347,11 +330,6 @@ public class YACLScreen extends Screen {
             saveFinishedButton.setTooltip(Tooltip.create(pendingChanges ? Component.translatable("yacl.gui.save.tooltip") : Component.translatable("yacl.gui.finished.tooltip")));
             cancelResetButton.setMessage(pendingChanges ? GuiUtils.translatableFallback("yacl.gui.cancel", CommonComponents.GUI_CANCEL) : Component.translatable("controls.reset"));
             cancelResetButton.setTooltip(Tooltip.create(pendingChanges ? Component.translatable("yacl.gui.cancel.tooltip") : Component.translatable("yacl.gui.reset.tooltip")));
-        }
-
-        @Override
-        public void close() {
-            descriptionWidget.close();
         }
     }
 

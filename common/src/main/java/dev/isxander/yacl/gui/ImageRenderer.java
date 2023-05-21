@@ -3,7 +3,6 @@ package dev.isxander.yacl.gui;
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -12,8 +11,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.FastColor;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -21,16 +18,36 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.IntStream;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
-public interface ImageRenderer extends AutoCloseable {
+public interface ImageRenderer {
     int render(GuiGraphics graphics, int x, int y, int width);
+
+    void close();
+
+    Map<ResourceLocation, CompletableFuture<Optional<ImageRenderer>>> CACHE = new ConcurrentHashMap<>();
+
+    static CompletableFuture<Optional<ImageRenderer>> getOrMakeAsync(ResourceLocation id, Supplier<Optional<ImageRenderer>> factory) {
+        return CACHE.computeIfAbsent(id, key -> CompletableFuture.supplyAsync(factory));
+    }
+
+    static CompletableFuture<Optional<ImageRenderer>> getOrMakeSync(ResourceLocation id, Supplier<Optional<ImageRenderer>> factory) {
+        return CACHE.computeIfAbsent(id, key -> CompletableFuture.completedFuture(factory.get()));
+    }
+
+    static void closeAll() {
+        CACHE.values().forEach(future -> future.thenAccept(opt -> opt.ifPresent(ImageRenderer::close)));
+        CACHE.clear();
+    }
 
     class TextureBacked implements ImageRenderer {
         private final ResourceLocation location;

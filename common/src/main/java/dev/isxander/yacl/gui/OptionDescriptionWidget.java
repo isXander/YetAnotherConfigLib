@@ -5,7 +5,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.network.chat.Component;
@@ -17,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class OptionDescriptionWidget extends AbstractWidget implements AutoCloseable {
+public class OptionDescriptionWidget extends AbstractWidget {
     private @Nullable OptionDescription description;
     private List<FormattedCharSequence> wrappedText;
 
@@ -134,23 +133,7 @@ public class OptionDescriptionWidget extends AbstractWidget implements AutoClose
     }
 
     public void setOptionDescription(OptionDescription description) {
-        //this.close();
         this.description = description;
         this.wrappedText = null;
-    }
-
-    @Override
-    public void close() {
-        if (description != null) {
-            description.image().thenAccept(image -> {
-                if (image.isPresent()) {
-                    try {
-                        image.get().close();
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
-        }
     }
 }

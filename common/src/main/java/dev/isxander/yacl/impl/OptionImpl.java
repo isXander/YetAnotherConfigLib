@@ -52,8 +52,7 @@ public final class OptionImpl<T> implements Option<T> {
         this.listeners = new ArrayList<>(listeners);
         this.controller = controlGetter.apply(this);
 
-        var memoizedDescriptionFunction = Util.memoize(descriptionFunction);
-        addListener((opt, pending) -> description = memoizedDescriptionFunction.apply(pending));
+        addListener((opt, pending) -> description = descriptionFunction.apply(pending));
 
         requestSet(binding().getValue());
     }
