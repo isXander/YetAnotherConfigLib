@@ -149,11 +149,11 @@ public interface ImageRenderer extends AutoCloseable {
             return createGIF(resource.open(), textureLocation);
         }
 
-        public static AnimatedNativeImageBacked createWEBPFromTexture(ResourceLocation textureLocation, int frameDelayMS) throws IOException {
+        public static AnimatedNativeImageBacked createWEBPFromTexture(ResourceLocation textureLocation) throws IOException {
             ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
             Resource resource = resourceManager.getResource(textureLocation).orElseThrow();
 
-            return createWEBP(resource.open(), textureLocation, frameDelayMS);
+            return createWEBP(resource.open(), textureLocation);
         }
 
         public static AnimatedNativeImageBacked createGIF(InputStream is, ResourceLocation uniqueLocation) {
@@ -173,10 +173,30 @@ public interface ImageRenderer extends AutoCloseable {
             }
         }
 
-        public static AnimatedNativeImageBacked createWEBP(InputStream is, ResourceLocation uniqueLocation, int frameDelayMS) {
+        public static AnimatedNativeImageBacked createWEBP(InputStream is, ResourceLocation uniqueLocation) {
             try (is) {
-                ImageReader reader = ImageIO.getImageReadersBySuffix("webp").next();
+                ImageReader reader = new WebPImageReaderSpi().createReaderInstance();
                 reader.setInput(ImageIO.createImageInputStream(is));
+
+                // WebP reader does not expose frame delay, prepare for reflection hell
+                int frameDelayMS;
+                reader.getNumImages(true); // Force reading of all frames
+                try {
+                    Class<?> webpReaderClass = Class.forName("com.twelvemonkeys.imageio.plugins.webp.WebPImageReader");
+                    Field framesField = webpReaderClass.getDeclaredField("frames");
+                    framesField.setAccessible(true);
+                    List<?> frames = (List<?>) framesField.get(reader);
+                    Object firstFrame = frames.get(0);
+
+                    Class<?> animationFrameClass = Class.forName("com.twelvemonkeys.imageio.plugins.webp.AnimationFrame");
+                    Field durationField = animationFrameClass.getDeclaredField("duration");
+                    durationField.setAccessible(true);
+                    frameDelayMS = (int) durationField.get(firstFrame);
+                } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+                // that was fun
+
                 return createFromImageReader(reader, frameDelayMS, uniqueLocation);
             } catch (IOException e) {
                 throw new RuntimeException(e);

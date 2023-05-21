@@ -38,7 +38,7 @@ public record OptionDescriptionImpl(Component descriptiveName, Component descrip
             Validate.isTrue(width > 0, "Width must be greater than 0!");
             Validate.isTrue(height > 0, "Height must be greater than 0!");
 
-            this.image = CompletableFuture.completedFuture(Optional.of(new ImageRenderer.TextureBacked(image, width, height)));
+            this.image = ImageRenderer.getOrMakeSync(image, () -> Optional.of(new ImageRenderer.TextureBacked(image, width, height)));
             imageUnset = false;
             return this;
         }
@@ -46,7 +46,7 @@ public record OptionDescriptionImpl(Component descriptiveName, Component descrip
         @Override
         public Builder image(Path path, ResourceLocation uniqueLocation) {
             Validate.isTrue(imageUnset, "Image already set!");
-            this.image = CompletableFuture.supplyAsync(() -> ImageRenderer.NativeImageBacked.createFromPath(path, uniqueLocation));
+            this.image = ImageRenderer.getOrMakeAsync(uniqueLocation, () -> ImageRenderer.NativeImageBacked.createFromPath(path, uniqueLocation));
             imageUnset = false;
             return this;
         }
@@ -54,7 +54,7 @@ public record OptionDescriptionImpl(Component descriptiveName, Component descrip
         @Override
         public Builder gifImage(ResourceLocation image) {
             Validate.isTrue(imageUnset, "Image already set!");
-            this.image = CompletableFuture.supplyAsync(() -> {
+            this.image = ImageRenderer.getOrMakeAsync(image, () -> {
                 try {
                     return Optional.of(ImageRenderer.AnimatedNativeImageBacked.createGIFFromTexture(image));
                 } catch (IOException e) {
@@ -69,7 +69,7 @@ public record OptionDescriptionImpl(Component descriptiveName, Component descrip
         @Override
         public Builder gifImage(Path path, ResourceLocation uniqueLocation) {
             Validate.isTrue(imageUnset, "Image already set!");
-            this.image = CompletableFuture.supplyAsync(() -> {
+            this.image = ImageRenderer.getOrMakeAsync(uniqueLocation, () -> {
                 try {
                     return Optional.of(ImageRenderer.AnimatedNativeImageBacked.createGIF(new FileInputStream(path.toFile()), uniqueLocation));
                 } catch (IOException e) {
@@ -82,11 +82,11 @@ public record OptionDescriptionImpl(Component descriptiveName, Component descrip
         }
 
         @Override
-        public Builder webpImage(ResourceLocation image, int frameDelayMS) {
+        public Builder webpImage(ResourceLocation image) {
             Validate.isTrue(imageUnset, "Image already set!");
-            this.image = CompletableFuture.supplyAsync(() -> {
+            this.image = ImageRenderer.getOrMakeAsync(image, () -> {
                 try {
-                    return Optional.of(ImageRenderer.AnimatedNativeImageBacked.createWEBPFromTexture(image, frameDelayMS));
+                    return Optional.of(ImageRenderer.AnimatedNativeImageBacked.createWEBPFromTexture(image));
                 } catch (IOException e) {
                     e.printStackTrace();
                     return Optional.empty();
@@ -97,11 +97,11 @@ public record OptionDescriptionImpl(Component descriptiveName, Component descrip
         }
 
         @Override
-        public Builder webpImage(Path path, ResourceLocation uniqueLocation, int frameDelayMS) {
+        public Builder webpImage(Path path, ResourceLocation uniqueLocation) {
             Validate.isTrue(imageUnset, "Image already set!");
-            this.image = CompletableFuture.supplyAsync(() -> {
+            this.image = ImageRenderer.getOrMakeAsync(uniqueLocation, () -> {
                 try {
-                    return Optional.of(ImageRenderer.AnimatedNativeImageBacked.createWEBP(new FileInputStream(path.toFile()), uniqueLocation, frameDelayMS));
+                    return Optional.of(ImageRenderer.AnimatedNativeImageBacked.createWEBP(new FileInputStream(path.toFile()), uniqueLocation));
                 } catch (IOException e) {
                     e.printStackTrace();
                     return Optional.empty();
