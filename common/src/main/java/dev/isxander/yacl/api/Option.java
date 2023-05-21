@@ -17,10 +17,13 @@ public interface Option<T> {
      */
     @NotNull Component name();
 
+    @NotNull OptionDescription description();
+
     /**
      * Tooltip (or description) of the option.
      * Rendered on hover.
      */
+    @Deprecated
     @NotNull Component tooltip();
 
     /**
@@ -126,12 +129,17 @@ public interface Option<T> {
          */
         Builder<T> name(@NotNull Component name);
 
+        Builder<T> description(@NotNull OptionDescription description);
+
+        Builder<T> description(@NotNull Function<T, OptionDescription> descriptionFunction);
+
         /**
          * Sets the tooltip to be used by the option.
          * No need to wrap the text yourself, the gui does this itself.
          *
          * @param tooltipGetter function to get tooltip depending on value {@link Builder#build()}.
          */
+        @Deprecated
         Builder<T> tooltip(@NotNull Function<T, Component> tooltipGetter);
 
         /**
@@ -150,6 +158,7 @@ public interface Option<T> {
          *
          * @param tooltips text lines - merged with a new-line on {@link Builder#build()}.
          */
+        @Deprecated
         Builder<T> tooltip(@NotNull Component... tooltips);
 
         /**

@@ -20,8 +20,10 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.resources.ResourceLocation;
 
 import java.awt.Color;
+import java.nio.file.Path;
 import java.util.List;
 
 public class GuiTest {
@@ -59,7 +61,17 @@ public class GuiTest {
                                         .tooltip(Component.literal("Test!"))
                                         .option(Option.createBuilder(boolean.class)
                                                 .name(Component.literal("Boolean Toggle"))
-                                                .tooltip(value -> Component.literal("A simple toggle button that contains the value '" + value + "'"))
+                                                .description(OptionDescription.createBuilder()
+                                                        .name(Component.literal("Boolean Toggle"))
+                                                        .description(Component.empty()
+                                                                .append(Component.literal("a").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("a")))))
+                                                                .append(Component.literal("b").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("b")))))
+                                                                .append(Component.literal("c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("c")))))
+                                                                .append(Component.literal("e").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("e")))))
+                                                                .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://isxander.dev")))
+                                                        )
+                                                        .webpImage(Path.of("D:\\Xander\\Downloads\\e.webp"), new ResourceLocation("yacl", "e.webp"), 33)
+                                                        .build())
                                                 .binding(
                                                         defaults.booleanToggle,
                                                         () -> config.booleanToggle,
@@ -70,6 +82,11 @@ public class GuiTest {
                                                 .build())
                                         .option(Option.createBuilder(boolean.class)
                                                 .name(Component.literal("Custom Boolean Toggle"))
+                                                .description(OptionDescription.createBuilder()
+                                                        .name(Component.literal("Custom Boolean Toggle"))
+                                                        .description(Component.literal("You can customize controllers like so! YACL is truly infinitely customizable!"))
+                                                        .image(Path.of("D:\\Xander\\Downloads\\_MG_0860-Enhanced-NR.png"), new ResourceLocation("yacl", "f.webp"))
+                                                        .build())
                                                 .tooltip(Component.literal("You can customize these controllers like this!"))
                                                 .tooltip(Component.empty())
                                                 .tooltip(opt -> Component.empty())
@@ -314,120 +331,6 @@ public class GuiTest {
                                                 .controller(TickBoxController::new)
                                                 .build())
                                         .build())
-                                .build())
-                        .category(ConfigCategory.createBuilder()
-                                .name(Component.literal("Scroll Test"))
-                                .option(Option.createBuilder(int.class)
-                                        .name(Component.literal("Int Slider that is cut off because the slider"))
-                                        .binding(
-                                                defaults.scrollingSlider,
-                                                () -> config.scrollingSlider,
-                                                (value) -> config.scrollingSlider = value
-                                        )
-                                        .controller(opt -> new IntegerSliderController(opt, 0, 10, 1))
-                                        .build())
-                                .option(ButtonOption.createBuilder()
-                                        .name(Component.literal("Option"))
-                                        .action((screen, opt) -> {
-                                        })
-                                        .controller(ActionController::new)
-                                        .build())
-                                .option(ButtonOption.createBuilder()
-                                        .name(Component.literal("Option"))
-                                        .action((screen, opt) -> {
-                                        })
-                                        .controller(ActionController::new)
-                                        .build())
-                                .option(ButtonOption.createBuilder()
-                                        .name(Component.literal("Option"))
-                                        .action((screen, opt) -> {
-                                        })
-                                        .controller(ActionController::new)
-                                        .build())
-                                .option(ButtonOption.createBuilder()
-                                        .name(Component.literal("Option"))
-                                        .action((screen, opt) -> {
-                                        })
-                                        .controller(ActionController::new)
-                                        .build())
-                                .option(ButtonOption.createBuilder()
-                                        .name(Component.literal("Option"))
-                                        .action((screen, opt) -> {
-                                        })
-                                        .controller(ActionController::new)
-                                        .build())
-                                .option(ButtonOption.createBuilder()
-                                        .name(Component.literal("Option"))
-                                        .action((screen, opt) -> {
-                                        })
-                                        .controller(ActionController::new)
-                                        .build())
-                                .option(ButtonOption.createBuilder()
-                                        .name(Component.literal("Option"))
-                                        .action((screen, opt) -> {
-                                        })
-                                        .controller(ActionController::new)
-                                        .build())
-                                .option(ButtonOption.createBuilder()
-                                        .name(Component.literal("Option"))
-                                        .action((screen, opt) -> {
-                                        })
-                                        .controller(ActionController::new)
-                                        .build())
-                                .option(ButtonOption.createBuilder()
-                                        .name(Component.literal("Option"))
-                                        .action((screen, opt) -> {
-                                        })
-                                        .controller(ActionController::new)
-                                        .build())
-                                .option(ButtonOption.createBuilder()
-                                        .name(Component.literal("Option"))
-                                        .action((screen, opt) -> {
-                                        })
-                                        .controller(ActionController::new)
-                                        .build())
-                                .option(ButtonOption.createBuilder()
-                                        .name(Component.literal("Option"))
-                                        .action((screen, opt) -> {
-                                        })
-                                        .controller(ActionController::new)
-                                        .build())
-                                .option(ButtonOption.createBuilder()
-                                        .name(Component.literal("Option"))
-                                        .action((screen, opt) -> {
-                                        })
-                                        .controller(ActionController::new)
-                                        .build())
-                                .option(ButtonOption.createBuilder()
-                                        .name(Component.literal("Option"))
-                                        .action((screen, opt) -> {
-                                        })
-                                        .controller(ActionController::new)
-                                        .build())
-                                .build())
-                        .category(ConfigCategory.createBuilder()
-                                .name(Component.literal("Category Test"))
-                                .build())
-                        .category(ConfigCategory.createBuilder()
-                                .name(Component.literal("Category Test"))
-                                .build())
-                        .category(ConfigCategory.createBuilder()
-                                .name(Component.literal("Category Test"))
-                                .build())
-                        .category(ConfigCategory.createBuilder()
-                                .name(Component.literal("Category Test"))
-                                .build())
-                        .category(ConfigCategory.createBuilder()
-                                .name(Component.literal("Category Test"))
-                                .build())
-                        .category(ConfigCategory.createBuilder()
-                                .name(Component.literal("Category Test"))
-                                .build())
-                        .category(ConfigCategory.createBuilder()
-                                .name(Component.literal("Category Test"))
-                                .build())
-                        .category(ConfigCategory.createBuilder()
-                                .name(Component.literal("Category Test"))
                                 .build())
                         .save(() -> {
                             Minecraft.getInstance().options.save();

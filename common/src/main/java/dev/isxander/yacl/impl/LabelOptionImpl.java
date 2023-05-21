@@ -19,6 +19,7 @@ import java.util.function.BiConsumer;
 public final class LabelOptionImpl implements LabelOption {
     private final Component label;
     private final Component name = Component.literal("Label Option");
+    private final OptionDescription description;
     private final Component tooltip = Component.empty();
     private final LabelController labelController;
     private final Binding<Component> binding;
@@ -27,6 +28,10 @@ public final class LabelOptionImpl implements LabelOption {
         this.label = label;
         this.labelController = new LabelController(this);
         this.binding = Binding.immutable(label);
+        this.description = OptionDescription.createBuilder()
+                .name(this.name)
+                .description(this.label)
+                .build();
     }
 
     @Override
@@ -37,6 +42,11 @@ public final class LabelOptionImpl implements LabelOption {
     @Override
     public @NotNull Component name() {
         return name;
+    }
+
+    @Override
+    public @NotNull OptionDescription description() {
+        return description;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package dev.isxander.yacl.gui;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.impl.utils.YACLConstants;
@@ -21,24 +20,27 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entry> {
     private final YACLScreen yaclScreen;
-    private boolean singleCategory = false;
-
+    private final ConfigCategory category;
     private ImmutableList<Entry> viewableChildren;
+    private String searchQuery = "";
+    private final Consumer<Option<?>> hoverEvent;
+    private Option<?> lastHoveredOption;
 
-    public OptionListWidget(YACLScreen screen, Minecraft client, int width, int height) {
-        super(client, width / 3, 0, width / 3 * 2 + 1, height, true);
+    public OptionListWidget(YACLScreen screen, ConfigCategory category, Minecraft client, int x, int y, int width, int height, Consumer<Option<?>> hoverEvent) {
+        super(client, x, y, width, height, true);
         this.yaclScreen = screen;
+        this.category = category;
+        this.hoverEvent = hoverEvent;
 
         refreshOptions();
 
-        for (ConfigCategory category : screen.config.categories()) {
-            for (OptionGroup group : category.groups()) {
-                if (group instanceof ListOption<?> listOption) {
-                    listOption.addRefreshListener(() -> refreshListEntries(listOption, category));
-                }
+        for (OptionGroup group : category.groups()) {
+            if (group instanceof ListOption<?> listOption) {
+                listOption.addRefreshListener(() -> refreshListEntries(listOption, category));
             }
         }
     }
@@ -46,47 +48,36 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     public void refreshOptions() {
         clearEntries();
 
-        List<ConfigCategory> categories = new ArrayList<>();
-        if (yaclScreen.getCurrentCategoryIdx() == -1) {
-            // -1 = no category, search in progress, so use all categories for search
-            categories.addAll(yaclScreen.config.categories());
-        } else {
-            categories.add(yaclScreen.config.categories().get(yaclScreen.getCurrentCategoryIdx()));
-        }
-        singleCategory = categories.size() == 1;
+        for (OptionGroup group : category.groups()) {
+            GroupSeparatorEntry groupSeparatorEntry;
+            if (!group.isRoot()) {
+                groupSeparatorEntry = group instanceof ListOption<?> listOption
+                        ? new ListGroupSeparatorEntry(listOption, yaclScreen)
+                        : new GroupSeparatorEntry(group, yaclScreen);
+                addEntry(groupSeparatorEntry);
+            } else {
+                groupSeparatorEntry = null;
+            }
 
-        for (ConfigCategory category : categories) {
-            for (OptionGroup group : category.groups()) {
-                GroupSeparatorEntry groupSeparatorEntry;
-                if (!group.isRoot()) {
-                    groupSeparatorEntry = group instanceof ListOption<?> listOption
-                            ? new ListGroupSeparatorEntry(listOption, yaclScreen)
-                            : new GroupSeparatorEntry(group, yaclScreen);
-                    addEntry(groupSeparatorEntry);
-                } else {
-                    groupSeparatorEntry = null;
+            List<Entry> optionEntries = new ArrayList<>();
+
+            // add empty entry to make sure users know it's empty not just bugging out
+            if (groupSeparatorEntry instanceof ListGroupSeparatorEntry listGroupSeparatorEntry) {
+                if (listGroupSeparatorEntry.listOption.options().isEmpty()) {
+                    EmptyListLabel emptyListLabel = new EmptyListLabel(listGroupSeparatorEntry, category);
+                    addEntry(emptyListLabel);
+                    optionEntries.add(emptyListLabel);
                 }
+            }
 
-                List<Entry> optionEntries = new ArrayList<>();
+            for (Option<?> option : group.options()) {
+                OptionEntry entry = new OptionEntry(option, category, group, groupSeparatorEntry, option.controller().provideWidget(yaclScreen, getDefaultEntryDimension()));
+                addEntry(entry);
+                optionEntries.add(entry);
+            }
 
-                // add empty entry to make sure users know it's empty not just bugging out
-                if (groupSeparatorEntry instanceof ListGroupSeparatorEntry listGroupSeparatorEntry) {
-                    if (listGroupSeparatorEntry.listOption.options().isEmpty()) {
-                        EmptyListLabel emptyListLabel = new EmptyListLabel(listGroupSeparatorEntry, category);
-                        addEntry(emptyListLabel);
-                        optionEntries.add(emptyListLabel);
-                    }
-                }
-
-                for (Option<?> option : group.options()) {
-                    OptionEntry entry = new OptionEntry(option, category, group, groupSeparatorEntry, option.controller().provideWidget(yaclScreen, getDefaultEntryDimension()));
-                    addEntry(entry);
-                    optionEntries.add(entry);
-                }
-
-                if (groupSeparatorEntry != null) {
-                    groupSeparatorEntry.setChildEntries(optionEntries);
-                }
+            if (groupSeparatorEntry != null) {
+                groupSeparatorEntry.setChildEntries(optionEntries);
             }
         }
 
@@ -135,6 +126,12 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
                 groupSeparatorEntry.setExpanded(true);
             }
         }
+    }
+
+    public void updateSearchQuery(String query) {
+        this.searchQuery = query;
+        expandAllGroups();
+        recacheViewableChildren();
     }
 
     @Override
@@ -294,6 +291,13 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
                 resetButton.setY(y);
                 resetButton.render(graphics, mouseX, mouseY, tickDelta);
             }
+
+            if (isHovered()) {
+                if (lastHoveredOption != option) {
+                    lastHoveredOption = option;
+                    hoverEvent.accept(option);
+                }
+            }
         }
 
         @Override
@@ -318,12 +322,10 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
         @Override
         public boolean isViewable() {
-            String query = yaclScreen.searchFieldWidget.getQuery();
             return (groupSeparatorEntry == null || groupSeparatorEntry.isExpanded())
-                    && (yaclScreen.searchFieldWidget.isEmpty()
-                    || (!singleCategory && categoryName.contains(query))
-                    || groupName.contains(query)
-                    || widget.matchesSearch(query));
+                    && (searchQuery.isEmpty()
+                    || groupName.contains(searchQuery)
+                    || widget.matchesSearch(searchQuery));
         }
 
         @Override
@@ -427,7 +429,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
         @Override
         public boolean isViewable() {
-            return yaclScreen.searchFieldWidget.isEmpty() || childEntries.stream().anyMatch(Entry::isViewable);
+            return searchQuery.isEmpty() || childEntries.stream().anyMatch(Entry::isViewable);
         }
 
         @Override
@@ -524,6 +526,11 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
+        public void setExpanded(boolean expanded) {
+            super.setExpanded(listOption.available() && expanded);
+        }
+
+        @Override
         public List<? extends GuiEventListener> children() {
             return ImmutableList.of(expandMinimizeButton, addListButton, resetListButton);
         }
@@ -547,10 +554,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
         @Override
         public boolean isViewable() {
-            String query = yaclScreen.searchFieldWidget.getQuery();
-            return parent.isExpanded() && (yaclScreen.searchFieldWidget.isEmpty()
-                    || (!singleCategory && categoryName.contains(query))
-                    || groupName.contains(query));
+            return parent.isExpanded() && (searchQuery.isEmpty() || groupName.contains(searchQuery));
         }
 
         @Override

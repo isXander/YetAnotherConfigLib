@@ -31,6 +31,9 @@ dependencies {
     })
     modImplementation(libs.fabric.loader)
 
+    implementation(libs.twelvemonkeys.imageio.core)
+    implementation(libs.twelvemonkeys.imageio.webp)
+
     "common"(project(path = ":test-common", configuration = "namedElements")) { isTransitive = false }
     implementation(project(path = ":fabric", configuration = "namedElements"))
 
