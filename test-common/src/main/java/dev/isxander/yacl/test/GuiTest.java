@@ -70,7 +70,7 @@ public class GuiTest {
                                                                 .append(Component.literal("e").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("e")))))
                                                                 .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://isxander.dev")))
                                                         )
-                                                        .webpImage(Path.of("D:\\Xander\\Downloads\\e.webp"), new ResourceLocation("yacl", "e.webp"), 33)
+                                                        .webpImage(Path.of("D:\\Xander\\Downloads\\e.webp"), new ResourceLocation("yacl", "e.webp"))
                                                         .build())
                                                 .binding(
                                                         defaults.booleanToggle,

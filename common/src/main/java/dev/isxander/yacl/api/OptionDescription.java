@@ -28,11 +28,13 @@ public interface OptionDescription {
         Builder image(ResourceLocation image, int width, int height);
         Builder image(Path path, ResourceLocation uniqueLocation);
 
-        Builder gifImage(ResourceLocation image);
-        Builder gifImage(Path path, ResourceLocation uniqueLocation);
+        Builder webpImage(ResourceLocation image);
+        Builder webpImage(Path path, ResourceLocation uniqueLocation);
 
-        Builder webpImage(ResourceLocation image, int frameDelayMS);
-        Builder webpImage(Path path, ResourceLocation uniqueLocation, int frameDelayMS);
+        @Deprecated
+        Builder gifImage(ResourceLocation image);
+        @Deprecated
+        Builder gifImage(Path path, ResourceLocation uniqueLocation);
 
         OptionDescription build();
     }
