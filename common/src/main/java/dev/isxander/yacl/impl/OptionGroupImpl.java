@@ -3,6 +3,7 @@ package dev.isxander.yacl.impl;
 import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl.api.ListOption;
 import dev.isxander.yacl.api.Option;
+import dev.isxander.yacl.api.OptionDescription;
 import dev.isxander.yacl.api.OptionGroup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
@@ -10,6 +11,7 @@ import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,14 +20,14 @@ import java.util.List;
 @ApiStatus.Internal
 public final class OptionGroupImpl implements OptionGroup {
     private final @NotNull Component name;
-    private final @NotNull Component tooltip;
+    private final @NotNull OptionDescription description;
     private final ImmutableList<? extends Option<?>> options;
     private final boolean collapsed;
     private final boolean isRoot;
 
-    public OptionGroupImpl(@NotNull Component name, @NotNull Component tooltip, ImmutableList<? extends Option<?>> options, boolean collapsed, boolean isRoot) {
+    public OptionGroupImpl(@NotNull Component name, @NotNull OptionDescription description, ImmutableList<? extends Option<?>> options, boolean collapsed, boolean isRoot) {
         this.name = name;
-        this.tooltip = tooltip;
+        this.description = description;
         this.options = options;
         this.collapsed = collapsed;
         this.isRoot = isRoot;
@@ -37,8 +39,13 @@ public final class OptionGroupImpl implements OptionGroup {
     }
 
     @Override
+    public OptionDescription description() {
+        return description;
+    }
+
+    @Override
     public @NotNull Component tooltip() {
-        return tooltip;
+        return description.description();
     }
 
     @Override
@@ -59,7 +66,8 @@ public final class OptionGroupImpl implements OptionGroup {
     @ApiStatus.Internal
     public static final class BuilderImpl implements Builder {
         private Component name = Component.empty();
-        private final List<Component> tooltipLines = new ArrayList<>();
+        private OptionDescription description = null;
+        private OptionDescription.Builder legacyBuilder = null;
         private final List<Option<?>> options = new ArrayList<>();
         private boolean collapsed = false;
 
@@ -72,10 +80,22 @@ public final class OptionGroupImpl implements OptionGroup {
         }
 
         @Override
+        public Builder description(@NotNull OptionDescription description) {
+            Validate.isTrue(legacyBuilder == null, "Cannot set description when deprecated `tooltip` method is used");
+            Validate.notNull(description, "`description` must not be null");
+
+            this.description = description;
+            return this;
+        }
+
+        @Override
         public Builder tooltip(@NotNull Component... tooltips) {
+            Validate.isTrue(description == null, "Cannot use deprecated `tooltip` method when `description` in use.");
             Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
 
-            tooltipLines.addAll(List.of(tooltips));
+            ensureLegacyDescriptionBuilder();
+
+            legacyBuilder.description(tooltips);
             return this;
         }
 
@@ -111,19 +131,18 @@ public final class OptionGroupImpl implements OptionGroup {
         public OptionGroup build() {
             Validate.notEmpty(options, "`options` must not be empty to build `OptionGroup`");
 
-            MutableComponent concatenatedTooltip = Component.empty();
-            boolean first = true;
-            for (Component line : tooltipLines) {
-                if (line.getContents() == ComponentContents.EMPTY)
-                    continue;
-
-                if (!first) concatenatedTooltip.append("\n");
-                first = false;
-
-                concatenatedTooltip.append(line);
+            if (description == null) {
+                ensureLegacyDescriptionBuilder();
+                description = legacyBuilder.name(name).build();
             }
 
-            return new OptionGroupImpl(name, concatenatedTooltip, ImmutableList.copyOf(options), collapsed, false);
+            return new OptionGroupImpl(name, description, ImmutableList.copyOf(options), collapsed, false);
+        }
+
+        private void ensureLegacyDescriptionBuilder() {
+            if (legacyBuilder == null) {
+                legacyBuilder = OptionDescription.createBuilder();
+            }
         }
     }
 }

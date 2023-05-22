@@ -12,7 +12,7 @@ architectury {
     minecraft = libs.versions.minecraft.get()
 }
 
-version = "2.5.1-beta.1+1.20"
+version = "3.0.0-beta.1+1.20"
 
 val isBeta = "beta" in version.toString()
 val changelogText = rootProject.file("changelogs/${project.version}.md").takeIf { it.exists() }?.readText() ?: "No changelog provided."
@@ -92,6 +92,7 @@ githubRelease {
     tagName("${project.version}")
     targetCommitish(grgit.branch.current().name)
     body(changelogText)
+    prerelease(isBeta)
     releaseAssets(
         { findProject(":fabric")?.tasks?.get("remapJar")?.outputs?.files },
         { findProject(":fabric")?.tasks?.get("remapSourcesJar")?.outputs?.files },
@@ -109,6 +110,6 @@ tasks.register("releaseMod") {
 tasks.register("buildAll") {
     group = "mod"
 
-    dependsOn(project(":fabric").tasks["build"])
-    dependsOn(project(":forge").tasks["build"])
+    findProject(":fabric")?.let { dependsOn(it.tasks["build"]) }
+    findProject(":forge")?.let { dependsOn(it.tasks["build"]) }
 }

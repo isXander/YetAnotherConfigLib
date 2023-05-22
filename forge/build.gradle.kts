@@ -1,4 +1,6 @@
+import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.libs
 
 plugins {
@@ -113,9 +115,11 @@ tasks {
     }
 }
 
-components["java"].withGroovyBuilder {
-    "withVariantsFromConfiguration"(configurations["shadowRuntimeElements"]) {
-        "skip"()
+components["java"].run {
+    if (this is AdhocComponentWithVariants) {
+        withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) {
+            skip()
+        }
     }
 }
 

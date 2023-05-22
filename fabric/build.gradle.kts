@@ -109,12 +109,13 @@ tasks {
     }
 }
 
-components["java"].withGroovyBuilder {
-    "withVariantsFromConfiguration"(configurations["shadowRuntimeElements"]) {
-        "skip"()
+components["java"].run {
+    if (this is AdhocComponentWithVariants) {
+        withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) {
+            skip()
+        }
     }
 }
-
 val changelogText: String by ext
 val isBeta: Boolean by ext
 

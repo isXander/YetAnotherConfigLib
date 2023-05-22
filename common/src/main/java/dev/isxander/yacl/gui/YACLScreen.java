@@ -56,17 +56,13 @@ public class YACLScreen extends Screen {
 
     @Override
     protected void init() {
-        tabNavigationBar = TabNavigationBar.builder(tabManager, this.width)
-                .addTabs(tabs = config.categories()
-                        .stream()
-                        .map(category -> {
-                            if (category instanceof PlaceholderCategory placeholder)
-                                return new PlaceholderTab(placeholder);
-                            return new CategoryTab(category);
-                        })
-                        .toArray(Tab[]::new)
-                )
-                .build();
+        tabNavigationBar = new ScrollableNavigationBar(this.width, tabManager, config.categories()
+                .stream()
+                .map(category -> {
+                    if (category instanceof PlaceholderCategory placeholder)
+                        return new PlaceholderTab(placeholder);
+                    return new CategoryTab(category);
+                }).toList());
         tabNavigationBar.selectTab(0, false);
         tabNavigationBar.arrangeElements();
         ScreenRectangle navBarArea = tabNavigationBar.getRectangle();
@@ -239,8 +235,8 @@ public class YACLScreen extends Screen {
 
             this.optionList = new TabListWidget<>(
                     () -> new ScreenRectangle(tabArea.position(), tabArea.width() / 3 * 2 + 1, tabArea.height()),
-                    new OptionListWidget(YACLScreen.this, category, minecraft, 0, 0, width / 3 * 2 + 1, height, hoveredOption -> {
-                        descriptionWidget.setOptionDescription(hoveredOption.description());
+                    new OptionListWidget(YACLScreen.this, category, minecraft, 0, 0, width / 3 * 2 + 1, height, desc -> {
+                        descriptionWidget.setOptionDescription(desc);
                     })
             );
 
@@ -316,6 +312,7 @@ public class YACLScreen extends Screen {
         public void tick() {
             updateButtons();
             searchField.tick();
+            descriptionWidget.tick();
         }
 
         private void updateButtons() {

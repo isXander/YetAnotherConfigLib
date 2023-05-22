@@ -1,11 +1,13 @@
 package dev.isxander.yacl.gui;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.navigation.FocusNavigationEvent;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.network.chat.CommonComponents;
 import org.jetbrains.annotations.Nullable;
@@ -101,5 +103,17 @@ public class TabListWidget<T extends ElementListWidgetExt<?>> extends AbstractWi
     @Override
     public void setFocused(@Nullable GuiEventListener listener) {
         this.list.setFocused(listener);
+    }
+
+    @Nullable
+    @Override
+    public ComponentPath nextFocusPath(FocusNavigationEvent event) {
+        return this.list.nextFocusPath(event);
+    }
+
+    @Nullable
+    @Override
+    public ComponentPath getCurrentFocusPath() {
+        return this.list.getCurrentFocusPath();
     }
 }

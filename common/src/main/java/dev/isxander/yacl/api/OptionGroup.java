@@ -19,9 +19,12 @@ public interface OptionGroup {
      */
     Component name();
 
+    OptionDescription description();
+
     /**
      * Tooltip displayed on hover.
      */
+    @Deprecated
     Component tooltip();
 
     /**
@@ -55,6 +58,8 @@ public interface OptionGroup {
          */
         Builder name(@NotNull Component name);
 
+        Builder description(@NotNull OptionDescription description);
+
         /**
          * Sets the tooltip to be used by the option group.
          * Can be invoked twice to append more lines.
@@ -62,6 +67,7 @@ public interface OptionGroup {
          *
          * @param tooltips Component lines - merged with a new-line on {@link Builder#build()}.
          */
+        @Deprecated
         Builder tooltip(@NotNull Component... tooltips);
 
         /**
