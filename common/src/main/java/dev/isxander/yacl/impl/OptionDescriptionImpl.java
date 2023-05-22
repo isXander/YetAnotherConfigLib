@@ -4,19 +4,20 @@ import dev.isxander.yacl.api.OptionDescription;
 import dev.isxander.yacl.gui.ImageRenderer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.Validate;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public record OptionDescriptionImpl(Component descriptiveName, Component description, CompletableFuture<Optional<ImageRenderer>> image) implements OptionDescription {
     public static class BuilderImpl implements Builder {
         private Component name;
-        private Component description;
+        private final List<Component> descriptionLines = new ArrayList<>();
         private CompletableFuture<Optional<ImageRenderer>> image = CompletableFuture.completedFuture(Optional.empty());
         private boolean imageUnset = true;
 
@@ -27,8 +28,14 @@ public record OptionDescriptionImpl(Component descriptiveName, Component descrip
         }
 
         @Override
-        public Builder description(Component description) {
-            this.description = description;
+        public Builder description(Component... description) {
+            this.descriptionLines.addAll(Arrays.asList(description));
+            return this;
+        }
+
+        @Override
+        public Builder description(Collection<? extends Component> lines) {
+            this.descriptionLines.addAll(lines);
             return this;
         }
 
@@ -115,10 +122,14 @@ public record OptionDescriptionImpl(Component descriptiveName, Component descrip
         public OptionDescription build() {
             Validate.notNull(name, "Name must be set!");
 
-            if (description == null)
-                description = Component.empty();
+            MutableComponent concatenatedDescription = Component.empty();
+            Iterator<Component> iter = descriptionLines.iterator();
+            while (iter.hasNext()) {
+                concatenatedDescription.append(iter.next());
+                if (iter.hasNext()) concatenatedDescription.append("\n");
+            }
 
-            return new OptionDescriptionImpl(name.copy().withStyle(ChatFormatting.BOLD), description, image);
+            return new OptionDescriptionImpl(name.copy().withStyle(ChatFormatting.BOLD), concatenatedDescription, image);
         }
     }
 }

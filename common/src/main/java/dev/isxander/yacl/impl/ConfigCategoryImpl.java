@@ -1,10 +1,7 @@
 package dev.isxander.yacl.impl;
 
 import com.google.common.collect.ImmutableList;
-import dev.isxander.yacl.api.ConfigCategory;
-import dev.isxander.yacl.api.ListOption;
-import dev.isxander.yacl.api.Option;
-import dev.isxander.yacl.api.OptionGroup;
+import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
@@ -114,7 +111,7 @@ public final class ConfigCategoryImpl implements ConfigCategory {
             Validate.notNull(name, "`name` must not be null to build `ConfigCategory`");
 
             List<OptionGroup> combinedGroups = new ArrayList<>();
-            combinedGroups.add(new OptionGroupImpl(Component.empty(), Component.empty(), ImmutableList.copyOf(rootOptions), false, true));
+            combinedGroups.add(new OptionGroupImpl(Component.empty(), OptionDescription.createBuilder().name(Component.literal("Root")).build(), ImmutableList.copyOf(rootOptions), false, true));
             combinedGroups.addAll(groups);
 
             Validate.notEmpty(combinedGroups, "at least one option must be added to build `ConfigCategory`");

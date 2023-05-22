@@ -1,5 +1,7 @@
 package dev.isxander.yacl.gui;
 
+import com.mojang.blaze3d.Blaze3D;
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.isxander.yacl.api.OptionDescription;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -17,6 +19,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class OptionDescriptionWidget extends AbstractWidget {
+    private static final int AUTO_SCROLL_TIMER = 3000;
+    private static final float AUTO_SCROLL_SPEED = 1;
+
     private @Nullable OptionDescription description;
     private List<FormattedCharSequence> wrappedText;
 
@@ -25,9 +30,12 @@ public class OptionDescriptionWidget extends AbstractWidget {
 
     private Supplier<ScreenRectangle> dimensions;
 
-    private int scrollAmount;
+    private float targetScrollAmount, currentScrollAmount;
     private int maxScrollAmount;
     private int descriptionY;
+
+    private int lastInteractionTime;
+    private boolean scrollingBackward;
 
     public OptionDescriptionWidget(Supplier<ScreenRectangle> dimensions, @Nullable OptionDescription description) {
         super(0, 0, 0, 0, description == null ? Component.empty() : description.descriptiveName());
@@ -38,6 +46,8 @@ public class OptionDescriptionWidget extends AbstractWidget {
     @Override
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         if (description == null) return;
+
+        currentScrollAmount = Mth.lerp(delta * 0.5f, currentScrollAmount, targetScrollAmount);
 
         ScreenRectangle dimensions = this.dimensions.get();
         this.setX(dimensions.left());
@@ -58,7 +68,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
 
         graphics.enableScissor(getX(), y, getX() + getWidth(), getY() + getHeight());
 
-        y -= scrollAmount;
+        y -= (int)currentScrollAmount;
 
         if (description.image().isDone()) {
             var image = description.image().join();
@@ -79,11 +89,18 @@ public class OptionDescriptionWidget extends AbstractWidget {
 
         graphics.disableScissor();
 
-        maxScrollAmount = Math.max(0, y + scrollAmount - getY() - getHeight());
+        maxScrollAmount = Math.max(0, y + (int)currentScrollAmount - getY() - getHeight());
 
+        if (isHoveredOrFocused()) {
+            lastInteractionTime = currentTimeMS();
+        }
         Style hoveredStyle = getDescStyle(mouseX, mouseY);
         if (hoveredStyle != null && hoveredStyle.getHoverEvent() != null) {
             graphics.renderComponentHoverEffect(font, hoveredStyle, mouseX, mouseY);
+        }
+
+        if (isFocused()) {
+            graphics.renderOutline(getX(), getY(), getWidth(), getHeight(), -1);
         }
     }
 
@@ -104,10 +121,48 @@ public class OptionDescriptionWidget extends AbstractWidget {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
         if (isMouseOver(mouseX, mouseY)) {
-            scrollAmount = Mth.clamp(scrollAmount - (int) amount * 10, 0, maxScrollAmount);
+            targetScrollAmount = Mth.clamp(targetScrollAmount - (int) amount * 10, 0, maxScrollAmount);
+            lastInteractionTime = currentTimeMS();
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (isFocused()) {
+            switch (keyCode) {
+                case InputConstants.KEY_UP ->
+                    targetScrollAmount = Mth.clamp(targetScrollAmount - 10, 0, maxScrollAmount);
+                case InputConstants.KEY_DOWN ->
+                    targetScrollAmount = Mth.clamp(targetScrollAmount + 10, 0, maxScrollAmount);
+                default -> {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public void tick() {
+        float pxPerTick = AUTO_SCROLL_SPEED / 20f * font.lineHeight;
+        if (maxScrollAmount > 0 && currentTimeMS() - lastInteractionTime > AUTO_SCROLL_TIMER) {
+            if (scrollingBackward) {
+                pxPerTick *= -1;
+                if (targetScrollAmount + pxPerTick < 0) {
+                    scrollingBackward = false;
+                    lastInteractionTime = currentTimeMS();
+                }
+            } else {
+                if (targetScrollAmount + pxPerTick > maxScrollAmount) {
+                    scrollingBackward = true;
+                    lastInteractionTime = currentTimeMS();
+                }
+            }
+
+            targetScrollAmount = Mth.clamp(targetScrollAmount + pxPerTick, 0, maxScrollAmount);
+        }
     }
 
     private Style getDescStyle(int mouseX, int mouseY) {
@@ -135,5 +190,12 @@ public class OptionDescriptionWidget extends AbstractWidget {
     public void setOptionDescription(OptionDescription description) {
         this.description = description;
         this.wrappedText = null;
+        this.targetScrollAmount = 0;
+        this.currentScrollAmount = 0;
+        this.lastInteractionTime = currentTimeMS();
+    }
+
+    private int currentTimeMS() {
+        return (int)(Blaze3D.getTime() * 1000);
     }
 }

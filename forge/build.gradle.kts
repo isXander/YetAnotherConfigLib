@@ -1,4 +1,7 @@
+import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.libs
 
 plugins {
     alias(libs.plugins.architectury.loom)
@@ -35,7 +38,9 @@ val minecraftVersion: String = libs.versions.minecraft.get()
 dependencies {
     minecraft(libs.minecraft)
     mappings(loom.layered {
-        mappings("org.quiltmc:quilt-mappings:$minecraftVersion+build.${libs.versions.quilt.mappings.get()}:intermediary-v2")
+        val qm = libs.versions.quilt.mappings.get()
+        if (qm != "0")
+            mappings("org.quiltmc:quilt-mappings:${libs.versions.minecraft.get()}+build.${libs.versions.quilt.mappings.get()}:intermediary-v2")
         officialMojangMappings()
     })
     forge(libs.forge)
@@ -110,13 +115,16 @@ tasks {
     }
 }
 
-components["java"].withGroovyBuilder {
-    "withVariantsFromConfiguration"(configurations["shadowRuntimeElements"]) {
-        "skip"()
+components["java"].run {
+    if (this is AdhocComponentWithVariants) {
+        withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) {
+            skip()
+        }
     }
 }
 
 val changelogText: String by ext
+val isBeta: Boolean by ext
 
 val modrinthId: String by project
 if (modrinthId.isNotEmpty()) {
@@ -125,7 +133,7 @@ if (modrinthId.isNotEmpty()) {
         projectId.set(modrinthId)
         versionName.set("${project.version} (Forge)")
         versionNumber.set("${project.version}-forge")
-        versionType.set("release")
+        versionType.set(if (isBeta) "beta" else "release")
         uploadFile.set(tasks["remapJar"])
         gameVersions.set(listOf("1.19.4"))
         loaders.set(listOf("forge"))
@@ -145,7 +153,7 @@ if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
             })
 
             id = curseforgeId
-            releaseType = "release"
+            releaseType = if (isBeta) "beta" else "release"
             addGameVersion("1.19.4")
             addGameVersion("Forge")
             addGameVersion("Java 17")

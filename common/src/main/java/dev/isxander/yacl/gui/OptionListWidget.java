@@ -1,6 +1,7 @@
 package dev.isxander.yacl.gui;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.impl.utils.YACLConstants;
@@ -26,10 +27,10 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     private final ConfigCategory category;
     private ImmutableList<Entry> viewableChildren;
     private String searchQuery = "";
-    private final Consumer<Option<?>> hoverEvent;
-    private Option<?> lastHoveredOption;
+    private final Consumer<OptionDescription> hoverEvent;
+    private OptionDescription lastHoveredOption;
 
-    public OptionListWidget(YACLScreen screen, ConfigCategory category, Minecraft client, int x, int y, int width, int height, Consumer<Option<?>> hoverEvent) {
+    public OptionListWidget(YACLScreen screen, ConfigCategory category, Minecraft client, int x, int y, int width, int height, Consumer<OptionDescription> hoverEvent) {
         super(client, x, y, width, height, true);
         this.yaclScreen = screen;
         this.category = category;
@@ -236,6 +237,13 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         return ret;
     }
 
+    private void setHoverDescription(OptionDescription description) {
+        if (description != lastHoveredOption) {
+            lastHoveredOption = description;
+            hoverEvent.accept(description);
+        }
+    }
+
     public abstract class Entry extends ElementListWidgetExt.Entry<Entry> {
         public boolean isViewable() {
             return true;
@@ -291,11 +299,8 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
                 resetButton.render(matrices, mouseX, mouseY, tickDelta);
             }
 
-            if (isHovered()) {
-                if (lastHoveredOption != option) {
-                    lastHoveredOption = option;
-                    hoverEvent.accept(option);
-                }
+            if (isHovered() || isFocused()) {
+                setHoverDescription(option.description());
             }
         }
 
@@ -391,12 +396,9 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             expandMinimizeButton.render(matrices, mouseX, mouseY, tickDelta);
 
             wrappedName.renderCentered(matrices, x + entryWidth / 2, y + getYPadding());
-        }
 
-        @Override
-        public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
-            if ((isHovered() && !expandMinimizeButton.isMouseOver(mouseX, mouseY)) || expandMinimizeButton.isFocused()) {
-                YACLScreen.renderMultilineTooltip(matrices, font, wrappedTooltip, getRowLeft() + getRowWidth() / 2, y - 3, y + getItemHeight() + 3, screen.width, screen.height);
+            if (isHovered() || isFocused()) {
+                setHoverDescription(group.description());
             }
         }
 

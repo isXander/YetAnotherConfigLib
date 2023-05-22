@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -23,7 +24,8 @@ public interface OptionDescription {
     interface Builder {
         Builder name(Component name);
 
-        Builder description(Component description);
+        Builder description(Component... description);
+        Builder description(Collection<? extends Component> lines);
 
         Builder image(ResourceLocation image, int width, int height);
         Builder image(Path path, ResourceLocation uniqueLocation);
