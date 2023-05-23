@@ -2,8 +2,8 @@ package dev.isxander.yacl.impl;
 
 import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.api.*;
+import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
@@ -291,24 +291,27 @@ public final class OptionImpl<T> implements Option<T> {
             Validate.notNull(binding, "`binding` must not be null when building `Option`");
             Validate.isTrue(!instant || flags.isEmpty(), "instant application does not support option flags");
 
-            Function<T, Component> concatenatedTooltipGetter = value -> {
-                MutableComponent concatenatedTooltip = Component.empty();
-                boolean first = true;
-                for (Function<T, Component> line : tooltipGetters) {
-                    Component lineComponent = line.apply(value);
-
-                    if (lineComponent.getContents() == ComponentContents.EMPTY)
-                        continue;
-
-                    if (!first) concatenatedTooltip.append("\n");
-                    first = false;
-
-                    concatenatedTooltip.append(lineComponent);
-                }
-
-                return concatenatedTooltip;
-            };
             if (descriptionFunction == null) {
+                if (!tooltipGetters.isEmpty())
+                    YACLConstants.LOGGER.warn("Using deprecated `tooltip` method in option '{}'. Use `description` instead.", name.getString());
+
+                Function<T, Component> concatenatedTooltipGetter = value -> {
+                    MutableComponent concatenatedTooltip = Component.empty();
+                    boolean first = true;
+                    for (Function<T, Component> line : tooltipGetters) {
+                        Component lineComponent = line.apply(value);
+
+                        if (lineComponent.getContents() == ComponentContents.EMPTY)
+                            continue;
+
+                        if (!first) concatenatedTooltip.append("\n");
+                        first = false;
+
+                        concatenatedTooltip.append(lineComponent);
+                    }
+
+                    return concatenatedTooltip;
+                };
                 descriptionFunction = opt -> OptionDescription.createBuilder().name(name).description(concatenatedTooltipGetter.apply(opt)).build();
             }
 

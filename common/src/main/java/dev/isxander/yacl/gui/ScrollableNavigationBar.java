@@ -61,6 +61,10 @@ public class ScrollableNavigationBar extends TabNavigationBar {
         layout.setX(layout.getX() - this.scrollOffset);
     }
 
+    public int getScrollOffset() {
+        return scrollOffset;
+    }
+
     @Override
     public void setFocused(@Nullable GuiEventListener child) {
         super.setFocused(child);

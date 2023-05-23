@@ -5,13 +5,11 @@ import dev.isxander.yacl.api.ListOption;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.OptionDescription;
 import dev.isxander.yacl.api.OptionGroup;
+import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentContents;
-import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -132,16 +130,21 @@ public final class OptionGroupImpl implements OptionGroup {
             Validate.notEmpty(options, "`options` must not be empty to build `OptionGroup`");
 
             if (description == null) {
-                ensureLegacyDescriptionBuilder();
+                if (ensureLegacyDescriptionBuilder())
+                    YACLConstants.LOGGER.warn("Using deprecated `tooltip` method in option group '{}'. Use `description` instead.", name != null ? name.getString() : "unnamed group");
+
                 description = legacyBuilder.name(name).build();
             }
 
             return new OptionGroupImpl(name, description, ImmutableList.copyOf(options), collapsed, false);
         }
 
-        private void ensureLegacyDescriptionBuilder() {
+        private boolean ensureLegacyDescriptionBuilder() {
             if (legacyBuilder == null) {
                 legacyBuilder = OptionDescription.createBuilder();
+                return false;
+            } else {
+                return true;
             }
         }
     }
