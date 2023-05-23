@@ -61,6 +61,8 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
          */
         Builder<T> name(@NotNull Component name);
 
+        Builder<T> description(@NotNull OptionDescription description);
+
         /**
          * Sets the tooltip to be used by the list. It is displayed like a normal
          * group when you hover over the name. Entries do not allow a tooltip.
@@ -70,6 +72,7 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
          *
          * @param tooltips text lines - merged with a new-line on {@link dev.isxander.yacl.api.ListOption.Builder#build()}.
          */
+        @Deprecated
         Builder<T> tooltip(@NotNull Component... tooltips);
 
         /**

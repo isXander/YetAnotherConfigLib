@@ -3,8 +3,8 @@ package dev.isxander.yacl.impl;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.api.*;
+import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -218,7 +218,8 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     @ApiStatus.Internal
     public static final class BuilderImpl<T> implements Builder<T> {
         private Component name = Component.empty();
-        private final List<Component> tooltipLines = new ArrayList<>();
+        private OptionDescription description = null;
+        private OptionDescription.Builder legacyBuilder = null;
         private Function<ListOptionEntry<T>, Controller<T>> controllerFunction;
         private Binding<List<T>> binding = null;
         private final Set<OptionFlag> flags = new HashSet<>();
@@ -241,10 +242,22 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         }
 
         @Override
+        public Builder<T> description(@NotNull OptionDescription description) {
+            Validate.isTrue(legacyBuilder == null, "Cannot set description when deprecated `tooltip` method is used");
+            Validate.notNull(description, "`description` must not be null");
+
+            this.description = description;
+            return this;
+        }
+
+        @Override
         public Builder<T> tooltip(@NotNull Component... tooltips) {
+            Validate.isTrue(description == null, "Cannot use deprecated `tooltip` method when `description` in use.");
             Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
 
-            tooltipLines.addAll(List.of(tooltips));
+            ensureLegacyDescriptionBuilder();
+
+            legacyBuilder.description(tooltips);
             return this;
         }
 
@@ -328,16 +341,23 @@ public final class ListOptionImpl<T> implements ListOption<T> {
             Validate.notNull(binding, "`binding` must not be null");
             Validate.notNull(initialValue, "`initialValue` must not be null");
 
-            MutableComponent concatenatedTooltip = Component.empty();
-            boolean first = true;
-            for (Component line : tooltipLines) {
-                if (!first) concatenatedTooltip.append("\n");
-                first = false;
+            if (description == null) {
+                if (ensureLegacyDescriptionBuilder())
+                    YACLConstants.LOGGER.warn("Using deprecated `tooltip` method in list option {}. Use `description` instead.", name.getString());
 
-                concatenatedTooltip.append(line);
+                description = legacyBuilder.name(name).build();
             }
 
-            return new ListOptionImpl<>(name, OptionDescription.createBuilder().name(name).description(concatenatedTooltip).build(), binding, initialValue, typeClass, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available, listeners);
+            return new ListOptionImpl<>(name, description, binding, initialValue, typeClass, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available, listeners);
+        }
+
+        private boolean ensureLegacyDescriptionBuilder() {
+            if (legacyBuilder == null) {
+                legacyBuilder = OptionDescription.createBuilder();
+                return false;
+            } else {
+                return true;
+            }
         }
     }
 }
