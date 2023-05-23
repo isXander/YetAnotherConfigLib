@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 public interface ImageRenderer {
     int render(GuiGraphics graphics, int x, int y, int width);
@@ -223,8 +224,20 @@ public interface ImageRenderer {
         private static AnimatedNativeImageBacked createFromImageReader(ImageReader reader, int frameDelayMS, ResourceLocation uniqueLocation) throws IOException {
             int frameCount = reader.getNumImages(true);
 
-            int frameWidth = reader.getWidth(0);
-            int frameHeight = reader.getHeight(0);
+            int frameWidth = IntStream.range(reader.getMinIndex(), frameCount).map(i -> {
+                try {
+                    return reader.getWidth(i);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }).max().orElseThrow();
+            int frameHeight = IntStream.range(reader.getMinIndex(), frameCount).map(i -> {
+                try {
+                    return reader.getHeight(i);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }).max().orElseThrow();
 
             // Packs the frames into an optimal 1:1 texture.
             // OpenGL can only have texture axis with a max of 32768 pixels,
@@ -234,8 +247,15 @@ public interface ImageRenderer {
             int rows = (int)Math.ceil(frameCount / (double)cols);
 
             NativeImage image = new NativeImage(frameWidth * cols, frameHeight * rows, true);
+            for (int x = 0; x < frameWidth * cols; x++) {
+                for (int y = 0; y < frameHeight * rows; y++) {
+                    image.setPixelRGBA(x, y, 0xFF000000);
+                }
+            }
             for (int i = reader.getMinIndex(); i < frameCount - 1; i++) {
                 BufferedImage bi = reader.read(i);
+                int xOffset = (frameWidth - bi.getWidth()) / 2;
+                int yOffset = (frameHeight - bi.getHeight()) / 2;
                 for (int w = 0; w < bi.getWidth(); w++) {
                     for (int h = 0; h < bi.getHeight(); h++) {
                         int rgb = bi.getRGB(w, h);
@@ -247,8 +267,8 @@ public interface ImageRenderer {
                         int row = (int) Math.floor(i / (double)cols);
 
                         image.setPixelRGBA(
-                                bi.getWidth() * col + w,
-                                bi.getHeight() * row + h,
+                                frameWidth * col + w + xOffset,
+                                frameHeight * row + h + yOffset,
                                 FastColor.ABGR32.color(255, b, g, r) // NativeImage uses ABGR for some reason
                         );
                     }
@@ -287,7 +307,7 @@ public interface ImageRenderer {
                 currentFrame++;
                 lastFrameTime = timeMS;
             }
-            if (currentFrame >= frameCount) currentFrame = 0;
+            if (currentFrame >= frameCount - 1) currentFrame = 0;
 
             return targetHeight;
         }

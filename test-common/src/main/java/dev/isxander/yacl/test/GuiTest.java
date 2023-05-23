@@ -70,7 +70,7 @@ public class GuiTest {
                                                                 .append(Component.literal("e").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("e")))))
                                                                 .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://isxander.dev")))
                                                         )
-                                                        .webpImage(Path.of("D:\\Xander\\Downloads\\e.webp"), new ResourceLocation("yacl", "e.webp"))
+                                                        .gifImage(Path.of("D:\\Xander\\Downloads\\showcaseMain.gif"), new ResourceLocation("yacl", "e.webp"))
                                                         .build())
                                                 .binding(
                                                         defaults.booleanToggle,
@@ -82,14 +82,11 @@ public class GuiTest {
                                                 .build())
                                         .option(Option.createBuilder(boolean.class)
                                                 .name(Component.literal("Custom Boolean Toggle"))
-                                                .description(OptionDescription.createBuilder()
-                                                        .name(Component.literal("Custom Boolean Toggle"))
+                                                .description(val -> OptionDescription.createBuilder()
+                                                        .name(Component.literal("Custom Boolean Toggle " + val))
                                                         .description(Component.literal("You can customize controllers like so! YACL is truly infinitely customizable! This tooltip is long in order to demonstrate the cool, smooth scrolling of these descriptions. Did you know, they are also super clickable?! I know, cool right, YACL 3.x really is amazing."))
                                                         .image(Path.of("D:\\Xander\\Downloads\\_MG_0860-Enhanced-NR.png"), new ResourceLocation("yacl", "f.webp"))
                                                         .build())
-                                                .tooltip(Component.literal("You can customize these controllers like this!"))
-                                                .tooltip(Component.empty())
-                                                .tooltip(opt -> Component.empty())
                                                 .binding(
                                                         defaults.customBooleanToggle,
                                                         () -> config.customBooleanToggle,
