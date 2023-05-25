@@ -3,6 +3,7 @@ package dev.isxander.yacl.gui;
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
+import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -38,7 +39,7 @@ public interface ImageRenderer {
     Map<ResourceLocation, CompletableFuture<Optional<ImageRenderer>>> CACHE = new ConcurrentHashMap<>();
 
     static CompletableFuture<Optional<ImageRenderer>> getOrMakeAsync(ResourceLocation id, Supplier<Optional<ImageRenderer>> factory) {
-        return CACHE.computeIfAbsent(id, key -> CompletableFuture.supplyAsync(factory));
+        return CACHE.computeIfAbsent(id, key -> CompletableFuture.supplyAsync(factory, YACLConstants.SINGLE_THREAD_EXECUTOR));
     }
 
     static CompletableFuture<Optional<ImageRenderer>> getOrMakeSync(ResourceLocation id, Supplier<Optional<ImageRenderer>> factory) {
