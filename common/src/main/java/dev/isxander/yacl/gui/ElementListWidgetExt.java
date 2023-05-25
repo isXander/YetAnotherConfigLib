@@ -85,12 +85,6 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
         this.smoothScrollAmount = getScrollAmount();
     }
 
-    public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        for (E entry : children()) {
-            entry.postRender(graphics, mouseX, mouseY, delta);
-        }
-    }
-
     @Nullable
     @Override
     protected E getEntryAtPosition(double x, double y) {
@@ -217,10 +211,6 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
                 }
             }
             return false;
-        }
-
-        public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-
         }
 
         public int getItemHeight() {

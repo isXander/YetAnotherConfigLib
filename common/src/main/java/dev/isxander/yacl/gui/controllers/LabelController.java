@@ -85,10 +85,9 @@ public class LabelController implements Controller<Component> {
                 graphics.fill(getDimension().x() - 1, getDimension().yLimit(), getDimension().xLimit() + 1, getDimension().yLimit() + 1, -1);
                 graphics.fill(getDimension().xLimit(), getDimension().y() - 1, getDimension().xLimit() + 1, getDimension().yLimit() + 1, -1);
             }
-        }
 
-        @Override
-        public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+            graphics.pose().pushPose();
+            graphics.pose().translate(0, 0, 100);
             if (isMouseOver(mouseX, mouseY)) {
                 YACLScreen.renderMultilineTooltip(graphics, textRenderer, wrappedTooltip, getDimension().centerX(), getDimension().y() - 5, getDimension().yLimit() + 5, screen.width, screen.height);
 
@@ -115,6 +114,7 @@ public class LabelController implements Controller<Component> {
                     }
                 }
             }
+            graphics.pose().popPose();
         }
 
         @Override

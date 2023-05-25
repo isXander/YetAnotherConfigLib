@@ -155,10 +155,4 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     protected int getThumbWidth() {
         return 4;
     }
-
-    @Override
-    public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        if (super.isMouseOver(mouseX, mouseY) || focused)
-            super.postRender(graphics, mouseX, mouseY, delta);
-    }
 }

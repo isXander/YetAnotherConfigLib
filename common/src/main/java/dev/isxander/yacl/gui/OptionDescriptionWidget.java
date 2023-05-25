@@ -2,12 +2,14 @@ package dev.isxander.yacl.gui;
 
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.InputConstants;
-import dev.isxander.yacl.api.OptionDescription;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.navigation.FocusNavigationEvent;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -19,8 +21,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class OptionDescriptionWidget extends AbstractWidget {
-    private static final int AUTO_SCROLL_TIMER = 3000;
-    private static final float AUTO_SCROLL_SPEED = 1;
+    private static final int AUTO_SCROLL_TIMER = 1500;
+    private static final float AUTO_SCROLL_SPEED = 1; // lines per second
 
     private @Nullable DescriptionWithName description;
     private List<FormattedCharSequence> wrappedText;
@@ -184,6 +186,10 @@ public class OptionDescriptionWidget extends AbstractWidget {
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput builder) {
+        if (description != null) {
+            builder.add(NarratedElementType.TITLE, description.name());
+            builder.add(NarratedElementType.HINT, description.description().description());
+        }
 
     }
 
@@ -198,4 +204,12 @@ public class OptionDescriptionWidget extends AbstractWidget {
     private int currentTimeMS() {
         return (int)(Blaze3D.getTime() * 1000);
     }
+
+    @Nullable
+    @Override
+    public ComponentPath nextFocusPath(FocusNavigationEvent event) {
+        // prevents focusing on this widget
+        return null;
+    }
+
 }

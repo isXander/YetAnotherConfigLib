@@ -80,13 +80,6 @@ public class ListEntryWidget extends AbstractWidget implements ContainerEventHan
         entryWidget.render(graphics, mouseX, mouseY, delta);
     }
 
-    @Override
-    public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        removeButton.renderHoveredTooltip(graphics);
-        moveUpButton.renderHoveredTooltip(graphics);
-        moveDownButton.renderHoveredTooltip(graphics);
-    }
-
     protected void updateButtonStates() {
         removeButton.active = listOption.available();
         moveUpButton.active = listOption.indexOf(listOptionEntry) > 0 && listOption.available();

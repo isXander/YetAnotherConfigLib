@@ -53,13 +53,6 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         }
     }
 
-    @Override
-    public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        if (hovered || focused) {
-            YACLScreen.renderMultilineTooltip(graphics, textRenderer, wrappedTooltip, getDimension().centerX(), getDimension().y() - 5, getDimension().yLimit() + 5, screen.width, screen.height);
-        }
-    }
-
     protected void drawHoveredControl(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
 
     }

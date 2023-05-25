@@ -305,11 +305,6 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
-        public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-            widget.postRender(graphics, mouseX, mouseY, delta);
-        }
-
-        @Override
         public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
             return widget.mouseScrolled(mouseX, mouseY, amount);
         }
@@ -479,6 +474,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             group.addListener((opt, val) -> this.resetListButton.active = !opt.isPendingValueDefault() && opt.available());
             this.resetListButton.active = !group.isPendingValueDefault() && group.available();
 
+
             this.addListButton = new TooltipButtonWidget(yaclScreen, resetListButton.getX() - 20, -50, 20, 20, Component.literal("+"), Component.translatable("yacl.list.add_top"), btn -> {
                 group.insertNewEntryToTop();
                 setExpanded(true);
@@ -501,15 +497,6 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
             resetListButton.render(graphics, mouseX, mouseY, tickDelta);
             addListButton.render(graphics, mouseX, mouseY, tickDelta);
-        }
-
-        @Override
-        public void postRender(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-            minimizeIfUnavailable(); // cannot run in render because it *should* cause a ConcurrentModificationException (but doesn't)
-
-            super.postRender(graphics, mouseX, mouseY, delta);
-            
-            addListButton.renderHoveredTooltip(graphics);
         }
 
         private void minimizeIfUnavailable() {
