@@ -72,7 +72,7 @@ public class LabelController implements Controller<Component> {
         public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
             updateText();
 
-            float y = getDimension().y();
+            int y = getDimension().y();
             for (FormattedCharSequence text : wrappedText) {
                 textRenderer.drawShadow(matrices, text, getDimension().x() + getXPadding(), y + getYPadding(), option().available() ? -1 : 0xFFA0A0A0);
                 y += textRenderer.lineHeight;
@@ -84,10 +84,9 @@ public class LabelController implements Controller<Component> {
                 GuiComponent.fill(matrices, getDimension().x() - 1, getDimension().yLimit(), getDimension().xLimit() + 1, getDimension().yLimit() + 1, -1);
                 GuiComponent.fill(matrices, getDimension().xLimit(), getDimension().y() - 1, getDimension().xLimit() + 1, getDimension().yLimit() + 1, -1);
             }
-        }
 
-        @Override
-        public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
+            matrices.pushPose();
+            matrices.translate(0, 0, 100);
             if (isMouseOver(mouseX, mouseY)) {
                 YACLScreen.renderMultilineTooltip(matrices, textRenderer, wrappedTooltip, getDimension().centerX(), getDimension().y() - 5, getDimension().yLimit() + 5, screen.width, screen.height);
 
@@ -114,6 +113,7 @@ public class LabelController implements Controller<Component> {
                     }
                 }
             }
+            matrices.popPose();
         }
 
         @Override

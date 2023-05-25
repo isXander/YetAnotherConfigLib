@@ -2,13 +2,19 @@ package dev.isxander.yacl.gui;
 
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.InputConstants;
-import dev.isxander.yacl.api.OptionDescription;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.navigation.FocusNavigationEvent;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
@@ -19,8 +25,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class OptionDescriptionWidget extends AbstractWidget {
-    private static final int AUTO_SCROLL_TIMER = 3000;
-    private static final float AUTO_SCROLL_SPEED = 1;
+    private static final int AUTO_SCROLL_TIMER = 1500;
+    private static final float AUTO_SCROLL_SPEED = 1; // lines per second
 
     private @Nullable DescriptionWithName description;
     private List<FormattedCharSequence> wrappedText;
@@ -44,7 +50,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    public void renderWidget(PoseStack matrices, int mouseX, int mouseY, float delta) {
         if (description == null) return;
 
         currentScrollAmount = Mth.lerp(delta * 0.5f, currentScrollAmount, targetScrollAmount);
@@ -59,22 +65,22 @@ public class OptionDescriptionWidget extends AbstractWidget {
 
         int nameWidth = font.width(description.name());
         if (nameWidth > getWidth()) {
-            renderScrollingString(graphics, font, description.name(), getX(), y, getX() + getWidth(), y + font.lineHeight, -1);
+            renderScrollingString(matrices, font, description.name(), getX(), y, getX() + getWidth(), y + font.lineHeight, -1);
         } else {
-            graphics.drawString(font, description.name(), getX(), y, 0xFFFFFF);
+            font.draw(matrices, description.name(), getX(), y, 0xFFFFFF);
         }
 
         y += 5 + font.lineHeight;
 
-        graphics.enableScissor(getX(), y, getX() + getWidth(), getY() + getHeight());
+        GuiComponent.enableScissor(getX(), y, getX() + getWidth(), getY() + getHeight());
 
         y -= (int)currentScrollAmount;
 
         if (description.description().image().isDone()) {
             var image = description.description().image().join();
             if (image.isPresent()) {
-                image.get().render(graphics, getX(), y, getWidth());
-                y += image.get().render(graphics, getX(), y, getWidth()) + 5;
+                image.get().render(matrices, getX(), y, getWidth());
+                y += image.get().render(matrices, getX(), y, getWidth()) + 5;
             }
         }
 
@@ -83,11 +89,11 @@ public class OptionDescriptionWidget extends AbstractWidget {
 
         descriptionY = y;
         for (var line : wrappedText) {
-            graphics.drawString(font, line, getX(), y, 0xFFFFFF);
+            font.draw(matrices, line, getX(), y, 0xFFFFFF);
             y += font.lineHeight;
         }
 
-        graphics.disableScissor();
+        GuiComponent.disableScissor();
 
         maxScrollAmount = Math.max(0, y + (int)currentScrollAmount - getY() - getHeight());
 
@@ -96,11 +102,11 @@ public class OptionDescriptionWidget extends AbstractWidget {
         }
         Style hoveredStyle = getDescStyle(mouseX, mouseY);
         if (hoveredStyle != null && hoveredStyle.getHoverEvent() != null) {
-            graphics.renderComponentHoverEffect(font, hoveredStyle, mouseX, mouseY);
+            minecraft.screen.renderComponentHoverEffect(matrices, font, hoveredStyle, mouseX, mouseY);
         }
 
         if (isFocused()) {
-            graphics.renderOutline(getX(), getY(), getWidth(), getHeight(), -1);
+            GuiComponent.renderOutline(matrices, getX(), getY(), getWidth(), getHeight(), -1);
         }
     }
 
@@ -184,6 +190,10 @@ public class OptionDescriptionWidget extends AbstractWidget {
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput builder) {
+        if (description != null) {
+            builder.add(NarratedElementType.TITLE, description.name());
+            builder.add(NarratedElementType.HINT, description.description().description());
+        }
 
     }
 
@@ -198,4 +208,12 @@ public class OptionDescriptionWidget extends AbstractWidget {
     private int currentTimeMS() {
         return (int)(Blaze3D.getTime() * 1000);
     }
+
+    @Nullable
+    @Override
+    public ComponentPath nextFocusPath(FocusNavigationEvent event) {
+        // prevents focusing on this widget
+        return null;
+    }
+
 }

@@ -77,14 +77,7 @@ public class YACLScreen extends Screen {
     @Override
     public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
         renderDirtBackground(matrices);
-
         super.render(matrices, mouseX, mouseY, delta);
-
-        for (GuiEventListener child : children()) {
-            if (child instanceof TooltipButtonWidget tooltipButtonWidget) {
-                tooltipButtonWidget.renderHoveredTooltip(matrices);
-            }
-        }
     }
 
     protected void finishOrSave() {
@@ -227,7 +220,7 @@ public class YACLScreen extends Screen {
     private class CategoryTab implements Tab {
         private final ConfigCategory category;
 
-        private final TabListWidget<OptionListWidget> optionList;
+        private TabListWidget<OptionListWidget> optionList;
         private final Button saveFinishedButton;
         private final Button cancelResetButton;
         private final Button undoButton;
@@ -236,13 +229,6 @@ public class YACLScreen extends Screen {
 
         public CategoryTab(ConfigCategory category) {
             this.category = category;
-
-            this.optionList = new TabListWidget<>(
-                    () -> new ScreenRectangle(tabArea.position(), tabArea.width() / 3 * 2 + 1, tabArea.height()),
-                    new OptionListWidget(YACLScreen.this, category, minecraft, 0, 0, width / 3 * 2 + 1, height, desc -> {
-                        descriptionWidget.setOptionDescription(desc);
-                    })
-            );
 
             int columnWidth = width / 3;
             int padding = columnWidth / 20;
@@ -277,6 +263,13 @@ public class YACLScreen extends Screen {
                     Component.translatable("gui.recipebook.search_hint"),
                     Component.translatable("gui.recipebook.search_hint"),
                     searchQuery -> optionList.getList().updateSearchQuery(searchQuery)
+            );
+
+            this.optionList = new TabListWidget<>(
+                    () -> new ScreenRectangle(tabArea.position(), tabArea.width() / 3 * 2 + 1, tabArea.height()),
+                    new OptionListWidget(YACLScreen.this, category, minecraft, 0, 0, width / 3 * 2 + 1, height, desc -> {
+                        descriptionWidget.setOptionDescription(desc);
+                    })
             );
 
             descriptionWidget = new OptionDescriptionWidget(

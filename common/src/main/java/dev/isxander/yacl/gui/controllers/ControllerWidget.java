@@ -45,21 +45,11 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         Component shortenedName = Component.literal(GuiUtils.shortenString(name.getString(), textRenderer, getDimension().width() - getControlWidth() - getXPadding() - 7, "...")).setStyle(name.getStyle());
 
         drawButtonRect(matrices, getDimension().x(), getDimension().y(), getDimension().xLimit(), getDimension().yLimit(), isHovered(), isAvailable());
-        matrices.pushPose();
-        matrices.translate(getDimension().x() + getXPadding(), getTextY(), 0);
-        textRenderer.drawShadow(matrices, shortenedName, 0, 0, getValueColor());
-        matrices.popPose();
+        textRenderer.drawShadow(matrices, shortenedName, getDimension().x() + getXPadding(), getTextY(), getValueColor());
 
         drawValueText(matrices, mouseX, mouseY, delta);
         if (isHovered()) {
             drawHoveredControl(matrices, mouseX, mouseY, delta);
-        }
-    }
-
-    @Override
-    public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
-        if (hovered || focused) {
-            YACLScreen.renderMultilineTooltip(matrices, textRenderer, wrappedTooltip, getDimension().centerX(), getDimension().y() - 5, getDimension().yLimit() + 5, screen.width, screen.height);
         }
     }
 
@@ -69,10 +59,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
 
     protected void drawValueText(PoseStack matrices, int mouseX, int mouseY, float delta) {
         Component valueText = getValueText();
-        matrices.pushPose();
-        matrices.translate(getDimension().xLimit() - textRenderer.width(valueText) - getXPadding(), getTextY(), 0);
-        textRenderer.drawShadow(matrices, valueText, 0, 0, getValueColor());
-        matrices.popPose();
+        textRenderer.drawShadow(matrices, valueText, getDimension().xLimit() - textRenderer.width(valueText) - getXPadding(), getTextY(), getValueColor());
     }
 
     private void updateTooltip() {
@@ -125,8 +112,8 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         GuiComponent.fill(matrices, x1, y1, x1 + width, y2, color);
     }
 
-    protected float getTextY() {
-        return getDimension().y() + getDimension().height() / 2f - textRenderer.lineHeight / 2f;
+    protected int getTextY() {
+        return (int)(getDimension().y() + getDimension().height() / 2f - textRenderer.lineHeight / 2f);
     }
 
     @Nullable

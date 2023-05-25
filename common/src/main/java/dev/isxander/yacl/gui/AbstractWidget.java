@@ -27,10 +27,6 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
         this.dim = dim;
     }
 
-    public void postRender(PoseStack matrices, int mouseX, int mouseY, float delta) {
-
-    }
-
     public boolean canReset() {
         return false;
     }
