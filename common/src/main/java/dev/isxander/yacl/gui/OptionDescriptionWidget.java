@@ -22,7 +22,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
     private static final int AUTO_SCROLL_TIMER = 3000;
     private static final float AUTO_SCROLL_SPEED = 1;
 
-    private @Nullable OptionDescription description;
+    private @Nullable DescriptionWithName description;
     private List<FormattedCharSequence> wrappedText;
 
     private static final Minecraft minecraft = Minecraft.getInstance();
@@ -37,8 +37,8 @@ public class OptionDescriptionWidget extends AbstractWidget {
     private int lastInteractionTime;
     private boolean scrollingBackward;
 
-    public OptionDescriptionWidget(Supplier<ScreenRectangle> dimensions, @Nullable OptionDescription description) {
-        super(0, 0, 0, 0, description == null ? Component.empty() : description.descriptiveName());
+    public OptionDescriptionWidget(Supplier<ScreenRectangle> dimensions, @Nullable DescriptionWithName description) {
+        super(0, 0, 0, 0, description == null ? Component.empty() : description.name());
         this.dimensions = dimensions;
         this.setOptionDescription(description);
     }
@@ -57,11 +57,11 @@ public class OptionDescriptionWidget extends AbstractWidget {
 
         int y = getY();
 
-        int nameWidth = font.width(description.descriptiveName());
+        int nameWidth = font.width(description.name());
         if (nameWidth > getWidth()) {
-            renderScrollingString(graphics, font, description.descriptiveName(), getX(), y, getX() + getWidth(), y + font.lineHeight, -1);
+            renderScrollingString(graphics, font, description.name(), getX(), y, getX() + getWidth(), y + font.lineHeight, -1);
         } else {
-            graphics.drawString(font, description.descriptiveName(), getX(), y, 0xFFFFFF);
+            graphics.drawString(font, description.name(), getX(), y, 0xFFFFFF);
         }
 
         y += 5 + font.lineHeight;
@@ -70,16 +70,16 @@ public class OptionDescriptionWidget extends AbstractWidget {
 
         y -= (int)currentScrollAmount;
 
-        if (description.image().isDone()) {
-            var image = description.image().join();
+        if (description.description().image().isDone()) {
+            var image = description.description().image().join();
             if (image.isPresent()) {
                 image.get().render(graphics, getX(), y, getWidth());
                 y += image.get().render(graphics, getX(), y, getWidth()) + 5;
             }
         }
 
-        if (wrappedText == null && description.description() != null)
-            wrappedText = font.split(description.description(), getWidth());
+        if (wrappedText == null)
+            wrappedText = font.split(description.description().description(), getWidth());
 
         descriptionY = y;
         for (var line : wrappedText) {
@@ -187,7 +187,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
 
     }
 
-    public void setOptionDescription(OptionDescription description) {
+    public void setOptionDescription(DescriptionWithName description) {
         this.description = description;
         this.wrappedText = null;
         this.targetScrollAmount = 0;

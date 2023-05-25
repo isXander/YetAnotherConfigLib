@@ -14,18 +14,11 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public record OptionDescriptionImpl(Component descriptiveName, Component description, CompletableFuture<Optional<ImageRenderer>> image) implements OptionDescription {
+public record OptionDescriptionImpl(Component description, CompletableFuture<Optional<ImageRenderer>> image) implements OptionDescription {
     public static class BuilderImpl implements Builder {
-        private Component name;
         private final List<Component> descriptionLines = new ArrayList<>();
         private CompletableFuture<Optional<ImageRenderer>> image = CompletableFuture.completedFuture(Optional.empty());
         private boolean imageUnset = true;
-
-        @Override
-        public Builder name(Component name) {
-            this.name = name;
-            return this;
-        }
 
         @Override
         public Builder description(Component... description) {
@@ -45,7 +38,18 @@ public record OptionDescriptionImpl(Component descriptiveName, Component descrip
             Validate.isTrue(width > 0, "Width must be greater than 0!");
             Validate.isTrue(height > 0, "Height must be greater than 0!");
 
-            this.image = ImageRenderer.getOrMakeSync(image, () -> Optional.of(new ImageRenderer.TextureBacked(image, width, height)));
+            this.image = ImageRenderer.getOrMakeSync(image, () -> Optional.of(new ImageRenderer.TextureBacked(image, 0, 0, width, height, width, height)));
+            imageUnset = false;
+            return this;
+        }
+
+        @Override
+        public Builder image(ResourceLocation image, float u, float v, int width, int height, int textureWidth, int textureHeight) {
+            Validate.isTrue(imageUnset, "Image already set!");
+            Validate.isTrue(width > 0, "Width must be greater than 0!");
+            Validate.isTrue(height > 0, "Height must be greater than 0!");
+
+            this.image = ImageRenderer.getOrMakeSync(image, () -> Optional.of(new ImageRenderer.TextureBacked(image, u, v, width, height, textureWidth, textureHeight)));
             imageUnset = false;
             return this;
         }
@@ -120,8 +124,6 @@ public record OptionDescriptionImpl(Component descriptiveName, Component descrip
 
         @Override
         public OptionDescription build() {
-            Validate.notNull(name, "Name must be set!");
-
             MutableComponent concatenatedDescription = Component.empty();
             Iterator<Component> iter = descriptionLines.iterator();
             while (iter.hasNext()) {
@@ -129,7 +131,7 @@ public record OptionDescriptionImpl(Component descriptiveName, Component descrip
                 if (iter.hasNext()) concatenatedDescription.append("\n");
             }
 
-            return new OptionDescriptionImpl(name.copy().withStyle(ChatFormatting.BOLD), concatenatedDescription, image);
+            return new OptionDescriptionImpl(concatenatedDescription, image);
         }
     }
 }

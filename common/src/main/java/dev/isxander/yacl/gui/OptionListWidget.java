@@ -27,10 +27,10 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     private final ConfigCategory category;
     private ImmutableList<Entry> viewableChildren;
     private String searchQuery = "";
-    private final Consumer<OptionDescription> hoverEvent;
-    private OptionDescription lastHoveredOption;
+    private final Consumer<DescriptionWithName> hoverEvent;
+    private DescriptionWithName lastHoveredOption;
 
-    public OptionListWidget(YACLScreen screen, ConfigCategory category, Minecraft client, int x, int y, int width, int height, Consumer<OptionDescription> hoverEvent) {
+    public OptionListWidget(YACLScreen screen, ConfigCategory category, Minecraft client, int x, int y, int width, int height, Consumer<DescriptionWithName> hoverEvent) {
         super(client, x, y, width, height, true);
         this.yaclScreen = screen;
         this.category = category;
@@ -237,7 +237,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         return ret;
     }
 
-    private void setHoverDescription(OptionDescription description) {
+    private void setHoverDescription(DescriptionWithName description) {
         if (description != lastHoveredOption) {
             lastHoveredOption = description;
             hoverEvent.accept(description);
@@ -300,7 +300,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             }
 
             if (isHovered() || isFocused()) {
-                setHoverDescription(option.description());
+                setHoverDescription(DescriptionWithName.of(option.name(), option.description()));
             }
         }
 
@@ -398,7 +398,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             wrappedName.renderCentered(matrices, x + entryWidth / 2, y + getYPadding());
 
             if (isHovered() || isFocused()) {
-                setHoverDescription(group.description());
+                setHoverDescription(DescriptionWithName.of(group.name(), group.description()));
             }
         }
 

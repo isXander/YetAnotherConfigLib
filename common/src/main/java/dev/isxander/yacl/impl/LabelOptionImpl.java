@@ -29,7 +29,6 @@ public final class LabelOptionImpl implements LabelOption {
         this.labelController = new LabelController(this);
         this.binding = Binding.immutable(label);
         this.description = OptionDescription.createBuilder()
-                .name(this.name)
                 .description(this.label)
                 .build();
     }
