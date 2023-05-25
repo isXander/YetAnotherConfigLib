@@ -7,6 +7,7 @@
   },
   "client": [
     "AbstractSelectionListMixin",
+    "ContainerEventHandlerMixin",
     "MinecraftMixin",
     "OptionInstanceAccessor"
   ]
