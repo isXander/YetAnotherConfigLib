@@ -53,11 +53,17 @@ public interface ImageRenderer {
     class TextureBacked implements ImageRenderer {
         private final ResourceLocation location;
         private final int width, height;
+        private final int textureWidth, textureHeight;
+        private final float u, v;
 
-        public TextureBacked(ResourceLocation location, int width, int height) {
+        public TextureBacked(ResourceLocation location, float u, float v, int width, int height, int textureWidth, int textureHeight) {
             this.location = location;
             this.width = width;
             this.height = height;
+            this.textureWidth = textureWidth;
+            this.textureHeight = textureHeight;
+            this.u = u;
+            this.v = v;
         }
 
         @Override
@@ -68,7 +74,7 @@ public interface ImageRenderer {
             graphics.pose().pushPose();
             graphics.pose().translate(x, y, 0);
             graphics.pose().scale(ratio, ratio, 1);
-            graphics.blit(location, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
+            graphics.blit(location, 0, 0, this.u, this.v, this.width, this.height, this.textureWidth, this.textureHeight);
             graphics.pose().popPose();
 
             return targetHeight;
@@ -86,7 +92,7 @@ public interface ImageRenderer {
         protected NativeImage image;
         protected DynamicTexture texture;
         protected final ResourceLocation uniqueLocation;
-        protected int width, height;
+        protected final int width, height;
 
         public NativeImageBacked(NativeImage image, ResourceLocation uniqueLocation) {
             this.image = image;
@@ -144,11 +150,11 @@ public interface ImageRenderer {
         private int currentFrame;
         private double lastFrameTime;
 
-        private double frameDelay;
-        private int frameCount;
+        private final double frameDelay;
+        private final int frameCount;
 
-        private int packCols, packRows;
-        private int frameWidth, frameHeight;
+        private final int packCols, packRows;
+        private final int frameWidth, frameHeight;
 
         public AnimatedNativeImageBacked(NativeImage image, int frameWidth, int frameHeight, int frameCount, double frameDelayMS, int packCols, int packRows, ResourceLocation uniqueLocation) {
             super(image, uniqueLocation);
@@ -196,24 +202,26 @@ public interface ImageRenderer {
                 ImageReader reader = new WebPImageReaderSpi().createReaderInstance();
                 reader.setInput(ImageIO.createImageInputStream(is));
 
-                // WebP reader does not expose frame delay, prepare for reflection hell
-                int frameDelayMS;
-                reader.getNumImages(true); // Force reading of all frames
-                try {
-                    Class<?> webpReaderClass = Class.forName("com.twelvemonkeys.imageio.plugins.webp.WebPImageReader");
-                    Field framesField = webpReaderClass.getDeclaredField("frames");
-                    framesField.setAccessible(true);
-                    List<?> frames = (List<?>) framesField.get(reader);
-                    Object firstFrame = frames.get(0);
+                int frameDelayMS = 0;
+                int numImages = reader.getNumImages(true); // Force reading of all frames
+                if (numImages > 1) {
+                    // WebP reader does not expose frame delay, prepare for reflection hell
+                    try {
+                        Class<?> webpReaderClass = Class.forName("com.twelvemonkeys.imageio.plugins.webp.WebPImageReader");
+                        Field framesField = webpReaderClass.getDeclaredField("frames");
+                        framesField.setAccessible(true);
+                        List<?> frames = (List<?>) framesField.get(reader);
+                        Object firstFrame = frames.get(0);
 
-                    Class<?> animationFrameClass = Class.forName("com.twelvemonkeys.imageio.plugins.webp.AnimationFrame");
-                    Field durationField = animationFrameClass.getDeclaredField("duration");
-                    durationField.setAccessible(true);
-                    frameDelayMS = (int) durationField.get(firstFrame);
-                } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
-                    throw new RuntimeException(e);
+                        Class<?> animationFrameClass = Class.forName("com.twelvemonkeys.imageio.plugins.webp.AnimationFrame");
+                        Field durationField = animationFrameClass.getDeclaredField("duration");
+                        durationField.setAccessible(true);
+                        frameDelayMS = (int) durationField.get(firstFrame);
+                    } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                    // that was fun
                 }
-                // that was fun
 
                 return createFromImageReader(reader, frameDelayMS, uniqueLocation);
             } catch (IOException e) {
@@ -301,13 +309,15 @@ public interface ImageRenderer {
             );
             graphics.pose().popPose();
 
-            double timeMS = Blaze3D.getTime() * 1000;
-            if (lastFrameTime == 0) lastFrameTime = timeMS;
-            if (timeMS - lastFrameTime >= frameDelay) {
-                currentFrame++;
-                lastFrameTime = timeMS;
+            if (frameCount > 1) {
+                double timeMS = Blaze3D.getTime() * 1000;
+                if (lastFrameTime == 0) lastFrameTime = timeMS;
+                if (timeMS - lastFrameTime >= frameDelay) {
+                    currentFrame++;
+                    lastFrameTime = timeMS;
+                }
+                if (currentFrame >= frameCount - 1) currentFrame = 0;
             }
-            if (currentFrame >= frameCount - 1) currentFrame = 0;
 
             return targetHeight;
         }

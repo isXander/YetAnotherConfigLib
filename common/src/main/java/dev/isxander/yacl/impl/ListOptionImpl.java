@@ -345,7 +345,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
                 if (ensureLegacyDescriptionBuilder())
                     YACLConstants.LOGGER.warn("Using deprecated `tooltip` method in list option {}. Use `description` instead.", name.getString());
 
-                description = legacyBuilder.name(name).build();
+                description = legacyBuilder.build();
             }
 
             return new ListOptionImpl<>(name, description, binding, initialValue, typeClass, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available, listeners);

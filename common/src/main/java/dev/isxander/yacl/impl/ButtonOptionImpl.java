@@ -217,7 +217,7 @@ public final class ButtonOptionImpl implements ButtonOption {
                 concatenatedTooltip.append(line);
             }
 
-            return new ButtonOptionImpl(name, OptionDescription.createBuilder().name(name).description(concatenatedTooltip).build(), action, available, controlGetter);
+            return new ButtonOptionImpl(name, OptionDescription.createBuilder().description(concatenatedTooltip).build(), action, available, controlGetter);
         }
     }
 }

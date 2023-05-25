@@ -133,7 +133,7 @@ public final class OptionGroupImpl implements OptionGroup {
                 if (ensureLegacyDescriptionBuilder())
                     YACLConstants.LOGGER.warn("Using deprecated `tooltip` method in option group '{}'. Use `description` instead.", name != null ? name.getString() : "unnamed group");
 
-                description = legacyBuilder.name(name).build();
+                description = legacyBuilder.build();
             }
 
             return new OptionGroupImpl(name, description, ImmutableList.copyOf(options), collapsed, false);

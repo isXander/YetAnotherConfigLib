@@ -312,7 +312,7 @@ public final class OptionImpl<T> implements Option<T> {
 
                     return concatenatedTooltip;
                 };
-                descriptionFunction = opt -> OptionDescription.createBuilder().name(name).description(concatenatedTooltipGetter.apply(opt)).build();
+                descriptionFunction = opt -> OptionDescription.createBuilder().description(concatenatedTooltipGetter.apply(opt)).build();
             }
 
             return new OptionImpl<>(name, descriptionFunction, controlGetter, binding, available, ImmutableSet.copyOf(flags), typeClass, listeners);

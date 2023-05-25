@@ -129,8 +129,21 @@ public interface Option<T> {
          */
         Builder<T> name(@NotNull Component name);
 
+        /**
+         * Sets the description to be used by the option.
+         * @see OptionDescription
+         * @param description the static description.
+         * @return this builder
+         */
         Builder<T> description(@NotNull OptionDescription description);
 
+        /**
+         * Sets the function to get the description by the option's current value.
+         *
+         * @see OptionDescription
+         * @param descriptionFunction the function to get the description by the option's current value.
+         * @return this builder
+         */
         Builder<T> description(@NotNull Function<T, OptionDescription> descriptionFunction);
 
         /**
