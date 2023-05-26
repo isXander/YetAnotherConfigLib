@@ -40,9 +40,11 @@ public interface OptionDescription {
         return new OptionDescriptionImpl.BuilderImpl();
     }
 
-    static OptionDescription empty() {
-        return new OptionDescriptionImpl(CommonComponents.EMPTY, CompletableFuture.completedFuture(Optional.empty()));
+    static OptionDescription of(Component... description) {
+        return createBuilder().description(description).build();
     }
+
+    OptionDescription EMPTY = new OptionDescriptionImpl(CommonComponents.EMPTY, CompletableFuture.completedFuture(Optional.empty()));
 
     interface Builder {
         /**

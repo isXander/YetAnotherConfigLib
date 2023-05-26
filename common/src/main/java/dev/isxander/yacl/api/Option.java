@@ -1,6 +1,7 @@
 package dev.isxander.yacl.api;
 
 import com.google.common.collect.ImmutableSet;
+import dev.isxander.yacl.api.controller.ControllerBuilder;
 import dev.isxander.yacl.impl.OptionImpl;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -54,12 +55,6 @@ public interface Option<T> {
     void setAvailable(boolean available);
 
     /**
-     * Class of the option type.
-     * Used by some controllers.
-     */
-    @NotNull Class<T> typeClass();
-
-    /**
      * Tasks that needs to be executed upon applying changes.
      */
     @NotNull ImmutableSet<OptionFlag> flags();
@@ -111,14 +106,19 @@ public interface Option<T> {
      */
     void addListener(BiConsumer<Option<T>, T> changedListener);
 
+    static <T> Builder<T> createBuilder() {
+        return new OptionImpl.BuilderImpl<>();
+    }
+
     /**
      * Creates a builder to construct an {@link Option}
      *
      * @param <T> type of the option's value
      * @param typeClass used to capture the type
      */
+    @Deprecated
     static <T> Builder<T> createBuilder(Class<T> typeClass) {
-        return new OptionImpl.BuilderImpl<>(typeClass);
+        return createBuilder();
     }
 
     interface Builder<T> {
@@ -146,33 +146,7 @@ public interface Option<T> {
          */
         Builder<T> description(@NotNull Function<T, OptionDescription> descriptionFunction);
 
-        /**
-         * Sets the tooltip to be used by the option.
-         * No need to wrap the text yourself, the gui does this itself.
-         *
-         * @param tooltipGetter function to get tooltip depending on value {@link Builder#build()}.
-         */
-        @Deprecated
-        Builder<T> tooltip(@NotNull Function<T, Component> tooltipGetter);
-
-        /**
-         * Sets the tooltip to be used by the option.
-         * No need to wrap the text yourself, the gui does this itself.
-         *
-         * @param tooltipGetter function to get tooltip depending on value {@link Builder#build()}.
-         */
-        @Deprecated
-        Builder<T> tooltip(@NotNull Function<T, Component>... tooltipGetter);
-
-        /**
-         * Sets the tooltip to be used by the option.
-         * Can be invoked twice to append more lines.
-         * No need to wrap the text yourself, the gui does this itself.
-         *
-         * @param tooltips text lines - merged with a new-line on {@link Builder#build()}.
-         */
-        @Deprecated
-        Builder<T> tooltip(@NotNull Component... tooltips);
+        Builder<T> controller(@NotNull Function<Option<T>, ControllerBuilder<T>> controllerBuilder);
 
         /**
          * Sets the controller for the option.
@@ -180,7 +154,7 @@ public interface Option<T> {
          *
          * @see dev.isxander.yacl.gui.controllers
          */
-        Builder<T> controller(@NotNull Function<Option<T>, Controller<T>> control);
+        Builder<T> customController(@NotNull Function<Option<T>, Controller<T>> control);
 
         /**
          * Sets the binding for the option.
@@ -220,7 +194,7 @@ public interface Option<T> {
          * Upon applying changes, all flags are executed.
          * {@link Option#flags()}
          */
-        Builder<T> flags(@NotNull Collection<OptionFlag> flags);
+        Builder<T> flags(@NotNull Collection<? extends OptionFlag> flags);
 
         /**
          * Instantly invokes the binder's setter when modified in the GUI.

@@ -21,7 +21,7 @@ public class CyclingListController<T> implements ICyclingController<T> {
      * @param option option of which to bind the controller to
      * @param values the values to cycle through
      */
-    public CyclingListController(Option<T> option, Iterable<T> values) {
+    public CyclingListController(Option<T> option, Iterable<? extends T> values) {
         this(option, values, value -> Component.literal(value.toString()));
     }
 
@@ -31,7 +31,7 @@ public class CyclingListController<T> implements ICyclingController<T> {
      * @param values the values to cycle through
      * @param valueFormatter function of how to convert each value to a string to display
      */
-    public CyclingListController(Option<T> option, Iterable<T> values, Function<T, Component> valueFormatter) {
+    public CyclingListController(Option<T> option, Iterable<? extends T> values, Function<T, Component> valueFormatter) {
         this.option = option;
         this.valueFormatter = valueFormatter;
         this.values = ImmutableList.copyOf(values);

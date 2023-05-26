@@ -1,6 +1,8 @@
 package dev.isxander.yacl.test;
 
 import dev.isxander.yacl.api.*;
+import dev.isxander.yacl.api.controller.BooleanControllerBuilder;
+import dev.isxander.yacl.api.controller.TickBoxControllerBuilder;
 import dev.isxander.yacl.gui.RequireRestartScreen;
 import dev.isxander.yacl.gui.controllers.*;
 import dev.isxander.yacl.gui.controllers.cycling.EnumController;
@@ -34,14 +36,12 @@ public class GuiTest {
                                 .name(Component.literal("Suites"))
                                 .option(ButtonOption.createBuilder()
                                         .name(Component.literal("Full Test Suite"))
-                                        .controller(ActionController::new)
                                         .action((screen, opt) -> Minecraft.getInstance().setScreen(getFullTestSuite(screen)))
                                         .build())
                                 .group(OptionGroup.createBuilder()
                                         .name(Component.literal("Wiki"))
                                         .option(ButtonOption.createBuilder()
                                                 .name(Component.literal("Get Started"))
-                                                .controller(ActionController::new)
                                                 .action((screen, opt) -> Minecraft.getInstance().setScreen(getWikiGetStarted(screen)))
                                                 .build())
                                         .build())
@@ -58,7 +58,7 @@ public class GuiTest {
                                 .tooltip(Component.literal("Example Category Description"))
                                 .group(OptionGroup.createBuilder()
                                         .name(Component.literal("Boolean Controllers"))
-                                        .option(Option.createBuilder(boolean.class)
+                                        .option(Option.<Boolean>createBuilder()
                                                 .name(Component.literal("Boolean Toggle"))
                                                 .description(OptionDescription.createBuilder()
                                                         .description(Component.empty()
@@ -75,10 +75,10 @@ public class GuiTest {
                                                         () -> config.booleanToggle,
                                                         (value) -> config.booleanToggle = value
                                                 )
-                                                .controller(BooleanController::new)
+                                                .controller(BooleanControllerBuilder::create)
                                                 .flag(OptionFlag.GAME_RESTART)
                                                 .build())
-                                        .option(Option.createBuilder(boolean.class)
+                                        .option(Option.<Boolean>createBuilder()
                                                 .name(Component.literal("Custom Boolean Toggle"))
                                                 .description(val -> OptionDescription.createBuilder()
                                                         .description(Component.literal("You can customize controllers like so! YACL is truly infinitely customizable! This tooltip is long in order to demonstrate the cool, smooth scrolling of these descriptions. Did you know, they are also super clickable?! I know, cool right, YACL 3.x really is amazing."))
@@ -89,17 +89,19 @@ public class GuiTest {
                                                         () -> config.customBooleanToggle,
                                                         (value) -> config.customBooleanToggle = value
                                                 )
-                                                .controller(opt -> new BooleanController(opt, state -> state ? Component.literal("Amazing") : Component.literal("Not Amazing"), true))
+                                                .controller(opt -> BooleanControllerBuilder.create(opt)
+                                                        .valueFormatter(state -> state ? Component.literal("Amazing") : Component.literal("Not Amazing"))
+                                                        .coloured(true))
                                                 .build())
                                         .option(Option.createBuilder(boolean.class)
                                                 .name(Component.literal("Tick Box"))
-                                                .tooltip(Component.literal("There are even alternate methods of displaying the same data type!"))
+                                                .description(OptionDescription.of(Component.literal("There are even alternate methods of displaying the same data type!")))
                                                 .binding(
                                                         defaults.tickbox,
                                                         () -> config.tickbox,
                                                         (value) -> config.tickbox = value
                                                 )
-                                                .controller(TickBoxController::new)
+                                                .controller(TickBoxControllerBuilder::create)
                                                 .build())
                                         .build())
                                 .group(OptionGroup.createBuilder()
@@ -113,7 +115,7 @@ public class GuiTest {
                                                         value -> config.intSlider = value
 
                                                 )
-                                                .controller(opt -> new IntegerSliderController(opt, 0, 3, 1))
+                                                .customController(opt -> new IntegerSliderController(opt, 0, 3, 1))
                                                 .build())
                                         .option(Option.createBuilder(double.class)
                                                 .name(Component.literal("Double Slider"))
@@ -122,7 +124,7 @@ public class GuiTest {
                                                         () -> config.doubleSlider,
                                                         (value) -> config.doubleSlider = value
                                                 )
-                                                .controller(opt -> new DoubleSliderController(opt, 0, 3, 0.05))
+                                                .customController(opt -> new DoubleSliderController(opt, 0, 3, 0.05))
                                                 .build())
                                         .option(Option.createBuilder(float.class)
                                                 .name(Component.literal("Float Slider"))
@@ -131,7 +133,7 @@ public class GuiTest {
                                                         () -> config.floatSlider,
                                                         (value) -> config.floatSlider = value
                                                 )
-                                                .controller(opt -> new FloatSliderController(opt, 0, 3, 0.1f))
+                                                .customController(opt -> new FloatSliderController(opt, 0, 3, 0.1f))
                                                 .build())
                                         .option(Option.createBuilder(long.class)
                                                 .name(Component.literal("Long Slider"))
@@ -140,7 +142,7 @@ public class GuiTest {
                                                         () -> config.longSlider,
                                                         (value) -> config.longSlider = value
                                                 )
-                                                .controller(opt -> new LongSliderController(opt, 0, 1_000_000, 100))
+                                                .customController(opt -> new LongSliderController(opt, 0, 1_000_000, 100))
                                                 .build())
                                         .build())
                                 .group(OptionGroup.createBuilder()
@@ -152,7 +154,7 @@ public class GuiTest {
                                                         () -> config.textField,
                                                         value -> config.textField = value
                                                 )
-                                                .controller(StringController::new)
+                                                .customController(StringController::new)
                                                 .build())
                                         .option(Option.createBuilder(Color.class)
                                                 .name(Component.literal("Color Option"))
@@ -161,7 +163,7 @@ public class GuiTest {
                                                         () -> config.colorOption,
                                                         value -> config.colorOption = value
                                                 )
-                                                .controller(ColorController::new)
+                                                .customController(ColorController::new)
                                                 .build())
                                         .build())
                                 .group(OptionGroup.createBuilder()
@@ -173,7 +175,7 @@ public class GuiTest {
                                                         () -> config.doubleField,
                                                         value -> config.doubleField = value
                                                 )
-                                                .controller(DoubleFieldController::new)
+                                                .customController(DoubleFieldController::new)
                                                 .build())
                                         .option(Option.createBuilder(float.class)
                                                 .name(Component.literal("Float Field"))
@@ -182,7 +184,7 @@ public class GuiTest {
                                                         () -> config.floatField,
                                                         value -> config.floatField = value
                                                 )
-                                                .controller(FloatFieldController::new)
+                                                .customController(FloatFieldController::new)
                                                 .build())
                                         .option(Option.createBuilder(int.class)
                                                 .name(Component.literal("Integer Field"))
@@ -191,7 +193,7 @@ public class GuiTest {
                                                         () -> config.intField,
                                                         value -> config.intField = value
                                                 )
-                                                .controller(IntegerFieldController::new)
+                                                .customController(IntegerFieldController::new)
                                                 .build())
                                         .option(Option.createBuilder(long.class)
                                                 .name(Component.literal("Long Field"))
@@ -200,7 +202,7 @@ public class GuiTest {
                                                         () -> config.longField,
                                                         value -> config.longField = value
                                                 )
-                                                .controller(LongFieldController::new)
+                                                .customController(LongFieldController::new)
                                                 .build())
                                         .build())
                                 .group(OptionGroup.createBuilder()
@@ -212,7 +214,7 @@ public class GuiTest {
                                                         () -> config.enumOption,
                                                         (value) -> config.enumOption = value
                                                 )
-                                                .controller(EnumController::new)
+                                                .customController(opt -> new EnumController<>(opt, ConfigTest.Alphabet.class))
                                                 .build())
                                         .build())
                                 .group(OptionGroup.createBuilder()
@@ -220,7 +222,6 @@ public class GuiTest {
                                         .option(ButtonOption.createBuilder()
                                                 .name(Component.literal("Button \"Option\""))
                                                 .action((screen, opt) -> SystemToast.add(Minecraft.getInstance().getToasts(), SystemToast.SystemToastIds.TUTORIAL_HINT, Component.literal("Button Pressed"), Component.literal("Button option was invoked!")))
-                                                .controller(ActionController::new)
                                                 .build())
                                         .option(LabelOption.create(
                                                 Component.empty()
@@ -233,17 +234,17 @@ public class GuiTest {
                                         .build())
                                 .group(OptionGroup.createBuilder()
                                         .name(Component.literal("Minecraft Bindings"))
-                                        .tooltip(Component.literal("YACL can also bind Minecraft options!"))
+                                        .description(OptionDescription.of(Component.literal("YACL can also bind Minecraft options!")))
                                         .option(Option.createBuilder(boolean.class)
                                                 .name(Component.literal("Minecraft AutoJump"))
-                                                .tooltip(Component.literal("You can even bind minecraft options!"))
+                                                .description(OptionDescription.of(Component.literal("You can even bind minecraft options!")))
                                                 .binding(Binding.minecraft(Minecraft.getInstance().options.autoJump()))
-                                                .controller(TickBoxController::new)
+                                                .customController(TickBoxController::new)
                                                 .build())
-                                        .option(Option.createBuilder(GraphicsStatus.class)
+                                        .option(Option.<GraphicsStatus>createBuilder()
                                                 .name(Component.literal("Minecraft Graphics Mode"))
                                                 .binding(Binding.minecraft(Minecraft.getInstance().options.graphicsMode()))
-                                                .controller(EnumController::new)
+                                                .customController(opt -> new EnumController<>(opt, GraphicsStatus.class))
                                                 .build())
                                         .build())
                                 .build())
@@ -286,7 +287,7 @@ public class GuiTest {
                                                 () -> config.groupTestRoot,
                                                 value -> config.groupTestRoot = value
                                         )
-                                        .controller(TickBoxController::new)
+                                        .customController(TickBoxController::new)
                                         .build())
                                 .group(OptionGroup.createBuilder()
                                         .name(Component.literal("First Group"))
@@ -297,7 +298,7 @@ public class GuiTest {
                                                         () -> config.groupTestFirstGroup,
                                                         value -> config.groupTestFirstGroup = value
                                                 )
-                                                .controller(TickBoxController::new)
+                                                .customController(TickBoxController::new)
                                                 .build())
                                         .option(Option.createBuilder(boolean.class)
                                                 .name(Component.literal("First Group Test 2"))
@@ -306,7 +307,7 @@ public class GuiTest {
                                                         () -> config.groupTestFirstGroup2,
                                                         value -> config.groupTestFirstGroup2 = value
                                                 )
-                                                .controller(TickBoxController::new)
+                                                .customController(TickBoxController::new)
                                                 .build())
                                         .build())
                                 .group(OptionGroup.createBuilder()
@@ -318,7 +319,7 @@ public class GuiTest {
                                                         () -> config.groupTestSecondGroup,
                                                         value -> config.groupTestSecondGroup = value
                                                 )
-                                                .controller(TickBoxController::new)
+                                                .customController(TickBoxController::new)
                                                 .build())
                                         .build())
                                 .build())
@@ -372,12 +373,12 @@ public class GuiTest {
                         .tooltip(Component.literal("This Component will appear as a tooltip when you hover or focus the button with Tab. There is no need to add \n to wrap as YACL will do it for you."))
                         .group(OptionGroup.createBuilder()
                                 .name(Component.literal("Name of the group"))
-                                .tooltip(Component.literal("This Component will appear when you hover over the name or focus on the collapse button with Tab."))
+                                .description(OptionDescription.of(Component.literal("This Component will appear when you hover over the name or focus on the collapse button with Tab.")))
                                 .option(Option.createBuilder(boolean.class)
                                         .name(Component.literal("Boolean Option"))
-                                        .tooltip(Component.literal("This Component will appear as a tooltip when you hover over the option."))
+                                        .description(OptionDescription.of(Component.literal("This Component will appear as a tooltip when you hover over the option.")))
                                         .binding(true, () -> myBooleanOption, newVal -> myBooleanOption = newVal)
-                                        .controller(TickBoxController::new)
+                                        .customController(TickBoxController::new)
                                         .build())
                                 .build())
                         .build())

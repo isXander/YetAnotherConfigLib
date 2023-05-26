@@ -74,11 +74,6 @@ public final class LabelOptionImpl implements LabelOption {
     }
 
     @Override
-    public @NotNull Class<Component> typeClass() {
-        return Component.class;
-    }
-
-    @Override
     public @NotNull ImmutableSet<OptionFlag> flags() {
         return ImmutableSet.of();
     }

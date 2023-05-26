@@ -26,25 +26,8 @@ public class EnumController<T extends Enum<T>> extends CyclingListController<T> 
         };
     }
 
-    /**
-     * Constructs a cycling enum controller with a default value formatter and all values being available.
-     * The default value formatter first searches if the
-     * enum is a {@link NameableEnum} or {@link OptionEnum} else, just uses {@link Enum#toString()}
-     *
-     * @param option bound option
-     */
-    public EnumController(Option<T> option) {
-        this(option, getDefaultFormatter());
-    }
-
-    /**
-     * Constructs a cycling enum controller with all values being available.
-     *
-     * @param option bound option
-     * @param valueFormatter format the enum into any {@link Component}
-     */
-    public EnumController(Option<T> option, Function<T, Component> valueFormatter) {
-        this(option, valueFormatter, option.typeClass().getEnumConstants());
+    public EnumController(Option<T> option, Class<T> enumClass) {
+        this(option, getDefaultFormatter(), enumClass.getEnumConstants());
     }
 
     /**

@@ -21,7 +21,7 @@ public interface LabelOption extends Option<Component> {
         return new LabelOptionImpl(label);
     }
 
-    static dev.isxander.yacl.api.LabelOption.Builder createBuilder() {
+    static Builder createBuilder() {
         return new LabelOptionImpl.BuilderImpl();
     }
 
@@ -29,12 +29,12 @@ public interface LabelOption extends Option<Component> {
         /**
          * Appends a line to the label
          */
-        dev.isxander.yacl.api.LabelOption.Builder line(@NotNull Component line);
+        Builder line(@NotNull Component line);
 
         /**
          * Appends multiple lines to the label
          */
-        dev.isxander.yacl.api.LabelOption.Builder lines(@NotNull Collection<? extends Component> lines);
+        Builder lines(@NotNull Collection<? extends Component> lines);
 
         LabelOption build();
     }

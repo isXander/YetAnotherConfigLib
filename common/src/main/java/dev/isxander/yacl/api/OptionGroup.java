@@ -61,16 +61,6 @@ public interface OptionGroup {
         Builder description(@NotNull OptionDescription description);
 
         /**
-         * Sets the tooltip to be used by the option group.
-         * Can be invoked twice to append more lines.
-         * No need to wrap the Component yourself, the gui does this itself.
-         *
-         * @param tooltips Component lines - merged with a new-line on {@link Builder#build()}.
-         */
-        @Deprecated
-        Builder tooltip(@NotNull Component... tooltips);
-
-        /**
          * Adds an option to group.
          * To construct an option, use {@link Option#createBuilder(Class)}
          *

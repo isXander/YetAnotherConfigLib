@@ -3,6 +3,7 @@ package dev.isxander.yacl.impl;
 import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.impl.utils.YACLConstants;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
@@ -111,7 +112,7 @@ public final class ConfigCategoryImpl implements ConfigCategory {
             Validate.notNull(name, "`name` must not be null to build `ConfigCategory`");
 
             List<OptionGroup> combinedGroups = new ArrayList<>();
-            combinedGroups.add(new OptionGroupImpl(Component.empty(), OptionDescription.empty(), ImmutableList.copyOf(rootOptions), false, true));
+            combinedGroups.add(new OptionGroupImpl(CommonComponents.EMPTY, OptionDescription.EMPTY, ImmutableList.copyOf(rootOptions), false, true));
             combinedGroups.addAll(groups);
 
             Validate.notEmpty(combinedGroups, "at least one option must be added to build `ConfigCategory`");
