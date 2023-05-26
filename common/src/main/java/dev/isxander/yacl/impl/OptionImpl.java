@@ -2,6 +2,7 @@ package dev.isxander.yacl.impl;
 
 import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.api.*;
+import dev.isxander.yacl.api.controller.ControllerBuilder;
 import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -28,8 +29,6 @@ public final class OptionImpl<T> implements Option<T> {
 
     private final ImmutableSet<OptionFlag> flags;
 
-    private final Class<T> typeClass;
-
     private T pendingValue;
 
     private final List<BiConsumer<Option<T>, T>> listeners;
@@ -41,14 +40,12 @@ public final class OptionImpl<T> implements Option<T> {
             @NotNull Binding<T> binding,
             boolean available,
             ImmutableSet<OptionFlag> flags,
-            @NotNull Class<T> typeClass,
             @NotNull Collection<BiConsumer<Option<T>, T>> listeners
     ) {
         this.name = name;
         this.binding = binding;
         this.available = available;
         this.flags = flags;
-        this.typeClass = typeClass;
         this.listeners = new ArrayList<>(listeners);
         this.controller = controlGetter.apply(this);
 
@@ -90,11 +87,6 @@ public final class OptionImpl<T> implements Option<T> {
     @Override
     public void setAvailable(boolean available) {
         this.available = available;
-    }
-
-    @Override
-    public @NotNull Class<T> typeClass() {
-        return typeClass;
     }
 
     @Override
@@ -151,8 +143,7 @@ public final class OptionImpl<T> implements Option<T> {
     public static class BuilderImpl<T> implements Builder<T> {
         private Component name = Component.literal("Name not specified!").withStyle(ChatFormatting.RED);
 
-        private Function<T, OptionDescription> descriptionFunction = null;
-        private final List<Function<T, Component>> tooltipGetters = new ArrayList<>();
+        private Function<T, OptionDescription> descriptionFunction = pending -> OptionDescription.EMPTY;
 
         private Function<Option<T>, Controller<T>> controlGetter;
 
@@ -164,13 +155,7 @@ public final class OptionImpl<T> implements Option<T> {
 
         private final Set<OptionFlag> flags = new HashSet<>();
 
-        private final Class<T> typeClass;
-
         private final List<BiConsumer<Option<T>, T>> listeners = new ArrayList<>();
-
-        public BuilderImpl(Class<T> typeClass) {
-            this.typeClass = typeClass;
-        }
 
         @Override
         public Builder<T> name(@NotNull Component name) {
@@ -192,35 +177,14 @@ public final class OptionImpl<T> implements Option<T> {
         }
 
         @Override
-        public Builder<T> tooltip(@NotNull Function<T, Component> tooltipGetter) {
-            Validate.notNull(tooltipGetter, "`tooltipGetter` cannot be null");
+        public Builder<T> controller(@NotNull Function<Option<T>, ControllerBuilder<T>> controllerBuilder) {
+            Validate.notNull(controllerBuilder, "`controllerBuilder` cannot be null");
 
-            this.tooltipGetters.add(tooltipGetter);
-            return this;
+            return customController(opt -> controllerBuilder.apply(opt).build());
         }
 
         @Override
-        @SafeVarargs
-        @Deprecated
-        public final Builder<T> tooltip(@NotNull Function<T, Component>... tooltipGetter) {
-            Validate.notNull(tooltipGetter, "`tooltipGetter` cannot be null");
-
-            this.tooltipGetters.addAll(List.of(tooltipGetter));
-            return this;
-        }
-
-        @Override
-        public Builder<T> tooltip(@NotNull Component... tooltips) {
-            var tooltipFunctions = Arrays.stream(tooltips)
-                    .map(t -> (Function<T, Component>) opt -> t)
-                    .toList();
-
-            this.tooltipGetters.addAll(tooltipFunctions);
-            return this;
-        }
-
-        @Override
-        public Builder<T> controller(@NotNull Function<Option<T>, Controller<T>> control) {
+        public Builder<T> customController(@NotNull Function<Option<T>, Controller<T>> control) {
             Validate.notNull(control, "`control` cannot be null");
 
             this.controlGetter = control;
@@ -260,7 +224,7 @@ public final class OptionImpl<T> implements Option<T> {
         }
 
         @Override
-        public Builder<T> flags(@NotNull Collection<OptionFlag> flags) {
+        public Builder<T> flags(@NotNull Collection<? extends OptionFlag> flags) {
             Validate.notNull(flags, "`flags` must not be null");
 
             this.flags.addAll(flags);
@@ -291,31 +255,7 @@ public final class OptionImpl<T> implements Option<T> {
             Validate.notNull(binding, "`binding` must not be null when building `Option`");
             Validate.isTrue(!instant || flags.isEmpty(), "instant application does not support option flags");
 
-            if (descriptionFunction == null) {
-                if (!tooltipGetters.isEmpty())
-                    YACLConstants.LOGGER.warn("Using deprecated `tooltip` method in option '{}'. Use `description` instead.", name.getString());
-
-                Function<T, Component> concatenatedTooltipGetter = value -> {
-                    MutableComponent concatenatedTooltip = Component.empty();
-                    boolean first = true;
-                    for (Function<T, Component> line : tooltipGetters) {
-                        Component lineComponent = line.apply(value);
-
-                        if (lineComponent.getContents() == ComponentContents.EMPTY)
-                            continue;
-
-                        if (!first) concatenatedTooltip.append("\n");
-                        first = false;
-
-                        concatenatedTooltip.append(lineComponent);
-                    }
-
-                    return concatenatedTooltip;
-                };
-                descriptionFunction = opt -> OptionDescription.createBuilder().description(concatenatedTooltipGetter.apply(opt)).build();
-            }
-
-            return new OptionImpl<>(name, descriptionFunction, controlGetter, binding, available, ImmutableSet.copyOf(flags), typeClass, listeners);
+            return new OptionImpl<>(name, descriptionFunction, controlGetter, binding, available, ImmutableSet.copyOf(flags), listeners);
         }
     }
 }

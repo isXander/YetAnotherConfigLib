@@ -79,11 +79,6 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     }
 
     @Override
-    public @NotNull Class<List<T>> typeClass() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public @NotNull Class<T> elementTypeClass() {
         return typeClass;
     }
@@ -218,8 +213,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     @ApiStatus.Internal
     public static final class BuilderImpl<T> implements Builder<T> {
         private Component name = Component.empty();
-        private OptionDescription description = null;
-        private OptionDescription.Builder legacyBuilder = null;
+        private OptionDescription description = OptionDescription.EMPTY;
         private Function<ListOptionEntry<T>, Controller<T>> controllerFunction;
         private Binding<List<T>> binding = null;
         private final Set<OptionFlag> flags = new HashSet<>();
@@ -243,21 +237,9 @@ public final class ListOptionImpl<T> implements ListOption<T> {
 
         @Override
         public Builder<T> description(@NotNull OptionDescription description) {
-            Validate.isTrue(legacyBuilder == null, "Cannot set description when deprecated `tooltip` method is used");
             Validate.notNull(description, "`description` must not be null");
 
             this.description = description;
-            return this;
-        }
-
-        @Override
-        public Builder<T> tooltip(@NotNull Component... tooltips) {
-            Validate.isTrue(description == null, "Cannot use deprecated `tooltip` method when `description` in use.");
-            Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
-
-            ensureLegacyDescriptionBuilder();
-
-            legacyBuilder.description(tooltips);
             return this;
         }
 
@@ -341,23 +323,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
             Validate.notNull(binding, "`binding` must not be null");
             Validate.notNull(initialValue, "`initialValue` must not be null");
 
-            if (description == null) {
-                if (ensureLegacyDescriptionBuilder())
-                    YACLConstants.LOGGER.warn("Using deprecated `tooltip` method in list option {}. Use `description` instead.", name.getString());
-
-                description = legacyBuilder.build();
-            }
-
             return new ListOptionImpl<>(name, description, binding, initialValue, typeClass, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available, listeners);
-        }
-
-        private boolean ensureLegacyDescriptionBuilder() {
-            if (legacyBuilder == null) {
-                legacyBuilder = OptionDescription.createBuilder();
-                return false;
-            } else {
-                return true;
-            }
         }
     }
 }

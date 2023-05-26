@@ -64,8 +64,7 @@ public final class OptionGroupImpl implements OptionGroup {
     @ApiStatus.Internal
     public static final class BuilderImpl implements Builder {
         private Component name = Component.empty();
-        private OptionDescription description = null;
-        private OptionDescription.Builder legacyBuilder = null;
+        private OptionDescription description = OptionDescription.EMPTY;
         private final List<Option<?>> options = new ArrayList<>();
         private boolean collapsed = false;
 
@@ -79,21 +78,9 @@ public final class OptionGroupImpl implements OptionGroup {
 
         @Override
         public Builder description(@NotNull OptionDescription description) {
-            Validate.isTrue(legacyBuilder == null, "Cannot set description when deprecated `tooltip` method is used");
             Validate.notNull(description, "`description` must not be null");
 
             this.description = description;
-            return this;
-        }
-
-        @Override
-        public Builder tooltip(@NotNull Component... tooltips) {
-            Validate.isTrue(description == null, "Cannot use deprecated `tooltip` method when `description` in use.");
-            Validate.notEmpty(tooltips, "`tooltips` cannot be empty");
-
-            ensureLegacyDescriptionBuilder();
-
-            legacyBuilder.description(tooltips);
             return this;
         }
 
@@ -129,23 +116,7 @@ public final class OptionGroupImpl implements OptionGroup {
         public OptionGroup build() {
             Validate.notEmpty(options, "`options` must not be empty to build `OptionGroup`");
 
-            if (description == null) {
-                if (ensureLegacyDescriptionBuilder())
-                    YACLConstants.LOGGER.warn("Using deprecated `tooltip` method in option group '{}'. Use `description` instead.", name != null ? name.getString() : "unnamed group");
-
-                description = legacyBuilder.build();
-            }
-
             return new OptionGroupImpl(name, description, ImmutableList.copyOf(options), collapsed, false);
-        }
-
-        private boolean ensureLegacyDescriptionBuilder() {
-            if (legacyBuilder == null) {
-                legacyBuilder = OptionDescription.createBuilder();
-                return false;
-            } else {
-                return true;
-            }
         }
     }
 }

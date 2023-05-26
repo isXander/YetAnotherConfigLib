@@ -3,6 +3,7 @@ package dev.isxander.yacl.impl;
 import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.gui.YACLScreen;
+import dev.isxander.yacl.gui.controllers.ActionController;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.lang3.Validate;
@@ -29,14 +30,13 @@ public final class ButtonOptionImpl implements ButtonOption {
             @NotNull Component name,
             @Nullable OptionDescription description,
             @NotNull BiConsumer<YACLScreen, ButtonOption> action,
-            boolean available,
-            @NotNull Function<ButtonOption, Controller<BiConsumer<YACLScreen, ButtonOption>>> controlGetter
+            boolean available
     ) {
         this.name = name;
         this.description = description;
         this.action = action;
         this.available = available;
-        this.controller = controlGetter.apply(this);
+        this.controller = new ActionController(this);
         this.binding = new EmptyBinderImpl();
     }
 
@@ -78,11 +78,6 @@ public final class ButtonOptionImpl implements ButtonOption {
     @Override
     public @NotNull Binding<BiConsumer<YACLScreen, ButtonOption>> binding() {
         return binding;
-    }
-
-    @Override
-    public @NotNull Class<BiConsumer<YACLScreen, ButtonOption>> typeClass() {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -150,9 +145,8 @@ public final class ButtonOptionImpl implements ButtonOption {
     @ApiStatus.Internal
     public static final class BuilderImpl implements Builder {
         private Component name;
-        private final List<Component> tooltipLines = new ArrayList<>();
+        private OptionDescription description = OptionDescription.EMPTY;
         private boolean available = true;
-        private Function<ButtonOption, Controller<BiConsumer<YACLScreen, ButtonOption>>> controlGetter;
         private BiConsumer<YACLScreen, ButtonOption> action;
 
         @Override
@@ -164,10 +158,10 @@ public final class ButtonOptionImpl implements ButtonOption {
         }
 
         @Override
-        public Builder tooltip(@NotNull Component... tooltips) {
-            Validate.notNull(tooltips, "`tooltips` cannot be empty");
+        public Builder description(@NotNull OptionDescription description) {
+            Validate.notNull(description, "`description` cannot be null");
 
-            //tooltipLines.addAll(List.of(tooltips));
+            this.description = description;
             return this;
         }
 
@@ -195,29 +189,11 @@ public final class ButtonOptionImpl implements ButtonOption {
         }
 
         @Override
-        public Builder controller(@NotNull Function<ButtonOption, Controller<BiConsumer<YACLScreen, ButtonOption>>> control) {
-            Validate.notNull(control, "`control` cannot be null");
-
-            this.controlGetter = control;
-            return this;
-        }
-
-        @Override
         public ButtonOption build() {
-            Validate.notNull(name, "`name` must not be null when building `Option`");
-            Validate.notNull(controlGetter, "`control` must not be null when building `Option`");
-            Validate.notNull(action, "`action` must not be null when building `Option`");
+            Validate.notNull(name, "`name` must not be null when building `ButtonOption`");
+            Validate.notNull(action, "`action` must not be null when building `ButtonOption`");
 
-            MutableComponent concatenatedTooltip = Component.empty();
-            boolean first = true;
-            for (Component line : tooltipLines) {
-                if (!first) concatenatedTooltip.append("\n");
-                first = false;
-
-                concatenatedTooltip.append(line);
-            }
-
-            return new ButtonOptionImpl(name, OptionDescription.createBuilder().description(concatenatedTooltip).build(), action, available, controlGetter);
+            return new ButtonOptionImpl(name, description, action, available);
         }
     }
 }
