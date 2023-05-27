@@ -1,5 +1,6 @@
-package dev.isxander.yacl.gui;
+package dev.isxander.yacl.gui.tab;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -19,8 +20,15 @@ public class ScrollableNavigationBar extends TabNavigationBar {
     private int scrollOffset;
     private int maxScrollOffset;
 
-    public ScrollableNavigationBar(int i, TabManager tabManager, Iterable<Tab> iterable) {
-        super(i, tabManager, iterable);
+    public ScrollableNavigationBar(int width, TabManager tabManager, Iterable<? extends Tab> tabs) {
+        super(width, tabManager, ImmutableList.copyOf(tabs));
+
+        // add tab tooltips to the tab buttons
+        for (TabButton tabButton : this.tabButtons) {
+            if (tabButton.tab() instanceof TabExt tab) {
+                tabButton.setTooltip(tab.getTooltip());
+            }
+        }
     }
 
     @Override

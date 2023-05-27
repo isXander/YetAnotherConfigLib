@@ -32,7 +32,7 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public interface ImageRenderer {
-    int render(GuiGraphics graphics, int x, int y, int width);
+    int render(GuiGraphics graphics, int x, int y, int renderWidth);
 
     void close();
 

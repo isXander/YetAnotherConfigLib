@@ -1,6 +1,7 @@
-package dev.isxander.yacl.gui;
+package dev.isxander.yacl.gui.tab;
 
 import com.google.common.collect.ImmutableList;
+import dev.isxander.yacl.gui.ElementListWidgetExt;
 import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -15,15 +16,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Supplier;
 
-/**
- * Author: MrCrayfish
- */
-public class TabListWidget<T extends ElementListWidgetExt<?>> extends AbstractWidget implements ContainerEventHandler
-{
+public class ListHolderWidget<T extends ElementListWidgetExt<?>> extends AbstractWidget implements ContainerEventHandler {
     private final Supplier<ScreenRectangle> dimensions;
     private final T list;
 
-    public TabListWidget(Supplier<ScreenRectangle> dimensions, T list) {
+    public ListHolderWidget(Supplier<ScreenRectangle> dimensions, T list) {
         super(0, 0, 100, 0, CommonComponents.EMPTY);
         this.dimensions = dimensions;
         this.list = list;
