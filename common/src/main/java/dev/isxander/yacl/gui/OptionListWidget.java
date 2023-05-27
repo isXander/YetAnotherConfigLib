@@ -299,7 +299,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
                 resetButton.render(graphics, mouseX, mouseY, tickDelta);
             }
 
-            if (isHovered() || isFocused()) {
+            if (isHovered()) {
                 setHoverDescription(DescriptionWithName.of(option.name(), option.description()));
             }
         }
@@ -335,6 +335,8 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         @Override
         public void setFocused(boolean focused) {
             super.setFocused(focused);
+            if (focused)
+                setHoverDescription(DescriptionWithName.of(option.name(), option.description()));
         }
 
         @Override
@@ -392,7 +394,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
             wrappedName.renderCentered(graphics, x + entryWidth / 2, y + getYPadding());
 
-            if (isHovered() || isFocused()) {
+            if (isHovered()) {
                 setHoverDescription(DescriptionWithName.of(group.name(), group.description()));
             }
         }
@@ -435,6 +437,13 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
         private int getYPadding() {
             return 6;
+        }
+
+        @Override
+        public void setFocused(boolean focused) {
+            super.setFocused(focused);
+            if (focused)
+                setHoverDescription(DescriptionWithName.of(group.name(), group.description()));
         }
 
         @Override
