@@ -123,6 +123,19 @@ public interface OptionDescription {
         Builder webpImage(Path path, ResourceLocation uniqueLocation);
 
         /**
+         * Sets a custom image renderer to display with the description.
+         * This is useful for rendering other abstract things relevant to your mod.
+         * <p>
+         * However, <strong>THIS IS NOT API SAFE!</strong> As part of the gui package, things
+         * may change that could break compatibility with future versions of YACL.
+         * A helpful utility (that is also not API safe) is {@link ImageRenderer#getOrMakeAsync(ResourceLocation, Supplier)}
+         * which will cache the image renderer for the whole game lifecycle and construct it asynchronously to the render thread.
+         * @param image the image renderer to display
+         * @return this builder
+         */
+        Builder customImage(CompletableFuture<Optional<ImageRenderer>> image);
+
+        /**
          * Sets an animated GIF image to display with the description. This is backed by a regular minecraft resource
          * in your mod's /assets folder.
          *

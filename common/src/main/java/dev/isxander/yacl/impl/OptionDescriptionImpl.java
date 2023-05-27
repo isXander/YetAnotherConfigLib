@@ -123,6 +123,16 @@ public record OptionDescriptionImpl(Component description, CompletableFuture<Opt
         }
 
         @Override
+        public Builder customImage(CompletableFuture<Optional<ImageRenderer>> image) {
+            Validate.notNull(image, "Image cannot be null!");
+            Validate.isTrue(imageUnset, "Image already set!");
+
+            this.image = image;
+            this.imageUnset = false;
+            return this;
+        }
+
+        @Override
         public OptionDescription build() {
             MutableComponent concatenatedDescription = Component.empty();
             Iterator<Component> iter = descriptionLines.iterator();
