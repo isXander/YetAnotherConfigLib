@@ -6,6 +6,9 @@ import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.api.utils.Dimension;
 import dev.isxander.yacl.api.utils.MutableDimension;
 import dev.isxander.yacl.api.utils.OptionUtils;
+import dev.isxander.yacl.gui.tab.ScrollableNavigationBar;
+import dev.isxander.yacl.gui.tab.ListHolderWidget;
+import dev.isxander.yacl.gui.tab.TabExt;
 import dev.isxander.yacl.gui.utils.GuiUtils;
 import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.ChatFormatting;
@@ -15,7 +18,6 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.components.tabs.TabNavigationBar;
@@ -25,14 +27,11 @@ import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
-import java.io.*;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -217,10 +216,11 @@ public class YACLScreen extends Screen {
         }
     }
 
-    private class CategoryTab implements Tab {
+    private class CategoryTab implements TabExt {
         private final ConfigCategory category;
+        private final Tooltip tooltip;
 
-        private TabListWidget<OptionListWidget> optionList;
+        private ListHolderWidget<OptionListWidget> optionList;
         private final Button saveFinishedButton;
         private final Button cancelResetButton;
         private final Button undoButton;
@@ -229,6 +229,7 @@ public class YACLScreen extends Screen {
 
         public CategoryTab(ConfigCategory category) {
             this.category = category;
+            this.tooltip = Tooltip.create(category.tooltip());
 
             int columnWidth = width / 3;
             int padding = columnWidth / 20;
@@ -265,7 +266,7 @@ public class YACLScreen extends Screen {
                     searchQuery -> optionList.getList().updateSearchQuery(searchQuery)
             );
 
-            this.optionList = new TabListWidget<>(
+            this.optionList = new ListHolderWidget<>(
                     () -> new ScreenRectangle(tabArea.position(), tabArea.width() / 3 * 2 + 1, tabArea.height()),
                     new OptionListWidget(YACLScreen.this, category, minecraft, 0, 0, width / 3 * 2 + 1, height, desc -> {
                         descriptionWidget.setOptionDescription(desc);
@@ -312,6 +313,12 @@ public class YACLScreen extends Screen {
             descriptionWidget.tick();
         }
 
+        @Nullable
+        @Override
+        public Tooltip getTooltip() {
+            return tooltip;
+        }
+
         private void updateButtons() {
             boolean pendingChanges = pendingChanges();
 
@@ -323,11 +330,13 @@ public class YACLScreen extends Screen {
         }
     }
 
-    private class PlaceholderTab implements Tab {
+    private class PlaceholderTab implements TabExt {
         private final PlaceholderCategory category;
+        private final Tooltip tooltip;
 
         public PlaceholderTab(PlaceholderCategory category) {
             this.category = category;
+            this.tooltip = Tooltip.create(category.tooltip());
         }
 
         @Override
@@ -342,6 +351,11 @@ public class YACLScreen extends Screen {
         @Override
         public void doLayout(ScreenRectangle screenRectangle) {
             minecraft.setScreen(category.screen().apply(minecraft, YACLScreen.this));
+        }
+
+        @Override
+        public @Nullable Tooltip getTooltip() {
+            return this.tooltip;
         }
     }
 }

@@ -1,8 +1,9 @@
-package dev.isxander.yacl.gui;
+package dev.isxander.yacl.gui.tab;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.vertex.PoseStack;
+import dev.isxander.yacl.gui.ElementListWidgetExt;
 import net.minecraft.client.gui.ComponentPath;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -15,29 +16,25 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.function.Supplier;
 
-/**
- * Author: MrCrayfish
- */
-public class TabListWidget<T extends ElementListWidgetExt<?>> extends AbstractWidget implements ContainerEventHandler
-{
+public class ListHolderWidget<T extends ElementListWidgetExt<?>> extends AbstractWidget implements ContainerEventHandler {
     private final Supplier<ScreenRectangle> dimensions;
     private final T list;
 
-    public TabListWidget(Supplier<ScreenRectangle> dimensions, T list) {
+    public ListHolderWidget(Supplier<ScreenRectangle> dimensions, T list) {
         super(0, 0, 100, 0, CommonComponents.EMPTY);
         this.dimensions = dimensions;
         this.list = list;
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float deltaTick) {
+    public void renderWidget(PoseStack matrices, int mouseX, int mouseY, float deltaTick) {
         ScreenRectangle dimensions = this.dimensions.get();
         this.setX(dimensions.left());
         this.setY(dimensions.top());
         this.width = dimensions.width();
         this.height = dimensions.height();
         this.list.updateDimensions(dimensions);
-        this.list.render(guiGraphics, mouseX, mouseY, deltaTick);
+        this.list.render(matrices, mouseX, mouseY, deltaTick);
     }
 
     @Override

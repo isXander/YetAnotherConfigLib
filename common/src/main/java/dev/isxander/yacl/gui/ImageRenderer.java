@@ -2,9 +2,12 @@ package dev.isxander.yacl.gui;
 
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
 import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -32,7 +35,7 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 public interface ImageRenderer {
-    int render(GuiGraphics graphics, int x, int y, int width);
+    int render(PoseStack matrices, int x, int y, int renderWidth);
 
     void close();
 
@@ -68,15 +71,16 @@ public interface ImageRenderer {
         }
 
         @Override
-        public int render(GuiGraphics graphics, int x, int y, int renderWidth) {
+        public int render(PoseStack matrices, int x, int y, int renderWidth) {
             float ratio = renderWidth / (float)this.width;
             int targetHeight = (int) (this.height * ratio);
 
-            graphics.pose().pushPose();
-            graphics.pose().translate(x, y, 0);
-            graphics.pose().scale(ratio, ratio, 1);
-            graphics.blit(location, 0, 0, this.u, this.v, this.width, this.height, this.textureWidth, this.textureHeight);
-            graphics.pose().popPose();
+            matrices.pushPose();
+            matrices.translate(x, y, 0);
+            matrices.scale(ratio, ratio, 1);
+            RenderSystem.setShaderTexture(0, location);
+            GuiComponent.blit(matrices, 0, 0, this.u, this.v, this.width, this.height, this.textureWidth, this.textureHeight);
+            matrices.popPose();
 
             return targetHeight;
         }
@@ -123,17 +127,18 @@ public interface ImageRenderer {
         }
 
         @Override
-        public int render(GuiGraphics graphics, int x, int y, int renderWidth) {
+        public int render(PoseStack matrices, int x, int y, int renderWidth) {
             if (image == null) return 0;
 
             float ratio = renderWidth / (float)this.width;
             int targetHeight = (int) (this.height * ratio);
 
-            graphics.pose().pushPose();
-            graphics.pose().translate(x, y, 0);
-            graphics.pose().scale(ratio, ratio, 1);
-            graphics.blit(uniqueLocation, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
-            graphics.pose().popPose();
+            matrices.pushPose();
+            matrices.translate(x, y, 0);
+            matrices.scale(ratio, ratio, 1);
+            RenderSystem.setShaderTexture(0, uniqueLocation);
+            GuiComponent.blit(matrices, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
+            matrices.popPose();
 
             return targetHeight;
         }
@@ -289,7 +294,7 @@ public interface ImageRenderer {
         }
 
         @Override
-        public int render(GuiGraphics graphics, int x, int y, int renderWidth) {
+        public int render(PoseStack matrices, int x, int y, int renderWidth) {
             if (image == null) return 0;
 
             float ratio = renderWidth / (float)frameWidth;
@@ -298,17 +303,18 @@ public interface ImageRenderer {
             int currentCol = currentFrame % packCols;
             int currentRow = (int) Math.floor(currentFrame / (double)packCols);
 
-            graphics.pose().pushPose();
-            graphics.pose().translate(x, y, 0);
-            graphics.pose().scale(ratio, ratio, 1);
-            graphics.blit(
-                    uniqueLocation,
+            matrices.pushPose();
+            matrices.translate(x, y, 0);
+            matrices.scale(ratio, ratio, 1);
+            RenderSystem.setShaderTexture(0, uniqueLocation);
+            GuiComponent.blit(
+                    matrices,
                     0, 0,
                     frameWidth * currentCol, frameHeight * currentRow,
                     frameWidth, frameHeight,
                     this.width, this.height
             );
-            graphics.pose().popPose();
+            matrices.popPose();
 
             if (frameCount > 1) {
                 double timeMS = Blaze3D.getTime() * 1000;
