@@ -216,7 +216,7 @@ public class YACLScreen extends Screen {
         }
     }
 
-    private class CategoryTab implements TabExt {
+    public class CategoryTab implements TabExt {
         private final ConfigCategory category;
         private final Tooltip tooltip;
 
@@ -330,7 +330,7 @@ public class YACLScreen extends Screen {
         }
     }
 
-    private class PlaceholderTab implements TabExt {
+    public class PlaceholderTab implements TabExt {
         private final PlaceholderCategory category;
         private final Tooltip tooltip;
 
