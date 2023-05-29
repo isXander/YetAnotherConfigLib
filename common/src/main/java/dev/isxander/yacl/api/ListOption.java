@@ -28,11 +28,6 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
     @Override
     @NotNull ImmutableList<ListOptionEntry<T>> options();
 
-    /**
-     * Class of the entry type
-     */
-    @NotNull Class<T> elementTypeClass();
-
     @ApiStatus.Internal
     ListOptionEntry<T> insertNewEntryToTop();
 
@@ -48,8 +43,13 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
     @ApiStatus.Internal
     void addRefreshListener(Runnable changedListener);
 
+    static <T> Builder<T> createBuilder() {
+        return new ListOptionImpl.BuilderImpl<>();
+    }
+
+    @Deprecated
     static <T> Builder<T> createBuilder(Class<T> typeClass) {
-        return new ListOptionImpl.BuilderImpl<>(typeClass);
+        return createBuilder();
     }
 
     interface Builder<T> {

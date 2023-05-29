@@ -25,13 +25,12 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     private final List<ListOptionEntry<T>> entries;
     private final boolean collapsed;
     private boolean available;
-    private final Class<T> typeClass;
     private final ImmutableSet<OptionFlag> flags;
     private final EntryFactory entryFactory;
     private final List<BiConsumer<Option<List<T>>, List<T>>> listeners;
     private final List<Runnable> refreshListeners;
 
-    public ListOptionImpl(@NotNull Component name, @NotNull OptionDescription description, @NotNull Binding<List<T>> binding, @NotNull T initialValue, @NotNull Class<T> typeClass, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available, Collection<BiConsumer<Option<List<T>>, List<T>>> listeners) {
+    public ListOptionImpl(@NotNull Component name, @NotNull OptionDescription description, @NotNull Binding<List<T>> binding, @NotNull T initialValue, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available, Collection<BiConsumer<Option<List<T>>, List<T>>> listeners) {
         this.name = name;
         this.description = description;
         this.binding = binding;
@@ -39,7 +38,6 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         this.entryFactory = new EntryFactory(controllerFunction);
         this.entries = createEntries(binding().getValue());
         this.collapsed = collapsed;
-        this.typeClass = typeClass;
         this.flags = flags;
         this.available = available;
         this.listeners = new ArrayList<>();
@@ -76,11 +74,6 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     @Override
     public @NotNull Binding<List<T>> binding() {
         return binding;
-    }
-
-    @Override
-    public @NotNull Class<T> elementTypeClass() {
-        return typeClass;
     }
 
     @Override
@@ -221,11 +214,6 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         private boolean collapsed = false;
         private boolean available = true;
         private final List<BiConsumer<Option<List<T>>, List<T>>> listeners = new ArrayList<>();
-        private final Class<T> typeClass;
-
-        public BuilderImpl(Class<T> typeClass) {
-            this.typeClass = typeClass;
-        }
 
         @Override
         public Builder<T> name(@NotNull Component name) {
@@ -323,7 +311,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
             Validate.notNull(binding, "`binding` must not be null");
             Validate.notNull(initialValue, "`initialValue` must not be null");
 
-            return new ListOptionImpl<>(name, description, binding, initialValue, typeClass, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available, listeners);
+            return new ListOptionImpl<>(name, description, binding, initialValue, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available, listeners);
         }
     }
 }
