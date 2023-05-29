@@ -3,6 +3,7 @@ package dev.isxander.yacl.gui.tab;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.TabButton;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -50,6 +51,17 @@ public class ScrollableNavigationBar extends TabNavigationBar {
         int allTabsWidth = singleTabWidth * this.tabButtons.size();
         this.layout.setX(Math.max((this.width - allTabsWidth) / 2, NAVBAR_MARGIN));
         this.maxScrollOffset = Math.max(0, allTabsWidth - noScrollWidth);
+    }
+
+    @Override
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        graphics.pose().pushPose();
+        // render option list BELOW the navbar without need to scissor
+        graphics.pose().translate(0, 0, 10);
+
+        super.render(graphics, mouseX, mouseY, delta);
+
+        graphics.pose().popPose();
     }
 
     @Override
