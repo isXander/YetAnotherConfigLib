@@ -5,7 +5,6 @@ import dev.isxander.yacl.api.ListOption;
 import dev.isxander.yacl.api.Option;
 import dev.isxander.yacl.api.OptionDescription;
 import dev.isxander.yacl.api.OptionGroup;
-import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
@@ -43,7 +42,7 @@ public final class OptionGroupImpl implements OptionGroup {
 
     @Override
     public @NotNull Component tooltip() {
-        return description.description();
+        return description.text();
     }
 
     @Override

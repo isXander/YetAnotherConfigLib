@@ -5,17 +5,13 @@ import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.gui.YACLScreen;
 import dev.isxander.yacl.gui.controllers.ActionController;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 @ApiStatus.Internal
 public final class ButtonOptionImpl implements ButtonOption {
@@ -52,7 +48,7 @@ public final class ButtonOptionImpl implements ButtonOption {
 
     @Override
     public @NotNull Component tooltip() {
-        return description().description();
+        return description().text();
     }
 
     @Override
