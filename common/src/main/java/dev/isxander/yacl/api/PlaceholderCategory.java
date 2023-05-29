@@ -11,7 +11,10 @@ import java.util.function.BiFunction;
 
 /**
  * A placeholder category that actually just opens another screen,
- * instead of displaying options
+ * instead of displaying options.
+ * <p>
+ * Use of this is discouraged, as it is not very user-friendly and navigating to a placeholder
+ * tab that opens another screen is not very intuitive, making keyboard navigation impossible.
  */
 public interface PlaceholderCategory extends ConfigCategory {
     /**
