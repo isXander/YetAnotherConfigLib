@@ -1,6 +1,7 @@
 package dev.isxander.yacl.api;
 
 import com.google.common.collect.ImmutableList;
+import dev.isxander.yacl.api.controller.ControllerBuilder;
 import dev.isxander.yacl.impl.ListOptionImpl;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.ApiStatus;
@@ -68,13 +69,15 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
          */
         Builder<T> initial(@NotNull T initialValue);
 
+        Builder<T> controller(@NotNull Function<Option<T>, ControllerBuilder<T>> controller);
+
         /**
          * Sets the controller for the option.
          * This is how you interact and change the options.
          *
          * @see dev.isxander.yacl.gui.controllers
          */
-        Builder<T> controller(@NotNull Function<ListOptionEntry<T>, Controller<T>> control);
+        Builder<T> customController(@NotNull Function<ListOptionEntry<T>, Controller<T>> control);
 
         /**
          * Sets the binding for the option.

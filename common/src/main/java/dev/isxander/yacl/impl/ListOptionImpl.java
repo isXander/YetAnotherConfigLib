@@ -3,6 +3,7 @@ package dev.isxander.yacl.impl;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.api.*;
+import dev.isxander.yacl.api.controller.ControllerBuilder;
 import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
@@ -239,7 +240,15 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         }
 
         @Override
-        public Builder<T> controller(@NotNull Function<ListOptionEntry<T>, Controller<T>> control) {
+        public Builder<T> controller(@NotNull Function<Option<T>, ControllerBuilder<T>> controller) {
+            Validate.notNull(controller, "`controller` cannot be null");
+
+            this.controllerFunction = opt -> controller.apply(opt).build();
+            return this;
+        }
+
+        @Override
+        public Builder<T> customController(@NotNull Function<ListOptionEntry<T>, Controller<T>> control) {
             Validate.notNull(control, "`control` cannot be null");
 
             this.controllerFunction = control;
