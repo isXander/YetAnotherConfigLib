@@ -3,15 +3,11 @@ package dev.isxander.yacl.impl;
 import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.api.controller.ControllerBuilder;
-import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentContents;
-import net.minecraft.network.chat.MutableComponent;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -66,7 +62,7 @@ public final class OptionImpl<T> implements Option<T> {
 
     @Override
     public @NotNull Component tooltip() {
-        return description.description();
+        return description.text();
     }
 
     @Override

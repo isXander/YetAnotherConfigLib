@@ -3,7 +3,6 @@ package dev.isxander.yacl.impl;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl.api.*;
-import dev.isxander.yacl.impl.utils.YACLConstants;
 import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
@@ -58,7 +57,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
 
     @Override
     public @NotNull Component tooltip() {
-        return description().description();
+        return description().text();
     }
 
     @Override

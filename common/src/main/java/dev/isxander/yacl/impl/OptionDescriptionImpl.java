@@ -14,20 +14,20 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public record OptionDescriptionImpl(Component description, CompletableFuture<Optional<ImageRenderer>> image) implements OptionDescription {
+public record OptionDescriptionImpl(Component text, CompletableFuture<Optional<ImageRenderer>> image) implements OptionDescription {
     public static class BuilderImpl implements Builder {
         private final List<Component> descriptionLines = new ArrayList<>();
         private CompletableFuture<Optional<ImageRenderer>> image = CompletableFuture.completedFuture(Optional.empty());
         private boolean imageUnset = true;
 
         @Override
-        public Builder description(Component... description) {
+        public Builder text(Component... description) {
             this.descriptionLines.addAll(Arrays.asList(description));
             return this;
         }
 
         @Override
-        public Builder description(Collection<? extends Component> lines) {
+        public Builder text(Collection<? extends Component> lines) {
             this.descriptionLines.addAll(lines);
             return this;
         }

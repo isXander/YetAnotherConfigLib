@@ -22,7 +22,7 @@ public interface OptionDescription {
      * including {@link net.minecraft.network.chat.ClickEvent}s and {@link net.minecraft.network.chat.HoverEvent}s.
      * @return The description of the option, with all lines merged with \n.
      */
-    Component description();
+    Component text();
 
     /**
      * The image to display with the description. If the Optional is empty, no image has been provided.
@@ -41,7 +41,7 @@ public interface OptionDescription {
     }
 
     static OptionDescription of(Component... description) {
-        return createBuilder().description(description).build();
+        return createBuilder().text(description).build();
     }
 
     OptionDescription EMPTY = new OptionDescriptionImpl(CommonComponents.EMPTY, CompletableFuture.completedFuture(Optional.empty()));
@@ -50,22 +50,22 @@ public interface OptionDescription {
         /**
          * Appends lines to the main description of the option. This can be called multiple times.
          * On {@link Builder#build()}, the lines are merged with \n.
-         * @see OptionDescription#description()
+         * @see OptionDescription#text()
          *
          * @param description the lines to append to the description.
          * @return this builder
          */
-        Builder description(Component... description);
+        Builder text(Component... description);
 
         /**
          * Appends lines to the main description of the option. This can be called multiple times.
          * On {@link Builder#build()}, the lines are merged with \n.
-         * @see OptionDescription#description()
+         * @see OptionDescription#text()
          *
          * @param lines the lines to append to the description.
          * @return this builder
          */
-        Builder description(Collection<? extends Component> lines);
+        Builder text(Collection<? extends Component> lines);
 
         /**
          * Sets a static image to display with the description. This is backed by a regular minecraft resource

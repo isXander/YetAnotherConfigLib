@@ -85,7 +85,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
         }
 
         if (wrappedText == null)
-            wrappedText = font.split(description.description().description(), getWidth());
+            wrappedText = font.split(description.description().text(), getWidth());
 
         descriptionY = y;
         for (var line : wrappedText) {
@@ -192,7 +192,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
     protected void updateWidgetNarration(NarrationElementOutput builder) {
         if (description != null) {
             builder.add(NarratedElementType.TITLE, description.name());
-            builder.add(NarratedElementType.HINT, description.description().description());
+            builder.add(NarratedElementType.HINT, description.description().text());
         }
 
     }
