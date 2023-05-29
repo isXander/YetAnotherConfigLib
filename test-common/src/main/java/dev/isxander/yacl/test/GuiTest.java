@@ -2,6 +2,8 @@ package dev.isxander.yacl.test;
 
 import dev.isxander.yacl.api.*;
 import dev.isxander.yacl.api.controller.BooleanControllerBuilder;
+import dev.isxander.yacl.api.controller.IntegerSliderControllerBuilder;
+import dev.isxander.yacl.api.controller.StringControllerBuilder;
 import dev.isxander.yacl.api.controller.TickBoxControllerBuilder;
 import dev.isxander.yacl.gui.RequireRestartScreen;
 import dev.isxander.yacl.gui.controllers.*;
@@ -257,24 +259,25 @@ public class GuiTest {
                                                 () -> config.stringList,
                                                 val -> config.stringList = val
                                         )
-                                        .controller(StringController::new)
+                                        .controller(StringControllerBuilder::create)
                                         .initial("")
                                         .build())
-                                .group(ListOption.createBuilder(Integer.class)
+                                .group(ListOption.<Integer>createBuilder()
                                         .name(Component.literal("Slider List"))
                                         .binding(
                                                 defaults.intList,
                                                 () -> config.intList,
                                                 val -> config.intList = val
                                         )
-                                        .controller(opt -> new IntegerSliderController(opt, 0, 10, 1))
+                                        .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                                                .range(0, 10).step(1))
                                         .initial(0)
                                         .available(false)
                                         .build())
                                 .group(ListOption.createBuilder(Component.class)
                                         .name(Component.literal("Useless Label List"))
                                         .binding(Binding.immutable(List.of(Component.literal("It's quite impressive that literally every single controller works, without problem."))))
-                                        .controller(LabelController::new)
+                                        .customController(LabelController::new)
                                         .initial(Component.literal("Initial label"))
                                         .build())
                                 .build())
