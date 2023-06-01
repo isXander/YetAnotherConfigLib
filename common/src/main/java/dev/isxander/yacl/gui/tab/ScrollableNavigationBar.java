@@ -1,9 +1,9 @@
 package dev.isxander.yacl.gui.tab;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.TabButton;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -54,14 +54,14 @@ public class ScrollableNavigationBar extends TabNavigationBar {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        graphics.pose().pushPose();
+    public void render(PoseStack matrices, int mouseX, int mouseY, float delta) {
+        matrices.pushPose();
         // render option list BELOW the navbar without need to scissor
-        graphics.pose().translate(0, 0, 10);
+        matrices.translate(0, 0, 10);
 
-        super.render(graphics, mouseX, mouseY, delta);
+        super.render(matrices, mouseX, mouseY, delta);
 
-        graphics.pose().popPose();
+        matrices.popPose();
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.layouts.LayoutElement;
@@ -53,11 +54,11 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
         smoothScrollAmount = Mth.lerp(Minecraft.getInstance().getDeltaFrameTime() * 0.5, smoothScrollAmount, getScrollAmount());
         returnSmoothAmount = true;
 
-        RenderSystem.enableScissor(x0, y0, x1, y1);
+        GuiComponent.enableScissor(x0, y0, x1, y1);
 
         super.render(matrices, mouseX, mouseY, delta);
 
-        RenderSystem.disableScissor();
+        GuiComponent.disableScissor();
 
         returnSmoothAmount = false;
     }

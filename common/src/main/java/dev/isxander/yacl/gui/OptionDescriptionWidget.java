@@ -2,19 +2,16 @@ package dev.isxander.yacl.gui;
 
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.navigation.FocusNavigationEvent;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
@@ -102,7 +99,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
         }
         Style hoveredStyle = getDescStyle(mouseX, mouseY);
         if (hoveredStyle != null && hoveredStyle.getHoverEvent() != null) {
-            minecraft.screen.renderComponentHoverEffect(matrices, font, hoveredStyle, mouseX, mouseY);
+            minecraft.screen.renderComponentHoverEffect(matrices, hoveredStyle, mouseX, mouseY);
         }
 
         if (isFocused()) {

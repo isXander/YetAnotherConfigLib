@@ -10,3 +10,4 @@ accessible field net/minecraft/client/gui/components/tabs/TabNavigationBar width
 accessible field net/minecraft/client/gui/components/tabs/TabNavigationBar tabManager Lnet/minecraft/client/gui/components/tabs/TabManager;
 accessible field net/minecraft/client/gui/components/tabs/TabNavigationBar tabs Lcom/google/common/collect/ImmutableList;
 accessible field net/minecraft/client/gui/components/tabs/TabNavigationBar tabButtons Lcom/google/common/collect/ImmutableList;
+accessible method net/minecraft/client/gui/screens/Screen renderComponentHoverEffect (Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/network/chat/Style;II)V

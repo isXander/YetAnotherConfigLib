@@ -54,7 +54,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         matrices.pushPose();
         int textX = getDimension().xLimit() - textRenderer.width(valueText) + renderOffset - getXPadding();
         matrices.translate(textX, getTextY(), 0);
-        GuiUtils.enableScissor(inputFieldBounds.x(), inputFieldBounds.y() - 2, inputFieldBounds.width() + 1, inputFieldBounds.height() + 4);
+        GuiComponent.enableScissor(inputFieldBounds.x(), inputFieldBounds.y() - 2, inputFieldBounds.xLimit() + 1, inputFieldBounds.yLimit() + 4);
         textRenderer.drawShadow(matrices, valueText, 0, 0, getValueColor());
         matrices.popPose();
 
@@ -84,7 +84,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                 }
             }
         }
-        RenderSystem.disableScissor();
+        GuiComponent.disableScissor();
     }
 
     @Override

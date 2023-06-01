@@ -15,12 +15,6 @@ public class GuiUtils {
         return fallback.copy();
     }
 
-    public static void enableScissor(int x, int y, int width, int height) {
-        Window window = Minecraft.getInstance().getWindow();
-        double d = window.getGuiScale();
-        RenderSystem.enableScissor((int)(x * d), (int)((window.getGuiScaledHeight() - y - height) * d), (int)(width * d), (int)(height * d));
-    }
-
     public static String shortenString(String string, Font font, int maxWidth, String suffix) {
         if (string.isEmpty())
             return string;
