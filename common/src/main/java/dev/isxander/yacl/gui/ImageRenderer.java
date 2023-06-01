@@ -4,6 +4,9 @@ import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
 import dev.isxander.yacl.impl.utils.YACLConstants;
+import net.minecraft.CrashReport;
+import net.minecraft.CrashReportCategory;
+import net.minecraft.ReportedException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -17,6 +20,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -151,18 +155,18 @@ public interface ImageRenderer {
         private int currentFrame;
         private double lastFrameTime;
 
-        private final double frameDelay;
+        private final double[] frameDelays;
         private final int frameCount;
 
         private final int packCols, packRows;
         private final int frameWidth, frameHeight;
 
-        public AnimatedNativeImageBacked(NativeImage image, int frameWidth, int frameHeight, int frameCount, double frameDelayMS, int packCols, int packRows, ResourceLocation uniqueLocation) {
+        public AnimatedNativeImageBacked(NativeImage image, int frameWidth, int frameHeight, int frameCount, double[] frameDelayMS, int packCols, int packRows, ResourceLocation uniqueLocation) {
             super(image, uniqueLocation);
             this.frameWidth = frameWidth;
             this.frameHeight = frameHeight;
             this.frameCount = frameCount;
-            this.frameDelay = frameDelayMS;
+            this.frameDelays = frameDelayMS;
             this.packCols = packCols;
             this.packRows = packRows;
         }
@@ -186,15 +190,24 @@ public interface ImageRenderer {
                 ImageReader reader = ImageIO.getImageReadersBySuffix("gif").next();
                 reader.setInput(ImageIO.createImageInputStream(is));
 
-                IIOMetadata metadata = reader.getImageMetadata(0);
-                String metaFormatName = metadata.getNativeMetadataFormatName();
-                IIOMetadataNode root = (IIOMetadataNode) metadata.getAsTree(metaFormatName);
-                IIOMetadataNode graphicsControlExtensionNode = (IIOMetadataNode) root.getElementsByTagName("GraphicControlExtension").item(0);
-                int delay = Integer.parseInt(graphicsControlExtensionNode.getAttribute("delayTime")) * 10;
 
-                return createFromImageReader(reader, delay, uniqueLocation);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+
+                AnimFrameProvider animFrameFunction = i -> {
+                    IIOMetadata metadata = reader.getImageMetadata(i);
+                    String metaFormatName = metadata.getNativeMetadataFormatName();
+                    IIOMetadataNode root = (IIOMetadataNode) metadata.getAsTree(metaFormatName);
+                    IIOMetadataNode graphicsControlExtensionNode = (IIOMetadataNode) root.getElementsByTagName("GraphicControlExtension").item(0);
+                    int delay = Integer.parseInt(graphicsControlExtensionNode.getAttribute("delayTime")) * 10;
+
+                    return new AnimFrame(delay, 0, 0);
+                };
+
+                return createFromImageReader(reader, animFrameFunction, uniqueLocation);
+            } catch (Exception e) {
+                CrashReport crashReport = CrashReport.forThrowable(e, "Failed to load GIF image");
+                CrashReportCategory category = crashReport.addCategory("YACL Gui");
+                category.setDetail("Image identifier", uniqueLocation.toString());
+                throw new ReportedException(crashReport);
             }
         }
 
@@ -203,36 +216,43 @@ public interface ImageRenderer {
                 ImageReader reader = new WebPImageReaderSpi().createReaderInstance();
                 reader.setInput(ImageIO.createImageInputStream(is));
 
-                int frameDelayMS = 0;
                 int numImages = reader.getNumImages(true); // Force reading of all frames
+                AnimFrameProvider animFrameFunction = i -> null;
                 if (numImages > 1) {
                     // WebP reader does not expose frame delay, prepare for reflection hell
-                    try {
-                        Class<?> webpReaderClass = Class.forName("com.twelvemonkeys.imageio.plugins.webp.WebPImageReader");
-                        Field framesField = webpReaderClass.getDeclaredField("frames");
-                        framesField.setAccessible(true);
-                        List<?> frames = (List<?>) framesField.get(reader);
-                        Object firstFrame = frames.get(0);
+                    Class<?> webpReaderClass = Class.forName("com.twelvemonkeys.imageio.plugins.webp.WebPImageReader");
+                    Field framesField = webpReaderClass.getDeclaredField("frames");
+                    framesField.setAccessible(true);
+                    List<?> frames = (List<?>) framesField.get(reader);
 
-                        Class<?> animationFrameClass = Class.forName("com.twelvemonkeys.imageio.plugins.webp.AnimationFrame");
-                        Field durationField = animationFrameClass.getDeclaredField("duration");
-                        durationField.setAccessible(true);
-                        frameDelayMS = (int) durationField.get(firstFrame);
-                    } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
+                    Class<?> animationFrameClass = Class.forName("com.twelvemonkeys.imageio.plugins.webp.AnimationFrame");
+                    Field durationField = animationFrameClass.getDeclaredField("duration");
+                    durationField.setAccessible(true);
+                    Field boundsField = animationFrameClass.getDeclaredField("bounds");
+                    boundsField.setAccessible(true);
+
+                    animFrameFunction = i -> {
+                        Rectangle bounds = (Rectangle) boundsField.get(frames.get(i));
+                        return new AnimFrame((int) durationField.get(frames.get(i)), bounds.x, bounds.y);
+                    };
                     // that was fun
                 }
 
-                return createFromImageReader(reader, frameDelayMS, uniqueLocation);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                return createFromImageReader(reader, animFrameFunction, uniqueLocation);
+            } catch (Throwable e) {
+                CrashReport crashReport = CrashReport.forThrowable(e, "Failed to load WEBP image");
+                CrashReportCategory category = crashReport.addCategory("YACL Gui");
+                category.setDetail("Image identifier", uniqueLocation.toString());
+                throw new ReportedException(crashReport);
             }
         }
 
-        private static AnimatedNativeImageBacked createFromImageReader(ImageReader reader, int frameDelayMS, ResourceLocation uniqueLocation) throws IOException {
+        private static AnimatedNativeImageBacked createFromImageReader(ImageReader reader, AnimFrameProvider animationProvider, ResourceLocation uniqueLocation) throws Exception {
             int frameCount = reader.getNumImages(true);
 
+            // Because this is being backed into a texture atlas, we need a maximum dimension
+            // so you can get the texture atlas size.
+            // Smaller frames are given black borders
             int frameWidth = IntStream.range(reader.getMinIndex(), frameCount).map(i -> {
                 try {
                     return reader.getWidth(i);
@@ -256,15 +276,42 @@ public interface ImageRenderer {
             int rows = (int)Math.ceil(frameCount / (double)cols);
 
             NativeImage image = new NativeImage(frameWidth * cols, frameHeight * rows, true);
+
+            // Fill whole atlas with black, as each frame may have different dimensions
+            // that would cause borders of transparent pixels to appear around the frames
             for (int x = 0; x < frameWidth * cols; x++) {
                 for (int y = 0; y < frameHeight * rows; y++) {
                     image.setPixelRGBA(x, y, 0xFF000000);
                 }
             }
+
+            BufferedImage bi = null;
+            Graphics2D graphics = null;
+
+            // each frame may have a different delay
+            double[] frameDelays = new double[frameCount];
+
             for (int i = reader.getMinIndex(); i < frameCount - 1; i++) {
-                BufferedImage bi = reader.read(i);
+                AnimFrame frame = animationProvider.get(i);
+                if (frameCount > 1) // frame will be null if not animation
+                    frameDelays[i] = frame.durationMS;
+
+                if (bi == null) {
+                    // first frame...
+                    bi = reader.read(i);
+                    graphics = bi.createGraphics();
+                } else {
+                    // WebP reader sometimes provides delta frames, (only the pixels that changed since the last frame)
+                    // so instead of overwriting the image every frame, we draw delta frames on top of the previous frame
+                    // to keep a complete image.
+                    BufferedImage deltaFrame = reader.read(i);
+                    graphics.drawImage(deltaFrame, frame.xOffset, frame.yOffset, null);
+                }
+
+                // Each frame may have different dimensions, so we need to center them.
                 int xOffset = (frameWidth - bi.getWidth()) / 2;
                 int yOffset = (frameHeight - bi.getHeight()) / 2;
+
                 for (int w = 0; w < bi.getWidth(); w++) {
                     for (int h = 0; h < bi.getHeight(); h++) {
                         int rgb = bi.getRGB(w, h);
@@ -283,9 +330,15 @@ public interface ImageRenderer {
                     }
                 }
             }
+            // gives the texture to GL for rendering
+            // usually, you create a native image with NativeImage.create, which sets the pixels and
+            // runs this function itself. In this case, we need to do it manually.
             image.upload(0, 0, 0, false);
 
-            return new AnimatedNativeImageBacked(image, frameWidth, frameHeight, frameCount, frameDelayMS, cols, rows, uniqueLocation);
+            graphics.dispose();
+            reader.dispose();
+
+            return new AnimatedNativeImageBacked(image, frameWidth, frameHeight, frameCount, frameDelays, cols, rows, uniqueLocation);
         }
 
         @Override
@@ -313,14 +366,21 @@ public interface ImageRenderer {
             if (frameCount > 1) {
                 double timeMS = Blaze3D.getTime() * 1000;
                 if (lastFrameTime == 0) lastFrameTime = timeMS;
-                if (timeMS - lastFrameTime >= frameDelay) {
+                if (timeMS - lastFrameTime >= frameDelays[currentFrame]) {
                     currentFrame++;
                     lastFrameTime = timeMS;
                 }
-                if (currentFrame >= frameCount - 1) currentFrame = 0;
+                if (currentFrame >= frameCount - 1)
+                    currentFrame = 0;
             }
 
             return targetHeight;
         }
+
+        @FunctionalInterface
+        private interface AnimFrameProvider {
+            AnimFrame get(int frame) throws Exception;
+        }
+        private record AnimFrame(int durationMS, int xOffset, int yOffset) {}
     }
 }
