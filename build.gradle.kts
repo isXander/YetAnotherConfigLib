@@ -12,7 +12,7 @@ architectury {
     minecraft = libs.versions.minecraft.get()
 }
 
-version = "3.0.0-beta.5+1.20"
+version = "3.0.0-beta.6+1.20"
 
 val isBeta = "beta" in version.toString()
 val changelogText = rootProject.file("changelogs/${project.version}.md").takeIf { it.exists() }?.readText() ?: "No changelog provided."
