@@ -7,7 +7,7 @@
   "environment": "*",
   "entrypoints": {
     "modmenu": [
-      "dev.isxander.yacl.test.fabric.ModMenuEntrypoint"
+      "dev.isxander.yacl3.test.fabric.ModMenuEntrypoint"
     ]
   }
 }
