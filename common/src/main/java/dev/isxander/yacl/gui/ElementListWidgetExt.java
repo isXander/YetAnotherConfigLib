@@ -67,6 +67,8 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
         this.y0 = rectangle.top();
         this.x1 = rectangle.right();
         this.y1 = rectangle.bottom();
+        this.width = rectangle.width();
+        this.height = rectangle.height();
     }
 
     /**

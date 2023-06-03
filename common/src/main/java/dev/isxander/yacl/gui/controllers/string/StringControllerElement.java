@@ -51,7 +51,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         if (!isHovered()) valueText = Component.literal(GuiUtils.shortenString(valueText.getString(), textRenderer, getMaxUnwrapLength(), "...")).setStyle(valueText.getStyle());
 
         int textX = getDimension().xLimit() - textRenderer.width(valueText) + renderOffset - getXPadding();
-        GuiUtils.enableScissor(inputFieldBounds.x(), inputFieldBounds.y() - 2, inputFieldBounds.width() + 1, inputFieldBounds.height() + 4);
+        graphics.enableScissor(inputFieldBounds.x(), inputFieldBounds.y() - 2, inputFieldBounds.width() + 1, inputFieldBounds.height() + 4);
         graphics.drawString(textRenderer, valueText, textX, getTextY(), getValueColor(), true);
 
         if (isHovered()) {
@@ -80,7 +80,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                 }
             }
         }
-        RenderSystem.disableScissor();
+        graphics.disableScissor();
     }
 
     @Override
