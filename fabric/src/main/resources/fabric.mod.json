@@ -2,7 +2,8 @@
   "schemaVersion": 1,
   "id": "${id}",
   "provides": [
-    "yet-another-config-lib"
+    "yet-another-config-lib",
+    "yet_another_config_lib"
   ],
   "version": "${version}",
   "name": "${name}",

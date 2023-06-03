@@ -1,4 +1,4 @@
-package dev.isxander.yacl.forge;
+package dev.isxander.yacl3.forge;
 
 import net.minecraftforge.fml.common.Mod;
 

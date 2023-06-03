@@ -1,6 +1,6 @@
-package dev.isxander.yacl.test.forge;
+package dev.isxander.yacl3.test.forge;
 
-import dev.isxander.yacl.test.GuiTest;
+import dev.isxander.yacl3.test.GuiTest;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
