@@ -339,7 +339,7 @@ public class GuiTest {
                                 .option(LabelOption.create(Component.literal("This is a test category!")))
                                 .build())
                         .category(ConfigCategory.createBuilder()
-                                .name(Component.literal("Category Test"))
+                                .name(Component.literal("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
                                 .option(LabelOption.create(Component.literal("This is a test category!")))
                                 .build())
                         .category(ConfigCategory.createBuilder()

@@ -35,20 +35,27 @@ public class ScrollableNavigationBar extends TabNavigationBar {
     @Override
     public void arrangeElements() {
         int noScrollWidth = this.width - NAVBAR_MARGIN*2;
-        int minimumSize = tabButtons.stream()
-                .map(AbstractWidget::getMessage)
-                .mapToInt(label -> font.width(label) + 3)
-                .min().orElse(0);
-        int singleTabWidth = Math.max(noScrollWidth / Math.min(this.tabButtons.size(), 3), minimumSize);
+
+        // first pass: set the width of each tab button
         for (TabButton tabButton : this.tabButtons) {
-            tabButton.setWidth(singleTabWidth);
+            tabButton.setWidth(font.width(tabButton.getMessage()) + 10);
+        }
+
+        // second pass: redistribute remaining width evenly
+        for (TabButton tabButton : tabButtons) {
+            int totalWidth = tabButtons.stream().mapToInt(AbstractWidget::getWidth).sum();
+            int remainingWidth = noScrollWidth - totalWidth;
+            if (remainingWidth > 0) {
+                int extra = remainingWidth / tabButtons.size();
+                tabButton.setWidth(tabButton.getWidth() + extra);
+            }
         }
 
         this.layout.arrangeElements();
         this.layout.setY(0);
         this.scrollOffset = 0;
 
-        int allTabsWidth = singleTabWidth * this.tabButtons.size();
+        int allTabsWidth = this.tabButtons.stream().mapToInt(AbstractWidget::getWidth).sum();
         this.layout.setX(Math.max((this.width - allTabsWidth) / 2, NAVBAR_MARGIN));
         this.maxScrollOffset = Math.max(0, allTabsWidth - noScrollWidth);
     }
