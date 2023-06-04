@@ -45,6 +45,11 @@ dependencies {
     })
     forge(libs.forge)
 
+    implementation(libs.twelvemonkeys.imageio.core)
+    forgeRuntimeLibrary(libs.twelvemonkeys.imageio.core)
+    implementation(libs.twelvemonkeys.imageio.webp)
+    forgeRuntimeLibrary(libs.twelvemonkeys.imageio.webp)
+
     "common"(project(path = ":common", configuration = "namedElements")) { isTransitive = false }
     "shadowCommon"(project(path = ":common", configuration = "transformProductionForge")) { isTransitive = false }
 }
