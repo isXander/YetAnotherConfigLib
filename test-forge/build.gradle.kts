@@ -34,6 +34,11 @@ dependencies {
     })
     forge(libs.forge)
 
+    implementation(libs.twelvemonkeys.imageio.core)
+    forgeRuntimeLibrary(libs.twelvemonkeys.imageio.core)
+    implementation(libs.twelvemonkeys.imageio.webp)
+    forgeRuntimeLibrary(libs.twelvemonkeys.imageio.webp)
+
     "common"(project(path = ":test-common", configuration = "namedElements")) { isTransitive = false }
     implementation(project(path = ":forge", configuration = "namedElements"))
 
