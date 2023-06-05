@@ -30,7 +30,7 @@ public final class ListOptionEntryImpl<T> implements ListOptionEntry<T> {
 
     @Override
     public @NotNull Component name() {
-        return Component.empty();
+        return group.name();
     }
 
     @Override
