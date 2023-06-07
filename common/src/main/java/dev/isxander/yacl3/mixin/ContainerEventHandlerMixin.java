@@ -22,7 +22,7 @@ public interface ContainerEventHandlerMixin {
      * should never result in focusing the always-at-the-top tab bar.
      * Without this, navigating right from the option list focuses the tab bar, not the action buttons/description.
      */
-    @Redirect(method = {"nextFocusPathVaguelyInDirection", "nextFocusPathInDirection"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/events/ContainerEventHandler;children()Ljava/util/List;"))
+    @Redirect(method = {"nextFocusPathVaguelyInDirection", "nextFocusPathInDirection"}, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/events/ContainerEventHandler;children()Ljava/util/List;"), require = 2)
     private List<?> modifyFocusCandidates(ContainerEventHandler instance, ScreenRectangle screenArea, ScreenDirection direction, @Nullable GuiEventListener focused, FocusNavigationEvent event) {
         if (direction.getAxis() == ScreenAxis.HORIZONTAL)
             return instance.children().stream().filter(child -> !(child instanceof TabNavigationBar)).toList();

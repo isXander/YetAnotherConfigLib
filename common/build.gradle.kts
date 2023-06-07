@@ -13,7 +13,14 @@ architectury {
 loom {
     silentMojangMappingsLicense()
 
-    accessWidenerPath.set(file("src/main/resources/yacl.accesswidener"))
+    accessWidenerPath.set(file("src/main/resources/yacl3.accesswidener"))
+
+    // Including YACL 2.x overwrites the identically named refmap, breaking all the mixins.
+    // So we need to use a different name for the refmap.
+    mixin {
+        useLegacyMixinAp.set(true)
+        defaultRefmapName.set("yacl3-refmap.json")
+    }
 }
 
 dependencies {

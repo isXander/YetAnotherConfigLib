@@ -21,7 +21,7 @@ loom {
     accessWidenerPath.set(project(":common").loom.accessWidenerPath)
 
     forge {
-        mixinConfig("yacl.mixins.json")
+        mixinConfig("yacl3.mixins.json")
 
         convertAccessWideners.set(true)
         extraAccessWideners.add(loom.accessWidenerPath.get().asFile.name)

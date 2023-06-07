@@ -47,6 +47,9 @@ dependencies {
         include(it)
     }
 
+    // include 2.0 version of YACL so auto-updaters don't break everyone's mod folders.
+    include("dev.isxander.yacl:yet-another-config-lib-fabric:2.5.1+1.19.4")
+
     "common"(project(path = ":common", configuration = "namedElements")) { isTransitive = false }
     "shadowCommon"(project(path = ":common", configuration = "transformProductionFabric")) { isTransitive = false }
 }
