@@ -38,8 +38,14 @@ dependencies {
     ).forEach { modApi(fabricApi.module(it, libs.versions.fabric.api.get())) }
     modApi(libs.mod.menu)
 
-    implementation(libs.twelvemonkeys.imageio.core)
-    implementation(libs.twelvemonkeys.imageio.webp)
+    libs.twelvemonkeys.imageio.core.let {
+        implementation(it)
+        include(it)
+    }
+    libs.twelvemonkeys.imageio.webp.let {
+        implementation(it)
+        include(it)
+    }
 
     "common"(project(path = ":common", configuration = "namedElements")) { isTransitive = false }
     "shadowCommon"(project(path = ":common", configuration = "transformProductionFabric")) { isTransitive = false }
