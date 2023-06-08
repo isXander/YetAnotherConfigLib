@@ -38,11 +38,7 @@ dependencies {
     ).forEach { modApi(fabricApi.module(it, libs.versions.fabric.api.get())) }
     modApi(libs.mod.menu)
 
-    libs.twelvemonkeys.imageio.core.let {
-        implementation(it)
-        include(it)
-    }
-    libs.twelvemonkeys.imageio.webp.let {
+    libs.bundles.twelvemonkeys.imageio.let {
         implementation(it)
         include(it)
     }

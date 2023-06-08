@@ -31,8 +31,7 @@ dependencies {
     })
     modImplementation(libs.fabric.loader)
 
-    implementation(libs.twelvemonkeys.imageio.core)
-    implementation(libs.twelvemonkeys.imageio.webp)
+    implementation(libs.bundles.twelvemonkeys.imageio)
 }
 
 java {

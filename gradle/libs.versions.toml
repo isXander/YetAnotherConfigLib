@@ -1,9 +1,9 @@
 [versions]
 # Plugins
-architectury_loom = "1.1.+"
+architectury_loom = "1.2.+"
 architectury_plugin = "3.4.+"
 shadow = "7.1.+"
-quilt_quiltflower = "1.8.+"
+quilt_quiltflower = "1.10.+"
 minotaur = "2.7.+"
 cursegradle = "2.+"
 github_release = "2.+"
@@ -12,7 +12,7 @@ grgit = "5.0.+"
 
 minecraft = "1.19.4"
 quilt_mappings = "10"
-fabric_loader = "0.14.19"
+fabric_loader = "0.14.21"
 
 # Common Dependencies
 mixin_extras = "0.2.0-beta.8"
@@ -33,6 +33,10 @@ fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_l
 mixin_extras_common = { module = "com.github.llamalad7.mixinextras:mixinextras-common", version.ref = "mixin_extras" }
 twelvemonkeys_imageio_core = { module = "com.twelvemonkeys.imageio:imageio-core", version.ref = "twelvemonkeys_imageio" }
 twelvemonkeys_imageio_webp = { module = "com.twelvemonkeys.imageio:imageio-webp", version.ref = "twelvemonkeys_imageio" }
+twelvemonkeys_imageio_metadata = { module = "com.twelvemonkeys.imageio:imageio-metadata", version.ref = "twelvemonkeys_imageio" }
+twelvemonkeys_common_lang = { module = "com.twelvemonkeys.common:common-lang", version.ref = "twelvemonkeys_imageio" }
+twelvemonkeys_common_io = { module = "com.twelvemonkeys.common:common-io", version.ref = "twelvemonkeys_imageio" }
+twelvemonkeys_common_image = { module = "com.twelvemonkeys.common:common-image", version.ref = "twelvemonkeys_imageio" }
 
 # Fabric-like Dependencies
 fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
@@ -40,6 +44,16 @@ mod_menu = { module = "com.terraformersmc:modmenu", version.ref = "mod_menu" }
 
 # Forge Dependencies
 forge = { module = "net.minecraftforge:forge", version.ref = "forge" }
+
+[bundles]
+twelvemonkeys_imageio = [
+    "twelvemonkeys_imageio_core",
+    "twelvemonkeys_imageio_webp",
+    "twelvemonkeys_imageio_metadata",
+    "twelvemonkeys_common_lang",
+    "twelvemonkeys_common_io",
+    "twelvemonkeys_common_image"
+]
 
 [plugins]
 architectury_loom = { id = "dev.architectury.loom", version.ref = "architectury_loom" }
