@@ -18,7 +18,15 @@ public abstract class AbstractSelectionListMixin<E extends AbstractSelectionList
      * YACL modifies these children() method to filter out hidden entries, so we need to redirect the field access to the
      * method, so we don't get ArrayIndexOutOfBoundsException.
      */
-    @Redirect(method = "nextEntry(Lnet/minecraft/client/gui/navigation/ScreenDirection;Ljava/util/function/Predicate;Lnet/minecraft/client/gui/components/AbstractSelectionList$Entry;)Lnet/minecraft/client/gui/components/AbstractSelectionList$Entry;", at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/components/AbstractSelectionList;children:Ljava/util/List;", opcode = Opcodes.GETFIELD))
+    @Redirect(
+            method = "nextEntry(Lnet/minecraft/client/gui/navigation/ScreenDirection;Ljava/util/function/Predicate;Lnet/minecraft/client/gui/components/AbstractSelectionList$Entry;)Lnet/minecraft/client/gui/components/AbstractSelectionList$Entry;",
+            at = @At(
+                    value = "FIELD",
+                    target = "Lnet/minecraft/client/gui/components/AbstractSelectionList;children:Ljava/util/List;",
+                    opcode = Opcodes.GETFIELD
+            ),
+            require = 0 // since 2.x also redirects this field access, we need to set this to 0 to prevent redirect conflict
+    )
     private List<E> modifyChildrenCall(AbstractSelectionList<E> instance) {
         return children();
     }
