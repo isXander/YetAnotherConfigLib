@@ -64,7 +64,7 @@ public class LongFieldController extends NumberFieldController<Long> {
 
     @Override
     public boolean isInputValid(String input) {
-        return input.matches("\\d+|-|");
+        return input.matches("(?:-?\\d+|)");
     }
 
     /**
