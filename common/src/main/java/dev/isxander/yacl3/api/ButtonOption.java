@@ -26,6 +26,11 @@ public interface ButtonOption extends Option<BiConsumer<YACLScreen, ButtonOption
          */
         Builder name(@NotNull Component name);
 
+        /**
+         * Sets the button text to be displayed next to the name.
+         */
+        Builder text(@NotNull Component text);
+
         Builder description(@NotNull OptionDescription description);
 
         Builder action(@NotNull BiConsumer<YACLScreen, ButtonOption> action);

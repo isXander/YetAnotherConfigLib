@@ -26,13 +26,14 @@ public final class ButtonOptionImpl implements ButtonOption {
             @NotNull Component name,
             @Nullable OptionDescription description,
             @NotNull BiConsumer<YACLScreen, ButtonOption> action,
+            @Nullable Component text,
             boolean available
     ) {
         this.name = name;
         this.description = description;
         this.action = action;
         this.available = available;
-        this.controller = new ActionController(this);
+        this.controller = text != null ? new ActionController(this, text) : new ActionController(this);
         this.binding = new EmptyBinderImpl();
     }
 
@@ -141,6 +142,7 @@ public final class ButtonOptionImpl implements ButtonOption {
     @ApiStatus.Internal
     public static final class BuilderImpl implements Builder {
         private Component name;
+        private Component text = null;
         private OptionDescription description = OptionDescription.EMPTY;
         private boolean available = true;
         private BiConsumer<YACLScreen, ButtonOption> action;
@@ -150,6 +152,14 @@ public final class ButtonOptionImpl implements ButtonOption {
             Validate.notNull(name, "`name` cannot be null");
 
             this.name = name;
+            return this;
+        }
+
+        @Override
+        public Builder text(@NotNull Component text) {
+            Validate.notNull(text, "`text` cannot be null");
+
+            this.text = text;
             return this;
         }
 
@@ -189,7 +199,7 @@ public final class ButtonOptionImpl implements ButtonOption {
             Validate.notNull(name, "`name` must not be null when building `ButtonOption`");
             Validate.notNull(action, "`action` must not be null when building `ButtonOption`");
 
-            return new ButtonOptionImpl(name, description, action, available);
+            return new ButtonOptionImpl(name, description, action, text, available);
         }
     }
 }
