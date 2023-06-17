@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.List;
 
-@Mixin(AbstractSelectionList.class)
+@Mixin(value = AbstractSelectionList.class, priority = 1010)
 public abstract class AbstractSelectionListMixin<E extends AbstractSelectionList.Entry<E>> {
     @Shadow public abstract List<E> children();
 
