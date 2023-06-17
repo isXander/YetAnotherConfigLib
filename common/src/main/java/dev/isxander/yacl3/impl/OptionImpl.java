@@ -251,6 +251,10 @@ public final class OptionImpl<T> implements Option<T> {
             Validate.notNull(binding, "`binding` must not be null when building `Option`");
             Validate.isTrue(!instant || flags.isEmpty(), "instant application does not support option flags");
 
+            if (instant) {
+                listeners.add((opt, pendingValue) -> opt.applyValue());
+            }
+
             return new OptionImpl<>(name, descriptionFunction, controlGetter, binding, available, ImmutableSet.copyOf(flags), listeners);
         }
     }
