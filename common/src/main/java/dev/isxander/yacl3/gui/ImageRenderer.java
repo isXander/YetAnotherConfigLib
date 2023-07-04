@@ -248,19 +248,23 @@ public interface ImageRenderer {
         }
 
         private static AnimatedNativeImageBacked createFromImageReader(ImageReader reader, AnimFrameProvider animationProvider, ResourceLocation uniqueLocation) throws Exception {
+            if (reader.isSeekForwardOnly()) {
+                throw new RuntimeException("Image reader is not seekable");
+            }
+
             int frameCount = reader.getNumImages(true);
 
             // Because this is being backed into a texture atlas, we need a maximum dimension
             // so you can get the texture atlas size.
             // Smaller frames are given black borders
-            int frameWidth = IntStream.range(reader.getMinIndex(), frameCount).map(i -> {
+            int frameWidth = IntStream.range(0, frameCount).map(i -> {
                 try {
                     return reader.getWidth(i);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }).max().orElseThrow();
-            int frameHeight = IntStream.range(reader.getMinIndex(), frameCount).map(i -> {
+            int frameHeight = IntStream.range(0, frameCount).map(i -> {
                 try {
                     return reader.getHeight(i);
                 } catch (IOException e) {
@@ -277,13 +281,13 @@ public interface ImageRenderer {
 
             NativeImage image = new NativeImage(frameWidth * cols, frameHeight * rows, true);
 
-            // Fill whole atlas with black, as each frame may have different dimensions
-            // that would cause borders of transparent pixels to appear around the frames
-            for (int x = 0; x < frameWidth * cols; x++) {
-                for (int y = 0; y < frameHeight * rows; y++) {
-                    image.setPixelRGBA(x, y, 0xFF000000);
-                }
-            }
+//            // Fill whole atlas with black, as each frame may have different dimensions
+//            // that would cause borders of transparent pixels to appear around the frames
+//            for (int x = 0; x < frameWidth * cols; x++) {
+//                for (int y = 0; y < frameHeight * rows; y++) {
+//                    image.setPixelRGBA(x, y, 0xFF000000);
+//                }
+//            }
 
             BufferedImage bi = null;
             Graphics2D graphics = null;
@@ -291,7 +295,7 @@ public interface ImageRenderer {
             // each frame may have a different delay
             double[] frameDelays = new double[frameCount];
 
-            for (int i = reader.getMinIndex(); i < frameCount - 1; i++) {
+            for (int i = 0; i < frameCount; i++) {
                 AnimFrame frame = animationProvider.get(i);
                 if (frameCount > 1) // frame will be null if not animation
                     frameDelays[i] = frame.durationMS;
@@ -318,6 +322,7 @@ public interface ImageRenderer {
                         int r = FastColor.ARGB32.red(rgb);
                         int g = FastColor.ARGB32.green(rgb);
                         int b = FastColor.ARGB32.blue(rgb);
+                        int a = FastColor.ARGB32.alpha(rgb);
 
                         int col = i % cols;
                         int row = (int) Math.floor(i / (double)cols);
@@ -325,7 +330,7 @@ public interface ImageRenderer {
                         image.setPixelRGBA(
                                 frameWidth * col + w + xOffset,
                                 frameHeight * row + h + yOffset,
-                                FastColor.ABGR32.color(255, b, g, r) // NativeImage uses ABGR for some reason
+                                FastColor.ABGR32.color(a, b, g, r) // NativeImage uses ABGR for some reason
                         );
                     }
                 }
@@ -335,7 +340,8 @@ public interface ImageRenderer {
             // runs this function itself. In this case, we need to do it manually.
             image.upload(0, 0, 0, false);
 
-            graphics.dispose();
+            if (graphics != null)
+                graphics.dispose();
             reader.dispose();
 
             return new AnimatedNativeImageBacked(image, frameWidth, frameHeight, frameCount, frameDelays, cols, rows, uniqueLocation);
