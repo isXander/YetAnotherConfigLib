@@ -263,6 +263,7 @@ public class GuiTest {
                                         .initial("")
                                         .minimumNumberOfEntries(3)
                                         .maximumNumberOfEntries(5)
+                                        .insertEntriesAtEnd(true)
                                         .build())
                                 .group(ListOption.<Integer>createBuilder()
                                         .name(Component.literal("Slider List"))

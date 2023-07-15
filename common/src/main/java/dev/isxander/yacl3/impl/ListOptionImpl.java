@@ -27,12 +27,13 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     private boolean available;
     private final int minimumNumberOfEntries;
     private final int maximumNumberOfEntries;
+    private final boolean insertEntriesAtEnd;
     private final ImmutableSet<OptionFlag> flags;
     private final EntryFactory entryFactory;
     private final List<BiConsumer<Option<List<T>>, List<T>>> listeners;
     private final List<Runnable> refreshListeners;
 
-    public ListOptionImpl(@NotNull Component name, @NotNull OptionDescription description, @NotNull Binding<List<T>> binding, @NotNull T initialValue, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available, int minimumNumberOfEntries, int maximumNumberOfEntries, Collection<BiConsumer<Option<List<T>>, List<T>>> listeners) {
+    public ListOptionImpl(@NotNull Component name, @NotNull OptionDescription description, @NotNull Binding<List<T>> binding, @NotNull T initialValue, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available, int minimumNumberOfEntries, int maximumNumberOfEntries, boolean insertEntriesAtEnd, Collection<BiConsumer<Option<List<T>>, List<T>>> listeners) {
         this.name = name;
         this.description = description;
         this.binding = binding;
@@ -44,6 +45,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         this.available = available;
         this.minimumNumberOfEntries = minimumNumberOfEntries;
         this.maximumNumberOfEntries = maximumNumberOfEntries;
+        this.insertEntriesAtEnd = insertEntriesAtEnd;
         this.listeners = new ArrayList<>();
         this.listeners.addAll(listeners);
         this.refreshListeners = new ArrayList<>();
@@ -102,9 +104,14 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     }
 
     @Override
-    public ListOptionEntry<T> insertNewEntryToTop() {
+    public ListOptionEntry<T> insertNewEntry() {
         ListOptionEntry<T> newEntry = entryFactory.create(initialValue);
-        entries.add(0, newEntry);
+        if (insertEntriesAtEnd) {
+            entries.add(newEntry);
+        } else {
+            // insert at top
+            entries.add(0, newEntry);
+        }
         onRefresh();
         return newEntry;
     }
@@ -232,6 +239,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         private boolean available = true;
         private int minimumNumberOfEntries = 0;
         private int maximumNumberOfEntries = Integer.MAX_VALUE;
+        private boolean insertEntriesAtEnd = false;
         private final List<BiConsumer<Option<List<T>>, List<T>>> listeners = new ArrayList<>();
 
         @Override
@@ -311,6 +319,12 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         }
 
         @Override
+        public Builder<T> insertEntriesAtEnd(boolean insertAtEnd) {
+            this.insertEntriesAtEnd = insertAtEnd;
+            return this;
+        }
+
+        @Override
         public Builder<T> flag(@NotNull OptionFlag... flag) {
             Validate.notNull(flag, "`flag` must not be null");
 
@@ -350,7 +364,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
             Validate.notNull(binding, "`binding` must not be null");
             Validate.notNull(initialValue, "`initialValue` must not be null");
 
-            return new ListOptionImpl<>(name, description, binding, initialValue, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available, minimumNumberOfEntries, maximumNumberOfEntries, listeners);
+            return new ListOptionImpl<>(name, description, binding, initialValue, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available, minimumNumberOfEntries, maximumNumberOfEntries, insertEntriesAtEnd, listeners);
         }
     }
 }

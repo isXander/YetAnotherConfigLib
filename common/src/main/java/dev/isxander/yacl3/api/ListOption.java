@@ -39,7 +39,7 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
     int minimumNumberOfEntries();
 
     @ApiStatus.Internal
-    ListOptionEntry<T> insertNewEntryToTop();
+    ListOptionEntry<T> insertNewEntry();
 
     @ApiStatus.Internal
     void insertEntry(int index, ListOptionEntry<?> entry);
@@ -125,6 +125,12 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
          * no further entries may be added.
          */
         Builder<T> maximumNumberOfEntries(int number);
+
+        /**
+         * Dictates if new entries should be added to the end of the list
+         * rather than the top.
+         */
+        Builder<T> insertEntriesAtEnd(boolean insertAtEnd);
 
         /**
          * Adds a flag to the option.
