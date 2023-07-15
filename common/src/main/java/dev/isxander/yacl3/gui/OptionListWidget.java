@@ -519,7 +519,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             super.updateExpandMinimizeText();
             expandMinimizeButton.active = listOption == null || listOption.available();
             if (addListButton != null)
-                addListButton.active = expandMinimizeButton.active;
+                addListButton.active = expandMinimizeButton.active && listOption.numberOfEntries() < listOption.maximumNumberOfEntries();
         }
 
         @Override

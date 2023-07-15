@@ -30,6 +30,15 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
     @NotNull ImmutableList<ListOptionEntry<T>> options();
 
     @ApiStatus.Internal
+    int numberOfEntries();
+
+    @ApiStatus.Internal
+    int maximumNumberOfEntries();
+
+    @ApiStatus.Internal
+    int minimumNumberOfEntries();
+
+    @ApiStatus.Internal
     ListOptionEntry<T> insertNewEntryToTop();
 
     @ApiStatus.Internal
@@ -104,6 +113,18 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
          * @see Option#available()
          */
         Builder<T> available(boolean available);
+
+        /**
+         * Sets a minimum size for the list. Once this size is reached,
+         * no further entries may be removed.
+         */
+        Builder<T> minimumNumberOfEntries(int number);
+
+        /**
+         * Sets a maximum size for the list. Once this size is reached,
+         * no further entries may be added.
+         */
+        Builder<T> maximumNumberOfEntries(int number);
 
         /**
          * Adds a flag to the option.

@@ -261,6 +261,8 @@ public class GuiTest {
                                         )
                                         .controller(StringControllerBuilder::create)
                                         .initial("")
+                                        .minimumNumberOfEntries(3)
+                                        .maximumNumberOfEntries(5)
                                         .build())
                                 .group(ListOption.<Integer>createBuilder()
                                         .name(Component.literal("Slider List"))
