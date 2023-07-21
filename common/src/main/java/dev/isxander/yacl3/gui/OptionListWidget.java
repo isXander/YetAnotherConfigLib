@@ -485,7 +485,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
 
             this.addListButton = new TooltipButtonWidget(yaclScreen, resetListButton.getX() - 20, -50, 20, 20, Component.literal("+"), Component.translatable("yacl.list.add_top"), btn -> {
-                group.insertNewEntryToTop();
+                group.insertNewEntry();
                 setExpanded(true);
             });
 
@@ -519,7 +519,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             super.updateExpandMinimizeText();
             expandMinimizeButton.active = listOption == null || listOption.available();
             if (addListButton != null)
-                addListButton.active = expandMinimizeButton.active;
+                addListButton.active = expandMinimizeButton.active && listOption.numberOfEntries() < listOption.maximumNumberOfEntries();
         }
 
         @Override

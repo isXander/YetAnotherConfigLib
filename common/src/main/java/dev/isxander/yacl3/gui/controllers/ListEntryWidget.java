@@ -80,7 +80,7 @@ public class ListEntryWidget extends AbstractWidget implements ContainerEventHan
     }
 
     protected void updateButtonStates() {
-        removeButton.active = listOption.available();
+        removeButton.active = listOption.available() && listOption.numberOfEntries() > listOption.minimumNumberOfEntries();
         moveUpButton.active = listOption.indexOf(listOptionEntry) > 0 && listOption.available();
         moveDownButton.active = listOption.indexOf(listOptionEntry) < listOption.options().size() - 1 && listOption.available();
     }
