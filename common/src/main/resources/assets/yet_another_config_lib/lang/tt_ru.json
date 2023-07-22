@@ -1,5 +1,6 @@
 {
-  "modmenu.descriptionTranslation.yacl": "YetAnotherConfigLib (yacl) — нәкъ менә кирәк нәрсә. Builder-based Minecraft өчен көйләүләр китапханәсе.",
+  "modmenu.summaryTranslation.yacl": "Төзүче нигезендә Minecraft өчен көйләүләр китапханәсе.",
+  "modmenu.descriptionTranslation.yacl": "YetAnotherConfigLib (yacl) — нәкъ менә кирәк нәрсә. Төзүче нигезендә Minecraft өчен көйләүләр китапханәсе.",
   "yacl.control.boolean.true": "Дөрес",
   "yacl.control.boolean.false": "Ялган",
 
