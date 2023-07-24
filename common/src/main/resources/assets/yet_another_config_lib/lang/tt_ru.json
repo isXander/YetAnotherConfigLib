@@ -1,0 +1,31 @@
+{
+  "modmenu.summaryTranslation.yacl": "Төзүче нигезендә Minecraft өчен көйләүләр китапханәсе.",
+  "modmenu.descriptionTranslation.yacl": "YetAnotherConfigLib (yacl) — нәкъ менә кирәк нәрсә. Төзүче нигезендә Minecraft өчен көйләүләр китапханәсе.",
+  "yacl.control.boolean.true": "Дөрес",
+  "yacl.control.boolean.false": "Ялган",
+
+  "yacl.control.action.execute": "ҮТӘҮ",
+
+  "yacl.gui.save": "Үзгәрешләрне саклау",
+  "yacl.gui.save.tooltip": "Кертелгән үзгәрешләрне даими итә.",
+  "yacl.gui.finished.tooltip": "GUI-ны яба.",
+  "yacl.gui.cancel.tooltip": "Үзгәрешләрне баш тарта һәм GUI-ны яба.",
+  "yacl.gui.reset.tooltip": "Барлык көйләүләрне беренчелгә кайтара. (Аларны төзәтергә ярый!)",
+  "yacl.gui.undo": "Баш тарту",
+  "yacl.gui.undo.tooltip": "Үзгәрешләргә кадәр булган халәткә барлык көйләүләрне төзәтә.",
+  "yacl.gui.fail_apply": "Кулланып булмады",
+  "yacl.gui.fail_apply.tooltip": "Үзгәрешләрне кулланып булмады; хата булды.",
+  "yacl.gui.save_before_exit": "Чыкканчы саклагыз!",
+  "yacl.gui.save_before_exit.tooltip": "GUI-тан чыгу өчен саклагыз яки баш тартыгыз.",
+
+  "yacl.list.move_up": "Өскә күчү",
+  "yacl.list.move_down": "Аска күчү",
+  "yacl.list.remove": "Бетерү",
+  "yacl.list.add_top": "Яңа элемент",
+  "yacl.list.empty": "Исемлек буш",
+
+  "yacl.restart.title": "Көйләү яңадан кушуны таләп ителә!",
+  "yacl.restart.message": "Үзгәрешләр куллану өчен бер яки күбрәк көйләү уенның яңадан кушуын таләп ителә.",
+  "yacl.restart.yes": "Minecraft-ны ябу",
+  "yacl.restart.no": "Әһәмият бирмәү"
+}
