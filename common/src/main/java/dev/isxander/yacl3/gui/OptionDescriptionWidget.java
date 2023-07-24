@@ -19,6 +19,7 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class OptionDescriptionWidget extends AbstractWidget {
@@ -149,6 +150,12 @@ public class OptionDescriptionWidget extends AbstractWidget {
     }
 
     public void tick() {
+        if (description != null) {
+            description.description().image()
+                    .getNow(Optional.empty())
+                    .ifPresent(ImageRenderer::tick);
+        }
+
         float pxPerTick = AUTO_SCROLL_SPEED / 20f * font.lineHeight;
         if (maxScrollAmount > 0 && currentTimeMS() - lastInteractionTime > AUTO_SCROLL_TIMER) {
             if (scrollingBackward) {
