@@ -25,7 +25,7 @@ public final class ListOptionEntryImpl<T> implements ListOptionEntry<T> {
         this.group = group;
         this.value = initialValue;
         this.binding = new EntryBinding();
-        this.controller = new EntryController<>(controlGetter.apply(this), this);
+        this.controller = new EntryController<>(controlGetter.apply(new HiddenNameListOptionEntry<>(this)), this);
     }
 
     @Override
@@ -40,7 +40,7 @@ public final class ListOptionEntryImpl<T> implements ListOptionEntry<T> {
 
     @Override
     public @NotNull Component tooltip() {
-        return Component.empty();
+        return group.tooltip();
     }
 
     @Override
