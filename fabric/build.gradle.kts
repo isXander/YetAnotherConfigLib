@@ -36,7 +36,7 @@ dependencies {
     modImplementation(libs.fabric.loader)
 
     listOf(
-        "fabric-resource-loader-v0"
+        "fabric-resource-loader-v0",
     ).forEach { modApi(fabricApi.module(it, libs.versions.fabric.api.get())) }
     modApi(libs.mod.menu)
 
