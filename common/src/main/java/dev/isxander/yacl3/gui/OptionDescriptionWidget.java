@@ -77,7 +77,6 @@ public class OptionDescriptionWidget extends AbstractWidget {
         if (description.description().image().isDone()) {
             var image = description.description().image().join();
             if (image.isPresent()) {
-                image.get().render(matrices, getX(), y, getWidth());
                 y += image.get().render(matrices, getX(), y, getWidth()) + 5;
             }
         }
