@@ -40,6 +40,8 @@ public interface ImageRenderer {
 
     void close();
 
+    default void tick() {}
+
     Map<ResourceLocation, CompletableFuture<Optional<ImageRenderer>>> CACHE = new ConcurrentHashMap<>();
 
     static CompletableFuture<Optional<ImageRenderer>> getOrMakeAsync(ResourceLocation id, Supplier<Optional<ImageRenderer>> factory) {
