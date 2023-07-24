@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.architectury.plugin)
     alias(libs.plugins.architectury.loom) apply false
+    alias(libs.plugins.loom.vineflower) apply false
 
     alias(libs.plugins.minotaur) apply false
     alias(libs.plugins.cursegradle) apply false
@@ -80,6 +81,10 @@ allprojects {
             }
         }
     }
+}
+
+subprojects {
+    apply(plugin = rootProject.libs.plugins.loom.vineflower.get().pluginId)
 }
 
 githubRelease {

@@ -3,7 +3,7 @@
 architectury_loom = "1.2.+"
 architectury_plugin = "3.4.+"
 shadow = "7.1.+"
-quilt_quiltflower = "1.10.+"
+loom_vineflower = "1.11.+"
 minotaur = "2.7.+"
 cursegradle = "2.+"
 github_release = "2.+"
@@ -58,6 +58,7 @@ twelvemonkeys_imageio = [
 [plugins]
 architectury_loom = { id = "dev.architectury.loom", version.ref = "architectury_loom" }
 architectury_plugin = { id = "architectury-plugin", version.ref = "architectury_plugin" }
+loom_vineflower = { id = "io.github.juuxel.loom-vineflower", version.ref = "loom_vineflower" }
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 
 minotaur = { id = "com.modrinth.minotaur", version.ref = "minotaur" }
