@@ -16,7 +16,7 @@ fabric_loader = "0.14.21"
 
 # Common Dependencies
 mixin_extras = "0.2.0-beta.8"
-twelvemonkeys_imageio = "3.9.4"
+twelvemonkeys_imageio = "3.10.0-SNAPSHOT"
 
 # Fabric-like Dependencies
 fabric_api = "0.79.0+1.19.4"
