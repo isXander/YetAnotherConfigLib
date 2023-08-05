@@ -4,6 +4,8 @@ import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.platform.YACLPlatform;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 import java.awt.*;
 import java.util.List;
@@ -43,6 +45,10 @@ public class ConfigTest {
     public long longField = 5;
     @SerialEntry
     public Alphabet enumOption = Alphabet.A;
+    @SerialEntry
+    public String stringOptions = "Banana";
+    @SerialEntry
+    public Item item = Items.OAK_LOG;
 
     @SerialEntry
     public List<String> stringList = List.of("This is quite cool.", "You can add multiple items!", "And it is integrated so well into Option groups!");

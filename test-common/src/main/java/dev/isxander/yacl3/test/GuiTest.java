@@ -1,10 +1,7 @@
 package dev.isxander.yacl3.test;
 
 import dev.isxander.yacl3.api.*;
-import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
-import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
-import dev.isxander.yacl3.api.controller.StringControllerBuilder;
-import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
+import dev.isxander.yacl3.api.controller.*;
 import dev.isxander.yacl3.gui.RequireRestartScreen;
 import dev.isxander.yacl3.gui.controllers.*;
 import dev.isxander.yacl3.gui.controllers.cycling.EnumController;
@@ -26,6 +23,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 
 import java.awt.Color;
 import java.nio.file.Path;
@@ -234,6 +232,30 @@ public class GuiTest {
                                                         (value) -> config.enumOption = value
                                                 )
                                                 .customController(opt -> new EnumController<>(opt, ConfigTest.Alphabet.class))
+                                                .build())
+                                        .build())
+                                .group(OptionGroup.createBuilder()
+                                        .name(Component.literal("Dropdown Controllers"))
+                                        .option(Option.<String>createBuilder()
+                                                .name(Component.literal("String Dropdown"))
+                                                .binding(
+                                                        defaults.stringOptions,
+                                                        () -> config.stringOptions,
+                                                        (value) -> config.stringOptions = value
+                                                )
+                                                .controller(opt -> DropdownStringControllerBuilder.create(opt)
+                                                        .values("Apple", "Banana", "Cherry", "Date")
+                                                        .allowEmpty(false)
+                                                )
+                                                .build())
+                                        .option(Option.<Item>createBuilder()
+                                                .name(Component.literal("Item Dropdown"))
+                                                .binding(
+                                                        defaults.item,
+                                                        () -> config.item,
+                                                        (value) -> config.item = value
+                                                )
+                                                .controller(ItemControllerBuilder::create)
                                                 .build())
                                         .build())
                                 .group(OptionGroup.createBuilder()
