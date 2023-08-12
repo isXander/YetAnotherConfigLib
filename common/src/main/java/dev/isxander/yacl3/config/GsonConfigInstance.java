@@ -193,7 +193,8 @@ public class GsonConfigInstance<T> extends ConfigInstance<T> {
          * @param gsonBuilder the function to apply to the builder
          */
         public Builder<T> appendGsonBuilder(UnaryOperator<GsonBuilder> gsonBuilder) {
-            this.gsonBuilder = builder -> gsonBuilder.apply(this.gsonBuilder.apply(builder));
+            UnaryOperator<GsonBuilder> prev = this.gsonBuilder;
+            this.gsonBuilder = builder -> gsonBuilder.apply(prev.apply(builder));
             return this;
         }
 
