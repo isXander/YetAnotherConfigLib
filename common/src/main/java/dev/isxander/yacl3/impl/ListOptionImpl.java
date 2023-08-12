@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.ControllerBuilder;
+import dev.isxander.yacl3.impl.utils.YACLConstants;
 import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
@@ -30,8 +31,10 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     private final boolean insertEntriesAtEnd;
     private final ImmutableSet<OptionFlag> flags;
     private final EntryFactory entryFactory;
+
     private final List<BiConsumer<Option<List<T>>, List<T>>> listeners;
     private final List<Runnable> refreshListeners;
+    private int listenerTriggerDepth = 0;
 
     public ListOptionImpl(@NotNull Component name, @NotNull OptionDescription description, @NotNull Binding<List<T>> binding, @NotNull Supplier<T> initialValue, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available, int minimumNumberOfEntries, int maximumNumberOfEntries, boolean insertEntriesAtEnd, Collection<BiConsumer<Option<List<T>>, List<T>>> listeners) {
         this.name = name;
@@ -49,7 +52,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         this.listeners = new ArrayList<>();
         this.listeners.addAll(listeners);
         this.refreshListeners = new ArrayList<>();
-        callListeners();
+        callListeners(true);
     }
 
     @Override
@@ -170,7 +173,12 @@ public final class ListOptionImpl<T> implements ListOption<T> {
 
     @Override
     public void setAvailable(boolean available) {
+        boolean changed = this.available != available;
+
         this.available = available;
+
+        if (changed)
+            callListeners(false);
     }
 
     @Override
@@ -205,14 +213,30 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         return values.stream().map(entryFactory::create).collect(Collectors.toList());
     }
 
-    void callListeners() {
+    void callListeners(boolean bypass) {
         List<T> pendingValue = pendingValue();
-        this.listeners.forEach(listener -> listener.accept(this, pendingValue));
+        if (bypass || listenerTriggerDepth == 0) {
+            if (listenerTriggerDepth > 10) {
+                throw new IllegalStateException("Listener trigger depth exceeded 10! This means a listener triggered a listener etc etc 10 times deep. This is likely a bug in the mod using YACL!");
+            }
+
+            this.listenerTriggerDepth++;
+
+            for (BiConsumer<Option<List<T>>, List<T>> listener : listeners) {
+                try {
+                    listener.accept(this, pendingValue);
+                } catch (Exception e) {
+                    YACLConstants.LOGGER.error("Exception whilst triggering listener for option '%s'".formatted(name.getString()), e);
+                }
+            }
+
+            this.listenerTriggerDepth--;
+        }
     }
 
     private void onRefresh() {
         refreshListeners.forEach(Runnable::run);
-        callListeners();
+        callListeners(true);
     }
 
     private class EntryFactory {
@@ -234,7 +258,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         private Function<ListOptionEntry<T>, Controller<T>> controllerFunction;
         private Binding<List<T>> binding = null;
         private final Set<OptionFlag> flags = new HashSet<>();
-        private T initialValue;
+        private Supplier<T> initialValue;
         private boolean collapsed = false;
         private boolean available = true;
         private int minimumNumberOfEntries = 0;
@@ -259,10 +283,18 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         }
 
         @Override
-        public Builder<T> initial(@NotNull T initialValue) {
+        public Builder<T> initial(@NotNull Supplier<T> initialValue) {
             Validate.notNull(initialValue, "`initialValue` cannot be empty");
 
             this.initialValue = initialValue;
+            return this;
+        }
+
+        @Override
+        public Builder<T> initial(@NotNull T initialValue) {
+            Validate.notNull(initialValue, "`initialValue` cannot be empty");
+
+            this.initialValue = () -> initialValue;
             return this;
         }
 

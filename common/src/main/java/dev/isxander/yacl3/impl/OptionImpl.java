@@ -3,6 +3,7 @@ package dev.isxander.yacl3.impl;
 import com.google.common.collect.ImmutableSet;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.ControllerBuilder;
+import dev.isxander.yacl3.impl.utils.YACLConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.Validate;
@@ -28,6 +29,7 @@ public final class OptionImpl<T> implements Option<T> {
     private T pendingValue;
 
     private final List<BiConsumer<Option<T>, T>> listeners;
+    private int listenerTriggerDepth = 0;
 
     public OptionImpl(
             @NotNull Component name,
@@ -82,7 +84,12 @@ public final class OptionImpl<T> implements Option<T> {
 
     @Override
     public void setAvailable(boolean available) {
+        boolean changed = this.available != available;
+
         this.available = available;
+
+        if (changed)
+            this.triggerListeners(false);
     }
 
     @Override
@@ -103,7 +110,7 @@ public final class OptionImpl<T> implements Option<T> {
     @Override
     public void requestSet(T value) {
         pendingValue = value;
-        listeners.forEach(listener -> listener.accept(this, pendingValue));
+        this.triggerListeners(true);
     }
 
     @Override
@@ -133,6 +140,26 @@ public final class OptionImpl<T> implements Option<T> {
     @Override
     public void addListener(BiConsumer<Option<T>, T> changedListener) {
         this.listeners.add(changedListener);
+    }
+
+    private void triggerListeners(boolean bypass) {
+        if (bypass || listenerTriggerDepth == 0) {
+            if (listenerTriggerDepth > 10) {
+                throw new IllegalStateException("Listener trigger depth exceeded 10! This means a listener triggered a listener etc etc 10 times deep. This is likely a bug in the mod using YACL!");
+            }
+
+            this.listenerTriggerDepth++;
+
+            for (BiConsumer<Option<T>, T> listener : listeners) {
+                try {
+                    listener.accept(this, pendingValue);
+                } catch (Exception e) {
+                    YACLConstants.LOGGER.error("Exception whilst triggering listener for option '%s'".formatted(name.getString()), e);
+                }
+            }
+
+            this.listenerTriggerDepth--;
+        }
     }
 
     @ApiStatus.Internal

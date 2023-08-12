@@ -17,6 +17,7 @@ import dev.isxander.yacl3.gui.controllers.string.number.DoubleFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.FloatFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.IntegerFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.LongFieldController;
+import net.minecraft.Util;
 import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
@@ -29,6 +30,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.awt.Color;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class GuiTest {
     public static Screen getModConfigScreenFactory(Screen parent) {
@@ -53,6 +55,8 @@ public class GuiTest {
     }
 
     private static Screen getFullTestSuite(Screen parent) {
+        AtomicReference<Option<Boolean>> booleanOption = new AtomicReference<>();
+
         return YetAnotherConfigLib.create(ConfigTest.GSON, (defaults, config, builder) -> builder
                         .title(Component.literal("Test GUI"))
                         .category(ConfigCategory.createBuilder()
@@ -60,26 +64,30 @@ public class GuiTest {
                                 .tooltip(Component.literal("Example Category Description"))
                                 .group(OptionGroup.createBuilder()
                                         .name(Component.literal("Boolean Controllers"))
-                                        .option(Option.<Boolean>createBuilder()
-                                                .name(Component.literal("Boolean Toggle"))
-                                                .description(OptionDescription.createBuilder()
-                                                        .text(Component.empty()
-                                                                .append(Component.literal("a").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("a")))))
-                                                                .append(Component.literal("b").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("b")))))
-                                                                .append(Component.literal("c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("c")))))
-                                                                .append(Component.literal("e").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("e")))))
-                                                                .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://isxander.dev")))
-                                                        )
-                                                        .webpImage(Path.of("D:\\Xander\\Code\\isXander\\Controlify\\src\\main\\resources\\assets\\controlify\\textures\\screenshots\\reach-around-placement.webp"), new ResourceLocation("yacl", "e.webp"))
-                                                        .build())
-                                                .binding(
-                                                        defaults.booleanToggle,
-                                                        () -> config.booleanToggle,
-                                                        (value) -> config.booleanToggle = value
-                                                )
-                                                .controller(BooleanControllerBuilder::create)
-                                                .flag(OptionFlag.GAME_RESTART)
-                                                .build())
+                                        .option(Util.make(() -> {
+                                            var opt = Option.<Boolean>createBuilder()
+                                                    .name(Component.literal("Boolean Toggle"))
+                                                    .description(OptionDescription.createBuilder()
+                                                            .text(Component.empty()
+                                                                    .append(Component.literal("a").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("a")))))
+                                                                    .append(Component.literal("b").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("b")))))
+                                                                    .append(Component.literal("c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("c")))))
+                                                                    .append(Component.literal("e").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("e")))))
+                                                                    .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://isxander.dev")))
+                                                            )
+                                                            .webpImage(Path.of("D:\\Xander\\Code\\isXander\\Controlify\\src\\main\\resources\\assets\\controlify\\textures\\screenshots\\reach-around-placement.webp"), new ResourceLocation("yacl", "e.webp"))
+                                                            .build())
+                                                    .binding(
+                                                            defaults.booleanToggle,
+                                                            () -> config.booleanToggle,
+                                                            (value) -> config.booleanToggle = value
+                                                    )
+                                                    .controller(BooleanControllerBuilder::create)
+                                                    .flag(OptionFlag.GAME_RESTART)
+                                                    .build();
+                                            booleanOption.set(opt);
+                                            return opt;
+                                        }))
                                         .option(Option.<Boolean>createBuilder()
                                                 .name(Component.literal("Custom Boolean Toggle"))
                                                 .description(val -> OptionDescription.createBuilder()
@@ -94,9 +102,9 @@ public class GuiTest {
                                                 .controller(opt -> BooleanControllerBuilder.create(opt)
                                                         .valueFormatter(state -> state ? Component.literal("Amazing") : Component.literal("Not Amazing"))
                                                         .coloured(true))
-                                                .available(false)
+                                                .listener((opt, val) -> booleanOption.get().setAvailable(val))
                                                 .build())
-                                        .option(Option.createBuilder(boolean.class)
+                                        .option(Option.<Boolean>createBuilder()
                                                 .name(Component.literal("Tick Box"))
                                                 .description(OptionDescription.of(Component.literal("There are even alternate methods of displaying the same data type!")))
                                                 .binding(

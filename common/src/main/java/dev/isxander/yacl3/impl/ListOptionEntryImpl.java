@@ -138,7 +138,7 @@ public final class ListOptionEntryImpl<T> implements ListOptionEntry<T> {
         @Override
         public void setValue(T newValue) {
             value = newValue;
-            group.callListeners();
+            group.callListeners(true);
         }
 
         @Override
