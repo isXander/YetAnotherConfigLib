@@ -41,7 +41,6 @@ public class YACLScreen extends Screen {
 
     public final TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
     public TabNavigationBar tabNavigationBar;
-    public Tab[] tabs;
     public ScreenRectangle tabArea;
 
     public Component saveButtonMessage, saveButtonTooltipMessage;
@@ -55,6 +54,12 @@ public class YACLScreen extends Screen {
 
     @Override
     protected void init() {
+        int currentTab = tabNavigationBar != null
+                ? tabNavigationBar.tabs.indexOf(tabManager.getCurrentTab())
+                : 0;
+        if (currentTab == -1)
+            currentTab = 0;
+
         tabNavigationBar = new ScrollableNavigationBar(this.width, tabManager, config.categories()
                 .stream()
                 .map(category -> {
@@ -62,7 +67,7 @@ public class YACLScreen extends Screen {
                         return new PlaceholderTab(placeholder);
                     return new CategoryTab(category);
                 }).toList());
-        tabNavigationBar.selectTab(0, false);
+        tabNavigationBar.selectTab(currentTab, false);
         tabNavigationBar.arrangeElements();
         ScreenRectangle navBarArea = tabNavigationBar.getRectangle();
         tabArea = new ScreenRectangle(0, navBarArea.height() - 1, this.width, this.height - navBarArea.height() + 1);
