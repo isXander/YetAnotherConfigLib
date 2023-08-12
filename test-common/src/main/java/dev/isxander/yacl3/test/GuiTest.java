@@ -47,6 +47,13 @@ public class GuiTest {
                                             Minecraft.getInstance().setScreen(AutogenConfigTest.INSTANCE.generateGui().generateScreen(screen));
                                         })
                                         .build())
+                                .option(ButtonOption.createBuilder()
+                                        .name(Component.literal("Skyblocker test"))
+                                        .action((screen, opt) -> {
+                                            SkyblockerConfig.HANDLER.serializer().load();
+                                            Minecraft.getInstance().setScreen(SkyblockerConfig.HANDLER.generateGui().generateScreen(screen));
+                                        })
+                                        .build())
                                 .group(OptionGroup.createBuilder()
                                         .name(Component.literal("Wiki"))
                                         .option(ButtonOption.createBuilder()

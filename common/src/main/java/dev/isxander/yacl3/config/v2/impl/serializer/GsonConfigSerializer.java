@@ -11,6 +11,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.Item;
+import org.jetbrains.annotations.ApiStatus;
 import org.quiltmc.parsers.json.JsonReader;
 import org.quiltmc.parsers.json.JsonWriter;
 import org.quiltmc.parsers.json.gson.GsonReader;
@@ -25,6 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -48,12 +50,12 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
         try (StringWriter stringWriter = new StringWriter()) {
             JsonWriter jsonWriter = json5 ? JsonWriter.json5(stringWriter) : JsonWriter.json(stringWriter);
             GsonWriter gsonWriter = new GsonWriter(jsonWriter);
+
             jsonWriter.beginObject();
+
             for (ConfigField<?> field : config.fields()) {
                 SerialField serial = field.serial().orElse(null);
-                if (serial == null) {
-                    continue;
-                }
+                if (serial == null) continue;
 
                 if (!json5 && serial.comment().isPresent() && YACLPlatform.isDevelopmentEnv()) {
                     YACLConstants.LOGGER.warn("Found comment in config field '{}', but json5 is not enabled. Enable it with `.setJson5(true)` on the `GsonConfigSerializerBuilder`. Comments will not be serialized. This warning is only visible in development environments.", serial.serialName());
@@ -61,13 +63,24 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
                 jsonWriter.comment(serial.comment().orElse(null));
 
                 jsonWriter.name(serial.serialName());
+
+                JsonElement element;
                 try {
-                    gson.toJson(field.access().get(), field.access().type(), gsonWriter);
+                    element = gson.toJsonTree(field.access().get(), field.access().type());
                 } catch (Exception e) {
-                    YACLConstants.LOGGER.error("Failed to serialize config field '{}'.", serial.serialName(), e);
+                    YACLConstants.LOGGER.error("Failed to serialize config field '{}'. Serializing as null.", serial.serialName(), e);
                     jsonWriter.nullValue();
+                    continue;
+                }
+
+                try {
+                    gson.toJson(element, gsonWriter);
+                } catch (Exception e) {
+                    YACLConstants.LOGGER.error("Failed to serialize config field '{}'. Due to the error state this JSON writer cannot continue safely and the save will be abandoned.", serial.serialName(), e);
+                    return;
                 }
             }
+
             jsonWriter.endObject();
             jsonWriter.flush();
 
@@ -79,46 +92,85 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
     }
 
     @Override
-    public void load() {
+    public LoadResult loadSafely(Map<ConfigField<?>, FieldAccess<?>> bufferAccessMap) {
         if (!Files.exists(path)) {
             YACLConstants.LOGGER.info("Config file '{}' does not exist. Creating it with default values.", path);
             save();
-            return;
+            return LoadResult.NO_CHANGE;
         }
 
         YACLConstants.LOGGER.info("Deserializing {} from '{}'", config.configClass().getSimpleName(), path);
 
+        Map<String, ConfigField<?>> fieldMap = Arrays.stream(config.fields())
+                .filter(field -> field.serial().isPresent())
+                .collect(Collectors.toMap(f -> f.serial().orElseThrow().serialName(), Function.identity()));
+        Set<String> missingFields = fieldMap.keySet();
+        boolean dirty = false;
+
         try (JsonReader jsonReader = json5 ? JsonReader.json5(path) : JsonReader.json(path)) {
             GsonReader gsonReader = new GsonReader(jsonReader);
-
-            Map<String, ConfigField<?>> fieldMap = Arrays.stream(config.fields())
-                    .filter(field -> field.serial().isPresent())
-                    .collect(Collectors.toMap(f -> f.serial().orElseThrow().serialName(), Function.identity()));
 
             jsonReader.beginObject();
 
             while (jsonReader.hasNext()) {
                 String name = jsonReader.nextName();
                 ConfigField<?> field = fieldMap.get(name);
+                missingFields.remove(name);
+
                 if (field == null) {
-                    YACLConstants.LOGGER.warn("Found unknown config field '{}' in '{}'.", name, path);
+                    YACLConstants.LOGGER.warn("Found unknown config field '{}'.", name);
                     jsonReader.skipValue();
                     continue;
                 }
 
+                FieldAccess<?> bufferAccess = bufferAccessMap.get(field);
+                SerialField serial = field.serial().orElse(null);
+                if (serial == null) continue;
+
+                JsonElement element;
                 try {
-                    field.access().set(gson.fromJson(gsonReader, field.access().type()));
+                    element = gson.fromJson(gsonReader, JsonElement.class);
                 } catch (Exception e) {
-                    YACLConstants.LOGGER.error("Failed to deserialize config field '{}'.", name, e);
-                    jsonReader.skipValue();
+                    YACLConstants.LOGGER.error("Failed to deserialize config field '{}'. Due to the error state this JSON reader cannot be re-used and loading will be aborted.", name, e);
+                    return LoadResult.FAILURE;
+                }
+
+                if (element.isJsonNull() && !serial.nullable()) {
+                    YACLConstants.LOGGER.warn("Found null value in non-nullable config field '{}'. Leaving field as default and marking as dirty.", name);
+                    dirty = true;
+                    continue;
+                }
+
+                try {
+                    bufferAccess.set(gson.fromJson(element, bufferAccess.type()));
+                } catch (Exception e) {
+                    YACLConstants.LOGGER.error("Failed to deserialize config field '{}'. Leaving as default.", name, e);
                 }
             }
 
             jsonReader.endObject();
         } catch (IOException e) {
-            YACLConstants.LOGGER.error("Failed to deserialize config class '{}'.", config.configClass().getSimpleName(), e);
+            YACLConstants.LOGGER.error("Failed to deserialize config class.", e);
+            return LoadResult.FAILURE;
         }
 
+        if (!missingFields.isEmpty()) {
+            for (String missingField : missingFields) {
+                if (fieldMap.get(missingField).serial().orElseThrow().required()) {
+                    dirty = true;
+                    YACLConstants.LOGGER.warn("Missing required config field '{}''. Re-saving as default.", missingField);
+                }
+            }
+        }
+
+        return dirty ? LoadResult.DIRTY : LoadResult.SUCCESS;
+    }
+
+    @Override
+    @Deprecated
+    public void load() {
+        YACLConstants.LOGGER.warn("Calling ConfigSerializer#load() directly is deprecated. Please use ConfigClassHandler#load() instead.");
+        config.load();
     }
 
     public static class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeserializer<Color> {
@@ -145,6 +197,7 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
         }
     }
 
+    @ApiStatus.Internal
     public static class Builder<T> implements GsonConfigSerializerBuilder<T> {
         private final ConfigClassHandler<T> config;
         private Path path;

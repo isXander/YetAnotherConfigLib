@@ -8,13 +8,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public class ConfigFieldImpl<T> implements ConfigField<T> {
-    private final FieldAccess<T> field;
-    private final ReadOnlyFieldAccess<T> defaultField;
+    private ReflectionFieldAccess<T> field;
+    private final ReflectionFieldAccess<T> defaultField;
     private final ConfigClassHandler<?> parent;
     private final Optional<SerialField> serial;
     private final Optional<AutoGenField> autoGen;
 
-    public ConfigFieldImpl(FieldAccess<T> field, ReadOnlyFieldAccess<T> defaultField, ConfigClassHandler<?> parent, @Nullable SerialEntry config, @Nullable AutoGen autoGen) {
+    public ConfigFieldImpl(ReflectionFieldAccess<T> field, ReflectionFieldAccess<T> defaultField, ConfigClassHandler<?> parent, @Nullable SerialEntry config, @Nullable AutoGen autoGen) {
         this.field = field;
         this.defaultField = defaultField;
         this.parent = parent;
@@ -23,7 +23,9 @@ public class ConfigFieldImpl<T> implements ConfigField<T> {
                 ? Optional.of(
                 new SerialFieldImpl(
                         "".equals(config.value()) ? field.name() : config.value(),
-                        "".equals(config.comment()) ? Optional.empty() : Optional.of(config.comment())
+                        "".equals(config.comment()) ? Optional.empty() : Optional.of(config.comment()),
+                        config.required(),
+                        config.nullable()
                 )
         )
                 : Optional.empty();
@@ -38,12 +40,16 @@ public class ConfigFieldImpl<T> implements ConfigField<T> {
     }
 
     @Override
-    public FieldAccess<T> access() {
+    public ReflectionFieldAccess<T> access() {
         return field;
     }
 
+    public void setFieldAccess(ReflectionFieldAccess<T> field) {
+        this.field = field;
+    }
+
     @Override
-    public ReadOnlyFieldAccess<T> defaultAccess() {
+    public ReflectionFieldAccess<T> defaultAccess() {
         return defaultField;
     }
 
@@ -62,7 +68,7 @@ public class ConfigFieldImpl<T> implements ConfigField<T> {
         return this.autoGen;
     }
 
-    private record SerialFieldImpl(String serialName, Optional<String> comment) implements SerialField {
+    private record SerialFieldImpl(String serialName, Optional<String> comment, boolean required, boolean nullable) implements SerialField {
     }
     private record AutoGenFieldImpl<T>(String category, Optional<String> group) implements AutoGenField {
     }

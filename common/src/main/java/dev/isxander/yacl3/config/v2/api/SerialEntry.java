@@ -25,4 +25,15 @@ public @interface SerialEntry {
      * If empty, the serializer will not add a comment.
      */
     String comment() default "";
+
+    /**
+     * Whether the field is required in the loaded config to be valid.
+     * If it's not, the config will be marked as dirty and re-saved with the default value.
+     */
+    boolean required() default true;
+
+    /**
+     * Whether the field can be null.
+     */
+    boolean nullable() default false;
 }

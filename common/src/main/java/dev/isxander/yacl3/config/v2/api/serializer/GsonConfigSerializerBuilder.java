@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import dev.isxander.yacl3.config.ConfigEntry;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.ConfigSerializer;
+import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.impl.serializer.GsonConfigSerializer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -55,7 +56,6 @@ public interface GsonConfigSerializerBuilder<T> {
      *     <li>null serialization</li>
      *     <li>{@link Component}, {@link Style} and {@link Color} type adapters</li>
      * </ul>
-     * Still respects the exclusion strategy to only serialize {@link ConfigEntry}
      * but these can be added to with setExclusionStrategies.
      *
      * @param gson gson instance to be converted to a builder
@@ -72,13 +72,22 @@ public interface GsonConfigSerializerBuilder<T> {
      *     <li>null serialization</li>
      *     <li>{@link Component}, {@link Style} and {@link Color} type adapters</li>
      * </ul>
+     * For example, if you wanted to revert YACL's lower_camel_case naming policy,
+     * you could do the following:
+     * <pre>
+     * {@code
+     * GsonConfigSerializerBuilder.create(config)
+     *         .appendGsonBuilder(builder -> builder.setFieldNamingPolicy(FieldNamingPolicy.IDENTITY))
+     * }
+     * </pre>
      *
      * @param gsonBuilder the function to apply to the builder
      */
     GsonConfigSerializerBuilder<T> appendGsonBuilder(UnaryOperator<GsonBuilder> gsonBuilder);
 
     /**
-     * Writes the json under JSON5 spec, allowing comments.
+     * Writes the json under JSON5 spec, allowing the use of {@link SerialEntry#comment()}.
+     * If enabling this option it's recommended to use the file extension {@code .json5}.
      *
      * @param json5 whether to write under JSON5 spec
      * @return this builder
