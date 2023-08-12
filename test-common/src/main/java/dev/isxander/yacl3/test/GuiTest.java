@@ -94,6 +94,7 @@ public class GuiTest {
                                                 .controller(opt -> BooleanControllerBuilder.create(opt)
                                                         .valueFormatter(state -> state ? Component.literal("Amazing") : Component.literal("Not Amazing"))
                                                         .coloured(true))
+                                                .available(false)
                                                 .build())
                                         .option(Option.createBuilder(boolean.class)
                                                 .name(Component.literal("Tick Box"))

@@ -192,8 +192,6 @@ public interface ImageRenderer {
                 ImageReader reader = ImageIO.getImageReadersBySuffix("gif").next();
                 reader.setInput(ImageIO.createImageInputStream(is));
 
-
-
                 AnimFrameProvider animFrameFunction = i -> {
                     IIOMetadata metadata = reader.getImageMetadata(i);
                     String metaFormatName = metadata.getNativeMetadataFormatName();
@@ -281,7 +279,7 @@ public interface ImageRenderer {
             int cols = (int)Math.ceil(Math.sqrt(frameCount) / Math.sqrt(ratio));
             int rows = (int)Math.ceil(frameCount / (double)cols);
 
-            NativeImage image = new NativeImage(frameWidth * cols, frameHeight * rows, true);
+            NativeImage image = new NativeImage(NativeImage.Format.RGBA, frameWidth * cols, frameHeight * rows, true);
 
 //            // Fill whole atlas with black, as each frame may have different dimensions
 //            // that would cause borders of transparent pixels to appear around the frames

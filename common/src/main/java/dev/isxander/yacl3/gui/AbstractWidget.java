@@ -77,6 +77,17 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
         int i = !enabled ? 0 : hovered ? 2 : 1;
         graphics.blit(net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATION, x1, y1, 0, 0, 46 + i * 20, width / 2, height, 256, 256);
         graphics.blit(net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATION, x1 + width / 2, y1, 0, 200 - width / 2f, 46 + i * 20, width / 2, height, 256, 256);
+
+        if (hovered && !enabled) {
+            drawOutline(graphics, x1, y1, x2, y2, 1, 0xFFD0D0D0);
+        }
+    }
+
+    protected void drawOutline(GuiGraphics graphics, int x1, int y1, int x2, int y2, int width, int color) {
+        graphics.fill(x1, y1, x2, y1 + width, color);
+        graphics.fill(x2, y1, x2 - width, y2, color);
+        graphics.fill(x1, y2, x2, y2 - width, color);
+        graphics.fill(x1, y1, x1 + width, y2, color);
     }
 
     protected int multiplyColor(int hex, float amount) {

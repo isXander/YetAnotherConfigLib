@@ -43,7 +43,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         Component name = control.option().changed() ? modifiedOptionName : control.option().name();
         Component shortenedName = Component.literal(GuiUtils.shortenString(name.getString(), textRenderer, getDimension().width() - getControlWidth() - getXPadding() - 7, "...")).setStyle(name.getStyle());
 
-        drawButtonRect(graphics, getDimension().x(), getDimension().y(), getDimension().xLimit(), getDimension().yLimit(), isHovered(), isAvailable());
+        drawButtonRect(graphics, getDimension().x(), getDimension().y(), getDimension().xLimit(), getDimension().yLimit(), hovered || focused, isAvailable());
         graphics.drawString(textRenderer, shortenedName, getDimension().x() + getXPadding(), getTextY(), getValueColor(), true);
 
 
@@ -105,13 +105,6 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         return true;
     }
 
-    protected void drawOutline(GuiGraphics graphics, int x1, int y1, int x2, int y2, int width, int color) {
-        graphics.fill(x1, y1, x2, y1 + width, color);
-        graphics.fill(x2, y1, x2 - width, y2, color);
-        graphics.fill(x1, y2, x2, y2 - width, color);
-        graphics.fill(x1, y1, x1 + width, y2, color);
-    }
-
     protected int getTextY() {
         return (int)(getDimension().y() + getDimension().height() / 2f - textRenderer.lineHeight / 2f);
     }
@@ -119,8 +112,6 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     @Nullable
     @Override
     public ComponentPath nextFocusPath(FocusNavigationEvent focusNavigationEvent) {
-        if (!this.isAvailable())
-            return null;
         return !this.isFocused() ? ComponentPath.leaf(this) : null;
     }
 
