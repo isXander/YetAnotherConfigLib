@@ -9,4 +9,8 @@ public interface SerialField {
     String serialName();
 
     Optional<String> comment();
+
+    boolean required();
+
+    boolean nullable();
 }
