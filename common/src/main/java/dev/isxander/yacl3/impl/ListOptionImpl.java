@@ -21,7 +21,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     private final Component name;
     private final OptionDescription description;
     private final Binding<List<T>> binding;
-    private final T initialValue;
+    private final Supplier<T> initialValue;
     private final List<ListOptionEntry<T>> entries;
     private final boolean collapsed;
     private boolean available;
@@ -33,7 +33,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     private final List<BiConsumer<Option<List<T>>, List<T>>> listeners;
     private final List<Runnable> refreshListeners;
 
-    public ListOptionImpl(@NotNull Component name, @NotNull OptionDescription description, @NotNull Binding<List<T>> binding, @NotNull T initialValue, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available, int minimumNumberOfEntries, int maximumNumberOfEntries, boolean insertEntriesAtEnd, Collection<BiConsumer<Option<List<T>>, List<T>>> listeners) {
+    public ListOptionImpl(@NotNull Component name, @NotNull OptionDescription description, @NotNull Binding<List<T>> binding, @NotNull Supplier<T> initialValue, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available, int minimumNumberOfEntries, int maximumNumberOfEntries, boolean insertEntriesAtEnd, Collection<BiConsumer<Option<List<T>>, List<T>>> listeners) {
         this.name = name;
         this.description = description;
         this.binding = binding;
@@ -105,7 +105,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
 
     @Override
     public ListOptionEntry<T> insertNewEntry() {
-        ListOptionEntry<T> newEntry = entryFactory.create(initialValue);
+        ListOptionEntry<T> newEntry = entryFactory.create(initialValue.get());
         if (insertEntriesAtEnd) {
             entries.add(newEntry);
         } else {

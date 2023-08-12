@@ -76,6 +76,11 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
         /**
          * Sets the value that is used when creating new entries
          */
+        Builder<T> initial(@NotNull Supplier<T> initialValue);
+
+        /**
+         * Sets the value that is used when creating new entries
+         */
         Builder<T> initial(@NotNull T initialValue);
 
         Builder<T> controller(@NotNull Function<Option<T>, ControllerBuilder<T>> controller);
