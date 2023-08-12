@@ -2,6 +2,7 @@ package dev.isxander.yacl3.api;
 
 import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl3.config.ConfigInstance;
+import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.impl.YetAnotherConfigLibImpl;
 import net.minecraft.client.gui.screens.Screen;
@@ -51,10 +52,15 @@ public interface YetAnotherConfigLib {
         return new YetAnotherConfigLibImpl.BuilderImpl();
     }
 
+    static <T> YetAnotherConfigLib create(ConfigClassHandler<T> configHandler, ConfigBackedBuilder<T> builder) {
+        return builder.build(configHandler.defaults(), configHandler.instance(), createBuilder().save(configHandler.serializer()::serialize)).build();
+    }
+
     /**
      * Creates an instance using a {@link ConfigInstance} which autofills the save() builder method.
      * This also takes an easy functional interface that provides defaults and config to help build YACL bindings.
      */
+    @Deprecated
     static <T> YetAnotherConfigLib create(ConfigInstance<T> configInstance, ConfigBackedBuilder<T> builder) {
         return builder.build(configInstance.getDefaults(), configInstance.getConfig(), createBuilder().save(configInstance::save)).build();
     }

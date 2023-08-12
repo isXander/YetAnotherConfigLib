@@ -57,6 +57,7 @@ public class GuiTest {
     private static Screen getFullTestSuite(Screen parent) {
         AtomicReference<Option<Boolean>> booleanOption = new AtomicReference<>();
 
+        ConfigTest.GSON.serializer().deserialize();
         return YetAnotherConfigLib.create(ConfigTest.GSON, (defaults, config, builder) -> builder
                         .title(Component.literal("Test GUI"))
                         .category(ConfigCategory.createBuilder()
@@ -372,7 +373,7 @@ public class GuiTest {
                                 .build())
                         .save(() -> {
                             Minecraft.getInstance().options.save();
-                            ConfigTest.GSON.save();
+                            ConfigTest.GSON.serializer().serialize();
                         })
                 )
                 .generateScreen(parent);

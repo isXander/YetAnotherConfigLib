@@ -1,16 +1,18 @@
 package dev.isxander.yacl3.test;
 
-import dev.isxander.yacl3.config.ConfigEntry;
-import dev.isxander.yacl3.config.ConfigInstance;
-import dev.isxander.yacl3.config.GsonConfigInstance;
+import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
+import dev.isxander.yacl3.config.v2.api.ConfigEntry;
+import dev.isxander.yacl3.config.v2.api.GsonConfigSerializerBuilder;
+import dev.isxander.yacl3.platform.YACLPlatform;
 
 import java.awt.*;
 import java.util.List;
-import java.nio.file.Path;
 
 public class ConfigTest {
-    public static final ConfigInstance<ConfigTest> GSON = GsonConfigInstance.createBuilder(ConfigTest.class)
-            .setPath(Path.of("./config/yacl-test.json"))
+    public static final ConfigClassHandler<ConfigTest> GSON = ConfigClassHandler.createBuilder(ConfigTest.class)
+            .serializer(config -> GsonConfigSerializerBuilder.create(config)
+                    .setPath(YACLPlatform.getConfigDir().resolve("yacl-test.json"))
+                    .build())
             .build();
 
     @ConfigEntry public boolean booleanToggle = false;
