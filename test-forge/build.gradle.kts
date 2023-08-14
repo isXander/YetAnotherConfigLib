@@ -42,6 +42,8 @@ dependencies {
     forgeRuntimeLibrary(libs.twelvemonkeys.imageio.core)
     implementation(libs.twelvemonkeys.imageio.webp)
     forgeRuntimeLibrary(libs.twelvemonkeys.imageio.webp)
+    implementation(libs.bundles.quilt.parsers)
+    forgeRuntimeLibrary(libs.bundles.quilt.parsers)
 
     "common"(project(path = ":test-common", configuration = "namedElements")) { isTransitive = false }
     implementation(project(path = ":forge", configuration = "namedElements"))

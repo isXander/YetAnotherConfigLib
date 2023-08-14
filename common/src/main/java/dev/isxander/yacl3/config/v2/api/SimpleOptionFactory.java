@@ -26,6 +26,7 @@ public abstract class SimpleOptionFactory<A extends Annotation, T> implements Op
                 .controller(opt -> this.createController(annotation, field, storage, opt))
                 .available(this.available(annotation, field, storage))
                 .flags(this.flags(annotation, field, storage))
+                .listener((opt, v) -> this.listener(annotation, field, storage, opt, v))
                 .build();
 
         postInit(annotation, field, storage, option);
@@ -68,6 +69,10 @@ public abstract class SimpleOptionFactory<A extends Annotation, T> implements Op
 
     protected Set<OptionFlag> flags(A annotation, ConfigField<T> field, OptionStorage storage) {
         return Set.of();
+    }
+
+    protected void listener(A annotation, ConfigField<T> field, OptionStorage storage, Option<T> option, T value) {
+
     }
 
     protected void postInit(A annotation, ConfigField<T> field, OptionStorage storage, Option<T> option) {

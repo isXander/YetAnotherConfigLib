@@ -44,7 +44,10 @@ public class GuiTest {
                                         .build())
                                 .option(ButtonOption.createBuilder()
                                         .name(Component.literal("Auto-gen test"))
-                                        .action((screen, opt) -> Minecraft.getInstance().setScreen(ConfigV2Test.INSTANCE.generateGui().generateScreen(screen)))
+                                        .action((screen, opt) -> {
+                                            ConfigV2Test.INSTANCE.serializer().deserialize();
+                                            Minecraft.getInstance().setScreen(ConfigV2Test.INSTANCE.generateGui().generateScreen(screen));
+                                        })
                                         .build())
                                 .group(OptionGroup.createBuilder()
                                         .name(Component.literal("Wiki"))

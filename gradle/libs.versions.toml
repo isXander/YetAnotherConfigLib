@@ -17,6 +17,7 @@ fabric_loader = "0.14.21"
 # Common Dependencies
 mixin_extras = "0.2.0-beta.8"
 twelvemonkeys_imageio = "3.10.0-SNAPSHOT"
+quilt_parsers = "0.2.1"
 
 # Fabric-like Dependencies
 fabric_api = "0.86.0+1.20.1"
@@ -37,6 +38,8 @@ twelvemonkeys_imageio_metadata = { module = "com.twelvemonkeys.imageio:imageio-m
 twelvemonkeys_common_lang = { module = "com.twelvemonkeys.common:common-lang", version.ref = "twelvemonkeys_imageio" }
 twelvemonkeys_common_io = { module = "com.twelvemonkeys.common:common-io", version.ref = "twelvemonkeys_imageio" }
 twelvemonkeys_common_image = { module = "com.twelvemonkeys.common:common-image", version.ref = "twelvemonkeys_imageio" }
+quilt_parsers_json = { module = "org.quiltmc.parsers:json", version.ref = "quilt_parsers" }
+quilt_parsers_gson = { module = "org.quiltmc.parsers:gson", version.ref = "quilt_parsers" }
 
 # Fabric-like Dependencies
 fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
@@ -53,6 +56,10 @@ twelvemonkeys_imageio = [
     "twelvemonkeys_common_lang",
     "twelvemonkeys_common_io",
     "twelvemonkeys_common_image"
+]
+quilt_parsers = [
+    "quilt_parsers_json",
+    "quilt_parsers_gson"
 ]
 
 [plugins]

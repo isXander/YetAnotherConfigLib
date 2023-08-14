@@ -28,6 +28,7 @@ dependencies {
     modImplementation(libs.fabric.loader)
 
     implementation(libs.bundles.twelvemonkeys.imageio)
+    implementation(libs.bundles.quilt.parsers)
 }
 
 java {

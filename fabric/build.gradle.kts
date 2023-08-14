@@ -44,6 +44,10 @@ dependencies {
         implementation(it)
         include(it)
     }
+    libs.bundles.quilt.parsers.let {
+        implementation(it)
+        include(it)
+    }
 
     "common"(project(path = ":common", configuration = "namedElements")) { isTransitive = false }
     "shadowCommon"(project(path = ":common", configuration = "transformProductionFabric")) { isTransitive = false }

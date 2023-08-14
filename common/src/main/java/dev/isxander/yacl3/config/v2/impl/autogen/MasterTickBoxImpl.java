@@ -15,13 +15,11 @@ public class MasterTickBoxImpl extends SimpleOptionFactory<MasterTickBox, Boolea
     }
 
     @Override
-    protected void postInit(MasterTickBox annotation, ConfigField<Boolean> field, OptionStorage storage, Option<Boolean> option) {
-        option.addListener((opt, val) -> {
-            for (String child : annotation.value()) {
-                storage.scheduleOptionOperation(child, childOpt -> {
-                    childOpt.setAvailable(annotation.invert() != val);
-                });
-            }
-        });
+    protected void listener(MasterTickBox annotation, ConfigField<Boolean> field, OptionStorage storage, Option<Boolean> option, Boolean value) {
+        for (String child : annotation.value()) {
+            storage.scheduleOptionOperation(child, childOpt -> {
+                childOpt.setAvailable(annotation.invert() != value);
+            });
+        }
     }
 }

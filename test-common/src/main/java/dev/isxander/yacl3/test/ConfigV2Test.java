@@ -12,18 +12,21 @@ public class ConfigV2Test {
     public static ConfigClassHandler<ConfigV2Test> INSTANCE = ConfigClassHandler.createBuilder(ConfigV2Test.class)
             .id(new ResourceLocation("yacl3", "config"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
-                    .setPath(YACLPlatform.getConfigDir().resolve("yacl-test-v2.json"))
+                    .setPath(YACLPlatform.getConfigDir().resolve("yacl-test-v2.json5"))
+                    .setJson5(true)
                     .build())
             .autoGen(true)
             .build();
 
     @AutoGen(category = "test", group = "master_test")
     @MasterTickBox({ "testTickBox", "testInt" })
-    @SerialEntry public boolean masterOption = true;
+    @SerialEntry(comment = "This option does this and that which is cool because this...")
+    public boolean masterOption = true;
 
     @AutoGen(category = "test", group = "master_test")
     @TickBox
-    @SerialEntry public boolean testTickBox = true;
+    @SerialEntry(comment = "This is a cool comment omg this is amazing")
+    public boolean testTickBox = true;
 
     @AutoGen(category = "test", group = "master_test")
     @IntSlider(min = 0, max = 10, step = 2)

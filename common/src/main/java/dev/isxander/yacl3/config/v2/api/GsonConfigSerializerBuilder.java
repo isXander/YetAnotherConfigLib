@@ -64,5 +64,7 @@ public interface GsonConfigSerializerBuilder<T> {
      */
     GsonConfigSerializerBuilder<T> appendGsonBuilder(UnaryOperator<GsonBuilder> gsonBuilder);
 
+    GsonConfigSerializerBuilder<T> setJson5(boolean json5);
+
     ConfigSerializer<T> build();
 }

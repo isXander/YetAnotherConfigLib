@@ -50,6 +50,11 @@ dependencies {
         include(it)
         forgeRuntimeLibrary(it)
     }
+    libs.bundles.quilt.parsers.let {
+        implementation(it)
+        include(it)
+        forgeRuntimeLibrary(it)
+    }
 
     "common"(project(path = ":common", configuration = "namedElements")) { isTransitive = false }
     "shadowCommon"(project(path = ":common", configuration = "transformProductionForge")) { isTransitive = false }
