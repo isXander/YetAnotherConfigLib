@@ -1,24 +1,33 @@
 package dev.isxander.yacl3.config.v2.impl;
 
-import dev.isxander.yacl3.api.YetAnotherConfigLib;
+import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.config.v2.api.*;
+import dev.isxander.yacl3.config.v2.api.autogen.AutoGen;
+import dev.isxander.yacl3.config.v2.api.autogen.OptionStorage;
+import dev.isxander.yacl3.config.v2.impl.autogen.OptionFactoryRegistry;
 import dev.isxander.yacl3.platform.YACLPlatform;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.Validate;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
     private final Class<T> configClass;
+    private final ResourceLocation id;
     private final boolean supportsAutoGen;
     private final ConfigSerializer<T> serializer;
     private final ConfigField<?>[] fields;
 
     private final T instance, defaults;
 
-    public ConfigClassHandlerImpl(Class<T> configClass, Function<ConfigClassHandler<T>, ConfigSerializer<T>> serializerFactory, boolean autoGen) {
+    public ConfigClassHandlerImpl(Class<T> configClass, ResourceLocation id, Function<ConfigClassHandler<T>, ConfigSerializer<T>> serializerFactory, boolean autoGen) {
         this.configClass = configClass;
+        this.id = id;
         this.supportsAutoGen = YACLPlatform.getEnvironment().isClient() && autoGen;
 
         try {
@@ -30,8 +39,9 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
         }
 
         this.fields = Arrays.stream(configClass.getDeclaredFields())
-                .filter(field -> field.isAnnotationPresent(ConfigEntry.class))
-                .map(field -> new ConfigFieldImpl<>(this.supportsAutoGen(), field.getAnnotation(ConfigEntry.class), new ReflectionFieldAccess<>(field, instance)))
+                .peek(field -> field.setAccessible(true))
+                .filter(field -> field.isAnnotationPresent(SerialEntry.class) || field.isAnnotationPresent(AutoGen.class))
+                .map(field -> new ConfigFieldImpl<>(new ReflectionFieldAccess<>(field, instance), new ReflectionFieldAccess<>(field, defaults), this, field.getAnnotation(SerialEntry.class), field.getAnnotation(AutoGen.class)))
                 .toArray(ConfigField[]::new);
         this.serializer = serializerFactory.apply(this);
     }
@@ -57,6 +67,11 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
     }
 
     @Override
+    public ResourceLocation id() {
+        return this.id;
+    }
+
+    @Override
     public boolean supportsAutoGen() {
         return this.supportsAutoGen;
     }
@@ -65,7 +80,43 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
     public YetAnotherConfigLib generateGui() {
         Validate.isTrue(supportsAutoGen(), "Auto GUI generation is not supported for this config class. You either need to enable it in the builder or you are attempting to create a GUI in a dedicated server environment.");
 
-        throw new IllegalStateException();
+        OptionStorageImpl storage = new OptionStorageImpl();
+        Map<String, CategoryAndGroups> categories = new LinkedHashMap<>();
+        for (ConfigField<?> configField : fields()) {
+            configField.autoGen().ifPresent(autoGen -> {
+                CategoryAndGroups groups = categories.computeIfAbsent(
+                        autoGen.category(),
+                        k -> new CategoryAndGroups(
+                                ConfigCategory.createBuilder()
+                                        .name(Component.translatable("yacl3.config.%s.category.%s".formatted(id().toString(), k))),
+                                new LinkedHashMap<>()
+                        )
+                );
+                OptionAddable group = groups.groups().computeIfAbsent(autoGen.group().orElse(""), k -> {
+                    if (k.isEmpty())
+                        return groups.category();
+                    return OptionGroup.createBuilder()
+                            .name(Component.translatable("yacl3.config.%s.category.%s.group.%s".formatted(id().toString(), autoGen.category(), k)));
+                });
+
+                Option<?> option = createOption(configField, storage);
+                storage.putOption(configField.access().name(), option);
+                group.option(option);
+            });
+        }
+        categories.values().forEach(CategoryAndGroups::finaliseGroups);
+
+        YetAnotherConfigLib.Builder yaclBuilder = YetAnotherConfigLib.createBuilder()
+                .save(this.serializer()::serialize)
+                .title(Component.translatable("yacl3.config.%s.title".formatted(this.id().toString())));
+        categories.values().forEach(category -> yaclBuilder.category(category.category().build()));
+
+        return yaclBuilder.build();
+    }
+
+    private <U> Option<U> createOption(ConfigField<U> configField, OptionStorage storage) {
+        return OptionFactoryRegistry.createOption(((ReflectionFieldAccess<?>) configField.access()).field(), configField, storage)
+                .orElseThrow(() -> new IllegalStateException("Failed to create option for field %s".formatted(configField.access().name())));
     }
 
     @Override
@@ -75,11 +126,18 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
 
     public static class BuilderImpl<T> implements Builder<T> {
         private final Class<T> configClass;
+        private ResourceLocation id;
         private Function<ConfigClassHandler<T>, ConfigSerializer<T>> serializerFactory;
         private boolean autoGen;
 
         public BuilderImpl(Class<T> configClass) {
             this.configClass = configClass;
+        }
+
+        @Override
+        public Builder<T> id(ResourceLocation id) {
+            this.id = id;
+            return this;
         }
 
         @Override
@@ -90,12 +148,23 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
 
         @Override
         public Builder<T> autoGen(boolean autoGen) {
-            throw new IllegalArgumentException();
+            this.autoGen = autoGen;
+            return this;
         }
 
         @Override
         public ConfigClassHandler<T> build() {
-            return new ConfigClassHandlerImpl<>(configClass, serializerFactory, autoGen);
+            return new ConfigClassHandlerImpl<>(configClass, id, serializerFactory, autoGen);
+        }
+    }
+
+    private record CategoryAndGroups(ConfigCategory.Builder category, Map<String, OptionAddable> groups) {
+        private void finaliseGroups() {
+            groups.forEach((name, group) -> {
+                if (group instanceof OptionGroup.Builder groupBuilder) {
+                    category.group(groupBuilder.build());
+                }
+            });
         }
     }
 }

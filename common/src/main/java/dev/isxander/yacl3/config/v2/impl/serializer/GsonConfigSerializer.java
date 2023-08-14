@@ -1,10 +1,7 @@
 package dev.isxander.yacl3.config.v2.impl.serializer;
 
 import com.google.gson.*;
-import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
-import dev.isxander.yacl3.config.v2.api.ConfigField;
-import dev.isxander.yacl3.config.v2.api.ConfigSerializer;
-import dev.isxander.yacl3.config.v2.api.GsonConfigSerializerBuilder;
+import dev.isxander.yacl3.config.v2.api.*;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.network.chat.Component;
@@ -35,14 +32,19 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
         JsonObject root = new JsonObject();
 
         for (ConfigField<?> field : config.fields()) {
-            if (YACLPlatform.isDevelopmentEnv() && field.comment().isPresent()) {
-                YACLConstants.LOGGER.error("Config field '{}' has a comment, but comments are not supported by Gson. Please remove the comment or switch to a different serializer. This log will not be shown in production.", field.serialName());
+            SerialField serial = field.serial().orElse(null);
+            if (serial == null) {
+                continue;
+            }
+
+            if (YACLPlatform.isDevelopmentEnv() && serial.comment().isPresent()) {
+                YACLConstants.LOGGER.error("Config field '{}' has a comment, but comments are not supported by Gson. Please remove the comment or switch to a different serializer. This log will not be shown in production.", serial.serialName());
             }
 
             try {
-                root.add(field.serialName(), gson.toJsonTree(field.access().get()));
+                root.add(serial.serialName(), gson.toJsonTree(field.access().get()));
             } catch (Exception e) {
-                YACLConstants.LOGGER.error("Failed to serialize config field '{}'.", field.serialName(), e);
+                YACLConstants.LOGGER.error("Failed to serialize config field '{}'.", serial.serialName(), e);
             }
         }
 
@@ -75,17 +77,22 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
         List<String> unconsumedKeys = new ArrayList<>(root.keySet());
 
         for (ConfigField<?> field : config.fields()) {
-            if (root.containsKey(field.serialName())) {
-                try {
-                    field.access().set(gson.fromJson(root.get(field.serialName()), field.access().type()));
-                } catch (Exception e) {
-                    YACLConstants.LOGGER.error("Failed to deserialize config field '{}'.", field.serialName(), e);
-                }
-            } else {
-                YACLConstants.LOGGER.warn("Config field '{}' was not found in the config file. Skipping.", field.serialName());
+            SerialField serial = field.serial().orElse(null);
+            if (serial == null) {
+                continue;
             }
 
-            unconsumedKeys.remove(field.serialName());
+            if (root.containsKey(serial.serialName())) {
+                try {
+                    field.access().set(gson.fromJson(root.get(serial.serialName()), field.access().type()));
+                } catch (Exception e) {
+                    YACLConstants.LOGGER.error("Failed to deserialize config field '{}'.", serial.serialName(), e);
+                }
+            } else {
+                YACLConstants.LOGGER.warn("Config field '{}' was not found in the config file. Skipping.", serial.serialName());
+            }
+
+            unconsumedKeys.remove(serial.serialName());
         }
 
         if (!unconsumedKeys.isEmpty()) {

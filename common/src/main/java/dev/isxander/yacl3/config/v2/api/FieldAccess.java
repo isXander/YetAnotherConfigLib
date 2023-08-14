@@ -1,14 +1,5 @@
 package dev.isxander.yacl3.config.v2.api;
 
-import java.lang.reflect.Type;
-
-public interface FieldAccess<T> {
-    T get();
-
+public interface FieldAccess<T> extends ReadOnlyFieldAccess<T> {
     void set(T value);
-
-    String name();
-
-    Type type();
-
 }

@@ -1,17 +1,17 @@
 package dev.isxander.yacl3.config.v2.api;
 
-import org.jetbrains.annotations.Nullable;
+import dev.isxander.yacl3.config.v2.api.autogen.AutoGenField;
 
 import java.util.Optional;
 
 public interface ConfigField<T> {
-    String serialName();
-
-    Optional<String> comment();
-
     FieldAccess<T> access();
 
-    @Nullable OptionFactory<T> factory();
+    ReadOnlyFieldAccess<T> defaultAccess();
 
-    boolean supportsFactory();
+    ConfigClassHandler<?> parent();
+
+    Optional<SerialField> serial();
+
+    Optional<AutoGenField<T>> autoGen();
 }

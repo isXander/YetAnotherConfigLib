@@ -5,6 +5,7 @@ import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.ControllerWidget;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
+import dev.isxander.yacl3.gui.utils.UndoRedoHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -21,8 +22,9 @@ public class StringControllerElement extends ControllerWidget<IStringController<
 
     protected int caretPos;
     protected int selectionLength;
-
     protected int renderOffset;
+
+    protected UndoRedoHelper undoRedoHelper;
 
     protected float ticks;
 
@@ -35,7 +37,9 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         inputFieldFocused = false;
         selectionLength = 0;
         emptyText = Component.literal("Click to type...").withStyle(ChatFormatting.GRAY);
-        control.option().addListener((opt, val) -> inputField = control.getString());
+        control.option().addListener((opt, val) -> {
+            inputField = control.getString();
+        });
         setDimension(dim);
     }
 
@@ -109,6 +113,10 @@ public class StringControllerElement extends ControllerWidget<IStringController<
 
                 selectionLength = 0;
             }
+//            if (undoRedoHelper == null) {
+//                undoRedoHelper = new UndoRedoHelper(inputField, caretPos, selectionLength);
+//            }
+
             return true;
         } else {
             inputFieldFocused = false;
@@ -187,12 +195,26 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                 doDelete();
                 return true;
             }
+//            case InputConstants.KEY_Z -> {
+//                if (Screen.hasControlDown()) {
+//                    UndoRedoHelper.FieldState updated = Screen.hasShiftDown() ? undoRedoHelper.redo() : undoRedoHelper.undo();
+//                    if (updated != null) {
+//                        System.out.println("Updated: " + updated);
+//                        if (modifyInput(builder -> builder.replace(0, inputField.length(), updated.text()))) {
+//                            caretPos = updated.cursorPos();
+//                            selectionLength = updated.selectionLength();
+//                            checkRenderOffset();
+//                        }
+//                    }
+//                    return true;
+//                }
+//            }
         }
 
         if (Screen.isPaste(keyCode)) {
             return doPaste();
         } else if (Screen.isCopy(keyCode)) {
-            return  doCopy();
+            return doCopy();
         } else if (Screen.isCut(keyCode)) {
             return doCut();
         } else if (Screen.isSelectAll(keyCode)) {
@@ -204,6 +226,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
 
     protected boolean doPaste() {
         this.write(client.keyboardHandler.getClipboard());
+        updateUndoHistory();
         return true;
     }
 
@@ -219,6 +242,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         if (selectionLength != 0) {
             client.keyboardHandler.setClipboard(getSelection());
             this.write("");
+            updateUndoHistory();
             return true;
         }
         return false;
@@ -255,9 +279,13 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         if (!inputFieldFocused)
             return false;
 
-        write(Character.toString(chr));
+        if (!Screen.hasControlDown()) {
+            write(Character.toString(chr));
+            updateUndoHistory();
+            return true;
+        }
 
-        return true;
+        return false;
     }
 
     protected void doBackspace() {
@@ -269,6 +297,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                 checkRenderOffset();
             }
         }
+        updateUndoHistory();
     }
 
     protected void doDelete() {
@@ -277,6 +306,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         } else if (caretPos < inputField.length()) {
             modifyInput(builder -> builder.deleteCharAt(caretPos));
         }
+        updateUndoHistory();
     }
 
     public void write(String string) {
@@ -306,6 +336,10 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         if (instantApply)
             updateControl();
         return true;
+    }
+
+    protected void updateUndoHistory() {
+//        undoRedoHelper.save(inputField, caretPos, selectionLength);
     }
 
     public int getUnshiftedLength() {
