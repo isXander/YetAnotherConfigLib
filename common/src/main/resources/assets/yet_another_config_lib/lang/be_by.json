@@ -1,0 +1,29 @@
+{
+  "yacl.control.boolean.true": "Праўда",
+  "yacl.control.boolean.false": "Няпраўда",
+
+  "yacl.control.action.execute": "ВЫКАНАЦЬ",
+
+  "yacl.gui.save": "Захаваць змены",
+  "yacl.gui.save.tooltip": "Робіць змены перманентнымі.",
+  "yacl.gui.finished.tooltip": "Закрыць GUI.",
+  "yacl.gui.cancel.tooltip": "Забыць усе змены і зачыніць GUI.",
+  "yacl.gui.reset.tooltip": "Скінуць усе налады да вызначаных. (Гэта можна адмяніць!)",
+  "yacl.gui.undo": "Адмяніць",
+  "yacl.gui.undo.tooltip": "Вярнуць усе налады да моманту змен.",
+  "yacl.gui.fail_apply": "Памылка пры ўжыванні",
+  "yacl.gui.fail_apply.tooltip": "Узнікла памылка і змены не могуць быць ужыты.",
+  "yacl.gui.save_before_exit": "Захавайце перад выхадам!",
+  "yacl.gui.save_before_exit.tooltip": "Захавайце ці скасуйце выхад з GUI.",
+
+  "yacl.list.move_up": "Перамясціць вышэй",
+  "yacl.list.move_down": "Перамясціць ніжэй",
+  "yacl.list.remove": "Выдаліць",
+  "yacl.list.add_top": "New entry",
+  "yacl.list.empty": "Спіс пусты",
+
+  "yacl.restart.title": "Налады патрабуюць перазапуск!",
+  "yacl.restart.message": "Адна ці больш налад патрабуе перазапуск гульні, каб ужыць змены.",
+  "yacl.restart.yes": "Закрыць Minecraft",
+  "yacl.restart.no": "Ігнараваць"
+}
