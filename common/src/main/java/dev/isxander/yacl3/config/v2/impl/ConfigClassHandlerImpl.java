@@ -102,7 +102,13 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
                             .name(Component.translatable("yacl3.config.%s.category.%s.group.%s".formatted(id().toString(), autoGen.category(), k)));
                 });
 
-                Option<?> option = createOption(configField, storage);
+                Option<?> option;
+                try {
+                    option = createOption(configField, storage);
+                } catch (Exception e) {
+                    throw new YACLAutoGenException("Failed to create option for field '%s'".formatted(configField.access().name()), e);
+                }
+
                 storage.putOption(configField.access().name(), option);
                 group.option(option);
             });
