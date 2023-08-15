@@ -12,7 +12,7 @@ public class ConfigFieldImpl<T> implements ConfigField<T> {
     private final ReadOnlyFieldAccess<T> defaultField;
     private final ConfigClassHandler<?> parent;
     private final Optional<SerialField> serial;
-    private final Optional<AutoGenField<T>> autoGen;
+    private final Optional<AutoGenField> autoGen;
 
     public ConfigFieldImpl(FieldAccess<T> field, ReadOnlyFieldAccess<T> defaultField, ConfigClassHandler<?> parent, @Nullable SerialEntry config, @Nullable AutoGen autoGen) {
         this.field = field;
@@ -58,12 +58,12 @@ public class ConfigFieldImpl<T> implements ConfigField<T> {
     }
 
     @Override
-    public Optional<AutoGenField<T>> autoGen() {
+    public Optional<AutoGenField> autoGen() {
         return this.autoGen;
     }
 
     private record SerialFieldImpl(String serialName, Optional<String> comment) implements SerialField {
     }
-    private record AutoGenFieldImpl<T>(String category, Optional<String> group) implements AutoGenField<T> {
+    private record AutoGenFieldImpl<T>(String category, Optional<String> group) implements AutoGenField {
     }
 }

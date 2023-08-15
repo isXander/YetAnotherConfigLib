@@ -6,13 +6,13 @@ import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigField;
 import dev.isxander.yacl3.config.v2.api.autogen.SimpleOptionFactory;
 import dev.isxander.yacl3.config.v2.api.autogen.FloatSlider;
-import dev.isxander.yacl3.config.v2.api.autogen.OptionStorage;
+import dev.isxander.yacl3.config.v2.api.autogen.OptionAccess;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 
 public class FloatSliderImpl extends SimpleOptionFactory<FloatSlider, Float> {
     @Override
-    protected ControllerBuilder<Float> createController(FloatSlider annotation, ConfigField<Float> field, OptionStorage storage, Option<Float> option) {
+    protected ControllerBuilder<Float> createController(FloatSlider annotation, ConfigField<Float> field, OptionAccess storage, Option<Float> option) {
         return FloatSliderControllerBuilder.create(option)
                 .valueFormatter(v -> {
                     String key = null;

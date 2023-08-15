@@ -6,16 +6,16 @@ import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigField;
 import dev.isxander.yacl3.config.v2.api.autogen.SimpleOptionFactory;
 import dev.isxander.yacl3.config.v2.api.autogen.MasterTickBox;
-import dev.isxander.yacl3.config.v2.api.autogen.OptionStorage;
+import dev.isxander.yacl3.config.v2.api.autogen.OptionAccess;
 
 public class MasterTickBoxImpl extends SimpleOptionFactory<MasterTickBox, Boolean> {
     @Override
-    protected ControllerBuilder<Boolean> createController(MasterTickBox annotation, ConfigField<Boolean> field, OptionStorage storage, Option<Boolean> option) {
+    protected ControllerBuilder<Boolean> createController(MasterTickBox annotation, ConfigField<Boolean> field, OptionAccess storage, Option<Boolean> option) {
         return TickBoxControllerBuilder.create(option);
     }
 
     @Override
-    protected void listener(MasterTickBox annotation, ConfigField<Boolean> field, OptionStorage storage, Option<Boolean> option, Boolean value) {
+    protected void listener(MasterTickBox annotation, ConfigField<Boolean> field, OptionAccess storage, Option<Boolean> option, Boolean value) {
         for (String child : annotation.value()) {
             storage.scheduleOptionOperation(child, childOpt -> {
                 childOpt.setAvailable(annotation.invert() != value);

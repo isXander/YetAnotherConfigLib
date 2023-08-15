@@ -1,14 +1,15 @@
 package dev.isxander.yacl3.config.v2.impl.autogen;
 
 import dev.isxander.yacl3.api.Option;
-import dev.isxander.yacl3.config.v2.api.autogen.OptionStorage;
+import dev.isxander.yacl3.config.v2.api.autogen.OptionAccess;
+import dev.isxander.yacl3.impl.utils.YACLConstants;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class OptionStorageImpl implements OptionStorage {
+public class OptionAccessImpl implements OptionAccess {
     private final Map<String, Option<?>> storage = new HashMap<>();
     private final Map<String, Consumer<Option<?>>> scheduledOperations = new HashMap<>();
 
@@ -32,6 +33,12 @@ public class OptionStorageImpl implements OptionStorage {
         Consumer<Option<?>> consumer = scheduledOperations.remove(fieldName);
         if (consumer != null) {
             consumer.accept(option);
+        }
+    }
+
+    public void checkBadOperations() {
+        if (!scheduledOperations.isEmpty()) {
+            YACLConstants.LOGGER.warn("There are scheduled operations on the `OptionAccess` that tried to reference fields that do not exist. The following have been referenced that do not exist: " + String.join(", ", scheduledOperations.keySet()));
         }
     }
 }

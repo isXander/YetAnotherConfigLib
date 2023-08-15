@@ -3,14 +3,13 @@ package dev.isxander.yacl3.config.v2.impl;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.config.v2.api.*;
 import dev.isxander.yacl3.config.v2.api.autogen.AutoGen;
-import dev.isxander.yacl3.config.v2.api.autogen.OptionStorage;
+import dev.isxander.yacl3.config.v2.api.autogen.OptionAccess;
 import dev.isxander.yacl3.config.v2.impl.autogen.OptionFactoryRegistry;
-import dev.isxander.yacl3.config.v2.impl.autogen.OptionStorageImpl;
+import dev.isxander.yacl3.config.v2.impl.autogen.OptionAccessImpl;
 import dev.isxander.yacl3.config.v2.impl.autogen.YACLAutoGenException;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import org.apache.commons.lang3.Validate;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
@@ -27,10 +26,10 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
 
     private final T instance, defaults;
 
-    public ConfigClassHandlerImpl(Class<T> configClass, ResourceLocation id, Function<ConfigClassHandler<T>, ConfigSerializer<T>> serializerFactory, boolean autoGen) {
+    public ConfigClassHandlerImpl(Class<T> configClass, ResourceLocation id, Function<ConfigClassHandler<T>, ConfigSerializer<T>> serializerFactory) {
         this.configClass = configClass;
         this.id = id;
-        this.supportsAutoGen = YACLPlatform.getEnvironment().isClient() && autoGen;
+        this.supportsAutoGen = YACLPlatform.getEnvironment().isClient();
 
         try {
             Constructor<T> constructor = configClass.getDeclaredConstructor();
@@ -84,7 +83,7 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
             throw new YACLAutoGenException("Auto GUI generation is not supported for this config class. You either need to enable it in the builder or you are attempting to create a GUI in a dedicated server environment.");
         }
 
-        OptionStorageImpl storage = new OptionStorageImpl();
+        OptionAccessImpl storage = new OptionAccessImpl();
         Map<String, CategoryAndGroups> categories = new LinkedHashMap<>();
         for (ConfigField<?> configField : fields()) {
             configField.autoGen().ifPresent(autoGen -> {
@@ -108,17 +107,18 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
                 group.option(option);
             });
         }
+        storage.checkBadOperations();
         categories.values().forEach(CategoryAndGroups::finaliseGroups);
 
         YetAnotherConfigLib.Builder yaclBuilder = YetAnotherConfigLib.createBuilder()
-                .save(this.serializer()::serialize)
+                .save(this.serializer()::save)
                 .title(Component.translatable("yacl3.config.%s.title".formatted(this.id().toString())));
         categories.values().forEach(category -> yaclBuilder.category(category.category().build()));
 
         return yaclBuilder.build();
     }
 
-    private <U> Option<U> createOption(ConfigField<U> configField, OptionStorage storage) {
+    private <U> Option<U> createOption(ConfigField<U> configField, OptionAccess storage) {
         return OptionFactoryRegistry.createOption(((ReflectionFieldAccess<?>) configField.access()).field(), configField, storage)
                 .orElseThrow(() -> new YACLAutoGenException("Failed to create option for field %s".formatted(configField.access().name())));
     }
@@ -132,7 +132,6 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
         private final Class<T> configClass;
         private ResourceLocation id;
         private Function<ConfigClassHandler<T>, ConfigSerializer<T>> serializerFactory;
-        private boolean autoGen;
 
         public BuilderImpl(Class<T> configClass) {
             this.configClass = configClass;
@@ -151,14 +150,8 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
         }
 
         @Override
-        public Builder<T> autoGen(boolean autoGen) {
-            this.autoGen = autoGen;
-            return this;
-        }
-
-        @Override
         public ConfigClassHandler<T> build() {
-            return new ConfigClassHandlerImpl<>(configClass, id, serializerFactory, autoGen);
+            return new ConfigClassHandlerImpl<>(configClass, id, serializerFactory);
         }
     }
 

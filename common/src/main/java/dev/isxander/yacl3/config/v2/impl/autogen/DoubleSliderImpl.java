@@ -6,13 +6,13 @@ import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigField;
 import dev.isxander.yacl3.config.v2.api.autogen.SimpleOptionFactory;
 import dev.isxander.yacl3.config.v2.api.autogen.DoubleSlider;
-import dev.isxander.yacl3.config.v2.api.autogen.OptionStorage;
+import dev.isxander.yacl3.config.v2.api.autogen.OptionAccess;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 
 public class DoubleSliderImpl extends SimpleOptionFactory<DoubleSlider, Double> {
     @Override
-    protected ControllerBuilder<Double> createController(DoubleSlider annotation, ConfigField<Double> field, OptionStorage storage, Option<Double> option) {
+    protected ControllerBuilder<Double> createController(DoubleSlider annotation, ConfigField<Double> field, OptionAccess storage, Option<Double> option) {
         return DoubleSliderControllerBuilder.create(option)
                 .valueFormatter(v -> {
                     String key = null;

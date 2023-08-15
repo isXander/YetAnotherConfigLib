@@ -7,7 +7,7 @@ import dev.isxander.yacl3.api.controller.ControllerBuilder;
 import dev.isxander.yacl3.api.controller.StringControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.ConfigField;
-import dev.isxander.yacl3.config.v2.api.GsonConfigSerializerBuilder;
+import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.autogen.*;
 import dev.isxander.yacl3.platform.YACLPlatform;
@@ -23,7 +23,6 @@ public class ConfigV2Test {
                     .setPath(YACLPlatform.getConfigDir().resolve("yacl-test-v2.json5"))
                     .setJson5(true)
                     .build())
-            .autoGen(true)
             .build();
 
     @AutoGen(category = "test", group = "master_test")
@@ -69,7 +68,7 @@ public class ConfigV2Test {
 
     public static class TestListControllerFactory implements ListGroup.ControllerFactory<String> {
         @Override
-        public ControllerBuilder<String> createController(ListGroup annotation, ConfigField<List<String>> field, OptionStorage storage, Option<String> option) {
+        public ControllerBuilder<String> createController(ListGroup annotation, ConfigField<List<String>> field, OptionAccess storage, Option<String> option) {
             return StringControllerBuilder.create(option);
         }
     }

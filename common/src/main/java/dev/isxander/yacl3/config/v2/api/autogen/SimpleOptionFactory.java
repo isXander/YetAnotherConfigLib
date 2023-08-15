@@ -18,28 +18,28 @@ import java.util.Set;
 
 public abstract class SimpleOptionFactory<A extends Annotation, T> implements OptionFactory<A, T> {
     @Override
-    public Option<T> createOption(A annotation, ConfigField<T> field, OptionStorage storage) {
+    public Option<T> createOption(A annotation, ConfigField<T> field, OptionAccess optionAccess) {
         Option<T> option = Option.<T>createBuilder()
-                .name(this.name(annotation, field, storage))
-                .description(v -> this.description(v, annotation, field, storage).build())
+                .name(this.name(annotation, field, optionAccess))
+                .description(v -> this.description(v, annotation, field, optionAccess).build())
                 .binding(new FieldBackedBinding<>(field.access(), field.defaultAccess()))
-                .controller(opt -> this.createController(annotation, field, storage, opt))
-                .available(this.available(annotation, field, storage))
-                .flags(this.flags(annotation, field, storage))
-                .listener((opt, v) -> this.listener(annotation, field, storage, opt, v))
+                .controller(opt -> this.createController(annotation, field, optionAccess, opt))
+                .available(this.available(annotation, field, optionAccess))
+                .flags(this.flags(annotation, field, optionAccess))
+                .listener((opt, v) -> this.listener(annotation, field, optionAccess, opt, v))
                 .build();
 
-        postInit(annotation, field, storage, option);
+        postInit(annotation, field, optionAccess, option);
         return option;
     }
 
-    protected abstract ControllerBuilder<T> createController(A annotation, ConfigField<T> field, OptionStorage storage, Option<T> option);
+    protected abstract ControllerBuilder<T> createController(A annotation, ConfigField<T> field, OptionAccess storage, Option<T> option);
 
-    protected MutableComponent name(A annotation, ConfigField<T> field, OptionStorage storage) {
+    protected MutableComponent name(A annotation, ConfigField<T> field, OptionAccess storage) {
         return Component.translatable(this.getTranslationKey(field, null));
     }
 
-    protected OptionDescription.Builder description(T value, A annotation, ConfigField<T> field, OptionStorage storage) {
+    protected OptionDescription.Builder description(T value, A annotation, ConfigField<T> field, OptionAccess storage) {
         OptionDescription.Builder builder = OptionDescription.createBuilder();
 
         String key = this.getTranslationKey(field, "desc");
@@ -63,19 +63,19 @@ public abstract class SimpleOptionFactory<A extends Annotation, T> implements Op
         return builder;
     }
 
-    protected boolean available(A annotation, ConfigField<T> field, OptionStorage storage) {
+    protected boolean available(A annotation, ConfigField<T> field, OptionAccess storage) {
         return true;
     }
 
-    protected Set<OptionFlag> flags(A annotation, ConfigField<T> field, OptionStorage storage) {
+    protected Set<OptionFlag> flags(A annotation, ConfigField<T> field, OptionAccess storage) {
         return Set.of();
     }
 
-    protected void listener(A annotation, ConfigField<T> field, OptionStorage storage, Option<T> option, T value) {
+    protected void listener(A annotation, ConfigField<T> field, OptionAccess storage, Option<T> option, T value) {
 
     }
 
-    protected void postInit(A annotation, ConfigField<T> field, OptionStorage storage, Option<T> option) {
+    protected void postInit(A annotation, ConfigField<T> field, OptionAccess storage, Option<T> option) {
 
     }
 

@@ -45,7 +45,7 @@ public class GuiTest {
                                 .option(ButtonOption.createBuilder()
                                         .name(Component.literal("Auto-gen test"))
                                         .action((screen, opt) -> {
-                                            ConfigV2Test.INSTANCE.serializer().deserialize();
+                                            ConfigV2Test.INSTANCE.serializer().load();
                                             Minecraft.getInstance().setScreen(ConfigV2Test.INSTANCE.generateGui().generateScreen(screen));
                                         })
                                         .build())
@@ -64,7 +64,7 @@ public class GuiTest {
     private static Screen getFullTestSuite(Screen parent) {
         AtomicReference<Option<Boolean>> booleanOption = new AtomicReference<>();
 
-        ConfigTest.GSON.serializer().deserialize();
+        ConfigTest.GSON.serializer().load();
         return YetAnotherConfigLib.create(ConfigTest.GSON, (defaults, config, builder) -> builder
                         .title(Component.literal("Test GUI"))
                         .category(ConfigCategory.createBuilder()
@@ -380,7 +380,7 @@ public class GuiTest {
                                 .build())
                         .save(() -> {
                             Minecraft.getInstance().options.save();
-                            ConfigTest.GSON.serializer().serialize();
+                            ConfigTest.GSON.serializer().save();
                         })
                 )
                 .generateScreen(parent);

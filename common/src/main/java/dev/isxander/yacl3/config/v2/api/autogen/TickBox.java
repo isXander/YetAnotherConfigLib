@@ -5,6 +5,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * An option factory.
+ * <p>
+ * This creates a regular option with a
+ * {@link dev.isxander.yacl3.api.controller.TickBoxControllerBuilder} controller.
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface TickBox {

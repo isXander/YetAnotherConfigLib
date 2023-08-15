@@ -6,7 +6,7 @@ import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.config.v2.api.ConfigField;
 import dev.isxander.yacl3.config.v2.api.autogen.ListGroup;
 import dev.isxander.yacl3.config.v2.api.autogen.OptionFactory;
-import dev.isxander.yacl3.config.v2.api.autogen.OptionStorage;
+import dev.isxander.yacl3.config.v2.api.autogen.OptionAccess;
 import dev.isxander.yacl3.config.v2.impl.FieldBackedBinding;
 import net.minecraft.client.Minecraft;
 import net.minecraft.locale.Language;
@@ -20,7 +20,11 @@ import java.util.List;
 
 public class ListGroupImpl<T> implements OptionFactory<ListGroup, List<T>> {
     @Override
-    public Option<List<T>> createOption(ListGroup annotation, ConfigField<List<T>> field, OptionStorage storage) {
+    public Option<List<T>> createOption(ListGroup annotation, ConfigField<List<T>> field, OptionAccess optionAccess) {
+        if (field.autoGen().orElseThrow().group().isPresent()) {
+            throw new YACLAutoGenException("@ListGroup fields ('%s') cannot be inside a group as lists act as groups.".formatted(field.access().name()));
+        }
+
         ListGroup.ValueFactory<T> valueFactory = createValueFactory((Class<? extends ListGroup.ValueFactory<T>>) annotation.valueFactory());
         ListGroup.ControllerFactory<T> controllerFactory = createControllerFactory((Class<? extends ListGroup.ControllerFactory<T>>) annotation.controllerFactory());
 
@@ -28,8 +32,11 @@ public class ListGroupImpl<T> implements OptionFactory<ListGroup, List<T>> {
                 .name(Component.translatable(this.getTranslationKey(field, null)))
                 .description(this.description(field))
                 .initial(valueFactory::provideNewValue)
-                .controller(opt -> controllerFactory.createController(annotation, field, storage, opt))
+                .controller(opt -> controllerFactory.createController(annotation, field, optionAccess, opt))
                 .binding(new FieldBackedBinding<>(field.access(), field.defaultAccess()))
+                .minimumNumberOfEntries(annotation.minEntries())
+                .maximumNumberOfEntries(annotation.maxEntries() == 0 ? Integer.MAX_VALUE : annotation.maxEntries())
+                .insertEntriesAtEnd(annotation.addEntriesToBottom())
                 .build();
     }
 

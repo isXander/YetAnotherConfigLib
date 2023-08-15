@@ -41,7 +41,7 @@ public class OptionFactoryRegistry {
         factoryMap.put(annotation, factory);
     }
 
-    public static <T> Optional<Option<T>> createOption(Field field, ConfigField<T> configField, OptionStorage storage) {
+    public static <T> Optional<Option<T>> createOption(Field field, ConfigField<T> configField, OptionAccess storage) {
         Annotation[] annotations = Arrays.stream(field.getAnnotations())
                 .filter(annotation -> factoryMap.containsKey(annotation.annotationType()))
                 .toArray(Annotation[]::new);

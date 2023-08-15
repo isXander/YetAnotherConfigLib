@@ -2,6 +2,7 @@ package dev.isxander.yacl3.config.v2.impl.serializer;
 
 import com.google.gson.*;
 import dev.isxander.yacl3.config.v2.api.*;
+import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.network.chat.Component;
@@ -18,9 +19,7 @@ import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -39,7 +38,7 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
     }
 
     @Override
-    public void serialize() {
+    public void save() {
         YACLConstants.LOGGER.info("Serializing {} to '{}'", config.configClass(), path);
 
         try (StringWriter stringWriter = new StringWriter()) {
@@ -76,10 +75,10 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
     }
 
     @Override
-    public void deserialize() {
+    public void load() {
         if (!Files.exists(path)) {
             YACLConstants.LOGGER.info("Config file '{}' does not exist. Creating it with default values.", path);
-            serialize();
+            save();
             return;
         }
 

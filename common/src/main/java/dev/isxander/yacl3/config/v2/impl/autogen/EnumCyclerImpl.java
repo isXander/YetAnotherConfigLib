@@ -7,7 +7,7 @@ import dev.isxander.yacl3.api.controller.CyclingListControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigField;
 import dev.isxander.yacl3.config.v2.api.autogen.SimpleOptionFactory;
 import dev.isxander.yacl3.config.v2.api.autogen.EnumCycler;
-import dev.isxander.yacl3.config.v2.api.autogen.OptionStorage;
+import dev.isxander.yacl3.config.v2.api.autogen.OptionAccess;
 import net.minecraft.network.chat.Component;
 
 import java.util.Arrays;
@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
 
 public class EnumCyclerImpl extends SimpleOptionFactory<EnumCycler, Enum<?>> {
     @Override
-    protected ControllerBuilder<Enum<?>> createController(EnumCycler annotation, ConfigField<Enum<?>> field, OptionStorage storage, Option<Enum<?>> option) {
+    protected ControllerBuilder<Enum<?>> createController(EnumCycler annotation, ConfigField<Enum<?>> field, OptionAccess storage, Option<Enum<?>> option) {
         List<? extends Enum<?>> values;
 
         if (option.pendingValue() instanceof EnumCycler.CyclableEnum<?> cyclableEnum) {
@@ -35,7 +35,7 @@ public class EnumCyclerImpl extends SimpleOptionFactory<EnumCycler, Enum<?>> {
         if (NameableEnum.class.isAssignableFrom(field.access().typeClass())) {
             builder.valueFormatter(v -> ((NameableEnum) v).getDisplayName());
         } else {
-            builder.valueFormatter(v -> Component.translatable(getTranslationKey(field, "fmt." + v.name().toLowerCase())));
+            builder.valueFormatter(v -> Component.translatable("yacl3.config.enum.%s.%s".formatted(field.access().typeClass().getSimpleName(), v.name().toLowerCase())));
         }
         return builder;
     }

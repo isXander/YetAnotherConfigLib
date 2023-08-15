@@ -53,7 +53,7 @@ public interface YetAnotherConfigLib {
     }
 
     static <T> YetAnotherConfigLib create(ConfigClassHandler<T> configHandler, ConfigBackedBuilder<T> builder) {
-        return builder.build(configHandler.defaults(), configHandler.instance(), createBuilder().save(configHandler.serializer()::serialize)).build();
+        return builder.build(configHandler.defaults(), configHandler.instance(), createBuilder().save(configHandler.serializer()::save)).build();
     }
 
     /**

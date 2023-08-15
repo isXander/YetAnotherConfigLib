@@ -1,8 +1,10 @@
-package dev.isxander.yacl3.config.v2.api;
+package dev.isxander.yacl3.config.v2.api.serializer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.isxander.yacl3.config.ConfigEntry;
+import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
+import dev.isxander.yacl3.config.v2.api.ConfigSerializer;
 import dev.isxander.yacl3.config.v2.impl.serializer.GsonConfigSerializer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -11,6 +13,17 @@ import java.awt.*;
 import java.nio.file.Path;
 import java.util.function.UnaryOperator;
 
+/**
+ * Uses GSON to serialize and deserialize config data from JSON to a file.
+ * <p>
+ * Only fields annotated with {@link dev.isxander.yacl3.config.v2.api.SerialEntry} are included in the JSON.
+ * {@link Component}, {@link Style} and {@link Color} have default type adapters, so there is no need to provide them in your GSON instance.
+ * GSON is automatically configured to format fields as {@code lower_camel_case}.
+ * <p>
+ * Optionally, this can also be written under JSON5 spec, allowing comments.
+ *
+ * @param <T> config data type
+ */
 public interface GsonConfigSerializerBuilder<T> {
     static <T> GsonConfigSerializerBuilder<T> create(ConfigClassHandler<T> config) {
         return new GsonConfigSerializer.Builder<>(config);
@@ -64,6 +77,12 @@ public interface GsonConfigSerializerBuilder<T> {
      */
     GsonConfigSerializerBuilder<T> appendGsonBuilder(UnaryOperator<GsonBuilder> gsonBuilder);
 
+    /**
+     * Writes the json under JSON5 spec, allowing comments.
+     *
+     * @param json5 whether to write under JSON5 spec
+     * @return this builder
+     */
     GsonConfigSerializerBuilder<T> setJson5(boolean json5);
 
     ConfigSerializer<T> build();
