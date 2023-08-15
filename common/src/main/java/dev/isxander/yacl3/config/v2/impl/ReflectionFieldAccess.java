@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.config.v2.impl;
 
 import dev.isxander.yacl3.config.v2.api.FieldAccess;
+import dev.isxander.yacl3.config.v2.impl.autogen.YACLAutoGenException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -11,7 +12,7 @@ public record ReflectionFieldAccess<T>(Field field, Object instance) implements 
         try {
             return (T) field.get(instance);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new YACLAutoGenException("Failed to access field '%s'".formatted(name()), e);
         }
     }
 
@@ -20,7 +21,7 @@ public record ReflectionFieldAccess<T>(Field field, Object instance) implements 
         try {
             field.set(instance, value);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            throw new YACLAutoGenException("Failed to set field '%s'".formatted(name()), e);
         }
     }
 

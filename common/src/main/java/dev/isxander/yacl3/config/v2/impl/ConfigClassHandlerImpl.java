@@ -6,6 +6,7 @@ import dev.isxander.yacl3.config.v2.api.autogen.AutoGen;
 import dev.isxander.yacl3.config.v2.api.autogen.OptionStorage;
 import dev.isxander.yacl3.config.v2.impl.autogen.OptionFactoryRegistry;
 import dev.isxander.yacl3.config.v2.impl.autogen.OptionStorageImpl;
+import dev.isxander.yacl3.config.v2.impl.autogen.YACLAutoGenException;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -36,7 +37,7 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
             this.instance = constructor.newInstance();
             this.defaults = constructor.newInstance();
         } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to create instance of config class '%s' with no-args constructor.".formatted(configClass.getName()), e);
+            throw new YACLAutoGenException("Failed to create instance of config class '%s' with no-args constructor.".formatted(configClass.getName()), e);
         }
 
         this.fields = Arrays.stream(configClass.getDeclaredFields())
@@ -79,7 +80,9 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
 
     @Override
     public YetAnotherConfigLib generateGui() {
-        Validate.isTrue(supportsAutoGen(), "Auto GUI generation is not supported for this config class. You either need to enable it in the builder or you are attempting to create a GUI in a dedicated server environment.");
+        if (!supportsAutoGen()) {
+            throw new YACLAutoGenException("Auto GUI generation is not supported for this config class. You either need to enable it in the builder or you are attempting to create a GUI in a dedicated server environment.");
+        }
 
         OptionStorageImpl storage = new OptionStorageImpl();
         Map<String, CategoryAndGroups> categories = new LinkedHashMap<>();
@@ -117,7 +120,7 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
 
     private <U> Option<U> createOption(ConfigField<U> configField, OptionStorage storage) {
         return OptionFactoryRegistry.createOption(((ReflectionFieldAccess<?>) configField.access()).field(), configField, storage)
-                .orElseThrow(() -> new IllegalStateException("Failed to create option for field %s".formatted(configField.access().name())));
+                .orElseThrow(() -> new YACLAutoGenException("Failed to create option for field %s".formatted(configField.access().name())));
     }
 
     @Override

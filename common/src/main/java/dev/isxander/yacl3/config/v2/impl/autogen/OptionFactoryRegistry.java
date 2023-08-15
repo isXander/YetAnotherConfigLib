@@ -24,6 +24,10 @@ public class OptionFactoryRegistry {
         registerOptionFactory(LongSlider.class, new LongSliderImpl());
         registerOptionFactory(FloatSlider.class, new FloatSliderImpl());
         registerOptionFactory(DoubleSlider.class, new DoubleSliderImpl());
+        registerOptionFactory(IntField.class, new IntFieldImpl());
+        registerOptionFactory(LongField.class, new LongFieldImpl());
+        registerOptionFactory(FloatField.class, new FloatFieldImpl());
+        registerOptionFactory(DoubleField.class, new DoubleFieldImpl());
         registerOptionFactory(EnumCycler.class, new EnumCyclerImpl());
         registerOptionFactory(StringField.class, new StringFieldImpl());
         registerOptionFactory(ColorRGBA.class, new ColorRGBAImpl());
