@@ -15,13 +15,15 @@ import java.util.function.UnaryOperator;
 
 /**
  * Uses GSON to serialize and deserialize config data from JSON to a file.
- *
+ * <p>
  * Only fields annotated with {@link ConfigEntry} are included in the JSON.
  * {@link Component}, {@link Style} and {@link Color} have default type adapters, so there is no need to provide them in your GSON instance.
  * GSON is automatically configured to format fields as {@code lower_camel_case}.
  *
  * @param <T> config data type
+ * @deprecated upgrade to config v2 {@link dev.isxander.yacl3.config.v2.api.ConfigClassHandler} with {@link dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder}
  */
+@Deprecated
 public class GsonConfigInstance<T> extends ConfigInstance<T> {
     private final Gson gson;
     private final Path path;

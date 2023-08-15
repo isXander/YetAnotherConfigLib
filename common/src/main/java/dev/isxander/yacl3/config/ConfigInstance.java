@@ -11,7 +11,9 @@ import java.lang.reflect.InvocationTargetException;
  * how it saves and load.
  *
  * @param <T> config data type
+ * @deprecated upgrade to config v2 {@link dev.isxander.yacl3.config.v2.api.ConfigClassHandler}
  */
+@Deprecated
 public abstract class ConfigInstance<T> {
     private final Class<T> configClass;
     private final T defaultInstance;
