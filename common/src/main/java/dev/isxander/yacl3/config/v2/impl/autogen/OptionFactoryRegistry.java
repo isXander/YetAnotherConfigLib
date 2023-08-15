@@ -30,7 +30,7 @@ public class OptionFactoryRegistry {
         registerOptionFactory(DoubleField.class, new DoubleFieldImpl());
         registerOptionFactory(EnumCycler.class, new EnumCyclerImpl());
         registerOptionFactory(StringField.class, new StringFieldImpl());
-        registerOptionFactory(ColorRGBA.class, new ColorRGBAImpl());
+        registerOptionFactory(ColorField.class, new ColorFieldImpl());
         registerOptionFactory(Label.class, new LabelImpl());
         registerOptionFactory(ListGroup.class, new ListGroupImpl<>());
 

@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ColorRGBA {
+public @interface ColorField {
     /**
      * Whether to show/allow the alpha channel in the color field.
      */
