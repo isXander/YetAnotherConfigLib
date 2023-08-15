@@ -5,6 +5,7 @@ import dev.isxander.yacl3.config.v2.api.*;
 import dev.isxander.yacl3.config.v2.api.autogen.AutoGen;
 import dev.isxander.yacl3.config.v2.api.autogen.OptionStorage;
 import dev.isxander.yacl3.config.v2.impl.autogen.OptionFactoryRegistry;
+import dev.isxander.yacl3.config.v2.impl.autogen.OptionStorageImpl;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;

@@ -33,4 +33,9 @@ public record ReflectionFieldAccess<T>(Field field, Object instance) implements 
     public Type type() {
         return field.getGenericType();
     }
+
+    @Override
+    public Class<T> typeClass() {
+        return (Class<T>) field.getType();
+    }
 }

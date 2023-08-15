@@ -8,4 +8,6 @@ public interface ReadOnlyFieldAccess<T> {
     String name();
 
     Type type();
+
+    Class<T> typeClass();
 }

@@ -4,7 +4,7 @@ import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import dev.isxander.yacl3.api.controller.ControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigField;
-import dev.isxander.yacl3.config.v2.api.SimpleOptionFactory;
+import dev.isxander.yacl3.config.v2.api.autogen.SimpleOptionFactory;
 import dev.isxander.yacl3.config.v2.api.autogen.Boolean;
 import dev.isxander.yacl3.config.v2.api.autogen.OptionStorage;
 import net.minecraft.network.chat.Component;

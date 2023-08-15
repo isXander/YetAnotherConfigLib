@@ -2,10 +2,9 @@ package dev.isxander.yacl3.config.v2.impl.autogen;
 
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.config.v2.api.ConfigField;
-import dev.isxander.yacl3.config.v2.api.OptionFactory;
+import dev.isxander.yacl3.config.v2.api.autogen.OptionFactory;
 import dev.isxander.yacl3.config.v2.api.autogen.*;
 import dev.isxander.yacl3.config.v2.api.autogen.Boolean;
-import dev.isxander.yacl3.config.v2.impl.autogen.*;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 
 import java.lang.annotation.Annotation;
@@ -22,9 +21,14 @@ public class OptionFactoryRegistry {
         registerOptionFactory(TickBox.class, new TickBoxImpl());
         registerOptionFactory(Boolean.class, new BooleanImpl());
         registerOptionFactory(IntSlider.class, new IntSliderImpl());
+        registerOptionFactory(LongSlider.class, new LongSliderImpl());
         registerOptionFactory(FloatSlider.class, new FloatSliderImpl());
         registerOptionFactory(DoubleSlider.class, new DoubleSliderImpl());
+        registerOptionFactory(EnumCycler.class, new EnumCyclerImpl());
+        registerOptionFactory(StringField.class, new StringFieldImpl());
+        registerOptionFactory(ColorRGBA.class, new ColorRGBAImpl());
         registerOptionFactory(Label.class, new LabelImpl());
+        registerOptionFactory(ListGroup.class, new ListGroupImpl<>());
 
         registerOptionFactory(MasterTickBox.class, new MasterTickBoxImpl());
     }
