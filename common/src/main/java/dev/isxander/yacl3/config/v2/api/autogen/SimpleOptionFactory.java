@@ -7,6 +7,8 @@ import dev.isxander.yacl3.api.controller.ControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigField;
 import dev.isxander.yacl3.config.v2.impl.FieldBackedBinding;
 import dev.isxander.yacl3.config.v2.impl.autogen.AutoGenUtils;
+import dev.isxander.yacl3.config.v2.impl.autogen.EmptyCustomImageFactory;
+import dev.isxander.yacl3.config.v2.impl.autogen.YACLAutoGenException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -63,11 +65,44 @@ public abstract class SimpleOptionFactory<A extends Annotation, T> implements Op
             }
         }
 
-        String imagePath = "textures/yacl3/" + field.parent().id().getPath() + "/" + field.access().name() + ".webp";
-        imagePath = imagePath.toLowerCase().replaceAll("[^a-z0-9/._:-]", "_");
-        ResourceLocation imageLocation = new ResourceLocation(field.parent().id().getNamespace(), imagePath);
-        if (Minecraft.getInstance().getResourceManager().getResource(imageLocation).isPresent()) {
-            builder.webpImage(imageLocation);
+        Optional<OverrideImage> imageOverrideOpt = field.access().getAnnotation(OverrideImage.class);
+        if (imageOverrideOpt.isPresent()) {
+            OverrideImage imageOverride = imageOverrideOpt.get();
+
+            if (!imageOverride.factory().equals(EmptyCustomImageFactory.class)) {
+                OverrideImage.CustomImageFactory<T> imageFactory;
+                try {
+                    imageFactory = (OverrideImage.CustomImageFactory<T>) AutoGenUtils.constructNoArgsClass(
+                            imageOverride.factory(),
+                            () -> "'%s': The factory class on @OverrideImage has no no-args constructor.".formatted(field.access().name()),
+                            () -> "'%s': Failed to instantiate factory class %s.".formatted(field.access().name(), imageOverride.factory().getName())
+                    );
+                } catch (ClassCastException e) {
+                    throw new YACLAutoGenException("'%s': The factory class on @OverrideImage is of incorrect type. Expected %s, got %s.".formatted(field.access().name(), field.access().type().getTypeName(), imageOverride.factory().getTypeParameters()[0].getName()));
+                }
+
+                builder.customImage(imageFactory.createImage(value, field, storage));
+            } else if (!imageOverride.value().isEmpty()) {
+                String path = imageOverride.value();
+                ResourceLocation imageLocation = new ResourceLocation(field.parent().id().getNamespace(), path);
+                String extension = path.substring(path.lastIndexOf('.') + 1);
+
+                switch (extension) {
+                    case "png", "jpg", "jpeg" -> builder.image(imageLocation, imageOverride.width(), imageOverride.height());
+                    case "webp" -> builder.webpImage(imageLocation);
+                    case "gif" -> builder.gifImage(imageLocation);
+                    default -> throw new YACLAutoGenException("'%s': Invalid image extension '%s' on @OverrideImage. Expected: ('png','jpg','webp','gif')".formatted(field.access().name(), extension));
+                }
+            } else {
+                throw new YACLAutoGenException("'%s': @OverrideImage has no value or factory class.".formatted(field.access().name()));
+            }
+        } else {
+            String imagePath = "textures/yacl3/" + field.parent().id().getPath() + "/" + field.access().name() + ".webp";
+            imagePath = imagePath.toLowerCase().replaceAll("[^a-z0-9/._:-]", "_");
+            ResourceLocation imageLocation = new ResourceLocation(field.parent().id().getNamespace(), imagePath);
+            if (Minecraft.getInstance().getResourceManager().getResource(imageLocation).isPresent()) {
+                builder.webpImage(imageLocation);
+            }
         }
 
         return builder;

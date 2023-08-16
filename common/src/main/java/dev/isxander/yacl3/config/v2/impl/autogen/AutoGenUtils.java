@@ -8,6 +8,9 @@ import dev.isxander.yacl3.config.v2.api.autogen.OverrideFormatter;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @ApiStatus.Internal
 public final class AutoGenUtils {
@@ -30,5 +33,15 @@ public final class AutoGenUtils {
                 throw new YACLAutoGenException("Attempted to use @CustomFormatter on an option factory for field '%s' that uses a controller that does not support this.".formatted(field.name()));
             }
         });
+    }
+
+    public static <T> T constructNoArgsClass(Class<T> clazz, Supplier<String> constructorNotFoundConsumer, Supplier<String> constructorFailedConsumer) {
+        try {
+            return clazz.getConstructor().newInstance();
+        } catch (NoSuchMethodException e) {
+            throw new YACLAutoGenException(constructorNotFoundConsumer.get(), e);
+        } catch (Exception e) {
+            throw new YACLAutoGenException(constructorFailedConsumer.get(), e);
+        }
     }
 }
