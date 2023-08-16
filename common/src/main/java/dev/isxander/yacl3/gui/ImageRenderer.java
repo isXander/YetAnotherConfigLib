@@ -279,7 +279,7 @@ public interface ImageRenderer {
             int cols = (int)Math.ceil(Math.sqrt(frameCount) / Math.sqrt(ratio));
             int rows = (int)Math.ceil(frameCount / (double)cols);
 
-            NativeImage image = new NativeImage(NativeImage.Format.RGBA, frameWidth * cols, frameHeight * rows, true);
+            NativeImage image = new NativeImage(NativeImage.Format.RGBA, frameWidth * cols, frameHeight * rows, false);
 
 //            // Fill whole atlas with black, as each frame may have different dimensions
 //            // that would cause borders of transparent pixels to appear around the frames
@@ -335,10 +335,6 @@ public interface ImageRenderer {
                     }
                 }
             }
-            // gives the texture to GL for rendering
-            // usually, you create a native image with NativeImage.create, which sets the pixels and
-            // runs this function itself. In this case, we need to do it manually.
-            image.upload(0, 0, 0, false);
 
             if (graphics != null)
                 graphics.dispose();
