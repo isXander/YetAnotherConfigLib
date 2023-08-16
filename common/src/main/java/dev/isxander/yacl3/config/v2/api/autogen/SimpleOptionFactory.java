@@ -6,6 +6,7 @@ import dev.isxander.yacl3.api.OptionFlag;
 import dev.isxander.yacl3.api.controller.ControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigField;
 import dev.isxander.yacl3.config.v2.impl.FieldBackedBinding;
+import dev.isxander.yacl3.config.v2.impl.autogen.AutoGenUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -14,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
+import java.util.Optional;
 import java.util.Set;
 
 public abstract class SimpleOptionFactory<A extends Annotation, T> implements OptionFactory<A, T> {
@@ -23,7 +25,14 @@ public abstract class SimpleOptionFactory<A extends Annotation, T> implements Op
                 .name(this.name(annotation, field, optionAccess))
                 .description(v -> this.description(v, annotation, field, optionAccess).build())
                 .binding(new FieldBackedBinding<>(field.access(), field.defaultAccess()))
-                .controller(opt -> this.createController(annotation, field, optionAccess, opt))
+                .controller(opt -> {
+                    ControllerBuilder<T> builder = this.createController(annotation, field, optionAccess, opt);
+
+                    Optional<OverrideFormatter> customFormatter = field.access().getAnnotation(OverrideFormatter.class);
+                    AutoGenUtils.addCustomFormatterToController(builder, customFormatter, field.access());
+
+                    return builder;
+                })
                 .available(this.available(annotation, field, optionAccess))
                 .flags(this.flags(annotation, field, optionAccess))
                 .listener((opt, v) -> this.listener(annotation, field, optionAccess, opt, v))
@@ -36,7 +45,8 @@ public abstract class SimpleOptionFactory<A extends Annotation, T> implements Op
     protected abstract ControllerBuilder<T> createController(A annotation, ConfigField<T> field, OptionAccess storage, Option<T> option);
 
     protected MutableComponent name(A annotation, ConfigField<T> field, OptionAccess storage) {
-        return Component.translatable(this.getTranslationKey(field, null));
+        Optional<OverrideName> customName = field.access().getAnnotation(OverrideName.class);
+        return Component.translatable(customName.map(OverrideName::value).orElse(this.getTranslationKey(field, null)));
     }
 
     protected OptionDescription.Builder description(T value, A annotation, ConfigField<T> field, OptionAccess storage) {

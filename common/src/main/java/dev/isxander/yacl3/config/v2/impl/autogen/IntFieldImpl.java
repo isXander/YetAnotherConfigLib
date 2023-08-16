@@ -14,7 +14,7 @@ public class IntFieldImpl extends SimpleOptionFactory<IntField, Integer> {
     @Override
     protected ControllerBuilder<Integer> createController(IntField annotation, ConfigField<Integer> field, OptionAccess storage, Option<Integer> option) {
         return IntegerFieldControllerBuilder.create(option)
-                .valueFormatter(v -> {
+                .formatValue(v -> {
                     String key = getTranslationKey(field, "fmt." + v);
                     if (Language.getInstance().has(key))
                         return Component.translatable(key);

@@ -3,6 +3,7 @@ package dev.isxander.yacl3.gui.controllers;
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.isxander.yacl3.api.Controller;
 import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.controller.ValueFormatter;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.AbstractWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
@@ -34,7 +35,7 @@ public class BooleanController implements Controller<Boolean> {
                     : CommonComponents.GUI_NO;
 
     private final Option<Boolean> option;
-    private final Function<Boolean, Component> valueFormatter;
+    private final ValueFormatter<Boolean> valueFormatter;
     private final boolean coloured;
 
     /**
@@ -67,8 +68,12 @@ public class BooleanController implements Controller<Boolean> {
      */
     public BooleanController(Option<Boolean> option, Function<Boolean, Component> valueFormatter, boolean coloured) {
         this.option = option;
-        this.valueFormatter = valueFormatter;
+        this.valueFormatter = valueFormatter::apply;
         this.coloured = coloured;
+    }
+
+    public static BooleanController createInternal(Option<Boolean> option, ValueFormatter<Boolean> formatter, boolean coloured) {
+        return new BooleanController(option, formatter::format, coloured);
     }
 
     /**
@@ -84,7 +89,7 @@ public class BooleanController implements Controller<Boolean> {
      */
     @Override
     public Component formatValue() {
-        return valueFormatter.apply(option().pendingValue());
+        return valueFormatter.format(option().pendingValue());
     }
 
     /**

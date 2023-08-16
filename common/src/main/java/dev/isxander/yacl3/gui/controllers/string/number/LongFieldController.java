@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui.controllers.string.number;
 
 import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.controller.ValueFormatter;
 import dev.isxander.yacl3.gui.controllers.slider.LongSliderController;
 import net.minecraft.network.chat.Component;
 
@@ -60,6 +61,10 @@ public class LongFieldController extends NumberFieldController<Long> {
      */
     public LongFieldController(Option<Long> option) {
         this(option, -Long.MAX_VALUE, Long.MAX_VALUE, LongSliderController.DEFAULT_FORMATTER);
+    }
+
+    public static LongFieldController createInternal(Option<Long> option, long min, long max, ValueFormatter<Long> formatter) {
+        return new LongFieldController(option, min, max, formatter::format);
     }
 
     @Override

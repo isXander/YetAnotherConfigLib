@@ -14,7 +14,7 @@ public class DoubleFieldImpl extends SimpleOptionFactory<DoubleField, Double> {
     @Override
     protected ControllerBuilder<Double> createController(DoubleField annotation, ConfigField<Double> field, OptionAccess storage, Option<Double> option) {
         return DoubleFieldControllerBuilder.create(option)
-                .valueFormatter(v -> {
+                .formatValue(v -> {
                     String key = null;
                     if (v == annotation.min())
                         key = getTranslationKey(field, "fmt.min");

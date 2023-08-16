@@ -14,7 +14,7 @@ public class LongFieldImpl extends SimpleOptionFactory<LongField, Long> {
     @Override
     protected ControllerBuilder<Long> createController(LongField annotation, ConfigField<Long> field, OptionAccess storage, Option<Long> option) {
         return LongFieldControllerBuilder.create(option)
-                .valueFormatter(v -> {
+                .formatValue(v -> {
                     String key = getTranslationKey(field, "fmt." + v);
                     if (Language.getInstance().has(key))
                         return Component.translatable(key);

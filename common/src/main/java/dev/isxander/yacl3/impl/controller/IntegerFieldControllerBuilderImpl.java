@@ -3,6 +3,7 @@ package dev.isxander.yacl3.impl.controller;
 import dev.isxander.yacl3.api.Controller;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder;
+import dev.isxander.yacl3.api.controller.ValueFormatter;
 import dev.isxander.yacl3.gui.controllers.slider.IntegerSliderController;
 import dev.isxander.yacl3.gui.controllers.string.number.IntegerFieldController;
 import net.minecraft.network.chat.Component;
@@ -12,7 +13,7 @@ import java.util.function.Function;
 public class IntegerFieldControllerBuilderImpl extends AbstractControllerBuilderImpl<Integer> implements IntegerFieldControllerBuilder {
     private int min = Integer.MIN_VALUE;
     private int max = Integer.MAX_VALUE;
-    private Function<Integer, Component> formatter = IntegerSliderController.DEFAULT_FORMATTER;
+    private ValueFormatter<Integer> formatter = IntegerSliderController.DEFAULT_FORMATTER::apply;
 
     public IntegerFieldControllerBuilderImpl(Option<Integer> option) {
         super(option);
@@ -38,13 +39,13 @@ public class IntegerFieldControllerBuilderImpl extends AbstractControllerBuilder
     }
 
     @Override
-    public IntegerFieldControllerBuilder valueFormatter(Function<Integer, Component> formatter) {
+    public IntegerFieldControllerBuilder formatValue(ValueFormatter<Integer> formatter) {
         this.formatter = formatter;
         return this;
     }
 
     @Override
     public Controller<Integer> build() {
-        return new IntegerFieldController(option, min, max, formatter);
+        return IntegerFieldController.createInternal(option, min, max, formatter);
     }
 }

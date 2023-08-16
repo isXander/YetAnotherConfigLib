@@ -18,7 +18,7 @@ public class BooleanImpl extends SimpleOptionFactory<Boolean, java.lang.Boolean>
             case ON_OFF -> builder.onOffFormatter();
             case YES_NO -> builder.yesNoFormatter();
             case TRUE_FALSE -> builder.trueFalseFormatter();
-            case CUSTOM -> builder.valueFormatter(v -> Component.translatable(getTranslationKey(field, "fmt." + v)));
+            case CUSTOM -> builder.formatValue(v -> Component.translatable(getTranslationKey(field, "fmt." + v)));
         }
         return builder;
     }

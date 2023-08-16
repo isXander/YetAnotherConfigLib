@@ -33,9 +33,9 @@ public class EnumCyclerImpl extends SimpleOptionFactory<EnumCycler, Enum<?>> {
         var builder = CyclingListControllerBuilder.create(option)
                 .values(values);
         if (NameableEnum.class.isAssignableFrom(field.access().typeClass())) {
-            builder.valueFormatter(v -> ((NameableEnum) v).getDisplayName());
+            builder.formatValue(v -> ((NameableEnum) v).getDisplayName());
         } else {
-            builder.valueFormatter(v -> Component.translatable("yacl3.config.enum.%s.%s".formatted(field.access().typeClass().getSimpleName(), v.name().toLowerCase())));
+            builder.formatValue(v -> Component.translatable("yacl3.config.enum.%s.%s".formatted(field.access().typeClass().getSimpleName(), v.name().toLowerCase())));
         }
         return builder;
     }

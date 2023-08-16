@@ -3,6 +3,7 @@ package dev.isxander.yacl3.impl.controller;
 import dev.isxander.yacl3.api.Controller;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
+import dev.isxander.yacl3.api.controller.ValueFormatter;
 import dev.isxander.yacl3.gui.controllers.slider.DoubleSliderController;
 import net.minecraft.network.chat.Component;
 
@@ -11,7 +12,7 @@ import java.util.function.Function;
 public class DoubleSliderControllerBuilderImpl extends AbstractControllerBuilderImpl<Double> implements DoubleSliderControllerBuilder {
     private double min, max;
     private double step;
-    private Function<Double, Component> formatter = DoubleSliderController.DEFAULT_FORMATTER;
+    private ValueFormatter<Double> formatter = DoubleSliderController.DEFAULT_FORMATTER::apply;
 
     public DoubleSliderControllerBuilderImpl(Option<Double> option) {
         super(option);
@@ -31,13 +32,13 @@ public class DoubleSliderControllerBuilderImpl extends AbstractControllerBuilder
     }
 
     @Override
-    public DoubleSliderControllerBuilder valueFormatter(Function<Double, Component> formatter) {
+    public DoubleSliderControllerBuilder formatValue(ValueFormatter<Double> formatter) {
         this.formatter = formatter;
         return this;
     }
 
     @Override
     public Controller<Double> build() {
-        return new DoubleSliderController(option, min, max, step, formatter);
+        return DoubleSliderController.createInternal(option, min, max, step, formatter);
     }
 }

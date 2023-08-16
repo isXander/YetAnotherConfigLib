@@ -3,6 +3,7 @@ package dev.isxander.yacl3.impl.controller;
 import dev.isxander.yacl3.api.Controller;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
+import dev.isxander.yacl3.api.controller.ValueFormatter;
 import dev.isxander.yacl3.gui.controllers.slider.FloatSliderController;
 import net.minecraft.network.chat.Component;
 
@@ -11,7 +12,7 @@ import java.util.function.Function;
 public class FloatSliderControllerBuilderImpl extends AbstractControllerBuilderImpl<Float> implements FloatSliderControllerBuilder {
     private float min, max;
     private float step;
-    private Function<Float, Component> formatter = FloatSliderController.DEFAULT_FORMATTER;
+    private ValueFormatter<Float> formatter = FloatSliderController.DEFAULT_FORMATTER::apply;
 
     public FloatSliderControllerBuilderImpl(Option<Float> option) {
         super(option);
@@ -31,13 +32,13 @@ public class FloatSliderControllerBuilderImpl extends AbstractControllerBuilderI
     }
 
     @Override
-    public FloatSliderControllerBuilder valueFormatter(Function<Float, Component> formatter) {
+    public FloatSliderControllerBuilder formatValue(ValueFormatter<Float> formatter) {
         this.formatter = formatter;
         return this;
     }
 
     @Override
     public Controller<Float> build() {
-        return new FloatSliderController(option, min, max, step, formatter);
+        return FloatSliderController.createInternal(option, min, max, step, formatter);
     }
 }

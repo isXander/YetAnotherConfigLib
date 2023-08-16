@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui.controllers.slider;
 
 import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.controller.ValueFormatter;
 import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.Validate;
 
@@ -19,7 +20,7 @@ public class DoubleSliderController implements ISliderController<Double> {
 
     private final double min, max, interval;
 
-    private final Function<Double, Component> valueFormatter;
+    private final ValueFormatter<Double> valueFormatter;
 
     /**
      * Constructs a {@link ISliderController} for doubles
@@ -52,7 +53,11 @@ public class DoubleSliderController implements ISliderController<Double> {
         this.min = min;
         this.max = max;
         this.interval = interval;
-        this.valueFormatter = valueFormatter;
+        this.valueFormatter = valueFormatter::apply;
+    }
+
+    public static DoubleSliderController createInternal(Option<Double> option, double min, double max, double interval, ValueFormatter<Double> formatter) {
+        return new DoubleSliderController(option, min, max, interval, formatter::format);
     }
 
     /**
@@ -68,7 +73,7 @@ public class DoubleSliderController implements ISliderController<Double> {
      */
     @Override
     public Component formatValue() {
-        return valueFormatter.apply(option().pendingValue());
+        return valueFormatter.format(option().pendingValue());
     }
 
     /**

@@ -14,7 +14,7 @@ public class LongSliderImpl extends SimpleOptionFactory<LongSlider, Long> {
     @Override
     protected ControllerBuilder<Long> createController(LongSlider annotation, ConfigField<Long> field, OptionAccess storage, Option<Long> option) {
         return LongSliderControllerBuilder.create(option)
-                .valueFormatter(v -> {
+                .formatValue(v -> {
                     String key = getTranslationKey(field, "fmt." + v);
                     if (Language.getInstance().has(key))
                         return Component.translatable(key);

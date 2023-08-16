@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui.controllers.string.number;
 
 import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.controller.ValueFormatter;
 import dev.isxander.yacl3.gui.controllers.slider.IntegerSliderController;
 import net.minecraft.network.chat.Component;
 
@@ -60,6 +61,10 @@ public class IntegerFieldController extends NumberFieldController<Integer> {
      */
     public IntegerFieldController(Option<Integer> option) {
         this(option, -Integer.MAX_VALUE, Integer.MAX_VALUE, IntegerSliderController.DEFAULT_FORMATTER);
+    }
+
+    public static IntegerFieldController createInternal(Option<Integer> option, int min, int max, ValueFormatter<Integer> formatter) {
+        return new IntegerFieldController(option, min, max, formatter::format);
     }
 
     @Override

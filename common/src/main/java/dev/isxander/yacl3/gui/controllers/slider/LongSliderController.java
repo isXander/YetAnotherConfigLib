@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui.controllers.slider;
 
 import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.controller.ValueFormatter;
 import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.Validate;
 
@@ -16,7 +17,7 @@ public class LongSliderController implements ISliderController<Long> {
 
     private final long min, max, interval;
 
-    private final Function<Long, Component> valueFormatter;
+    private final ValueFormatter<Long> valueFormatter;
 
     /**
      * Constructs a {@link ISliderController} for longs
@@ -49,7 +50,11 @@ public class LongSliderController implements ISliderController<Long> {
         this.min = min;
         this.max = max;
         this.interval = interval;
-        this.valueFormatter = valueFormatter;
+        this.valueFormatter = valueFormatter::apply;
+    }
+
+    public static LongSliderController createInternal(Option<Long> option, long min, long max, long interval, ValueFormatter<Long> formatter) {
+        return new LongSliderController(option, min, max, interval, formatter::format);
     }
 
     /**
@@ -65,7 +70,7 @@ public class LongSliderController implements ISliderController<Long> {
      */
     @Override
     public Component formatValue() {
-        return valueFormatter.apply(option().pendingValue());
+        return valueFormatter.format(option().pendingValue());
     }
 
     /**

@@ -2,6 +2,7 @@ package dev.isxander.yacl3.gui.controllers.cycling;
 
 import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.controller.ValueFormatter;
 import net.minecraft.network.chat.Component;
 
 import java.util.function.Function;
@@ -12,7 +13,7 @@ import java.util.function.Function;
  */
 public class CyclingListController<T> implements ICyclingController<T> {
     private final Option<T> option;
-    private final Function<T, Component> valueFormatter;
+    private final ValueFormatter<T> valueFormatter;
     private final ImmutableList<T> values;
 
     /**
@@ -33,8 +34,12 @@ public class CyclingListController<T> implements ICyclingController<T> {
      */
     public CyclingListController(Option<T> option, Iterable<? extends T> values, Function<T, Component> valueFormatter) {
         this.option = option;
-        this.valueFormatter = valueFormatter;
+        this.valueFormatter = valueFormatter::apply;
         this.values = ImmutableList.copyOf(values);
+    }
+
+    public static <T> CyclingListController<T> createInternal(Option<T> option, Iterable<? extends T> values, ValueFormatter<T> formatter) {
+        return new CyclingListController<>(option, values, formatter::format);
     }
 
     /**
@@ -50,7 +55,7 @@ public class CyclingListController<T> implements ICyclingController<T> {
      */
     @Override
     public Component formatValue() {
-        return valueFormatter.apply(option().pendingValue());
+        return valueFormatter.format(option().pendingValue());
     }
 
     /**

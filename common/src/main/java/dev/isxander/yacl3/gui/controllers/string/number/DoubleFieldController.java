@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui.controllers.string.number;
 
 import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.controller.ValueFormatter;
 import dev.isxander.yacl3.gui.controllers.slider.DoubleSliderController;
 import net.minecraft.network.chat.Component;
 
@@ -60,6 +61,10 @@ public class DoubleFieldController extends NumberFieldController<Double> {
      */
     public DoubleFieldController(Option<Double> option) {
         this(option, -Double.MAX_VALUE, Double.MAX_VALUE, DoubleSliderController.DEFAULT_FORMATTER);
+    }
+
+    public static DoubleFieldController createInternal(Option<Double> option, double min, double max, ValueFormatter<Double> formatter) {
+        return new DoubleFieldController(option, min, max, formatter::format);
     }
 
     /**

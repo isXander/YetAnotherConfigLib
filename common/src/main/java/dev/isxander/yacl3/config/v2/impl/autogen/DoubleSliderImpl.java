@@ -14,7 +14,7 @@ public class DoubleSliderImpl extends SimpleOptionFactory<DoubleSlider, Double> 
     @Override
     protected ControllerBuilder<Double> createController(DoubleSlider annotation, ConfigField<Double> field, OptionAccess storage, Option<Double> option) {
         return DoubleSliderControllerBuilder.create(option)
-                .valueFormatter(v -> {
+                .formatValue(v -> {
                     String key = null;
                     if (v == annotation.min())
                         key = getTranslationKey(field, "fmt.min");

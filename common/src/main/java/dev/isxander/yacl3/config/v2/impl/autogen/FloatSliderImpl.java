@@ -14,7 +14,7 @@ public class FloatSliderImpl extends SimpleOptionFactory<FloatSlider, Float> {
     @Override
     protected ControllerBuilder<Float> createController(FloatSlider annotation, ConfigField<Float> field, OptionAccess storage, Option<Float> option) {
         return FloatSliderControllerBuilder.create(option)
-                .valueFormatter(v -> {
+                .formatValue(v -> {
                     String key = null;
                     if (v == annotation.min())
                         key = getTranslationKey(field, "fmt.min");

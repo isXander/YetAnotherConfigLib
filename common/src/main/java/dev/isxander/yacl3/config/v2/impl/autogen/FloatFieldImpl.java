@@ -14,7 +14,7 @@ public class FloatFieldImpl extends SimpleOptionFactory<FloatField, Float> {
     @Override
     protected ControllerBuilder<Float> createController(FloatField annotation, ConfigField<Float> field, OptionAccess storage, Option<Float> option) {
         return FloatFieldControllerBuilder.create(option)
-                .valueFormatter(v -> {
+                .formatValue(v -> {
                     String key = null;
                     if (v == annotation.min())
                         key = getTranslationKey(field, "fmt.min");

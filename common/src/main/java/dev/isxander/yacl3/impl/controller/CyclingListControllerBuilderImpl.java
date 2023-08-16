@@ -4,14 +4,12 @@ import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl3.api.Controller;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.controller.CyclingListControllerBuilder;
+import dev.isxander.yacl3.api.controller.ValueFormatter;
 import dev.isxander.yacl3.gui.controllers.cycling.CyclingListController;
-import net.minecraft.network.chat.Component;
-
-import java.util.function.Function;
 
 public final class CyclingListControllerBuilderImpl<T> extends AbstractControllerBuilderImpl<T> implements CyclingListControllerBuilder<T> {
     private Iterable<? extends T> values;
-    private Function<T, Component> formatter = null;
+    private ValueFormatter<T> formatter = null;
 
     public CyclingListControllerBuilderImpl(Option<T> option) {
         super(option);
@@ -31,13 +29,13 @@ public final class CyclingListControllerBuilderImpl<T> extends AbstractControlle
     }
 
     @Override
-    public CyclingListControllerBuilder<T> valueFormatter(Function<T, Component> formatter) {
+    public CyclingListControllerBuilder<T> formatValue(ValueFormatter<T> formatter) {
         this.formatter = formatter;
         return this;
     }
 
     @Override
     public Controller<T> build() {
-        return new CyclingListController<>(option, values, formatter);
+        return CyclingListController.createInternal(option, values, formatter);
     }
 }

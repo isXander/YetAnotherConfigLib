@@ -3,8 +3,10 @@ package dev.isxander.yacl3.config.v2.impl;
 import dev.isxander.yacl3.config.v2.api.FieldAccess;
 import dev.isxander.yacl3.config.v2.impl.autogen.YACLAutoGenException;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.util.Optional;
 
 public record ReflectionFieldAccess<T>(Field field, Object instance) implements FieldAccess<T> {
     @Override
@@ -38,5 +40,10 @@ public record ReflectionFieldAccess<T>(Field field, Object instance) implements 
     @Override
     public Class<T> typeClass() {
         return (Class<T>) field.getType();
+    }
+
+    @Override
+    public <A extends Annotation> Optional<A> getAnnotation(Class<A> annotationClass) {
+        return Optional.ofNullable(field.getAnnotation(annotationClass));
     }
 }

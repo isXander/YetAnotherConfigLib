@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui.controllers.string.number;
 
 import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.controller.ValueFormatter;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.AbstractWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
@@ -20,11 +21,11 @@ import java.util.function.Function;
  */
 public abstract class NumberFieldController<T extends Number> implements ISliderController<T>, IStringController<T> {
     private final Option<T> option;
-    private final Function<T, Component> displayFormatter;
+    private final ValueFormatter<T> displayFormatter;
 
     public NumberFieldController(Option<T> option, Function<T, Component> displayFormatter) {
         this.option = option;
-        this.displayFormatter = displayFormatter;
+        this.displayFormatter = displayFormatter::apply;
     }
 
     @Override
@@ -50,7 +51,7 @@ public abstract class NumberFieldController<T extends Number> implements ISlider
 
     @Override
     public Component formatValue() {
-        return displayFormatter.apply(option().pendingValue());
+        return displayFormatter.format(option().pendingValue());
     }
 
     @Override

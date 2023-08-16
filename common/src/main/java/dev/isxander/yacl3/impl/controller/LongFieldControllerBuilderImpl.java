@@ -3,6 +3,7 @@ package dev.isxander.yacl3.impl.controller;
 import dev.isxander.yacl3.api.Controller;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.controller.LongFieldControllerBuilder;
+import dev.isxander.yacl3.api.controller.ValueFormatter;
 import dev.isxander.yacl3.gui.controllers.slider.LongSliderController;
 import dev.isxander.yacl3.gui.controllers.string.number.LongFieldController;
 import net.minecraft.network.chat.Component;
@@ -12,7 +13,7 @@ import java.util.function.Function;
 public class LongFieldControllerBuilderImpl extends AbstractControllerBuilderImpl<Long> implements LongFieldControllerBuilder {
     private long min = Long.MIN_VALUE;
     private long max = Long.MAX_VALUE;
-    private Function<Long, Component> formatter = LongSliderController.DEFAULT_FORMATTER;
+    private ValueFormatter<Long> formatter = LongSliderController.DEFAULT_FORMATTER::apply;
 
     public LongFieldControllerBuilderImpl(Option<Long> option) {
         super(option);
@@ -38,13 +39,13 @@ public class LongFieldControllerBuilderImpl extends AbstractControllerBuilderImp
     }
 
     @Override
-    public LongFieldControllerBuilder valueFormatter(Function<Long, Component> formatter) {
+    public LongFieldControllerBuilder formatValue(ValueFormatter<Long> formatter) {
         this.formatter = formatter;
         return this;
     }
 
     @Override
     public Controller<Long> build() {
-        return new LongFieldController(option, min, max, formatter);
+        return LongFieldController.createInternal(option, min, max, formatter);
     }
 }

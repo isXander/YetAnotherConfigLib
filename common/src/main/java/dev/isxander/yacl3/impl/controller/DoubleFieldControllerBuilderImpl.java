@@ -3,6 +3,7 @@ package dev.isxander.yacl3.impl.controller;
 import dev.isxander.yacl3.api.Controller;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.controller.DoubleFieldControllerBuilder;
+import dev.isxander.yacl3.api.controller.ValueFormatter;
 import dev.isxander.yacl3.gui.controllers.slider.DoubleSliderController;
 import dev.isxander.yacl3.gui.controllers.string.number.DoubleFieldController;
 import net.minecraft.network.chat.Component;
@@ -12,7 +13,7 @@ import java.util.function.Function;
 public class DoubleFieldControllerBuilderImpl extends AbstractControllerBuilderImpl<Double> implements DoubleFieldControllerBuilder {
     private double min = Double.MIN_VALUE;
     private double max = Double.MAX_VALUE;
-    private Function<Double, Component> formatter = DoubleSliderController.DEFAULT_FORMATTER;
+    private ValueFormatter<Double> formatter = DoubleSliderController.DEFAULT_FORMATTER::apply;
 
     public DoubleFieldControllerBuilderImpl(Option<Double> option) {
         super(option);
@@ -38,13 +39,13 @@ public class DoubleFieldControllerBuilderImpl extends AbstractControllerBuilderI
     }
 
     @Override
-    public DoubleFieldControllerBuilder valueFormatter(Function<Double, Component> formatter) {
+    public DoubleFieldControllerBuilder formatValue(ValueFormatter<Double> formatter) {
         this.formatter = formatter;
         return this;
     }
 
     @Override
     public Controller<Double> build() {
-        return new DoubleFieldController(option, min, max, formatter);
+        return DoubleFieldController.createInternal(option, min, max, formatter);
     }
 }

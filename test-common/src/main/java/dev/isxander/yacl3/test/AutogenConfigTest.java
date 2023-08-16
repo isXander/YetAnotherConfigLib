@@ -12,6 +12,7 @@ import dev.isxander.yacl3.config.v2.api.autogen.Label;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.autogen.*;
+import dev.isxander.yacl3.gui.ValueFormatters;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -52,7 +53,9 @@ public class AutogenConfigTest {
     @SerialEntry public double testDouble = 0.1;
 
     @AutoGen(category = "test", group = "master_test")
-    @FloatSlider(min = 0.1f, max = 10.2f, step = 0.1f)
+    @FloatSlider(min = 0.0f, max = 1f, step = 0.01f)
+    @OverrideFormatter(ValueFormatters.PercentFormatter.class)
+    @OverrideName("A cool percentage.")
     @SerialEntry public float testFloat = 0.1f;
 
     @AutoGen(category = "test", group = "master_test")
