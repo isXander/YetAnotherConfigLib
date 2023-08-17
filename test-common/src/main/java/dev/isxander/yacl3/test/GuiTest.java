@@ -70,7 +70,7 @@ public class GuiTest {
                                                                 .append(Component.literal("e").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("e")))))
                                                                 .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://isxander.dev")))
                                                         )
-                                                        .webpImage(Path.of("D:\\Xander\\Code\\isXander\\Controlify\\src\\main\\resources\\assets\\controlify\\textures\\screenshots\\reach-around-placement.webp"), new ResourceLocation("yacl", "e.webp"))
+                                                        .webpImage(Path.of("C:\\Users\\xande\\Code\\Controlify\\src\\main\\resources\\assets\\controlify\\textures\\screenshots\\reach-around-placement.webp"), new ResourceLocation("yacl", "e.webp"))
                                                         .build())
                                                 .binding(
                                                         defaults.booleanToggle,

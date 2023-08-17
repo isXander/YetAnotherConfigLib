@@ -1,7 +1,11 @@
 package dev.isxander.yacl3.impl;
 
 import dev.isxander.yacl3.api.OptionDescription;
-import dev.isxander.yacl3.gui.ImageRenderer;
+import dev.isxander.yacl3.gui.image.ImageRenderer;
+import dev.isxander.yacl3.gui.image.ImageRendererManager;
+import dev.isxander.yacl3.gui.image.impl.AnimatedDynamicTextureImage;
+import dev.isxander.yacl3.gui.image.impl.DynamicTextureImage;
+import dev.isxander.yacl3.gui.image.impl.ResourceTextureImage;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -37,7 +41,7 @@ public record OptionDescriptionImpl(Component text, CompletableFuture<Optional<I
             Validate.isTrue(width > 0, "Width must be greater than 0!");
             Validate.isTrue(height > 0, "Height must be greater than 0!");
 
-            this.image = ImageRenderer.getOrMakeSync(image, () -> Optional.of(new ImageRenderer.TextureBacked(image, 0, 0, width, height, width, height)));
+            this.image = ImageRendererManager.registerImage(image, ResourceTextureImage.createFactory(image, 0, 0, width, height, width, height)).thenApply(Optional::of);
             imageUnset = false;
             return this;
         }
@@ -48,7 +52,7 @@ public record OptionDescriptionImpl(Component text, CompletableFuture<Optional<I
             Validate.isTrue(width > 0, "Width must be greater than 0!");
             Validate.isTrue(height > 0, "Height must be greater than 0!");
 
-            this.image = ImageRenderer.getOrMakeSync(image, () -> Optional.of(new ImageRenderer.TextureBacked(image, u, v, width, height, textureWidth, textureHeight)));
+            this.image = ImageRendererManager.registerImage(image, ResourceTextureImage.createFactory(image, u, v, width, height, textureWidth, textureHeight)).thenApply(Optional::of);
             imageUnset = false;
             return this;
         }
@@ -56,7 +60,8 @@ public record OptionDescriptionImpl(Component text, CompletableFuture<Optional<I
         @Override
         public Builder image(Path path, ResourceLocation uniqueLocation) {
             Validate.isTrue(imageUnset, "Image already set!");
-            this.image = ImageRenderer.getOrMakeAsync(uniqueLocation, () -> ImageRenderer.NativeImageBacked.createFromPath(path, uniqueLocation));
+
+            this.image = ImageRendererManager.registerImage(uniqueLocation, DynamicTextureImage.fromPath(path, uniqueLocation)).thenApply(Optional::of);
             imageUnset = false;
             return this;
         }
@@ -64,14 +69,8 @@ public record OptionDescriptionImpl(Component text, CompletableFuture<Optional<I
         @Override
         public Builder gifImage(ResourceLocation image) {
             Validate.isTrue(imageUnset, "Image already set!");
-            this.image = ImageRenderer.getOrMakeAsync(image, () -> {
-                try {
-                    return Optional.of(ImageRenderer.AnimatedNativeImageBacked.createGIFFromTexture(image));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return Optional.empty();
-                }
-            });
+
+            this.image = ImageRendererManager.registerImage(image, AnimatedDynamicTextureImage.createGIFFromTexture(image)).thenApply(Optional::of);
             imageUnset = false;
             return this;
         }
@@ -79,14 +78,8 @@ public record OptionDescriptionImpl(Component text, CompletableFuture<Optional<I
         @Override
         public Builder gifImage(Path path, ResourceLocation uniqueLocation) {
             Validate.isTrue(imageUnset, "Image already set!");
-            this.image = ImageRenderer.getOrMakeAsync(uniqueLocation, () -> {
-                try {
-                    return Optional.of(ImageRenderer.AnimatedNativeImageBacked.createGIF(new FileInputStream(path.toFile()), uniqueLocation));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return Optional.empty();
-                }
-            });
+
+            this.image = ImageRendererManager.registerImage(uniqueLocation, AnimatedDynamicTextureImage.createGIFFromPath(path, uniqueLocation)).thenApply(Optional::of);
             imageUnset = false;
             return this;
         }
@@ -94,14 +87,8 @@ public record OptionDescriptionImpl(Component text, CompletableFuture<Optional<I
         @Override
         public Builder webpImage(ResourceLocation image) {
             Validate.isTrue(imageUnset, "Image already set!");
-            this.image = ImageRenderer.getOrMakeAsync(image, () -> {
-                try {
-                    return Optional.of(ImageRenderer.AnimatedNativeImageBacked.createWEBPFromTexture(image));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return Optional.empty();
-                }
-            });
+
+            this.image = ImageRendererManager.registerImage(image, AnimatedDynamicTextureImage.createWEBPFromTexture(image)).thenApply(Optional::of);
             imageUnset = false;
             return this;
         }
@@ -109,14 +96,8 @@ public record OptionDescriptionImpl(Component text, CompletableFuture<Optional<I
         @Override
         public Builder webpImage(Path path, ResourceLocation uniqueLocation) {
             Validate.isTrue(imageUnset, "Image already set!");
-            this.image = ImageRenderer.getOrMakeAsync(uniqueLocation, () -> {
-                try {
-                    return Optional.of(ImageRenderer.AnimatedNativeImageBacked.createWEBP(new FileInputStream(path.toFile()), uniqueLocation));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return Optional.empty();
-                }
-            });
+
+            this.image = ImageRendererManager.registerImage(uniqueLocation, AnimatedDynamicTextureImage.createWEBPFromPath(path, uniqueLocation)).thenApply(Optional::of);
             imageUnset = false;
             return this;
         }
