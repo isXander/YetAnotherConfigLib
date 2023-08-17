@@ -3,7 +3,7 @@ package dev.isxander.yacl3.config.v2.impl.autogen;
 import dev.isxander.yacl3.config.v2.api.ConfigField;
 import dev.isxander.yacl3.config.v2.api.autogen.OptionAccess;
 import dev.isxander.yacl3.config.v2.api.autogen.OverrideImage;
-import dev.isxander.yacl3.gui.ImageRenderer;
+import dev.isxander.yacl3.gui.image.ImageRenderer;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;

@@ -2,7 +2,7 @@ package dev.isxander.yacl3.config.v2.api.autogen;
 
 import dev.isxander.yacl3.config.v2.api.ConfigField;
 import dev.isxander.yacl3.config.v2.impl.autogen.EmptyCustomImageFactory;
-import dev.isxander.yacl3.gui.ImageRenderer;
+import dev.isxander.yacl3.gui.image.ImageRenderer;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

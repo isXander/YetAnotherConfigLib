@@ -1,6 +1,6 @@
 package dev.isxander.yacl3.api;
 
-import dev.isxander.yacl3.gui.ImageRenderer;
+import dev.isxander.yacl3.gui.image.ImageRenderer;
 import dev.isxander.yacl3.impl.OptionDescriptionImpl;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;

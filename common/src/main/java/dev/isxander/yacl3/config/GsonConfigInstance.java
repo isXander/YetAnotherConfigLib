@@ -22,6 +22,20 @@ import java.util.function.UnaryOperator;
  *
  * @param <T> config data type
  * @deprecated upgrade to config v2 {@link dev.isxander.yacl3.config.v2.api.ConfigClassHandler} with {@link dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder}
+ *          <pre>
+ * {@code
+ * public class MyConfig {
+ *     public static ConfigClassHandler<MyConfig> HANDLER = ConfigClassHandler.createBuilder(MyConfig.class)
+ *             .id(new ResourceLocation("modid", "config"))
+ *             .serializer(config -> GsonConfigSerializerBuilder.create(config)
+ *                     .setPath(FabricLoader.getInstance().getConfigDir().resolve("my_mod.json")
+ *                     .build())
+ *             .build();
+ *
+ *     @SerialEntry public boolean myBoolean = true;
+ * }
+ * }
+ * </pre>
  */
 @Deprecated
 public class GsonConfigInstance<T> extends ConfigInstance<T> {
