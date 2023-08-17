@@ -2,6 +2,7 @@ package dev.isxander.yacl3.gui;
 
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.InputConstants;
+import dev.isxander.yacl3.gui.image.ImageRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.Font;
@@ -76,7 +77,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
         if (description.description().image().isDone()) {
             var image = description.description().image().join();
             if (image.isPresent()) {
-                y += image.get().render(graphics, getX(), y, getWidth()) + 5;
+                y += image.get().render(graphics, getX(), y, getWidth(), delta) + 5;
             }
         }
 
