@@ -3,7 +3,9 @@ package dev.isxander.yacl3.gui.controllers.dropdown;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class DropdownStringControllerElement extends AbstractDropdownControllerElement<String, String> {
 	private final DropdownStringController controller;
@@ -15,9 +17,17 @@ public class DropdownStringControllerElement extends AbstractDropdownControllerE
 
 	@Override
 	public List<String> getMatchingValues() {
-		return controller.getAllowedValues().stream()
+		var stream = controller.getAllowedValues().stream();
+		if (controller.allowMode == DropdownMode.ALLOW_ANY && !controller.getAllowedValues().contains(inputField)) {
+			stream = Stream.concat(Stream.of(inputField), stream);
+		}
+		return stream
 				.filter(this::matchingValue)
-				.sorted()
+				.sorted((s1, s2) -> {
+					if (s1.startsWith(inputField) && !s2.startsWith(inputField)) return -1;
+					if (!s1.startsWith(inputField) && s2.startsWith(inputField)) return 1;
+					return s1.compareTo(s2);
+				})
 				.toList();
 	}
 

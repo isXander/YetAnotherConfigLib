@@ -48,6 +48,8 @@ public class ConfigTest {
     @SerialEntry
     public String stringOptions = "Banana";
     @SerialEntry
+    public String stringSuggestions = "";
+    @SerialEntry
     public Item item = Items.OAK_LOG;
 
     @SerialEntry

@@ -3,15 +3,15 @@ package dev.isxander.yacl3.impl.controller;
 import dev.isxander.yacl3.api.Controller;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.controller.DropdownStringControllerBuilder;
+import dev.isxander.yacl3.gui.controllers.dropdown.DropdownMode;
 import dev.isxander.yacl3.gui.controllers.dropdown.DropdownStringController;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class DropdownStringControllerBuilderImpl extends StringControllerBuilderImpl implements DropdownStringControllerBuilder {
 	private List<String> values;
-	private boolean allowEmpty = false;
+	private DropdownMode allowMode = DropdownMode.ALLOW_VALUES;
 
 	public DropdownStringControllerBuilderImpl(Option<String> option) {
 		super(option);
@@ -30,19 +30,14 @@ public class DropdownStringControllerBuilderImpl extends StringControllerBuilder
 	}
 
 	@Override
-	public DropdownStringControllerBuilder allowEmpty(boolean allowEmpty) {
-		this.allowEmpty = allowEmpty;
+	public DropdownStringControllerBuilder allow(DropdownMode allow) {
+		this.allowMode = allow;
 		return this;
 	}
 
 	@Override
 	public Controller<String> build() {
-		if (allowEmpty && !values.contains("")) {
-			// We need to duplicate the list because it might have been passed in as an immutable list
-			values = new ArrayList<>(values);
-			values.add("");
-		}
-		return new DropdownStringController(option, values);
+		return new DropdownStringController(option, values, allowMode);
 	}
 
 }
