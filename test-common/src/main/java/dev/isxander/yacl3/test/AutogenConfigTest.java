@@ -54,8 +54,8 @@ public class AutogenConfigTest {
 
     @AutoGen(category = "test", group = "master_test")
     @FloatSlider(min = 0.0f, max = 1f, step = 0.01f)
-    @OverrideFormatter(ValueFormatters.PercentFormatter.class)
-    @OverrideName("A cool percentage.")
+    @CustomFormat(ValueFormatters.PercentFormatter.class)
+    @CustomName("A cool percentage.")
     @SerialEntry public float testFloat = 0.1f;
 
     @AutoGen(category = "test", group = "master_test")

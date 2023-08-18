@@ -18,6 +18,9 @@ public class LongSliderImpl extends SimpleOptionFactory<LongSlider, Long> {
                     String key = getTranslationKey(field, "fmt." + v);
                     if (Language.getInstance().has(key))
                         return Component.translatable(key);
+                    key = getTranslationKey(field, "fmt");
+                    if (Language.getInstance().has(key))
+                        return Component.translatable(key, v);
                     return Component.literal(Long.toString(v));
                 })
                 .range(annotation.min(), annotation.max())

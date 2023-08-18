@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface OverrideFormatter {
+public @interface CustomFormat {
     Class<? extends ValueFormatter<?>> value();
 }

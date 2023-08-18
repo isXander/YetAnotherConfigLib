@@ -30,8 +30,7 @@ public abstract class SimpleOptionFactory<A extends Annotation, T> implements Op
                 .controller(opt -> {
                     ControllerBuilder<T> builder = this.createController(annotation, field, optionAccess, opt);
 
-                    Optional<OverrideFormatter> customFormatter = field.access().getAnnotation(OverrideFormatter.class);
-                    AutoGenUtils.addCustomFormatterToController(builder, customFormatter, field.access());
+                    AutoGenUtils.addCustomFormatterToController(builder, field.access());
 
                     return builder;
                 })
@@ -47,8 +46,8 @@ public abstract class SimpleOptionFactory<A extends Annotation, T> implements Op
     protected abstract ControllerBuilder<T> createController(A annotation, ConfigField<T> field, OptionAccess storage, Option<T> option);
 
     protected MutableComponent name(A annotation, ConfigField<T> field, OptionAccess storage) {
-        Optional<OverrideName> customName = field.access().getAnnotation(OverrideName.class);
-        return Component.translatable(customName.map(OverrideName::value).orElse(this.getTranslationKey(field, null)));
+        Optional<CustomName> customName = field.access().getAnnotation(CustomName.class);
+        return Component.translatable(customName.map(CustomName::value).orElse(this.getTranslationKey(field, null)));
     }
 
     protected OptionDescription.Builder description(T value, A annotation, ConfigField<T> field, OptionAccess storage) {
@@ -65,14 +64,20 @@ public abstract class SimpleOptionFactory<A extends Annotation, T> implements Op
             }
         }
 
-        Optional<OverrideImage> imageOverrideOpt = field.access().getAnnotation(OverrideImage.class);
+        field.access().getAnnotation(CustomDescription.class).ifPresent(customDescription -> {
+            for (String line : customDescription.value()) {
+                builder.text(Component.translatable(line));
+            }
+        });
+
+        Optional<CustomImage> imageOverrideOpt = field.access().getAnnotation(CustomImage.class);
         if (imageOverrideOpt.isPresent()) {
-            OverrideImage imageOverride = imageOverrideOpt.get();
+            CustomImage imageOverride = imageOverrideOpt.get();
 
             if (!imageOverride.factory().equals(EmptyCustomImageFactory.class)) {
-                OverrideImage.CustomImageFactory<T> imageFactory;
+                CustomImage.CustomImageFactory<T> imageFactory;
                 try {
-                    imageFactory = (OverrideImage.CustomImageFactory<T>) AutoGenUtils.constructNoArgsClass(
+                    imageFactory = (CustomImage.CustomImageFactory<T>) AutoGenUtils.constructNoArgsClass(
                             imageOverride.factory(),
                             () -> "'%s': The factory class on @OverrideImage has no no-args constructor.".formatted(field.access().name()),
                             () -> "'%s': Failed to instantiate factory class %s.".formatted(field.access().name(), imageOverride.factory().getName())
@@ -81,7 +86,7 @@ public abstract class SimpleOptionFactory<A extends Annotation, T> implements Op
                     throw new YACLAutoGenException("'%s': The factory class on @OverrideImage is of incorrect type. Expected %s, got %s.".formatted(field.access().name(), field.access().type().getTypeName(), imageOverride.factory().getTypeParameters()[0].getName()));
                 }
 
-                builder.customImage(imageFactory.createImage(value, field, storage));
+                builder.customImage(imageFactory.createImage(value, field, storage).thenApply(Optional::of));
             } else if (!imageOverride.value().isEmpty()) {
                 String path = imageOverride.value();
                 ResourceLocation imageLocation = new ResourceLocation(field.parent().id().getNamespace(), path);

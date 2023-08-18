@@ -22,6 +22,9 @@ public class FloatSliderImpl extends SimpleOptionFactory<FloatSlider, Float> {
                         key = getTranslationKey(field, "fmt.max");
                     if (key != null && Language.getInstance().has(key))
                         return Component.translatable(key);
+                    key = getTranslationKey(field, "fmt");
+                    if (Language.getInstance().has(key))
+                        return Component.translatable(key, v);
                     return Component.translatable(String.format(annotation.format(), v));
                 })
                 .range(annotation.min(), annotation.max())
