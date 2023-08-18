@@ -72,7 +72,7 @@ public interface Option<T> {
     /**
      * Sets the pending value
      */
-    void requestSet(T value);
+    void requestSet(@NotNull T value);
 
     /**
      * Applies the pending value to the bound value.

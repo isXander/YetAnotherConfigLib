@@ -71,7 +71,7 @@ public class HiddenNameListOptionEntry<T> implements ListOptionEntry<T> {
     }
 
     @Override
-    public void requestSet(T value) {
+    public void requestSet(@NotNull T value) {
         option.requestSet(value);
     }
 

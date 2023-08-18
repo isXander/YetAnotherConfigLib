@@ -39,7 +39,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     public ListOptionImpl(@NotNull Component name, @NotNull OptionDescription description, @NotNull Binding<List<T>> binding, @NotNull Supplier<T> initialValue, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available, int minimumNumberOfEntries, int maximumNumberOfEntries, boolean insertEntriesAtEnd, Collection<BiConsumer<Option<List<T>>, List<T>>> listeners) {
         this.name = name;
         this.description = description;
-        this.binding = binding;
+        this.binding = new SafeBinding<>(binding);
         this.initialValue = initialValue;
         this.entryFactory = new EntryFactory(controllerFunction);
         this.entries = createEntries(binding().getValue());
@@ -131,7 +131,7 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     }
 
     @Override
-    public void requestSet(List<T> value) {
+    public void requestSet(@NotNull List<T> value) {
         entries.clear();
         entries.addAll(createEntries(value));
         onRefresh();

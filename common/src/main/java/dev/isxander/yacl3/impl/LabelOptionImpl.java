@@ -25,6 +25,8 @@ public final class LabelOptionImpl implements LabelOption {
     private final Binding<Component> binding;
 
     public LabelOptionImpl(Component label) {
+        Validate.notNull(label, "`label` must not be null");
+
         this.label = label;
         this.labelController = new LabelController(this);
         this.binding = Binding.immutable(label);
@@ -89,7 +91,7 @@ public final class LabelOptionImpl implements LabelOption {
     }
 
     @Override
-    public void requestSet(Component value) {
+    public void requestSet(@NotNull Component value) {
 
     }
 

@@ -79,7 +79,7 @@ public final class ListOptionEntryImpl<T> implements ListOptionEntry<T> {
     }
 
     @Override
-    public void requestSet(T value) {
+    public void requestSet(@NotNull T value) {
         binding.setValue(value);
     }
 

@@ -41,7 +41,7 @@ public final class OptionImpl<T> implements Option<T> {
             @NotNull Collection<BiConsumer<Option<T>, T>> listeners
     ) {
         this.name = name;
-        this.binding = binding;
+        this.binding = new SafeBinding<>(binding);
         this.available = available;
         this.flags = flags;
         this.listeners = new ArrayList<>(listeners);
@@ -108,7 +108,9 @@ public final class OptionImpl<T> implements Option<T> {
     }
 
     @Override
-    public void requestSet(T value) {
+    public void requestSet(@NotNull T value) {
+        Validate.notNull(value, "`value` cannot be null");
+
         pendingValue = value;
         this.triggerListeners(true);
     }

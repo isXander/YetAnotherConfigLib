@@ -93,7 +93,7 @@ public final class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
-    public void requestSet(BiConsumer<YACLScreen, ButtonOption> value) {
+    public void requestSet(@NotNull BiConsumer<YACLScreen, ButtonOption> value) {
         throw new UnsupportedOperationException();
     }
 
