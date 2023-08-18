@@ -58,9 +58,10 @@ public abstract class SimpleOptionFactory<A extends Annotation, T> implements Op
             builder.text(Component.translatable(key));
         } else {
             key += ".";
-            int i = 0;
-            while (Language.getInstance().has(key + i++)) {
+            int i = 1;
+            while (Language.getInstance().has(key + i)) {
                 builder.text(Component.translatable(key + i));
+                i++;
             }
         }
 
