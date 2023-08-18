@@ -31,6 +31,8 @@ public class OptionFactoryRegistry {
         registerOptionFactory(EnumCycler.class, new EnumCyclerImpl());
         registerOptionFactory(StringField.class, new StringFieldImpl());
         registerOptionFactory(ColorField.class, new ColorFieldImpl());
+        registerOptionFactory(Dropdown.class, new DropdownImpl());
+        registerOptionFactory(ItemField.class, new ItemFieldImpl());
         registerOptionFactory(Label.class, new LabelImpl());
         registerOptionFactory(ListGroup.class, new ListGroupImpl<>());
 

@@ -13,9 +13,12 @@ import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.autogen.*;
 import dev.isxander.yacl3.gui.ValueFormatters;
+import dev.isxander.yacl3.gui.controllers.dropdown.DropdownMode;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 import java.awt.*;
 import java.util.List;
@@ -30,7 +33,7 @@ public class AutogenConfigTest {
             .build();
 
     @AutoGen(category = "test", group = "master_test")
-    @MasterTickBox({ "testTickBox", "testBoolean", "testInt", "testDouble", "testFloat", "testLong", "testIntField", "testDoubleField", "testFloatField", "testLongField", "testEnum", "testColor", "testString" })
+    @MasterTickBox({ "testTickBox", "testBoolean", "testInt", "testDouble", "testFloat", "testLong", "testIntField", "testDoubleField", "testFloatField", "testLongField", "testEnum", "testColor", "testString", "testDropdown", "testItem" })
     @SerialEntry(comment = "This option disables all the other options in this group")
     public boolean masterOption = true;
 
@@ -89,6 +92,14 @@ public class AutogenConfigTest {
     @AutoGen(category = "test", group = "master_test")
     @StringField
     @SerialEntry public String testString = "Test string";
+
+    @AutoGen(category = "test", group = "master_test")
+    @Dropdown(values = {"Apple", "Banana", "Cherry", "Date"}, allow = DropdownMode.ALLOW_ANY)
+    @SerialEntry public String testDropdown = "Cherry";
+
+    @AutoGen(category = "test", group = "master_test")
+    @ItemField
+    @SerialEntry public Item testItem = Items.AZURE_BLUET;
 
     @AutoGen(category = "test", group = "misc") @Label
     private final Component testLabel = Component.literal("Test label");
