@@ -9,8 +9,8 @@ import java.util.List;
 
 public class DropdownStringController extends AbstractDropdownController<String> {
 
-	public DropdownStringController(Option<String> option, List<String> allowedValues, DropdownMode allowMode) {
-		super(option, allowedValues, allowMode);
+	public DropdownStringController(Option<String> option, List<String> allowedValues, boolean allowEmptyValue, boolean allowAnyValue) {
+		super(option, allowedValues, allowEmptyValue, allowAnyValue);
 	}
 
 	@Override

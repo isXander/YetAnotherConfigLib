@@ -5,7 +5,6 @@ import dev.isxander.yacl3.api.controller.*;
 import dev.isxander.yacl3.gui.RequireRestartScreen;
 import dev.isxander.yacl3.gui.controllers.*;
 import dev.isxander.yacl3.gui.controllers.cycling.EnumController;
-import dev.isxander.yacl3.gui.controllers.dropdown.DropdownMode;
 import dev.isxander.yacl3.gui.controllers.slider.DoubleSliderController;
 import dev.isxander.yacl3.gui.controllers.slider.FloatSliderController;
 import dev.isxander.yacl3.gui.controllers.slider.IntegerSliderController;
@@ -257,7 +256,7 @@ public class GuiTest {
                                                 )
                                                 .controller(opt -> DropdownStringControllerBuilder.create(opt)
                                                         .values("Apple", "Banana", "Cherry", "Date")
-                                                        .allow(DropdownMode.ALLOW_ANY)
+                                                        .allowAnyValue(true)
                                                 )
                                                 .build())
                                         .option(Option.<Item>createBuilder()

@@ -1,7 +1,5 @@
 package dev.isxander.yacl3.config.v2.api.autogen;
 
-import dev.isxander.yacl3.gui.controllers.dropdown.DropdownMode;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -29,10 +27,17 @@ public @interface Dropdown {
 	String[] values();
 
 	/**
-	 * TODO
 	 * Whether to accept the empty string as a valid value if it does not
 	 * already appear in {@link #values()}. If it already appears there,
 	 * the value of this does not apply.
 	 */
-	DropdownMode allow() default DropdownMode.ALLOW_VALUES;
+	boolean allowEmptyValue() default false;
+
+	/**
+	 * Whether to accept any string as a valid value. The list of strings
+	 * supplied in {@link #values()} are only used as dropdown suggestions.
+	 * Empty strings are still prohibited unless the empty string appears in
+	 * {@link #values()} or {@link #allowEmptyValue()}.
+	 */
+	boolean allowAnyValue() default false;
 }

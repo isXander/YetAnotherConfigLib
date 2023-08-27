@@ -13,7 +13,6 @@ import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.autogen.*;
 import dev.isxander.yacl3.gui.ValueFormatters;
-import dev.isxander.yacl3.gui.controllers.dropdown.DropdownMode;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -94,7 +93,7 @@ public class AutogenConfigTest {
     @SerialEntry public String testString = "Test string";
 
     @AutoGen(category = "test", group = "master_test")
-    @Dropdown(values = {"Apple", "Banana", "Cherry", "Date"}, allow = DropdownMode.ALLOW_ANY)
+    @Dropdown(values = {"Apple", "Banana", "Cherry", "Date"}, allowAnyValue = true)
     @SerialEntry public String testDropdown = "Cherry";
 
     @AutoGen(category = "test", group = "master_test")

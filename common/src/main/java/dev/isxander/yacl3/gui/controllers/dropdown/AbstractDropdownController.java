@@ -10,7 +10,8 @@ import java.util.List;
 public abstract class AbstractDropdownController<T> implements IStringController<T> {
 	protected final Option<T> option;
 	private final List<String> allowedValues;
-	public final DropdownMode allowMode;
+	public final boolean allowEmptyValue;
+	public final boolean allowAnyValue;
 
 	/**
 	 * Constructs a dropdown controller
@@ -18,14 +19,15 @@ public abstract class AbstractDropdownController<T> implements IStringController
 	 * @param option bound option
 	 * @param allowedValues possible values
 	 */
-	protected AbstractDropdownController(Option<T> option, List<String> allowedValues, DropdownMode allowMode) {
+	protected AbstractDropdownController(Option<T> option, List<String> allowedValues, boolean allowEmptyValue, boolean allowAnyValue) {
 		this.option = option;
 		this.allowedValues = allowedValues;
-		this.allowMode = allowMode;
+		this.allowEmptyValue = allowEmptyValue;
+		this.allowAnyValue = allowAnyValue;
 	}
 
 	protected AbstractDropdownController(Option<T> option) {
-		this(option, Collections.emptyList(), DropdownMode.ALLOW_VALUES);
+		this(option, Collections.emptyList(), false, false);
 	}
 
 	/**
@@ -36,22 +38,25 @@ public abstract class AbstractDropdownController<T> implements IStringController
 		return option;
 	}
 
-	private List<String> getAllowedValuesOr(String additionalEntry) {
-		if (allowedValues.contains(additionalEntry)) return allowedValues;
-		List<String> values = new ArrayList<>(allowedValues);
-		values.add(additionalEntry);
-		return values;
-	}
 	public List<String> getAllowedValues() {
-		return switch (allowMode) {
-			case ALLOW_VALUES -> allowedValues;
-			case ALLOW_EMPTY -> getAllowedValuesOr("");
-			case ALLOW_ANY -> getAllowedValuesOr(getString());
-		};
+		return getAllowedValues("");
+	}
+	public List<String> getAllowedValues(String inputField) {
+		List<String> values = new ArrayList<>(allowedValues);
+		if (allowEmptyValue && !values.contains("")) values.add("");
+		if (allowAnyValue && !inputField.isBlank() && !allowedValues.contains(inputField)) {
+			values.add(inputField);
+		}
+		String currentValue = getString();
+		if (allowAnyValue && !allowedValues.contains(currentValue)) {
+			values.add(currentValue);
+		}
+		return values;
 	}
 
 	public boolean isValueValid(String value) {
-		return allowMode == DropdownMode.ALLOW_ANY || getAllowedValues().contains(value);
+		if (value.isBlank()) return allowEmptyValue;
+		return allowAnyValue || getAllowedValues().contains(value);
 	}
 
 	protected String getValidValue(String value) {
@@ -59,11 +64,8 @@ public abstract class AbstractDropdownController<T> implements IStringController
 	}
 	protected String getValidValue(String value, int offset) {
 		if (offset == -1) return getString();
-		List<String> activeValues;
-		if (allowMode == DropdownMode.ALLOW_ANY) activeValues = getAllowedValuesOr(value);
-		else activeValues = getAllowedValues();
 
-		return activeValues.stream()
+		return getAllowedValues(value).stream()
 				.filter(val -> val.toLowerCase().contains(value.toLowerCase()))
 				.sorted((s1, s2) -> {
 					if (s1.startsWith(value) && !s2.startsWith(value)) return -1;

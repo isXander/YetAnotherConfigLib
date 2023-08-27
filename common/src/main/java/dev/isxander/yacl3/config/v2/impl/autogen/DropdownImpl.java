@@ -13,6 +13,7 @@ public class DropdownImpl extends SimpleOptionFactory<Dropdown, String> {
 	protected ControllerBuilder<String> createController(Dropdown annotation, ConfigField<String> field, OptionAccess storage, Option<String> option) {
 		return DropdownStringControllerBuilder.create(option)
 				.values(annotation.values())
-				.allow(annotation.allow());
+				.allowEmptyValue(annotation.allowEmptyValue())
+				.allowAnyValue(annotation.allowAnyValue());
 	}
 }
