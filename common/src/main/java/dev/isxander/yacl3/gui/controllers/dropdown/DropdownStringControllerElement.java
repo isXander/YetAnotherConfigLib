@@ -3,7 +3,6 @@ package dev.isxander.yacl3.gui.controllers.dropdown;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class DropdownStringControllerElement extends AbstractDropdownControllerElement<String, String> {
@@ -15,7 +14,7 @@ public class DropdownStringControllerElement extends AbstractDropdownControllerE
 	}
 
 	@Override
-	public List<String> getMatchingValues() {
+	public List<String> computeMatchingValues() {
 		return controller.getAllowedValues(inputField).stream()
 				.filter(this::matchingValue)
 				.sorted((s1, s2) -> {

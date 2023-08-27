@@ -9,11 +9,18 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class ItemControllerElement extends AbstractDropdownControllerElement<Item, ResourceLocation> {
 	private final ItemController itemController;
+	protected Item currentItem = null;
+	protected Map<ResourceLocation, Item> matchingItems = new HashMap<>();
+
 
 	public ItemControllerElement(ItemController control, YACLScreen screen, Dimension<Integer> dim) {
 		super(control, screen, dim);
@@ -26,21 +33,25 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 		setDimension(getDimension().withWidth(getDimension().width() - getDecorationPadding()));
 		super.drawValueText(graphics, mouseX, mouseY, delta);
 		setDimension(oldDimension);
-		if (ItemRegistryHelper.isRegisteredItem(inputField)) {
-			graphics.renderFakeItem(new ItemStack(ItemRegistryHelper.getItemFromName(inputField)), getDimension().xLimit() - getXPadding() - getDecorationPadding() + 2, getDimension().y() + 2);
+		if (currentItem != null) {
+			graphics.renderFakeItem(new ItemStack(currentItem), getDimension().xLimit() - getXPadding() - getDecorationPadding() + 2, getDimension().y() + 2);
 		}
 	}
 
 	@Override
-	public List<ResourceLocation> getMatchingValues() {
-		return ItemRegistryHelper.getMatchingItemIdentifiers(inputField).toList();
+	public List<ResourceLocation> computeMatchingValues() {
+		List<ResourceLocation> identifiers = ItemRegistryHelper.getMatchingItemIdentifiers(inputField).toList();
+		currentItem = ItemRegistryHelper.getItemFromName(inputField, null);
+		for (ResourceLocation identifier : identifiers) {
+			matchingItems.put(identifier, BuiltInRegistries.ITEM.get(identifier));
+		}
+		return identifiers;
 	}
 
 	@Override
 	protected void renderDropdownEntry(GuiGraphics graphics, ResourceLocation identifier, int n) {
 		super.renderDropdownEntry(graphics, identifier, n);
-		Item item = BuiltInRegistries.ITEM.get(identifier);
-		graphics.renderFakeItem(new ItemStack(item), getDimension().xLimit() - getDecorationPadding() + 2, getDimension().y() + n * getDimension().height() + 4);
+		graphics.renderFakeItem(new ItemStack(matchingItems.get(identifier)), getDimension().xLimit() - getDecorationPadding() + 2, getDimension().y() + n * getDimension().height() + 4);
 	}
 
 	@Override

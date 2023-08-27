@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class AbstractDropdownControllerElement<T, U> extends StringControllerElement {
 	public static final int MAX_SHOWN_NUMBER_OF_ITEMS = 7;
@@ -20,10 +21,13 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 	// Stores the current selection position. The item at this position in the dropdown list will be chosen as the
 	// accepted value when the element is closed.
 	protected int selectedIndex = 0;
+	// Stores a cached list of matching values
+	protected List<U> matchingValues = null;
 
 	public AbstractDropdownControllerElement(AbstractDropdownController<T> control, YACLScreen screen, Dimension<Integer> dim) {
 		super(control, screen, dim, false);
 		this.dropdownController = control;
+		this.dropdownController.option.addListener((opt, val) -> this.matchingValues = this.computeMatchingValues());
 	}
 
 	public void showDropdown() {
@@ -38,6 +42,7 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 
 	public void ensureValidValue() {
 		inputField = dropdownController.getValidValue(inputField, selectedIndex);
+		this.matchingValues = this.computeMatchingValues();
 	}
 
 	@Override
@@ -133,10 +138,19 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 	}
 
 	public int getDropdownLength() {
-		return getMatchingValues().size();
+		return matchingValues.size();
 	}
 
-	public abstract List<U> getMatchingValues();
+	@Override
+	public boolean modifyInput(Consumer<StringBuilder> builder) {
+		boolean success = super.modifyInput(builder);
+		if (success) {
+			this.matchingValues = this.computeMatchingValues();
+		}
+		return success;
+	}
+
+	public abstract List<U> computeMatchingValues();
 
 	public boolean matchingValue(String value) {
 		return value.toLowerCase().contains(inputField.toLowerCase());
@@ -144,6 +158,8 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+		if (matchingValues == null) matchingValues = computeMatchingValues();
+		
 		super.render(graphics, mouseX, mouseY, delta);
 
 		if (inputFieldFocused && dropdownVisible) {
@@ -156,18 +172,17 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 	}
 
 	public void renderDropdown(GuiGraphics graphics) {
-		List<U> options = getMatchingValues();
-		if (options.size() == 0) return;
+		if (matchingValues.size() == 0) return;
 		// Limit the visible options to allow scrolling through the suggestion list
 		int begin = Math.max(0, selectedIndex - MAX_SHOWN_NUMBER_OF_ITEMS / 2);
 		int end = begin + MAX_SHOWN_NUMBER_OF_ITEMS;
-		if (end >= options.size()) {
-			end = options.size();
+		if (end >= matchingValues.size()) {
+			end = matchingValues.size();
 			begin = Math.max(0, end - MAX_SHOWN_NUMBER_OF_ITEMS);
 		}
 
 		renderDropdownBackground(graphics, end - begin);
-		if (options.size() >= 1) {
+		if (matchingValues.size() >= 1) {
 			// Highlight the currently selected element
 			graphics.renderOutline(
 					getDimension().x(),
@@ -179,7 +194,7 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 
 		int n = 1;
 		for (int i = begin; i < end; ++i) {
-			renderDropdownEntry(graphics, options.get(i), n);
+			renderDropdownEntry(graphics, matchingValues.get(i), n);
 			++n;
 		}
 	}
