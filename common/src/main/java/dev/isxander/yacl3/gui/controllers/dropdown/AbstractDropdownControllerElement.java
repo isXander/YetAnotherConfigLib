@@ -6,10 +6,12 @@ import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.string.StringControllerElement;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -184,12 +186,13 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 		renderDropdownBackground(graphics, end - begin);
 		if (matchingValues.size() >= 1) {
 			// Highlight the currently selected element
-			graphics.renderOutline(
-					getDimension().x(),
-					getDimension().yLimit() + 2 + getDimension().height() * (selectedIndex - begin),
-					getDimension().width(),
-					getDimension().height(),
-					-1);
+			graphics.setColor(0.0f, 0.0f, 0.0f, 0.5f);
+			int x = getDimension().x();
+			int y = getDimension().yLimit() + 2 + getDimension().height() * (selectedIndex - begin);
+			graphics.fill(x, y, x + getDimension().width(), y + getDimension().height(), -1);
+			graphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+			graphics.renderOutline(x, y, getDimension().width(), getDimension().height(), -1);
+
 		}
 
 		int n = 1;
@@ -199,9 +202,20 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 		}
 	}
 
+	protected int getDropdownEntryPadding() {
+		return 0;
+	}
+
 	protected void renderDropdownEntry(GuiGraphics graphics, U value, int n) {
-		Component text = shortenString(getString(value));
-		graphics.drawString(textRenderer, text, getDimension().xLimit() - textRenderer.width(text) - getDecorationPadding(), getTextY() + n * getDimension().height() + 2, -1, true);
+		String entry = getString(value);
+		int color = -1;
+		Component text;
+		if (entry.isBlank()) {
+			text = Component.translatable("yacl.control.text.blank").withStyle(ChatFormatting.GRAY);
+		} else {
+			text = shortenString(entry);
+		}
+		graphics.drawString(textRenderer, text, getDimension().xLimit() - textRenderer.width(text) - getDecorationPadding() - getDropdownEntryPadding(), getTextY() + n * getDimension().height() + 2, color, true);
 	}
 
 	public abstract String getString(U object);

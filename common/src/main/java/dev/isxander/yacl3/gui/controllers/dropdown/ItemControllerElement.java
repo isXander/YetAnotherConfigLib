@@ -51,7 +51,7 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 	@Override
 	protected void renderDropdownEntry(GuiGraphics graphics, ResourceLocation identifier, int n) {
 		super.renderDropdownEntry(graphics, identifier, n);
-		graphics.renderFakeItem(new ItemStack(matchingItems.get(identifier)), getDimension().xLimit() - getDecorationPadding() + 2, getDimension().y() + n * getDimension().height() + 4);
+		graphics.renderFakeItem(new ItemStack(matchingItems.get(identifier)), getDimension().xLimit() - getDecorationPadding() - 2, getDimension().y() + n * getDimension().height() + 4);
 	}
 
 	@Override
@@ -59,8 +59,14 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 		return BuiltInRegistries.ITEM.get(identifier).toString();
 	}
 
+	@Override
 	protected int getDecorationPadding() {
-		return 20;
+		return 16;
+	}
+
+	@Override
+	protected int getDropdownEntryPadding() {
+		return 4;
 	}
 
 	@Override
