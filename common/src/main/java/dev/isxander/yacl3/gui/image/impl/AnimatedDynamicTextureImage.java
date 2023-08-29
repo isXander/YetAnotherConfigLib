@@ -2,14 +2,15 @@ package dev.isxander.yacl3.gui.image.impl;
 
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
 import dev.isxander.yacl3.gui.image.ImageRendererFactory;
-import dev.isxander.yacl3.impl.utils.YACLConstants;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -50,7 +51,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
     }
 
     @Override
-    public int render(GuiGraphics graphics, int x, int y, int renderWidth, float tickDelta) {
+    public int render(PoseStack pose, int x, int y, int renderWidth, float tickDelta) {
         if (image == null) return 0;
 
         float ratio = renderWidth / (float)frameWidth;
@@ -59,17 +60,19 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         int currentCol = currentFrame % packCols;
         int currentRow = (int) Math.floor(currentFrame / (double)packCols);
 
-        graphics.pose().pushPose();
-        graphics.pose().translate(x, y, 0);
-        graphics.pose().scale(ratio, ratio, 1);
-        graphics.blit(
-                uniqueLocation,
+        RenderSystem.setShaderTexture(0, uniqueLocation);
+
+        pose.pushPose();
+        pose.translate(x, y, 0);
+        pose.scale(ratio, ratio, 1);
+        GuiComponent.blit(
+                pose,
                 0, 0,
                 frameWidth * currentCol, frameHeight * currentRow,
                 frameWidth, frameHeight,
                 this.width, this.height
         );
-        graphics.pose().popPose();
+        pose.popPose();
 
         if (frameCount > 1) {
             double timeMS = Blaze3D.getTime() * 1000;

@@ -2,10 +2,11 @@ package dev.isxander.yacl3.gui.image.impl;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl3.gui.image.ImageRenderer;
 import dev.isxander.yacl3.gui.image.ImageRendererFactory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
@@ -33,17 +34,21 @@ public class DynamicTextureImage implements ImageRenderer {
     }
 
     @Override
-    public int render(GuiGraphics graphics, int x, int y, int renderWidth, float tickDelta) {
+    public int render(PoseStack pose, int x, int y, int renderWidth, float tickDelta) {
         if (image == null) return 0;
 
         float ratio = renderWidth / (float)this.width;
         int targetHeight = (int) (this.height * ratio);
 
-        graphics.pose().pushPose();
-        graphics.pose().translate(x, y, 0);
-        graphics.pose().scale(ratio, ratio, 1);
-        graphics.blit(uniqueLocation, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
-        graphics.pose().popPose();
+        RenderSystem.setShaderTexture(0, uniqueLocation);
+
+        pose.pushPose();
+        pose.translate(x, y, 0);
+        pose.scale(ratio, ratio, 1);
+
+        GuiComponent.blit(pose, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
+
+        pose.popPose();
 
         return targetHeight;
     }

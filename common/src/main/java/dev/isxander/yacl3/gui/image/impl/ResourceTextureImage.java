@@ -1,8 +1,10 @@
 package dev.isxander.yacl3.gui.image.impl;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl3.gui.image.ImageRenderer;
 import dev.isxander.yacl3.gui.image.ImageRendererFactory;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.resources.ResourceLocation;
 
 public class ResourceTextureImage implements ImageRenderer {
@@ -22,15 +24,17 @@ public class ResourceTextureImage implements ImageRenderer {
     }
 
     @Override
-    public int render(GuiGraphics graphics, int x, int y, int renderWidth, float tickDelta) {
+    public int render(PoseStack pose, int x, int y, int renderWidth, float tickDelta) {
         float ratio = renderWidth / (float)this.width;
         int targetHeight = (int) (this.height * ratio);
 
-        graphics.pose().pushPose();
-        graphics.pose().translate(x, y, 0);
-        graphics.pose().scale(ratio, ratio, 1);
-        graphics.blit(location, 0, 0, this.u, this.v, this.width, this.height, this.textureWidth, this.textureHeight);
-        graphics.pose().popPose();
+        RenderSystem.setShaderTexture(0, location);
+
+        pose.pushPose();
+        pose.translate(x, y, 0);
+        pose.scale(ratio, ratio, 1);
+        GuiComponent.blit(pose, 0, 0, this.u, this.v, this.width, this.height, this.textureWidth, this.textureHeight);
+        pose.popPose();
 
         return targetHeight;
     }

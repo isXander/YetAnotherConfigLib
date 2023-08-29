@@ -1,9 +1,9 @@
 package dev.isxander.yacl3.gui.image;
 
-import net.minecraft.client.gui.GuiGraphics;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 public interface ImageRenderer {
-    int render(GuiGraphics graphics, int x, int y, int renderWidth, float tickDelta);
+    int render(PoseStack graphics, int x, int y, int renderWidth, float tickDelta);
 
     void close();
 
