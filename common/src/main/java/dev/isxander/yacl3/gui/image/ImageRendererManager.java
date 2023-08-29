@@ -15,6 +15,10 @@ public class ImageRendererManager {
     private static final Queue<FactoryIDPair<?>> CREATION_QUEUE = new ConcurrentLinkedQueue<>();
 
     public static <T extends ImageRenderer> CompletableFuture<T> registerImage(ResourceLocation id, ImageRendererFactory<T> factory) {
+        if (IMAGE_CACHE.containsKey(id)) {
+            return (CompletableFuture<T>) IMAGE_CACHE.get(id);
+        }
+
         SINGLE_THREAD_EXECUTOR.submit(() -> {
             try {
                 ImageRendererFactory.ImageSupplier<T> supplier = factory.prepareImage();
