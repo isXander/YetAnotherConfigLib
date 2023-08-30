@@ -1,12 +1,16 @@
 package dev.isxander.yacl3.config.v2.impl.serializer;
 
 import com.google.gson.*;
+import dev.isxander.yacl3.config.GsonConfigInstance;
 import dev.isxander.yacl3.config.v2.api.*;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
+import dev.isxander.yacl3.gui.utils.ItemRegistryHelper;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 import dev.isxander.yacl3.platform.YACLPlatform;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.world.item.Item;
 import org.quiltmc.parsers.json.JsonReader;
 import org.quiltmc.parsers.json.JsonWriter;
 import org.quiltmc.parsers.json.gson.GsonReader;
@@ -129,6 +133,18 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
         }
     }
 
+    public static class ItemTypeAdapter implements JsonSerializer<Item>, JsonDeserializer<Item> {
+        @Override
+        public Item deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            return ItemRegistryHelper.getItemFromName(jsonElement.getAsString());
+        }
+
+        @Override
+        public JsonElement serialize(Item item, Type type, JsonSerializationContext jsonSerializationContext) {
+            return new JsonPrimitive(BuiltInRegistries.ITEM.getKey(item).toString());
+        }
+    }
+
     public static class Builder<T> implements GsonConfigSerializerBuilder<T> {
         private final ConfigClassHandler<T> config;
         private Path path;
@@ -139,6 +155,7 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
                 .registerTypeHierarchyAdapter(Component.class, new Component.Serializer())
                 .registerTypeHierarchyAdapter(Style.class, new Style.Serializer())
                 .registerTypeHierarchyAdapter(Color.class, new ColorTypeAdapter())
+                .registerTypeHierarchyAdapter(Item.class, new ItemTypeAdapter())
                 .setPrettyPrinting();
 
         public Builder(ConfigClassHandler<T> config) {

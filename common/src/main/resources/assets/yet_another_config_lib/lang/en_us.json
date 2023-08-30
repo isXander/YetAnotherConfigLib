@@ -4,6 +4,8 @@
 
   "yacl.control.action.execute": "EXECUTE",
 
+  "yacl.control.text.blank": "<blank>",
+
   "yacl.gui.save": "Save Changes",
   "yacl.gui.save.tooltip": "Makes the changes made permanent.",
   "yacl.gui.finished.tooltip": "Closes the GUI.",
