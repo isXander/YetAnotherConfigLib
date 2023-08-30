@@ -1,24 +1,18 @@
 package dev.isxander.yacl3.gui.controllers;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.isxander.yacl3.api.Option;
-import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
 import dev.isxander.yacl3.gui.AbstractWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
-import dev.isxander.yacl3.gui.controllers.slider.ISliderController;
-import dev.isxander.yacl3.gui.controllers.slider.IntegerSliderController;
 import dev.isxander.yacl3.gui.controllers.string.IStringController;
 import dev.isxander.yacl3.gui.controllers.string.StringControllerElement;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
-import org.joml.Matrix4f;
 
 import java.awt.*;
 import java.util.List;
@@ -106,30 +100,18 @@ public class ColorController implements IStringController<Color> {
         return new ColorControllerElement(this, screen, widgetDimension);
     }
 
-
     public static class ColorControllerElement extends StringControllerElement {
         private final ColorController colorController;
 
         protected MutableDimension<Integer> colorPreviewDim;
-        protected MutableDimension<Integer> colorPickerDim;
-        private Dimension<Integer> sliderBounds;
-
         private final List<Character> allowedChars;
         private boolean mouseDown = false;
         private boolean colorPickerVisible = false;
-        private float interpolation;
 
         public ColorControllerElement(ColorController control, YACLScreen screen, Dimension<Integer> dim) {
             super(control, screen, dim, true);
             this.colorController = control;
             this.allowedChars = ImmutableList.of('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
-        }
-
-        @Override
-        public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-            super.render(graphics, mouseX, mouseY, delta);
-
-            calculateInterpolation();
         }
 
         @Override
@@ -139,53 +121,8 @@ public class ColorController implements IStringController<Color> {
                 colorPreviewDim.move(-inputFieldBounds.width() - 8, -2);
                 colorPreviewDim.expand(4, 4);
                 if(colorPickerVisible) {
-                    //FIXME - If the color picker is towards the top of the category, it will appear above the color controller instead of below
-                    //FIXME - The color preview doesn't have enough room for the translation string
-                    colorPickerDim.move(-inputFieldBounds.width() - 40, -20);
-                    int x = colorPickerDim.x() - 30;
-                    int y = colorPickerDim.y() - 35;
-                    int outline = 1; //"outline" width/height offset
-
-                    //Main color preview
-                    //A single pixel is subtracted to allow for the "outline"
-                    //The outline is really just a big black box behind the other drawn items
-                    graphics.fill(x, y, colorPickerDim.xLimit() - outline, colorPickerDim.yLimit() + 1, 2, colorController.option().pendingValue().getRGB());
-
-                    //HSL gradient
-                    int gradientX = colorPickerDim.xLimit();
-                    int gradientY = colorPickerDim.y() - 35;
-                    int gradientXLimit = inputFieldBounds.xLimit() + 5 - outline;
-                    int gradientYLimit = colorPickerDim.yLimit() + 1;
-
-                    //White to pending color value, left to right
-                    //Gets the hue of the pending value
-                    Color pendingValue = colorController.option().pendingValue();
-                    float[] HSL = Color.RGBtoHSB(pendingValue.getRed(), pendingValue.getGreen(), pendingValue.getBlue(), null);
-                    float hue = HSL[0];
-                    float RGB = Color.HSBtoRGB(hue, 1, 1);
-
-                    fillSidewaysGradient(graphics, gradientX, gradientY, gradientXLimit, gradientYLimit, 2, 0xFFFFFFFF, (int) RGB);
-
-                    //Transparent to black, top to bottom
-                    graphics.fillGradient(gradientX, gradientY, gradientXLimit, gradientYLimit, 3,0x00000000, 0xFF000000);
-
-                    //Rainbow gradient
-                    int rainbowY = colorPickerDim.y() + 10;
-                    int rainbowYLimit = colorPickerDim.yLimit() + 8;
-                    drawRainbowGradient(graphics, x, rainbowY, gradientXLimit, rainbowYLimit, 2);
-
-                    //RGB Slider
-                    //TODO - Actually work on this
-                    //Square
-                    graphics.fill(getThumbX() - getThumbWidth() / 2 + 1, sliderBounds.y() + 1, getThumbX() + getThumbWidth() / 2 + 1, sliderBounds.yLimit() + 1, 0xFF404040);
-                    //Square shadow
-                    graphics.fill(getThumbX() - getThumbWidth() / 2, sliderBounds.y(), getThumbX() + getThumbWidth() / 2, sliderBounds.yLimit(), -1);
-
-
-                    //Outline
-                    //Simply draws a huge black box
-                    //Space was added between the main color preview and the gradient
-                    graphics.fill(x - outline, y - outline, gradientXLimit + outline, rainbowYLimit + outline, 1, 0xFF000000);
+                    AbstractWidget colorPicker = new ColorPickerElement(this.colorController, this.screen, this.getDimension());
+                    colorPicker.render(graphics, mouseX, mouseY, delta);
                 }
                 super.drawValueText(graphics, mouseX, mouseY, delta);
             }
@@ -264,14 +201,8 @@ public class ColorController implements IStringController<Color> {
         public void setDimension(Dimension<Integer> dim) {
             super.setDimension(dim);
 
-            int trackWidth = dim.width() / 3;
-            if (optionNameString.isEmpty())
-                trackWidth = dim.width() / 2;
-
             int previewSize = (dim.height() - getYPadding() * 2) / 2;
             colorPreviewDim = Dimension.ofInt(dim.xLimit() - getXPadding() - previewSize, dim.centerY() - previewSize / 2, previewSize, previewSize);
-            colorPickerDim = Dimension.ofInt(dim.xLimit() - getXPadding() - previewSize, dim.centerY() - previewSize / 2, previewSize, previewSize);
-            sliderBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - getThumbWidth() / 2 - trackWidth, dim.centerY() - 5, trackWidth, 10);
         }
 
         @Override
@@ -336,15 +267,99 @@ public class ColorController implements IStringController<Color> {
 
         @Override
         public boolean isMouseOver(double mouseX, double mouseY) {
-            int i = colorPickerDim.x() - inputFieldBounds.width() - 70;
-            int i1 = colorPickerDim.y() - 55;
-            int i2 = inputFieldBounds.xLimit() + 5;
-            int i3 = colorPickerDim.yLimit();
-            if(colorPickerVisible && mouseX >= i && mouseX <= i2 && mouseY >= i1 && mouseY <= i3) {
+            int x = colorPreviewDim.x() - inputFieldBounds.width() - 70;
+            int y = colorPreviewDim.y() - 55;
+            int xLimit = inputFieldBounds.xLimit() + 5;
+            int yLimit = colorPreviewDim.yLimit();
+            if(colorPickerVisible && mouseX >= x && mouseX <= xLimit && mouseY >= y && mouseY <= yLimit) {
                 mouseDown = true;
             }
             //FIXME - Color picker "z fighting" options it is above is causing issues closing the color picker
             return super.isMouseOver(mouseX, mouseY) || mouseDown || focused;
+        }
+    }
+
+    public static class ColorPickerElement extends StringControllerElement {
+        private final ColorController colorController;
+        protected Dimension<Integer> inputFieldBounds;
+        protected MutableDimension<Integer> colorPickerDim;
+        private Dimension<Integer> sliderBounds;
+        private float interpolation;
+
+        public ColorPickerElement(ColorController control, YACLScreen screen, Dimension<Integer> dim) {
+            super(control, screen, dim, true);
+            this.colorController = control;
+        }
+
+        @Override
+        public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+            super.render(graphics, mouseX, mouseY, delta);
+
+            //FIXME - If the color picker is towards the top of the category, it will appear above the color controller instead of below
+            //FIXME - The color preview doesn't have enough room for the translation string
+            colorPickerDim.move(-inputFieldBounds.width() - 40, -20);
+            int x = colorPickerDim.x() - 30;
+            int y = colorPickerDim.y() - 35;
+            int outline = 1; //"outline" width/height offset
+
+            //Main color preview
+            //A single pixel is subtracted to allow for the "outline"
+            //The outline is really just a big black box behind the other drawn items
+            graphics.fill(x, y, colorPickerDim.xLimit() - outline, colorPickerDim.yLimit() + 1, 2, colorController.option().pendingValue().getRGB());
+
+            //HSL gradient
+            int gradientX = colorPickerDim.xLimit();
+            int gradientY = colorPickerDim.y() - 35;
+            int gradientXLimit = inputFieldBounds.xLimit() + 5 - outline;
+            int gradientYLimit = colorPickerDim.yLimit() + 1;
+
+            //White to pending color value, left to right
+            //Gets the hue of the pending value
+            Color pendingValue = colorController.option().pendingValue();
+            float[] HSL = Color.RGBtoHSB(pendingValue.getRed(), pendingValue.getGreen(), pendingValue.getBlue(), null);
+            float hue = HSL[0];
+            float RGB = Color.HSBtoRGB(hue, 1, 1);
+
+            fillSidewaysGradient(graphics, gradientX, gradientY, gradientXLimit, gradientYLimit, 2, 0xFFFFFFFF, (int) RGB);
+
+            //Transparent to black, top to bottom
+            graphics.fillGradient(gradientX, gradientY, gradientXLimit, gradientYLimit, 3,0x00000000, 0xFF000000);
+
+            //Rainbow gradient
+            int rainbowY = colorPickerDim.y() + 10;
+            int rainbowYLimit = colorPickerDim.yLimit() + 8;
+            drawRainbowGradient(graphics, x, rainbowY, gradientXLimit, rainbowYLimit, 2);
+
+            //RGB Slider
+            //TODO - Actually work on this
+            //Square
+//            graphics.fill(getThumbX() - getThumbWidth() / 2 + 1, sliderBounds.y() + 1, getThumbX() + getThumbWidth() / 2 + 1, sliderBounds.yLimit() + 1, 0xFF404040);
+            //Square shadow
+//            graphics.fill(getThumbX() - getThumbWidth() / 2, sliderBounds.y(), getThumbX() + getThumbWidth() / 2, sliderBounds.yLimit(), -1);
+
+
+            //Outline
+            //Simply draws a huge black box
+            //Space was added between the main color preview and the gradient
+            graphics.fill(x - outline, y - outline, gradientXLimit + outline, rainbowYLimit + outline, 1, 0xFF000000);
+
+            calculateInterpolation();
+        }
+
+        @Override
+        public void setDimension(Dimension<Integer> dim) {
+            super.setDimension(dim);
+
+            int trackWidth = dim.width() / 3;
+            if (optionNameString.isEmpty())
+                trackWidth = dim.width() / 2;
+
+            int previewSize = (dim.height() - getYPadding() * 2) / 2;
+            colorPickerDim = Dimension.ofInt(dim.xLimit() - getXPadding() - previewSize, dim.centerY() - previewSize / 2, previewSize, previewSize);
+            sliderBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - getThumbWidth() / 2 - trackWidth, dim.centerY() - 5, trackWidth, 10);
+
+            int width = Math.max(6, Math.min(textRenderer.width(getValueText()), getUnshiftedLength()));
+            inputFieldBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - width, dim.centerY() - textRenderer.lineHeight / 2, width, textRenderer.lineHeight);
         }
 
         //SLIDER related overrides
