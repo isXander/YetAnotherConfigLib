@@ -15,6 +15,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 
 import java.awt.*;
+import java.awt.image.ColorModel;
 import java.util.List;
 
 /**
@@ -284,7 +285,6 @@ public class ColorController implements IStringController<Color> {
         protected Dimension<Integer> inputFieldBounds;
         protected MutableDimension<Integer> colorPickerDim;
         private Dimension<Integer> sliderBounds;
-        private float interpolation;
 
         public ColorPickerElement(ColorController control, YACLScreen screen, Dimension<Integer> dim) {
             super(control, screen, dim, true);
@@ -314,10 +314,7 @@ public class ColorController implements IStringController<Color> {
             int gradientYLimit = colorPickerDim.yLimit() + 1;
 
             //White to pending color value, left to right
-            //Gets the hue of the pending value
-            Color pendingValue = colorController.option().pendingValue();
-            float[] HSL = Color.RGBtoHSB(pendingValue.getRed(), pendingValue.getGreen(), pendingValue.getBlue(), null);
-            float hue = HSL[0];
+            float hue = getHue();
             float RGB = Color.HSBtoRGB(hue, 1, 1);
 
             fillSidewaysGradient(graphics, gradientX, gradientY, gradientXLimit, gradientYLimit, 2, 0xFFFFFFFF, (int) RGB);
@@ -325,47 +322,40 @@ public class ColorController implements IStringController<Color> {
             //Transparent to black, top to bottom
             graphics.fillGradient(gradientX, gradientY, gradientXLimit, gradientYLimit, 3,0x00000000, 0xFF000000);
 
-            //Rainbow gradient
+            //Hue slider
             int rainbowY = colorPickerDim.y() + 10;
             int rainbowYLimit = colorPickerDim.yLimit() + 8;
             drawRainbowGradient(graphics, x, rainbowY, gradientXLimit, rainbowYLimit, 2);
-
-            //RGB Slider
-            //TODO - Actually work on this
-            //Square
-//            graphics.fill(getThumbX() - getThumbWidth() / 2 + 1, sliderBounds.y() + 1, getThumbX() + getThumbWidth() / 2 + 1, sliderBounds.yLimit() + 1, 0xFF404040);
-            //Square shadow
-//            graphics.fill(getThumbX() - getThumbWidth() / 2, sliderBounds.y(), getThumbX() + getThumbWidth() / 2, sliderBounds.yLimit(), -1);
+            //Slider thumb
+            graphics.fill(getThumbX() - getThumbWidth() / 2, rainbowY, getThumbX() + getThumbWidth() / 2, rainbowYLimit, 5, -1);
+            //Slider thumb shadow
+            graphics.fill(getThumbX() - getThumbWidth() / 2 - 1, rainbowY - 1, getThumbX() + getThumbWidth() / 2 + 1, rainbowYLimit + 1, 4, 0xFF404040);
 
 
             //Outline
             //Simply draws a huge black box
             //Space was added between the main color preview and the gradient
             graphics.fill(x - outline, y - outline, gradientXLimit + outline, rainbowYLimit + outline, 1, 0xFF000000);
-
-            calculateInterpolation();
         }
 
         @Override
         public void setDimension(Dimension<Integer> dim) {
             super.setDimension(dim);
 
+            int width = Math.max(6, Math.min(textRenderer.width(getValueText()), getUnshiftedLength()));
+            int previewSize = (dim.height() - getYPadding() * 2) / 2;
             int trackWidth = dim.width() / 3;
             if (optionNameString.isEmpty())
                 trackWidth = dim.width() / 2;
 
-            int previewSize = (dim.height() - getYPadding() * 2) / 2;
             colorPickerDim = Dimension.ofInt(dim.xLimit() - getXPadding() - previewSize, dim.centerY() - previewSize / 2, previewSize, previewSize);
             sliderBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - getThumbWidth() / 2 - trackWidth, dim.centerY() - 5, trackWidth, 10);
 
-            int width = Math.max(6, Math.min(textRenderer.width(getValueText()), getUnshiftedLength()));
+
             inputFieldBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - width, dim.centerY() - textRenderer.lineHeight / 2, width, textRenderer.lineHeight);
         }
 
         //SLIDER related overrides
-
-        //TODO - Probably do want to separate the color picker from the color controller
-        //TODO - These overrides specifically could cause a lot of problems
 
         @Override
         protected int getHoveredControlWidth() {
@@ -377,15 +367,20 @@ public class ColorController implements IStringController<Color> {
             return textRenderer.width(getValueText());
         }
 
-        protected void calculateInterpolation() {
-            int max = 255;
-            int min = 1;
-            int value = 100;
-            interpolation = Mth.clamp((float) ((value - min) * 1 / max - min), 0f, 1f);
+        protected int getThumbX() {
+            //Calculates the thumb x based upon the pending value's hue
+            //Multiplying the adjustment by 1.9 instead of 2 seemed to give better results
+            double multiplyValue = 1.9;
+            int adjustmentValue = (int) ((inputFieldBounds.xLimit() + 5 - colorPickerDim.x() - 30) * getHue() * multiplyValue);
+
+            return Mth.clamp(colorPickerDim.x() - 30 + adjustmentValue, colorPickerDim.x() - 30, inputFieldBounds.xLimit() + 5);
         }
 
-        protected int getThumbX() {
-            return (int) (sliderBounds.x() + sliderBounds.width() * interpolation);
+        protected float getHue() {
+            //Gets the hue of the pending value
+            Color pendingValue = colorController.option().pendingValue();
+            float[] HSL = Color.RGBtoHSB(pendingValue.getRed(), pendingValue.getGreen(), pendingValue.getBlue(), null);
+            return HSL[0];
         }
 
         protected int getThumbWidth() {
