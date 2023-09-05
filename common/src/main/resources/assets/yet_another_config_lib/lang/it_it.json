@@ -1,0 +1,31 @@
+{
+  "yacl.control.boolean.true": "Vero",
+  "yacl.control.boolean.false": "Falso",
+
+  "yacl.control.action.execute": "ESEGUI",
+
+  "yacl.control.text.blank": "<vuoto>",
+
+  "yacl.gui.save": "Salva Modifiche",
+  "yacl.gui.save.tooltip": "Rende permanenti le modifiche apportate.",
+  "yacl.gui.finished.tooltip": "Chiude la GUI.",
+  "yacl.gui.cancel.tooltip": "Scarta le modifiche in sospeso e chiude la GUI.",
+  "yacl.gui.reset.tooltip": "Ripristina tutte le opzioni ai valori predefiniti. (È reversibile!)",
+  "yacl.gui.undo": "Annulla",
+  "yacl.gui.undo.tooltip": "Ripristina tutte le opzioni a ciò che erano prima della modifica.",
+  "yacl.gui.fail_apply": "Applicazione delle opzioni non riuscita",
+  "yacl.gui.fail_apply.tooltip": "Si è verificato un errore e le modifiche non hanno potuto essere applicate.",
+  "yacl.gui.save_before_exit": "Salvare prima di uscire!",
+  "yacl.gui.save_before_exit.tooltip": "Salva o annulla per uscire dalla GUI.",
+
+  "yacl.list.move_up": "Sposta su",
+  "yacl.list.move_down": "Sposta giù",
+  "yacl.list.remove": "Rimuovi",
+  "yacl.list.add_top": "Nuova voce",
+  "yacl.list.empty": "La lista è vuota",
+
+  "yacl.restart.title": "L'opzione richiede il riavvio!",
+  "yacl.restart.message": "Una o più opzioni richiedono il riavvio del gioco per applicare le modifiche.",
+  "yacl.restart.yes": "Chiudi Minecraft",
+  "yacl.restart.no": "Ignora"
+}
