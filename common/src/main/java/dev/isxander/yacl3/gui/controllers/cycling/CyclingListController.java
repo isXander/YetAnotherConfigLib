@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.controller.ValueFormatter;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Function;
 
@@ -38,6 +39,7 @@ public class CyclingListController<T> implements ICyclingController<T> {
         this.values = ImmutableList.copyOf(values);
     }
 
+    @ApiStatus.Internal
     public static <T> CyclingListController<T> createInternal(Option<T> option, Iterable<? extends T> values, ValueFormatter<T> formatter) {
         return new CyclingListController<>(option, values, formatter::format);
     }

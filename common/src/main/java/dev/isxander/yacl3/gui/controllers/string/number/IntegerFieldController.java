@@ -4,6 +4,7 @@ import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.controller.ValueFormatter;
 import dev.isxander.yacl3.gui.controllers.slider.IntegerSliderController;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Function;
 
@@ -63,6 +64,7 @@ public class IntegerFieldController extends NumberFieldController<Integer> {
         this(option, -Integer.MAX_VALUE, Integer.MAX_VALUE, IntegerSliderController.DEFAULT_FORMATTER);
     }
 
+    @ApiStatus.Internal
     public static IntegerFieldController createInternal(Option<Integer> option, int min, int max, ValueFormatter<Integer> formatter) {
         return new IntegerFieldController(option, min, max, formatter::format);
     }
