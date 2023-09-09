@@ -21,12 +21,14 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     protected boolean inputFieldFocused;
 
     protected int caretPos;
+    protected int previousCaretPos;
     protected int selectionLength;
     protected int renderOffset;
 
     protected UndoRedoHelper undoRedoHelper;
 
     protected float ticks;
+    protected float caretTicks;
 
     private final Component emptyText;
 
@@ -69,18 +71,22 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                 if (caretPos > text.length())
                     caretPos = text.length();
 
-                int caretX = textX + textRenderer.width(text.substring(0, caretPos)) - 1;
+                int caretX = textX + textRenderer.width(text.substring(0, caretPos));
                 if (text.isEmpty())
                     caretX = inputFieldBounds.x() + inputFieldBounds.width() / 2;
 
-                if (ticks % 20 <= 10) {
-                    graphics.fill(caretX, inputFieldBounds.y(), caretX + 1, inputFieldBounds.yLimit(), -1);
-                }
-
                 if (selectionLength != 0) {
                     int selectionX = textX + textRenderer.width(text.substring(0, caretPos + selectionLength));
-                    graphics.fill(caretX, inputFieldBounds.y() - 1, selectionX, inputFieldBounds.yLimit(), 0x803030FF);
+                    graphics.fill(caretX, inputFieldBounds.y() - 2, selectionX, inputFieldBounds.yLimit() - 1, 0x803030FF);
                 }
+
+                if(caretPos != previousCaretPos) {
+                    previousCaretPos = caretPos;
+                    caretTicks = 0;
+                }
+
+                if ((caretTicks += delta) % 20 <= 10)
+                    graphics.fill(caretX, inputFieldBounds.y() - 2, caretX + 1, inputFieldBounds.yLimit() - 1, -1);
             }
         }
         graphics.disableScissor();
@@ -287,7 +293,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         }
 
         int textX = getDimension().xLimit() - textRenderer.width(inputField) - getXPadding();
-        int caretX = textX + textRenderer.width(inputField.substring(0, caretPos)) - 1;
+        int caretX = textX + textRenderer.width(inputField.substring(0, caretPos));
 
         int minX = getDimension().xLimit() - getXPadding() - getUnshiftedLength();
         int maxX = minX + getUnshiftedLength();
