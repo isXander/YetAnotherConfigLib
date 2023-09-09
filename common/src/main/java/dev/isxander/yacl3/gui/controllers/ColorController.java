@@ -10,6 +10,7 @@ import dev.isxander.yacl3.gui.controllers.string.IStringController;
 import dev.isxander.yacl3.gui.controllers.string.StringControllerElement;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
@@ -108,6 +109,8 @@ public class ColorController implements IStringController<Color> {
         private final List<Character> allowedChars;
         private boolean mouseDown = false;
         private boolean colorPickerVisible = false;
+        private boolean hovered = false;
+        private ColorPickerElement colorPickerElement;
 
         public ColorControllerElement(ColorController control, YACLScreen screen, Dimension<Integer> dim) {
             super(control, screen, dim, true);
@@ -117,13 +120,14 @@ public class ColorController implements IStringController<Color> {
 
         @Override
         protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+            hovered = isMouseOver(mouseX, mouseY);
             //Replace with drawHoveredControl???
             if (isHovered()) {
                 colorPreviewDim.move(-inputFieldBounds.width() - 8, -2);
                 colorPreviewDim.expand(4, 4);
                 if(colorPickerVisible) {
-                    AbstractWidget colorPicker = new ColorPickerElement(this.colorController, this.screen, this.getDimension());
-                    colorPicker.render(graphics, mouseX, mouseY, delta);
+                    colorPickerElement = new ColorPickerElement(this.colorController, this.screen, this.getDimension());
+                    colorPickerElement.render(graphics, mouseX, mouseY, delta);
                 }
                 super.drawValueText(graphics, mouseX, mouseY, delta);
             }
@@ -222,11 +226,21 @@ public class ColorController implements IStringController<Color> {
 
         @Override
         public boolean isHovered() {
-            if(!super.isHovered() || focused) {
+            if(!super.isHovered() || focused || !inputFieldFocused) {
                 //Hides the color picker when option is no longer selected
                 colorPickerVisible = false;
             }
-            return super.isHovered() || inputFieldFocused;
+            int x = colorPreviewDim.x() - inputFieldBounds.width() - 70;
+            int y = colorPreviewDim.y() - 55;
+            int xLimit = inputFieldBounds.xLimit() + 5;
+            int yLimit = colorPreviewDim.yLimit();
+
+//            if(colorPickerVisible && mouseX >= x && mouseX <= xLimit && mouseY >= y && mouseY <= yLimit) {
+////                mouseDown = true;
+//                return true;
+//            }
+
+            return hovered || inputFieldFocused;
         }
 
         @Override
@@ -236,8 +250,8 @@ public class ColorController implements IStringController<Color> {
                 //TODO - BUTTON instead of mouseX/mouseY detection for controller support
                 //FIXME - Clicking another category whilst the color picker is visible keeps the color picker visible when returning
                 //Detects if the user has clicked the color preview
-                if((mouseX >= colorPreviewDim.x() && mouseX <= colorPreviewDim.xLimit())
-                        && (mouseY >= colorPreviewDim.y() && mouseY <= colorPreviewDim.yLimit())) {
+                if(inputFieldFocused && (mouseX >= colorPreviewDim.x() && mouseX <= colorPreviewDim.xLimit())
+                        && (mouseY >= colorPreviewDim.y() && mouseY <= colorPreviewDim.yLimit()) && button == 0) {
                     colorPickerVisible = !colorPickerVisible;
                 }
 
@@ -273,10 +287,13 @@ public class ColorController implements IStringController<Color> {
             int xLimit = inputFieldBounds.xLimit() + 5;
             int yLimit = colorPreviewDim.yLimit();
             if(colorPickerVisible && mouseX >= x && mouseX <= xLimit && mouseY >= y && mouseY <= yLimit) {
-                mouseDown = true;
+                inputFieldFocused = true;
+                return true;
             }
             //FIXME - Color picker "z fighting" options it is above is causing issues closing the color picker
-            return super.isMouseOver(mouseX, mouseY) || mouseDown || focused;
+            //FIXME - Technically, the z fighting is still an issue, as the option behind it becomes selected
+            //FIXME - Example: Cliking on the string controller behind the color picker, then typing types into the controller
+            return super.isMouseOver(mouseX, mouseY);
         }
     }
 
