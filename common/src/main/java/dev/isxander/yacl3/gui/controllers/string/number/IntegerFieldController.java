@@ -95,7 +95,7 @@ public class IntegerFieldController extends NumberFieldController<Integer> {
      */
     @Override
     public String getString() {
-        return String.valueOf(option().pendingValue());
+        return NUMBER_FORMAT.format(option().pendingValue());
     }
 
     /**

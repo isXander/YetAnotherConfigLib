@@ -125,7 +125,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
 
             return true;
         } else {
-            inputFieldFocused = false;
+            unfocus();
         }
 
         return false;

@@ -90,7 +90,7 @@ public class FloatFieldController extends NumberFieldController<Float> {
      */
     @Override
     public String getString() {
-        return String.valueOf(option().pendingValue());
+        return NUMBER_FORMAT.format(option().pendingValue());
     }
 
     /**
