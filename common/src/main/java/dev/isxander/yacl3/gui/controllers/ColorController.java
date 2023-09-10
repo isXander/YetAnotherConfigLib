@@ -253,6 +253,7 @@ public class ColorController implements IStringController<Color> {
                 if(inputFieldFocused && (mouseX >= colorPreviewDim.x() && mouseX <= colorPreviewDim.xLimit())
                         && (mouseY >= colorPreviewDim.y() && mouseY <= colorPreviewDim.yLimit()) && button == 0) {
                     colorPickerVisible = !colorPickerVisible;
+                    playDownSound();
                 }
 
                 caretPos = Math.max(1, caretPos);
@@ -273,8 +274,8 @@ public class ColorController implements IStringController<Color> {
 
         @Override
         public boolean mouseReleased(double mouseX, double mouseY, int button) {
-            if (isAvailable() && mouseDown)
-                playDownSound();
+//            if (isAvailable() && mouseDown)
+//                playDownSound();
             mouseDown = false;
 
             return super.mouseReleased(mouseX, mouseY, button);
@@ -292,7 +293,7 @@ public class ColorController implements IStringController<Color> {
             }
             //FIXME - Color picker "z fighting" options it is above is causing issues closing the color picker
             //FIXME - Technically, the z fighting is still an issue, as the option behind it becomes selected
-            //FIXME - Example: Cliking on the string controller behind the color picker, then typing types into the controller
+            //FIXME - Example: Clicking on the string controller behind the color picker, then typing types into the controller
             return super.isMouseOver(mouseX, mouseY);
         }
     }
