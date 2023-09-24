@@ -133,7 +133,7 @@ if (modrinthId.isNotEmpty()) {
         versionNumber.set("${project.version}-fabric")
         versionType.set(if (isBeta) "beta" else "release")
         uploadFile.set(tasks["remapJar"])
-        gameVersions.set(listOf("1.20", "1.20.1"))
+        gameVersions.set(listOf("1.20.2"))
         loaders.set(listOf("fabric", "quilt"))
         changelog.set(changelogText)
         syncBodyFrom.set(rootProject.file("README.md").readText())
@@ -152,8 +152,7 @@ if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
 
             id = curseforgeId
             releaseType = if (isBeta) "beta" else "release"
-            addGameVersion("1.20")
-            addGameVersion("1.20.1")
+            addGameVersion("1.20.2")
             addGameVersion("Fabric")
             addGameVersion("Java 17")
 
