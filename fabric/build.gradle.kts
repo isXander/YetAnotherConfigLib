@@ -156,6 +156,7 @@ if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
             addGameVersion("1.20")
             addGameVersion("1.20.1")
             addGameVersion("Fabric")
+            addGameVersion("Quilt")
             addGameVersion("Java 17")
 
             changelog = changelogText

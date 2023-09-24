@@ -147,7 +147,7 @@ if (modrinthId.isNotEmpty()) {
         versionType.set(if (isBeta) "beta" else "release")
         uploadFile.set(tasks["remapJar"])
         gameVersions.set(listOf("1.20", "1.20.1"))
-        loaders.set(listOf("forge"))
+        loaders.set(listOf("forge", "neoforge"))
         changelog.set(changelogText)
         syncBodyFrom.set(rootProject.file("README.md").readText())
     }
@@ -168,6 +168,7 @@ if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
             addGameVersion("1.20")
             addGameVersion("1.20.1")
             addGameVersion("Forge")
+            addGameVersion("NeoForge")
             addGameVersion("Java 17")
 
             changelog = changelogText
