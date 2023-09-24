@@ -6,4 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 public interface TabExt extends Tab {
     @Nullable Tooltip getTooltip();
+
+    default void tick() {}
 }

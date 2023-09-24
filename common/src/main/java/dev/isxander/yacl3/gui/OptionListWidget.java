@@ -150,11 +150,11 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        super.mouseScrolled(mouseX, mouseY, amount);
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+        super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
 
         for (Entry child : children()) {
-            if (child.mouseScrolled(mouseX, mouseY, amount))
+            if (child.mouseScrolled(mouseX, mouseY, horizontal, vertical))
                 break;
         }
 
@@ -305,8 +305,8 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
-        public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-            return widget.mouseScrolled(mouseX, mouseY, amount);
+        public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+            return widget.mouseScrolled(mouseX, mouseY, horizontal, vertical);
         }
 
         @Override

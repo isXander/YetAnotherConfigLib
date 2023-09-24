@@ -43,7 +43,8 @@ public class YACLScreen extends Screen {
     public TabNavigationBar tabNavigationBar;
     public ScreenRectangle tabArea;
 
-    public Component saveButtonMessage, saveButtonTooltipMessage;
+    public Component saveButtonMessage;
+    public Tooltip saveButtonTooltipMessage;
     private int saveButtonMessageTime;
 
     public YACLScreen(YetAnotherConfigLib config, Screen parent) {
@@ -122,18 +123,22 @@ public class YACLScreen extends Screen {
 
     @Override
     public void tick() {
-        tabManager.tickCurrent();
+        if (tabManager.getCurrentTab() instanceof TabExt tabExt) {
+            tabExt.tick();
+        }
 
-        if (saveButtonMessage != null) {
-            if (saveButtonMessageTime > 140) {
-                saveButtonMessage = null;
-                saveButtonTooltipMessage = null;
-                saveButtonMessageTime = 0;
-            } else {
-                saveButtonMessageTime++;
-                //finishedSaveButton.setMessage(saveButtonMessage);
-                if (saveButtonTooltipMessage != null) {
-                    //finishedSaveButton.setTooltip(saveButtonTooltipMessage);
+        if (tabManager.getCurrentTab() instanceof CategoryTab categoryTab) {
+            if (saveButtonMessage != null) {
+                if (saveButtonMessageTime > 140) {
+                    saveButtonMessage = null;
+                    saveButtonTooltipMessage = null;
+                    saveButtonMessageTime = 0;
+                } else {
+                    saveButtonMessageTime++;
+                    categoryTab.saveFinishedButton.setMessage(saveButtonMessage);
+                    if (saveButtonTooltipMessage != null) {
+                        categoryTab.saveFinishedButton.setTooltip(saveButtonTooltipMessage);
+                    }
                 }
             }
         }
@@ -141,7 +146,7 @@ public class YACLScreen extends Screen {
 
     private void setSaveButtonMessage(Component message, Component tooltip) {
         saveButtonMessage = message;
-        saveButtonTooltipMessage = tooltip;
+        saveButtonTooltipMessage = Tooltip.create(tooltip);
         saveButtonMessageTime = 0;
     }
 
@@ -222,7 +227,7 @@ public class YACLScreen extends Screen {
         private final Tooltip tooltip;
 
         private ListHolderWidget<OptionListWidget> optionList;
-        private final Button saveFinishedButton;
+        public final Button saveFinishedButton;
         private final Button cancelResetButton;
         private final Button undoButton;
         private final SearchFieldWidget searchField;
@@ -310,7 +315,6 @@ public class YACLScreen extends Screen {
         @Override
         public void tick() {
             updateButtons();
-            searchField.tick();
             descriptionWidget.tick();
         }
 

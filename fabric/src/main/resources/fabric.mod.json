@@ -22,7 +22,8 @@
     "fabric-resource-loader-v0": "*"
   },
   "mixins": [
-    "yacl.mixins.json"
+    "yacl.mixins.json",
+    "yacl-fabric.mixins.json"
   ],
   "custom": {
     "modmenu": {

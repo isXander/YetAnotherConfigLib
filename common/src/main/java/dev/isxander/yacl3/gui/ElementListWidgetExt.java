@@ -26,20 +26,15 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
         this.y = y;
         this.x1 = this.x0 + width;
         this.doSmoothScrolling = smoothScrolling;
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
-        // default implementation bases scroll step from total height of entries, this is constant
-        this.setScrollAmount(this.getScrollAmount() - amount * 20);
-        return true;
-    }
-
-    @Override
-    protected void renderBackground(GuiGraphics graphics) {
-        // render transparent background if in-game.
         setRenderBackground(true);
-        setRenderTopAndBottom(false);
+        setRenderHeader(false, 0);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+        // default implementation bases scroll step from total height of entries, this is constant
+        this.setScrollAmount(this.getScrollAmount() - (vertical + horizontal) * 20);
+        return true;
     }
 
     @Override

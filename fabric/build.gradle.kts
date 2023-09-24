@@ -38,7 +38,6 @@ dependencies {
     listOf(
         "fabric-resource-loader-v0",
     ).forEach { modApi(fabricApi.module(it, libs.versions.fabric.api.get())) }
-    modApi(libs.mod.menu)
 
     libs.bundles.twelvemonkeys.imageio.let {
         implementation(it)

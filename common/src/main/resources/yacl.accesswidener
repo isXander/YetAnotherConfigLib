@@ -3,7 +3,6 @@ accessWidener v2 named
 extendable method net/minecraft/client/gui/components/AbstractSelectionList children ()Ljava/util/List;
 extendable method net/minecraft/client/gui/components/AbstractSelectionList getEntryAtPosition (DD)Lnet/minecraft/client/gui/components/AbstractSelectionList$Entry;
 accessible class net/minecraft/client/gui/components/AbstractSelectionList$Entry
-extendable method net/minecraft/client/gui/components/AbstractButton getTextureY ()I
 accessible method net/minecraft/client/gui/components/tabs/TabNavigationBar <init> (ILnet/minecraft/client/gui/components/tabs/TabManager;Ljava/lang/Iterable;)V
 accessible field net/minecraft/client/gui/components/tabs/TabNavigationBar layout Lnet/minecraft/client/gui/layouts/GridLayout;
 accessible field net/minecraft/client/gui/components/tabs/TabNavigationBar width I
