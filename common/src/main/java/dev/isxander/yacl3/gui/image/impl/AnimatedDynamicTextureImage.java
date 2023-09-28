@@ -172,8 +172,6 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
     }
 
     private static ImageRendererFactory.ImageSupplier<AnimatedDynamicTextureImage> createFromImageReader(ImageReader reader, AnimFrameProvider animationProvider, ResourceLocation uniqueLocation) throws Exception {
-        YACLConstants.LOGGER.info("Thread 1: {}", Thread.currentThread().getName());
-
         if (reader.isSeekForwardOnly()) {
             throw new RuntimeException("Image reader is not seekable");
         }
@@ -266,10 +264,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
             graphics.dispose();
         reader.dispose();
 
-        return () -> {
-            YACLConstants.LOGGER.info("Thread 2: {}", Thread.currentThread().getName());
-            return new AnimatedDynamicTextureImage(image, frameWidth, frameHeight, frameCount, frameDelays, cols, rows, uniqueLocation);
-        };
+        return () -> new AnimatedDynamicTextureImage(image, frameWidth, frameHeight, frameCount, frameDelays, cols, rows, uniqueLocation);
     }
 
     @FunctionalInterface
