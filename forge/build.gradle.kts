@@ -177,6 +177,7 @@ if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
 
         options(closureOf<me.hypherionmc.cursegradle.Options> {
             forgeGradleIntegration = false
+            fabricIntegration = false
         })
     }
 }
