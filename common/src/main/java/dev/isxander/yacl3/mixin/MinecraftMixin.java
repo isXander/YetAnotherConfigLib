@@ -13,9 +13,4 @@ public class MinecraftMixin {
     private void closeImages(CallbackInfo ci) {
         ImageRendererManager.closeAll();
     }
-
-    @Inject(method = "runTick", at = @At(value = "HEAD"))
-    private void finaliseImages(boolean tick, CallbackInfo ci) {
-        ImageRendererManager.pollImageFactories();
-    }
 }
