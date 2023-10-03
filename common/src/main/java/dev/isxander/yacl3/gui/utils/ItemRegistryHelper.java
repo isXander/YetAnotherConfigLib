@@ -86,9 +86,9 @@ public final class ItemRegistryHelper {
 			 "minecraft:deepslate_diamond_ore", even though the second is lexicographically smaller
 			 */
 			.sorted((id1, id2) -> {
-				String path = (sep == -1 ? value : value.substring(sep + 1));
-				boolean id1StartsWith = id1.getPath().startsWith(path);
-				boolean id2StartsWith = id2.getPath().startsWith(path);
+				String path = (sep == -1 ? value : value.substring(sep + 1)).toLowerCase();
+				boolean id1StartsWith = id1.getPath().toLowerCase().startsWith(path);
+				boolean id2StartsWith = id2.getPath().toLowerCase().startsWith(path);
 				if (id1StartsWith) {
 					if (id2StartsWith) {
 						return id1.compareTo(id2);
