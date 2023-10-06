@@ -9,15 +9,13 @@ import dev.isxander.yacl3.gui.controllers.slider.ISliderController;
 import dev.isxander.yacl3.gui.controllers.string.IStringController;
 import dev.isxander.yacl3.gui.controllers.string.StringControllerElement;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
-import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.ParsePosition;
 import java.util.function.Function;
 
 /**
@@ -28,18 +26,7 @@ import java.util.function.Function;
 public abstract class NumberFieldController<T extends Number> implements ISliderController<T>, IStringController<T> {
 
     protected static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
-
-    private static final List<Character> ALLOWED_CHARS = Util.make(() -> {
-        List<Character> chars = new ArrayList<>();
-        DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance();
-        chars.add(symbols.getDecimalSeparator());
-        chars.add(symbols.getMinusSign());
-        chars.add(symbols.getZeroDigit());
-        chars.add(symbols.getGroupingSeparator());
-        symbols.getExponentSeparator().chars().mapToObj(i -> (char) i).forEach(chars::add);
-        "123456789".chars().mapToObj(i -> (char) i).forEach(chars::add);
-        return chars;
-    });
+    private static final DecimalFormatSymbols DECIMAL_FORMAT_SYMBOLS = DecimalFormatSymbols.getInstance();
 
     private final Option<T> option;
     private final ValueFormatter<T> displayFormatter;
@@ -70,7 +57,10 @@ public abstract class NumberFieldController<T extends Number> implements ISlider
 
     @Override
     public boolean isInputValid(String input) {
-        return input.chars().allMatch(i -> ALLOWED_CHARS.contains((char) i));
+        input = input.replace(DECIMAL_FORMAT_SYMBOLS.getGroupingSeparator() + "", "");
+        ParsePosition parsePosition = new ParsePosition(0);
+        NUMBER_FORMAT.parse(input, parsePosition);
+        return parsePosition.getIndex() == input.length();
     }
 
     @Override

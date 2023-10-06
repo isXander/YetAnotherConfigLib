@@ -69,11 +69,6 @@ public class IntegerFieldController extends NumberFieldController<Integer> {
         return new IntegerFieldController(option, min, max, formatter::format);
     }
 
-    @Override
-    public boolean isInputValid(String input) {
-        return input.matches("(?:-?\\d+|)");
-    }
-
     /**
      * {@inheritDoc}
      */

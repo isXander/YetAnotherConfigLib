@@ -69,11 +69,6 @@ public class LongFieldController extends NumberFieldController<Long> {
         return new LongFieldController(option, min, max, formatter::format);
     }
 
-    @Override
-    public boolean isInputValid(String input) {
-        return input.matches("(?:-?\\d+|)");
-    }
-
     /**
      * {@inheritDoc}
      */
