@@ -275,6 +275,15 @@ public class GuiTest {
                                                 )
                                                 .controller(ItemControllerBuilder::create)
                                                 .build())
+                                        .option(Option.<ConfigTest.FormattingOption>createBuilder()
+                                                .name(Component.literal("Enum Dropdown"))
+                                                .binding(
+                                                        defaults.formattingOption,
+                                                        () -> config.formattingOption,
+                                                        (value) -> config.formattingOption = value
+                                                )
+                                                .controller(EnumDropdownControllerBuilder::create)
+                                                .build())
                                         .build())
                                 .group(OptionGroup.createBuilder()
                                         .name(Component.literal("Options that aren't really options"))
