@@ -71,8 +71,8 @@ public abstract class AbstractDropdownController<T> implements IStringController
 				.sorted((s1, s2) -> {
                     String s1LowerCase = s1.toLowerCase();
                     String s2LowerCase = s2.toLowerCase();
-					if (s1LowerCase.toLowerCase().startsWith(valueLowerCase) && !s2LowerCase.toLowerCase().startsWith(valueLowerCase)) return -1;
-					if (!s1LowerCase.toLowerCase().startsWith(valueLowerCase) && s2LowerCase.toLowerCase().startsWith(valueLowerCase)) return 1;
+					if (s1LowerCase.startsWith(valueLowerCase) && !s2LowerCase.startsWith(valueLowerCase)) return -1;
+					if (!s1LowerCase.startsWith(valueLowerCase) && s2LowerCase.startsWith(valueLowerCase)) return 1;
 					return s1.compareTo(s2);
 				})
 				.skip(offset)
