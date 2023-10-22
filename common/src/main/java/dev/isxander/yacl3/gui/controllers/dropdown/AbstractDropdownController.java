@@ -65,11 +65,14 @@ public abstract class AbstractDropdownController<T> implements IStringController
 	protected String getValidValue(String value, int offset) {
 		if (offset == -1) return getString();
 
+        String valueLowerCase = value.toLowerCase();
 		return getAllowedValues(value).stream()
-				.filter(val -> val.toLowerCase().contains(value.toLowerCase()))
+				.filter(val -> val.toLowerCase().contains(valueLowerCase))
 				.sorted((s1, s2) -> {
-					if (s1.startsWith(value) && !s2.startsWith(value)) return -1;
-					if (!s1.startsWith(value) && s2.startsWith(value)) return 1;
+                    String s1LowerCase = s1.toLowerCase();
+                    String s2LowerCase = s2.toLowerCase();
+					if (s1LowerCase.startsWith(valueLowerCase) && !s2LowerCase.startsWith(valueLowerCase)) return -1;
+					if (!s1LowerCase.startsWith(valueLowerCase) && s2LowerCase.startsWith(valueLowerCase)) return 1;
 					return s1.compareTo(s2);
 				})
 				.skip(offset)
