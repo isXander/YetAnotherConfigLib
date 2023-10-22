@@ -11,6 +11,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Function;
 
@@ -72,6 +73,7 @@ public class BooleanController implements Controller<Boolean> {
         this.coloured = coloured;
     }
 
+    @ApiStatus.Internal
     public static BooleanController createInternal(Option<Boolean> option, ValueFormatter<Boolean> formatter, boolean coloured) {
         return new BooleanController(option, formatter::format, coloured);
     }
