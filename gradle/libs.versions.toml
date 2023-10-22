@@ -6,17 +6,17 @@ shadow = "7.1.+"
 loom_vineflower = "1.11.+"
 minotaur = "2.7.+"
 cursegradle = "2.+"
-github_release = "2.+"
+github_release = "2.4.+"
 machete = "2.+"
 grgit = "5.0.+"
 
 minecraft = "1.20.2"
-quilt_mappings = "1"
-fabric_loader = "0.14.21"
+quilt_mappings = "3"
+fabric_loader = "0.14.22"
 
 # Common Dependencies
-mixin_extras = "0.2.0-rc.4"
-twelvemonkeys_imageio = "3.10.0-SNAPSHOT"
+mixin_extras = "0.2.0"
+twelvemonkeys_imageio = "3.10.0"
 quilt_parsers = "0.2.1"
 
 # Fabric-like Dependencies
