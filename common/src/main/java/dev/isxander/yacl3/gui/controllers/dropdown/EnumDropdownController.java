@@ -17,7 +17,7 @@ public class EnumDropdownController<E extends Enum<E>> extends AbstractDropdownC
     protected final Function<E, String> toString;
 
     public EnumDropdownController(Option<E> option, Function<E, String> toString) {
-        super(option);
+        super(option, Arrays.stream(option.pendingValue().getDeclaringClass().getEnumConstants()).map(toString).toList());
         this.toString = toString;
     }
 
@@ -49,8 +49,8 @@ public class EnumDropdownController<E extends Enum<E>> extends AbstractDropdownC
     @Override
     public boolean isValueValid(String value) {
         value = value.toLowerCase();
-        for (E constant : option().pendingValue().getDeclaringClass().getEnumConstants()) {
-            if (toString.apply(constant).equals(value)) return true;
+        for (String constant : getAllowedValues()) {
+            if (constant.equals(value)) return true;
         }
 
         return false;
@@ -73,8 +73,7 @@ public class EnumDropdownController<E extends Enum<E>> extends AbstractDropdownC
     @NotNull
     protected Stream<String> getValidEnumConstants(String value) {
         String valueLowerCase = value.toLowerCase();
-        return Arrays.stream(option().pendingValue().getDeclaringClass().getEnumConstants())
-                .map(this.toString)
+        return getAllowedValues().stream()
                 .filter(constant -> constant.toLowerCase().contains(valueLowerCase))
                 .sorted((s1, s2) -> {
                     String s1LowerCase = s1.toLowerCase();
