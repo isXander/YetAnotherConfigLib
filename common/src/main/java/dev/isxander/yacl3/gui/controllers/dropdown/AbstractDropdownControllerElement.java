@@ -174,7 +174,7 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 	}
 
 	public void renderDropdown(GuiGraphics graphics) {
-		if (matchingValues.size() == 0) return;
+		if (matchingValues.isEmpty()) return;
 		// Limit the visible options to allow scrolling through the suggestion list
 		int begin = Math.max(0, selectedIndex - MAX_SHOWN_NUMBER_OF_ITEMS / 2);
 		int end = begin + MAX_SHOWN_NUMBER_OF_ITEMS;
@@ -184,7 +184,7 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 		}
 
 		renderDropdownBackground(graphics, end - begin);
-		if (matchingValues.size() >= 1) {
+		if (!matchingValues.isEmpty()) {
 			// Highlight the currently selected element
 			graphics.setColor(0.0f, 0.0f, 0.0f, 0.5f);
 			int x = getDimension().x();
