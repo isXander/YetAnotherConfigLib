@@ -13,7 +13,7 @@ architectury {
     minecraft = libs.versions.minecraft.get()
 }
 
-version = "3.2.0+1.20"
+version = "3.3.0-beta.1+1.20.2"
 
 val isBeta = "beta" in version.toString()
 val changelogText = rootProject.file("changelogs/${project.version}.md").takeIf { it.exists() }?.readText() ?: "No changelog provided."
@@ -42,7 +42,6 @@ allprojects {
 
     repositories {
         mavenCentral()
-        maven("https://maven.terraformersmc.com/releases")
         maven("https://maven.isxander.dev/releases")
         maven("https://maven.isxander.dev/snapshots")
         maven("https://maven.quiltmc.org/repository/release")
@@ -52,8 +51,6 @@ allprojects {
                 includeGroup("maven.modrinth")
             }
         }
-        maven("https://jitpack.io")
-        maven("https://oss.sonatype.org/content/repositories/snapshots")
     }
 
     pluginManager.withPlugin("publishing") {

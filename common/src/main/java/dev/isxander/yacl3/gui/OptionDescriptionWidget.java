@@ -122,9 +122,9 @@ public class OptionDescriptionWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
         if (isMouseOver(mouseX, mouseY)) {
-            targetScrollAmount = Mth.clamp(targetScrollAmount - (int) amount * 10, 0, maxScrollAmount);
+            targetScrollAmount = Mth.clamp(targetScrollAmount - (int) vertical * 10, 0, maxScrollAmount);
             lastInteractionTime = currentTimeMS();
             return true;
         }

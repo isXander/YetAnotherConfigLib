@@ -1,0 +1,31 @@
+{
+  "yacl.control.boolean.true": "Waar",
+  "yacl.control.boolean.false": "Niet Waar",
+
+  "yacl.control.action.execute": "UITVOEREN",
+
+  "yacl.control.text.blank": "<blanco>",
+
+  "yacl.gui.save": "Wijzigingen Opslaan",
+  "yacl.gui.save.tooltip": "Maak de aangebrachte wijzigingen permanent.",
+  "yacl.gui.finished.tooltip": "Sluit de GUI.",
+  "yacl.gui.cancel.tooltip": "Vergeet wijzigingen en sluit het GUI.",
+  "yacl.gui.reset.tooltip": "Zet alle opties terug naar de standaardwaarden. (Dit is omkeerbaar!)",
+  "yacl.gui.undo": "Ongedaan maken",
+  "yacl.gui.undo.tooltip": "Zet alle opties terug naar wat ze waren voor het bewerken.",
+  "yacl.gui.fail_apply": "Toepassen gefaald",
+  "yacl.gui.fail_apply.tooltip": "Er is een fout opgetreden en de wijzigingen konden niet worden toegepast.",
+  "yacl.gui.save_before_exit": "Slaag op voordat u afsluit!",
+  "yacl.gui.save_before_exit.tooltip": "Slaag op of annuleer om het GUI af te sluiten.",
+
+  "yacl.list.move_up": "Ga omhoog",
+  "yacl.list.move_down": "Ga omlaag",
+  "yacl.list.remove": "Verwijder",
+  "yacl.list.add_top": "Nieuwe invoer",
+  "yacl.list.empty": "Lijst is leeg",
+
+  "yacl.restart.title": "Configuratie vereist opnieuw opstarten!",
+  "yacl.restart.message": "Voor één of meer opties moet je het spel opnieuw opstarten om de wijzigingen toe te passen.",
+  "yacl.restart.yes": "Sluit Minecraft",
+  "yacl.restart.no": "Negeren"
+}

@@ -80,11 +80,11 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
         if (!isAvailable() || (!isMouseOver(mouseX, mouseY)) || (!Screen.hasShiftDown() && !Screen.hasControlDown()))
             return false;
 
-        incrementValue(amount);
+        incrementValue(vertical);
         return true;
     }
 

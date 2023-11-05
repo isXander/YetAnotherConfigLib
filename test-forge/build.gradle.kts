@@ -46,7 +46,7 @@ dependencies {
     forgeRuntimeLibrary(libs.bundles.quilt.parsers)
 
     "common"(project(path = ":test-common", configuration = "namedElements")) { isTransitive = false }
-    implementation(project(path = ":forge", configuration = "namedElements"))
+    "common"(project(path = ":forge", configuration = "namedElements")) { isTransitive = false }
 
     "common"(project(path = ":common", configuration = "namedElements")) { isTransitive = false }
 }

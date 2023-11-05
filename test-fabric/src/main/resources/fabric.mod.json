@@ -9,5 +9,8 @@
     "modmenu": [
       "dev.isxander.yacl3.test.fabric.ModMenuEntrypoint"
     ]
-  }
+  },
+  "mixins": [
+    "yacl-test.mixins.json"
+  ]
 }

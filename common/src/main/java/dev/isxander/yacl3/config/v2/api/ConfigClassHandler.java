@@ -55,10 +55,24 @@ public interface ConfigClassHandler<T> {
     boolean supportsAutoGen();
 
     /**
+     * Safely loads the config class using the provided serializer.
+     * @return if the config was loaded successfully
+     */
+    boolean load();
+
+    /**
+     * Safely saves the config class using the provided serializer.
+     */
+    void save();
+
+    /**
      * The serializer for this config class.
      * Manages saving and loading of the config with fields
      * annotated with {@link SerialEntry}.
+     *
+     * @deprecated use {@link #load()} and {@link #save()} instead.
      */
+    @Deprecated
     ConfigSerializer<T> serializer();
 
     /**

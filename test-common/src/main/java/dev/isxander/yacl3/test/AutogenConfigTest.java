@@ -23,7 +23,7 @@ import java.awt.*;
 import java.util.List;
 
 public class AutogenConfigTest {
-    public static ConfigClassHandler<AutogenConfigTest> INSTANCE = ConfigClassHandler.createBuilder(AutogenConfigTest.class)
+    public static final ConfigClassHandler<AutogenConfigTest> INSTANCE = ConfigClassHandler.createBuilder(AutogenConfigTest.class)
             .id(new ResourceLocation("yacl3", "config"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
                     .setPath(YACLPlatform.getConfigDir().resolve("yacl-test-v2.json5"))

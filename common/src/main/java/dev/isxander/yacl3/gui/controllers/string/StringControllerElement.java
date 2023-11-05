@@ -21,12 +21,14 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     protected boolean inputFieldFocused;
 
     protected int caretPos;
+    protected int previousCaretPos;
     protected int selectionLength;
     protected int renderOffset;
 
     protected UndoRedoHelper undoRedoHelper;
 
     protected float ticks;
+    protected float caretTicks;
 
     private final Component emptyText;
 
@@ -69,18 +71,22 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                 if (caretPos > text.length())
                     caretPos = text.length();
 
-                int caretX = textX + textRenderer.width(text.substring(0, caretPos)) - 1;
+                int caretX = textX + textRenderer.width(text.substring(0, caretPos));
                 if (text.isEmpty())
                     caretX = inputFieldBounds.x() + inputFieldBounds.width() / 2;
 
-                if (ticks % 20 <= 10) {
-                    graphics.fill(caretX, inputFieldBounds.y(), caretX + 1, inputFieldBounds.yLimit(), -1);
-                }
-
                 if (selectionLength != 0) {
                     int selectionX = textX + textRenderer.width(text.substring(0, caretPos + selectionLength));
-                    graphics.fill(caretX, inputFieldBounds.y() - 1, selectionX, inputFieldBounds.yLimit(), 0x803030FF);
+                    graphics.fill(caretX, inputFieldBounds.y() - 2, selectionX, inputFieldBounds.yLimit() - 1, 0x803030FF);
                 }
+
+                if(caretPos != previousCaretPos) {
+                    previousCaretPos = caretPos;
+                    caretTicks = 0;
+                }
+
+                if ((caretTicks += delta) % 20 <= 10)
+                    graphics.fill(caretX, inputFieldBounds.y() - 2, caretX + 1, inputFieldBounds.yLimit() - 1, -1);
             }
         }
         graphics.disableScissor();
@@ -119,7 +125,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
 
             return true;
         } else {
-            inputFieldFocused = false;
+            unfocus();
         }
 
         return false;
@@ -152,10 +158,13 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                     checkRenderOffset();
                 } else {
                     if (caretPos > 0) {
-                        if (selectionLength != 0)
-                            caretPos += Math.min(selectionLength, 0);
-                        else
-                            caretPos--;
+                        if (Screen.hasControlDown()) {
+                            caretPos = findSpaceIndex(true);
+                        } else {
+                            if (selectionLength != 0) {
+                                caretPos += Math.min(selectionLength, 0);
+                            } else caretPos--;
+                        }
                     }
                     checkRenderOffset();
                     selectionLength = 0;
@@ -176,10 +185,13 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                     checkRenderOffset();
                 } else {
                     if (caretPos < inputField.length()) {
-                        if (selectionLength != 0)
-                            caretPos += Math.max(selectionLength, 0);
-                        else
-                            caretPos++;
+                        if (Screen.hasControlDown()) {
+                            caretPos = findSpaceIndex(false);
+                        } else {
+                            if (selectionLength != 0) {
+                                caretPos += Math.max(selectionLength, 0);
+                            } else caretPos++;
+                        }
                         checkRenderOffset();
                     }
                     selectionLength = 0;
@@ -193,6 +205,25 @@ public class StringControllerElement extends ControllerWidget<IStringController<
             }
             case InputConstants.KEY_DELETE -> {
                 doDelete();
+                return true;
+            }
+            case InputConstants.KEY_END -> {
+                if (Screen.hasShiftDown()) {
+                    selectionLength -= inputField.length() - caretPos;
+                } else selectionLength = 0;
+                caretPos = inputField.length();
+                checkRenderOffset();
+                return true;
+            }
+            case InputConstants.KEY_HOME -> {
+                if (Screen.hasShiftDown()) {
+                    selectionLength += caretPos;
+                    caretPos = 0;
+                } else {
+                    caretPos = 0;
+                    selectionLength = 0;
+                }
+                checkRenderOffset();
                 return true;
             }
 //            case InputConstants.KEY_Z -> {
@@ -262,7 +293,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         }
 
         int textX = getDimension().xLimit() - textRenderer.width(inputField) - getXPadding();
-        int caretX = textX + textRenderer.width(inputField.substring(0, caretPos)) - 1;
+        int caretX = textX + textRenderer.width(inputField.substring(0, caretPos));
 
         int minX = getDimension().xLimit() - getXPadding() - getUnshiftedLength();
         int maxX = minX + getUnshiftedLength();
@@ -371,16 +402,14 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         int fromIndex = caretPos;
         if (reverse) {
             if (caretPos > 0)
-                fromIndex -= 1;
-            i = this.inputField.lastIndexOf(" ", fromIndex);
-
-            if (i == -1) i = 0;
+                fromIndex -= 2;
+            i = this.inputField.lastIndexOf(" ", fromIndex) + 1;
         } else {
             if (caretPos < inputField.length())
                 fromIndex += 1;
-            i = this.inputField.indexOf(" ", fromIndex);
+            i = this.inputField.indexOf(" ", fromIndex) + 1;
 
-            if (i == -1) i = inputField.length();
+            if (i == 0) i = inputField.length();
         }
 
         return i;

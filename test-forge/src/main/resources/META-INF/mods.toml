@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[45,)"
+loaderVersion = "[48,)"
 #issueTrackerURL = ""
 license = "LGPL-3.0-or-later"
 
@@ -16,13 +16,13 @@ Test mod for YACL
 [[dependencies.yacl_test]]
 modId = "forge"
 mandatory = true
-versionRange = "[45,)"
+versionRange = "[48,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.yacl_test]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.19.4,)"
+versionRange = "[1.20.2,)"
 ordering = "NONE"
 side = "BOTH"

@@ -4,6 +4,7 @@ import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.controller.ValueFormatter;
 import dev.isxander.yacl3.gui.controllers.slider.DoubleSliderController;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Function;
 
@@ -63,6 +64,7 @@ public class DoubleFieldController extends NumberFieldController<Double> {
         this(option, -Double.MAX_VALUE, Double.MAX_VALUE, DoubleSliderController.DEFAULT_FORMATTER);
     }
 
+    @ApiStatus.Internal
     public static DoubleFieldController createInternal(Option<Double> option, double min, double max, ValueFormatter<Double> formatter) {
         return new DoubleFieldController(option, min, max, formatter::format);
     }
@@ -88,7 +90,7 @@ public class DoubleFieldController extends NumberFieldController<Double> {
      */
     @Override
     public String getString() {
-        return String.valueOf(option().pendingValue());
+        return NUMBER_FORMAT.format(option().pendingValue());
     }
 
     /**

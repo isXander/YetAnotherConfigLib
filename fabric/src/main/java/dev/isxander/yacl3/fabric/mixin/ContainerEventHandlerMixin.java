@@ -1,4 +1,4 @@
-package dev.isxander.yacl3.mixin;
+package dev.isxander.yacl3.fabric.mixin;
 
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -14,6 +14,10 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.List;
 
+/**
+ * This is in Fabric-only because only the Fabric fork of mixin supports @Redirect on interfaces.
+ * This will change in the next release of Mixin.
+ */
 @Mixin(ContainerEventHandler.class)
 public interface ContainerEventHandlerMixin {
     /**

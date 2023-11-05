@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.function.Supplier;
 
 /**
  * Separates {@link Option}s or {@link OptionGroup}s into multiple distinct sections.
@@ -47,7 +48,7 @@ public interface ConfigCategory {
         /**
          * Adds an option to the root group of the category.
          * To add to another group, use {@link Builder#group(OptionGroup)}.
-         * To construct an option, use {@link Option#createBuilder(Class)}
+         * To construct an option, use {@link Option#createBuilder()}
          *
          * @see ConfigCategory#groups()
          * @see OptionGroup#isRoot()
@@ -56,9 +57,52 @@ public interface ConfigCategory {
         Builder option(@NotNull Option<?> option);
 
         /**
+         * Adds an option to the root group of the category.
+         * To add to another group, use {@link Builder#group(OptionGroup)}.
+         * To construct an option, use {@link Option#createBuilder()}
+         *
+         * @param optionSupplier to be called to initialise the option. called immediately
+         * @return this
+         */
+        @Override
+        default Builder option(@NotNull Supplier<@NotNull Option<?>> optionSupplier) {
+            OptionAddable.super.option(optionSupplier);
+            return this;
+        }
+
+        /**
+         * Adds an option to the root group of the category if a condition is met.
+         * To add to another group, use {@link Builder#group(OptionGroup)}.
+         * To construct an option, use {@link Option#createBuilder()}
+         *
+         * @param condition only if true is the option added
+         * @return this
+         */
+        @Override
+        default Builder optionIf(boolean condition, @NotNull Option<?> option) {
+            OptionAddable.super.optionIf(condition, option);
+            return this;
+        }
+
+        /**
+         * Adds an option to the root group of the category if a condition is met.
+         * To add to another group, use {@link Builder#group(OptionGroup)}.
+         * To construct an option, use {@link Option#createBuilder()}
+         *
+         * @param condition only if true is the option added
+         * @param optionSupplier to be called to initialise the option. called immediately only if condition is true
+         * @return this
+         */
+        @Override
+        default Builder optionIf(boolean condition, @NotNull Supplier<@NotNull Option<?>> optionSupplier) {
+            OptionAddable.super.optionIf(condition, optionSupplier);
+            return this;
+        }
+
+        /**
          * Adds multiple options to the root group of the category.
          * To add to another group, use {@link Builder#groups(Collection)}.
-         * To construct an option, use {@link Option#createBuilder(Class)}
+         * To construct an option, use {@link Option#createBuilder()}
          *
          * @see ConfigCategory#groups()
          * @see OptionGroup#isRoot()

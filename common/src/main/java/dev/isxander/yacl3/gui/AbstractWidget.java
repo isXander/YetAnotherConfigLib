@@ -6,17 +6,26 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import org.joml.Matrix4f;
 
 import java.awt.*;
 
 public abstract class AbstractWidget implements GuiEventListener, Renderable, NarratableEntry {
+    private static final WidgetSprites SPRITES = new WidgetSprites(
+            new ResourceLocation("widget/button"), // normal
+            new ResourceLocation("widget/button_disabled"), // disabled & !focused
+            new ResourceLocation("widget/button_highlighted"), // !disabled & focused
+            new ResourceLocation("widget/slider_highlighted") // disabled & focused
+    );
+
     protected final Minecraft client = Minecraft.getInstance();
     protected final Font textRenderer = client.font;
     protected final int inactiveColor = 0xFFA0A0A0;
@@ -77,13 +86,7 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
         int width = x2 - x1;
         int height = y2 - y1;
 
-        int i = !enabled ? 0 : hovered ? 2 : 1;
-        graphics.blit(net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATION, x1, y1, 0, 0, 46 + i * 20, width / 2, height, 256, 256);
-        graphics.blit(net.minecraft.client.gui.components.AbstractWidget.WIDGETS_LOCATION, x1 + width / 2, y1, 0, 200 - width / 2f, 46 + i * 20, width / 2, height, 256, 256);
-
-        if (hovered && !enabled) {
-            drawOutline(graphics, x1, y1, x2, y2, 1, 0xFFD0D0D0);
-        }
+        graphics.blitSprite(SPRITES.get(enabled, hovered), x1, y1, width, height);
     }
 
     protected void drawOutline(GuiGraphics graphics, int x1, int y1, int x2, int y2, int width, int color) {

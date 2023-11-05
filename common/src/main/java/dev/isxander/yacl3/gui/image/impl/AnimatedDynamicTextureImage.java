@@ -1,8 +1,11 @@
 package dev.isxander.yacl3.gui.image.impl;
 
 import com.mojang.blaze3d.Blaze3D;
+import com.mojang.blaze3d.platform.GlConst;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
+import dev.isxander.yacl3.debug.DebugProperties;
 import dev.isxander.yacl3.gui.image.ImageRendererFactory;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 import net.minecraft.CrashReport;
@@ -62,6 +65,12 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         graphics.pose().pushPose();
         graphics.pose().translate(x, y, 0);
         graphics.pose().scale(ratio, ratio, 1);
+
+        if (DebugProperties.IMAGE_FILTERING) {
+            GlStateManager._texParameter(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MAG_FILTER, GlConst.GL_LINEAR);
+            GlStateManager._texParameter(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MIN_FILTER, GlConst.GL_LINEAR);
+        }
+
         graphics.blit(
                 uniqueLocation,
                 0, 0,
@@ -172,8 +181,6 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
     }
 
     private static ImageRendererFactory.ImageSupplier<AnimatedDynamicTextureImage> createFromImageReader(ImageReader reader, AnimFrameProvider animationProvider, ResourceLocation uniqueLocation) throws Exception {
-        YACLConstants.LOGGER.info("Thread 1: {}", Thread.currentThread().getName());
-
         if (reader.isSeekForwardOnly()) {
             throw new RuntimeException("Image reader is not seekable");
         }
@@ -266,10 +273,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
             graphics.dispose();
         reader.dispose();
 
-        return () -> {
-            YACLConstants.LOGGER.info("Thread 2: {}", Thread.currentThread().getName());
-            return new AnimatedDynamicTextureImage(image, frameWidth, frameHeight, frameCount, frameDelays, cols, rows, uniqueLocation);
-        };
+        return () -> new AnimatedDynamicTextureImage(image, frameWidth, frameHeight, frameCount, frameDelays, cols, rows, uniqueLocation);
     }
 
     @FunctionalInterface

@@ -1,30 +1,29 @@
 [versions]
 # Plugins
-architectury_loom = "1.2.+"
+architectury_loom = "1.3.+"
 architectury_plugin = "3.4.+"
 shadow = "7.1.+"
 loom_vineflower = "1.11.+"
 minotaur = "2.7.+"
 cursegradle = "2.+"
-github_release = "2.+"
+github_release = "2.4.+"
 machete = "2.+"
 grgit = "5.0.+"
 
-minecraft = "1.20.1"
-quilt_mappings = "20"
-fabric_loader = "0.14.21"
+minecraft = "1.20.2"
+quilt_mappings = "3"
+fabric_loader = "0.14.22"
 
 # Common Dependencies
-mixin_extras = "0.2.0-beta.8"
-twelvemonkeys_imageio = "3.10.0-SNAPSHOT"
+mixin_extras = "0.2.0"
+twelvemonkeys_imageio = "3.10.0"
 quilt_parsers = "0.2.1"
 
 # Fabric-like Dependencies
-fabric_api = "0.86.0+1.20.1"
-mod_menu = "7.1.0"
+fabric_api = "0.90.4+1.20.2"
 
 # Forge Dependencies
-forge = "1.20.1-47.1.42"
+forge = "1.20.2-48.0.33"
 
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
@@ -43,7 +42,6 @@ quilt_parsers_gson = { module = "org.quiltmc.parsers:gson", version.ref = "quilt
 
 # Fabric-like Dependencies
 fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
-mod_menu = { module = "com.terraformersmc:modmenu", version.ref = "mod_menu" }
 
 # Forge Dependencies
 forge = { module = "net.minecraftforge:forge", version.ref = "forge" }

@@ -8,10 +8,14 @@ import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.slider.ISliderController;
 import dev.isxander.yacl3.gui.controllers.string.IStringController;
 import dev.isxander.yacl3.gui.controllers.string.StringControllerElement;
+import dev.isxander.yacl3.impl.utils.YACLConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.ParsePosition;
 import java.util.function.Function;
 
 /**
@@ -20,6 +24,10 @@ import java.util.function.Function;
  * @param <T> number type
  */
 public abstract class NumberFieldController<T extends Number> implements ISliderController<T>, IStringController<T> {
+
+    protected static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
+    private static final DecimalFormatSymbols DECIMAL_FORMAT_SYMBOLS = DecimalFormatSymbols.getInstance();
+
     private final Option<T> option;
     private final ValueFormatter<T> displayFormatter;
 
@@ -35,8 +43,11 @@ public abstract class NumberFieldController<T extends Number> implements ISlider
 
     @Override
     public void setFromString(String value) {
-        if (value.isEmpty() || value.equals(".") || value.equals("-")) value = "0";
-        setPendingValue(Mth.clamp(Double.parseDouble(cleanupNumberString(value)), min(), max()));
+        try {
+            setPendingValue(Mth.clamp(NUMBER_FORMAT.parse(value).doubleValue(), min(), max()));
+        } catch (ParseException ignore) {
+            YACLConstants.LOGGER.warn("Failed to parse number: {}", value);
+        }
     }
 
     @Override
@@ -46,7 +57,10 @@ public abstract class NumberFieldController<T extends Number> implements ISlider
 
     @Override
     public boolean isInputValid(String input) {
-        return input.matches("[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)|[.]||-");
+        input = input.replace(DECIMAL_FORMAT_SYMBOLS.getGroupingSeparator() + "", "");
+        ParsePosition parsePosition = new ParsePosition(0);
+        NUMBER_FORMAT.parse(input, parsePosition);
+        return parsePosition.getIndex() == input.length();
     }
 
     @Override
@@ -57,10 +71,6 @@ public abstract class NumberFieldController<T extends Number> implements ISlider
     @Override
     public AbstractWidget provideWidget(YACLScreen screen, Dimension<Integer> widgetDimension) {
         return new StringControllerElement(this, screen, widgetDimension, false);
-    }
-
-    protected String cleanupNumberString(String number) {
-        return number.replace(String.valueOf(DecimalFormatSymbols.getInstance().getGroupingSeparator()), "");
     }
 
     @Override

@@ -56,7 +56,7 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 
 	@Override
 	public String getString(ResourceLocation identifier) {
-		return BuiltInRegistries.ITEM.get(identifier).toString();
+		return identifier.toString();
 	}
 
 	@Override

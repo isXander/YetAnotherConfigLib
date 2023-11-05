@@ -4,6 +4,7 @@ import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.controller.ValueFormatter;
 import dev.isxander.yacl3.gui.controllers.slider.FloatSliderController;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Function;
 
@@ -63,6 +64,7 @@ public class FloatFieldController extends NumberFieldController<Float> {
         this(option, -Float.MAX_VALUE, Float.MAX_VALUE, FloatSliderController.DEFAULT_FORMATTER);
     }
 
+    @ApiStatus.Internal
     public static FloatFieldController createInternal(Option<Float> option, float min, float max, ValueFormatter<Float> formatter) {
         return new FloatFieldController(option, min, max, formatter::format);
     }
@@ -88,7 +90,7 @@ public class FloatFieldController extends NumberFieldController<Float> {
      */
     @Override
     public String getString() {
-        return String.valueOf(option().pendingValue());
+        return NUMBER_FORMAT.format(option().pendingValue());
     }
 
     /**
