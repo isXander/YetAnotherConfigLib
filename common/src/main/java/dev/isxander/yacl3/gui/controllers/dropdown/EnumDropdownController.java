@@ -1,29 +1,30 @@
 package dev.isxander.yacl3.gui.controllers.dropdown;
 
 import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.controller.ValueFormatter;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.AbstractWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class EnumDropdownController<E extends Enum<E>> extends AbstractDropdownController<E> {
     /**
      * The function used to convert enum constants to strings used for display, suggestion, and validation. Defaults to {@link Enum#toString}.
      */
-    protected final Function<E, String> toString;
+    protected final ValueFormatter<E> formatter;
 
-    public EnumDropdownController(Option<E> option, Function<E, String> toString) {
-        super(option, Arrays.stream(option.pendingValue().getDeclaringClass().getEnumConstants()).map(toString).toList());
-        this.toString = toString;
+    public EnumDropdownController(Option<E> option, ValueFormatter<E> formatter) {
+        super(option, Arrays.stream(option.pendingValue().getDeclaringClass().getEnumConstants()).map(formatter::format).map(Component::getString).toList());
+        this.formatter = formatter;
     }
 
     @Override
     public String getString() {
-        return toString.apply(option().pendingValue());
+        return formatter.format(option().pendingValue()).getString();
     }
 
     @Override
@@ -32,15 +33,15 @@ public class EnumDropdownController<E extends Enum<E>> extends AbstractDropdownC
     }
 
     /**
-     * Searches through enum constants for one whose {@link #toString} result equals {@code value}
+     * Searches through enum constants for one whose {@link #formatter} result equals {@code value}
      *
      * @return The enum constant associated with the {@code value} or the pending value if none are found
-     * @implNote The return value of {@link #toString} on each enum constant should be unique in order to ensure accuracy
+     * @implNote The return value of {@link #formatter} on each enum constant should be unique in order to ensure accuracy
      */
     private E getEnumFromString(String value) {
         value = value.toLowerCase();
         for (E constant : option().pendingValue().getDeclaringClass().getEnumConstants()) {
-            if (toString.apply(constant).toLowerCase().equals(value)) return constant;
+            if (formatter.format(constant).getString().toLowerCase().equals(value)) return constant;
         }
 
         return option().pendingValue();
@@ -65,10 +66,10 @@ public class EnumDropdownController<E extends Enum<E>> extends AbstractDropdownC
     }
 
     /**
-     * Filters and sorts through enum constants for those whose {@link #toString} result equals {@code value}
+     * Filters and sorts through enum constants for those whose {@link #formatter} result equals {@code value}
      *
      * @return a sorted stream containing enum constants associated with the {@code value}
-     * @implNote The return value of {@link #toString} on each enum constant should be unique in order to ensure accuracy
+     * @implNote The return value of {@link #formatter} on each enum constant should be unique in order to ensure accuracy
      */
     @NotNull
     protected Stream<String> getValidEnumConstants(String value) {
