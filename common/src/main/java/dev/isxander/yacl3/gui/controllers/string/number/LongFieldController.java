@@ -4,6 +4,7 @@ import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.controller.ValueFormatter;
 import dev.isxander.yacl3.gui.controllers.slider.LongSliderController;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Function;
 
@@ -63,13 +64,9 @@ public class LongFieldController extends NumberFieldController<Long> {
         this(option, -Long.MAX_VALUE, Long.MAX_VALUE, LongSliderController.DEFAULT_FORMATTER);
     }
 
+    @ApiStatus.Internal
     public static LongFieldController createInternal(Option<Long> option, long min, long max, ValueFormatter<Long> formatter) {
         return new LongFieldController(option, min, max, formatter::format);
-    }
-
-    @Override
-    public boolean isInputValid(String input) {
-        return input.matches("(?:-?\\d+|)");
     }
 
     /**
@@ -93,7 +90,7 @@ public class LongFieldController extends NumberFieldController<Long> {
      */
     @Override
     public String getString() {
-        return String.valueOf(option().pendingValue());
+        return NUMBER_FORMAT.format(option().pendingValue());
     }
 
     /**

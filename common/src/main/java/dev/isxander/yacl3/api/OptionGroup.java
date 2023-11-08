@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.function.Supplier;
 
 /**
  * Serves as a separator between multiple chunks of options
@@ -70,8 +71,48 @@ public interface OptionGroup {
         Builder option(@NotNull Option<?> option);
 
         /**
+         * Adds an option to this group.
+         * To construct an option, use {@link Option#createBuilder()}
+         *
+         * @param optionSupplier to be called to initialise the option. called immediately
+         * @return this
+         */
+        @Override
+        default Builder option(@NotNull Supplier<@NotNull Option<?>> optionSupplier) {
+            OptionAddable.super.option(optionSupplier);
+            return this;
+        }
+
+        /**
+         * Adds an option to this group if a condition is met.
+         * To construct an option, use {@link Option#createBuilder()}
+         *
+         * @param condition only if true is the option added
+         * @return this
+         */
+        @Override
+        default Builder optionIf(boolean condition, @NotNull Option<?> option) {
+            OptionAddable.super.optionIf(condition, option);
+            return this;
+        }
+
+        /**
+         * Adds an option to this group if a condition is met.
+         * To construct an option, use {@link Option#createBuilder()}
+         *
+         * @param condition only if true is the option added
+         * @param optionSupplier to be called to initialise the option. called immediately only if condition is true
+         * @return this
+         */
+        @Override
+        default Builder optionIf(boolean condition, @NotNull Supplier<@NotNull Option<?>> optionSupplier) {
+            OptionAddable.super.optionIf(condition, optionSupplier);
+            return this;
+        }
+
+        /**
          * Adds multiple options to group.
-         * To construct an option, use {@link Option#createBuilder(Class)}
+         * To construct an option, use {@link Option#createBuilder()}
          *
          * @see OptionGroup#options()
          */
