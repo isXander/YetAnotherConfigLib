@@ -1,0 +1,31 @@
+{
+  "yacl.control.boolean.true": "Wahrhaft",
+  "yacl.control.boolean.false": "Unrichtig",
+
+  "yacl.control.action.execute": "Hinrichten",
+
+  "yacl.control.text.blank": "<ausdruckslos>",
+
+  "yacl.gui.save": "Veränderungen Sparen",
+  "yacl.gui.save.tooltip": "Eklärt den Wechsel für Permanent.",
+  "yacl.gui.finished.tooltip": "Ende mit der grafischen Benutzeroberfläche",
+  "yacl.gui.cancel.tooltip": "Verlernt die schwebenden Wechsel und sperre die grafische Benutzeroberfläche.",
+  "yacl.gui.reset.tooltip": "Starte alle Optionen zum Voreingestellten neu. (Dies ist umstoßbar!)",
+  "yacl.gui.undo": "Zunichte machen",
+  "yacl.gui.undo.tooltip": "Fällt alle Optionen zurück zu jenem Status, welcher er vor der Redaktion angenommen hatte.",
+  "yacl.gui.fail_apply": "Bewerbung missglückt",
+  "yacl.gui.fail_apply.tooltip": "Es gab einen Irrtum und das Wechselgeld konnte nicht beworben werden.",
+  "yacl.gui.save_before_exit": "Spare vor dem Aussteigen!",
+  "yacl.gui.save_before_exit.tooltip": "Spare oder stoniere zum Aussteigen der grafischen Benutzeroberflächen.",
+
+  "yacl.list.move_up": "In die Höhe umziehen",
+  "yacl.list.move_down": "Niedergehen",
+  "yacl.list.remove": "Aushebeln",
+  "yacl.list.add_top": "Neue Einreise",
+  "yacl.list.empty": "Aufstellung ist nichtssagend",
+
+  "yacl.restart.title": "Konfigurationsdatei sei des Verlangens nach einem Wiederanlauf!",
+  "yacl.restart.message": "Eine oder mehrere Möglichkeiten brauchen dich, einen Wiederanlauf zu durchgehen, um die Börse zu applizieren.",
+  "yacl.restart.yes": "Minecraft dichtmachen",
+  "yacl.restart.no": "Erneute Wiederanschaltung verwerfen"
+}
