@@ -99,13 +99,13 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
     protected void fillSidewaysGradient(GuiGraphics graphics, int x1, int y1, int x2, int y2, int z, int startColor, int endColor) {
         //Fills a gradient, left to right
         //Uses practically the same method as the GuiGraphics class, but with the x/y moved
-        //Has a custom "z" value incase needed for later
+        //Has a custom "z" value in case needed for later
         VertexConsumer vertex = graphics.bufferSource().getBuffer(RenderType.gui());
         Matrix4f matrix4f = graphics.pose().last().pose();
-        vertex.vertex(matrix4f, x1, y1, z).color(startColor).endVertex();
-        vertex.vertex(matrix4f, x1, y2, z).color(startColor).endVertex();
-        vertex.vertex(matrix4f, x2, y2, z).color(endColor).endVertex();
-        vertex.vertex(matrix4f, x2, y1, z).color(endColor).endVertex();
+        vertex.vertex(matrix4f, x2, y2, z).color(startColor).endVertex();
+        vertex.vertex(matrix4f, x2, y1, z).color(startColor).endVertex();
+        vertex.vertex(matrix4f, x1, y1, z).color(endColor).endVertex();
+        vertex.vertex(matrix4f, x1, y2, z).color(endColor).endVertex();
     }
 
 
@@ -120,12 +120,13 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
         int x = x2 - x1;
         int i = 6;
         //TODO - Some int array goofy stuff to reduce code
-        fillSidewaysGradient(graphics, x1, y1, x1 + (x / i), y2, z, red, yellow);
-        fillSidewaysGradient(graphics, x1 + (x / i), y1, x1 + (x / i * 2), y2, z, yellow, green);
-        fillSidewaysGradient(graphics, x1 + (x / i * 2), y1, x1 + (x / i * 3), y2, z, green, cyan);
-        fillSidewaysGradient(graphics, x1 + (x / i * 3), y1, x1 + (x / i * 4), y2, z, cyan, blue);
-        fillSidewaysGradient(graphics, x1 + (x / i * 4), y1, x1 + (x / i * 5), y2, z, blue, purple);
-        fillSidewaysGradient(graphics, x1 + (x / i * 5), y1, x2, y2, z, purple, red);
+
+        fillSidewaysGradient(graphics, x1 + (x / i), y1, x1, y2, z, red, yellow);
+        fillSidewaysGradient(graphics, x1 + (x / i * 2), y1, x1 + (x / i), y2, z, yellow, green);
+        fillSidewaysGradient(graphics, x1 + (x / i * 3), y1, x1 + (x / i * 2), y2, z, green, cyan);
+        fillSidewaysGradient(graphics, x1 + (x / i * 4), y1, x1 + (x / i * 3), y2, z, cyan, blue);
+        fillSidewaysGradient(graphics, x1 + (x / i * 5), y1, x1 + (x / i * 4), y2, z, blue, purple);
+        fillSidewaysGradient(graphics, x1 + (x / i * 6), y1, x1 + (x / i * 5), y2, z, purple, red);
     }
 
     protected int multiplyColor(int hex, float amount) {

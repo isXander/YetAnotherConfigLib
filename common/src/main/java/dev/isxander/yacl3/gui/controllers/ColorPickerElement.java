@@ -77,21 +77,10 @@ public class ColorPickerElement extends StringControllerElement {
 
         //HSL gradient
 
-//        float hue = getHue();
-//        float RGB = Color.HSBtoRGB(hue, 1, 1);
-
-        //FIXME - colorPickerDim.x and colorPickerDim.xLimit seems to be flipped,
-        //This causes the HSL gradient to be flipped, including the params and the order of the colors
-        //To temporary fix this, I've switched the params and the order of the colors in the param to have it
-        //go back to the way it should be, but this should be fixed better
-
         //White to pending color's RGB, left to right
-//        fillSidewaysGradient(graphics, colorPickerDim.xLimit(), colorPickerDim.y(), colorPickerDim.x() + (colorPickerDim.xLimit() / colorPreviewPortion) + 1, colorPickerDim.yLimit(), 2, 0xFFFFFFFF, (int) RGB);
-        fillSidewaysGradient(graphics, colorPickerDim.xLimit(), colorPickerDim.y() - sliderHeight - outline, colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + 1, colorPickerDim.yLimit(), 2, (int) getRgbFromHue(), 0xFFFFFFFF);
-//        System.out.println(Mth.degreesDifference(mouseX - colorPickerDim.x(), colorPickerDim.xLimit()));
+        fillSidewaysGradient(graphics, colorPickerDim.xLimit(), colorPickerDim.y() - sliderHeight - outline, colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + 1, colorPickerDim.yLimit(), 2, 0xFFFFFFFF, (int) getRgbFromHue());
 
         //Transparent to black, top to bottom
-//        graphics.fillGradient(colorPickerDim.xLimit(), colorPickerDim.y(), colorPickerDim.x() + (colorPickerDim.xLimit() / colorPreviewPortion) + 1, colorPickerDim.yLimit(), 3,0x00000000, 0xFF000000);
         graphics.fillGradient(colorPickerDim.xLimit(), colorPickerDim.y() - sliderHeight - outline, colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + 1, colorPickerDim.yLimit(), 3,0xFF000000, 0x00000000);
 
         //DELETEME
@@ -99,15 +88,12 @@ public class ColorPickerElement extends StringControllerElement {
 //        int hueSliderYLimit = colorPickerDim.yLimit() + 8;
 
         //Hue slider
-//        drawRainbowGradient(graphics, colorPickerDim.xLimit(), colorPickerDim.y(), colorPickerDim.x(), colorPickerDim.y() - sliderHeight, 2);
-        drawRainbowGradient(graphics, colorPickerDim.xLimit(), colorPickerDim.y(), colorPickerDim.x(), colorPickerDim.y() - sliderHeight, 2);
+        drawRainbowGradient(graphics, colorPickerDim.x(), colorPickerDim.y(), colorPickerDim.xLimit(), colorPickerDim.y() - sliderHeight, 2);
 
 
         //Slider thumb
-//        graphics.fill(getThumbX() - getThumbWidth() / 2, hueSliderY, getThumbX() + getThumbWidth() / 2, hueSliderYLimit, 5, -1);
         graphics.fill(getThumbX(mouseX) - getThumbWidth() / 2, colorPickerDim.y(), getThumbX(mouseX) + getThumbWidth() / 2, colorPickerDim.y() - sliderHeight, 5, -1);
         //Slider thumb shadow
-//        graphics.fill(getThumbX() - getThumbWidth() / 2 - 1, hueSliderY - 1, getThumbX() + getThumbWidth() / 2 + 1, hueSliderYLimit + 1, 4, 0xFF404040);
         graphics.fill(getThumbX(mouseX) - getThumbWidth() / 2 - 1, colorPickerDim.y() + 1, getThumbX(mouseX) + getThumbWidth() / 2 + 1, colorPickerDim.y() - sliderHeight - 1, 4, 0xFF404040);
 
 
