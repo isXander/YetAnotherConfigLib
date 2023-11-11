@@ -133,23 +133,29 @@ public class ColorController implements IStringController<Color> {
             if (isHovered()) {
                 colorPreviewDim.move(-inputFieldBounds.width() - 8, -2);
                 colorPreviewDim.expand(4, 4);
-                if(colorPickerVisible) {
-                    colorPickerElement = new ColorPickerElement(colorController, screen, getDimension());
-
-                    //FIXME - It would be much more ideal for the mouseClicked override in the color picker widget to handle this instead
-                    //I couldn't get the mouseClicked override for the color picker widget to work
-                    //The breakpoint I set for it would never activate no matter what
-                    //I believe this is something I've done wrong, but I couldn't figure it out
-                    colorPickerElement.setMouseDown(mouseDown);
-
-                    //Renders the color picker
-                    colorPickerElement.render(graphics, mouseX, mouseY, delta);
-                }
                 super.drawValueText(graphics, mouseX, mouseY, delta);
             }
 
             graphics.fill(colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), colorController.option().pendingValue().getRGB());
             drawOutline(graphics, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), 1, 0xFF000000);
+        }
+
+        @Override
+        public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+            super.render(graphics, mouseX, mouseY, delta);
+
+            if(colorPickerVisible) {
+                colorPickerElement = new ColorPickerElement(colorController, screen, getDimension());
+
+                //FIXME - It would be much more ideal for the mouseClicked override in the color picker widget to handle this instead
+                //I couldn't get the mouseClicked override for the color picker widget to work
+                //The breakpoint I set for it would never activate no matter what
+                //I believe this is something I've done wrong, but I couldn't figure it out
+                colorPickerElement.setMouseDown(mouseDown);
+
+                //Renders the color picker
+                colorPickerElement.render(graphics, mouseX, mouseY, delta);
+            }
         }
 
         @Override
@@ -265,18 +271,24 @@ public class ColorController implements IStringController<Color> {
                 //TODO - Controller support?
                 //FIXME - Clicking another category whilst the color picker is visible keeps the color picker visible when returning
                 //Detects if the user has clicked the color preview
-                if(inputFieldFocused && (mouseX >= colorPreviewDim.x() && mouseX <= colorPreviewDim.xLimit())
-                        && (mouseY >= colorPreviewDim.y() && mouseY <= colorPreviewDim.yLimit()) && button == 0) {
-                    colorPickerVisible = !colorPickerVisible;
-                    playDownSound();
+                if(clickedColorPreview(mouseX, mouseY, button)) {
+                        colorPickerVisible = !colorPickerVisible;
+                        playDownSound();
                 }
-
                 caretPos = Math.max(1, caretPos);
                 setSelectionLength();
                 mouseDown = true;
                 return true;
             }
 
+            return false;
+        }
+
+        public boolean clickedColorPreview(double mouseX, double mouseY, int button) {
+            if((mouseX >= colorPreviewDim.x() && mouseX <= colorPreviewDim.xLimit())
+                    && (mouseY >= colorPreviewDim.y() && mouseY <= colorPreviewDim.yLimit()) && button == 0) {
+                return true;
+            }
             return false;
         }
 
@@ -315,218 +327,224 @@ public class ColorController implements IStringController<Color> {
             //FIXME - Example: Clicking on the string controller behind the color picker, then typing types into the controller
             return super.isMouseOver(mouseX, mouseY);
         }
-    }
-
-    public static class ColorPickerElement extends StringControllerElement {
-        private boolean mouseDown;
-        private final ColorController colorController;
-        protected Dimension<Integer> inputFieldBounds;
-        protected MutableDimension<Integer> colorPickerDim;
-        private Dimension<Integer> sliderBounds;
-
-        public ColorPickerElement(ColorController control, YACLScreen screen, Dimension<Integer> dim) {
-            super(control, screen, dim, true);
-            this.colorController = control;
-            setDimension(dim);
-        }
 
         @Override
-        public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-//            int hueSliderX = colorPickerDim.x() - 30 - inputFieldBounds.width() - 40;
-//            int hueSliderY1 = colorPickerDim.y() + 10 - 20;
-//            int hueSliderXLimit = inputFieldBounds.xLimit() + 5;
-//            int hueSliderYLimit1 = colorPickerDim.yLimit() + 8 - 20;
-//            graphics.fill(hueSliderX, hueSliderY1, hueSliderXLimit, hueSliderYLimit1, 10, Color.YELLOW.getRGB());
-//            super.render(graphics, mouseX, mouseY, delta);
+        public void unfocus() {
+            colorPickerVisible = false;
+            super.unfocus();
+        }
+    }
 
-            //FIXME - If the color picker is towards the top of the category, it will appear above the color controller instead of below
-            //FIXME - The color preview doesn't have enough room for the translation string
-            colorPickerDim.move(-inputFieldBounds.width() - 40, -20);
-            int x = colorPickerDim.x() - 30;
-            int y = colorPickerDim.y() - 35;
-            int outline = 1; //"outline" width/height offset
-
-            //Main color preview
-            //A single pixel is subtracted to allow for the "outline"
-            //The outline is really just a big black box behind the other drawn items
-            graphics.fill(x, y, colorPickerDim.xLimit() - outline, colorPickerDim.yLimit() + 1, 2, colorController.option().pendingValue().getRGB());
-
-            //HSL gradient
-            int gradientX = colorPickerDim.xLimit();
-            int gradientY = colorPickerDim.y() - 35;
-            int gradientXLimit = inputFieldBounds.xLimit() + 5 - outline;
-            int gradientYLimit = colorPickerDim.yLimit() + 1;
-
-            //White to pending color value, left to right
-            float hue = getHue();
-            float RGB = Color.HSBtoRGB(hue, 1, 1);
-
-            fillSidewaysGradient(graphics, gradientX, gradientY, gradientXLimit, gradientYLimit, 2, 0xFFFFFFFF, (int) RGB);
-
-            //Transparent to black, top to bottom
-            graphics.fillGradient(gradientX, gradientY, gradientXLimit, gradientYLimit, 3,0x00000000, 0xFF000000);
-
-            //Hue slider
-            int hueSliderY = colorPickerDim.y() + 10;
-            int hueSliderYLimit = colorPickerDim.yLimit() + 8;
-            drawRainbowGradient(graphics, x, hueSliderY, gradientXLimit, hueSliderYLimit, 2);
-            //Slider thumb
-            graphics.fill(getThumbX() - getThumbWidth() / 2, hueSliderY, getThumbX() + getThumbWidth() / 2, hueSliderYLimit, 5, -1);
-            //Slider thumb shadow
-            graphics.fill(getThumbX() - getThumbWidth() / 2 - 1, hueSliderY - 1, getThumbX() + getThumbWidth() / 2 + 1, hueSliderYLimit + 1, 4, 0xFF404040);
-
-
-            //Outline
-            //Simply draws a huge black box
-            //Space was added between the main color preview and the gradient
-            graphics.fill(x - outline, y - outline, gradientXLimit + outline, hueSliderYLimit + outline, 1, 0xFF000000);
-
-
-            //FIXME - It would be much more ideal for the mouseClicked override to handle this instead
-            //Methods used to determine mouse clicks
-
-            //Temporary workaround for mouseClicked not working
-            //This detects when the left mouse button has been clicked anywhere on screen
-            int button = GLFW.glfwGetMouseButton(this.client.getWindow().getWindow(), GLFW.GLFW_MOUSE_BUTTON_LEFT);
-            mouseDown = button == GLFW.GLFW_PRESS;
-//            if(button == GLFW.GLFW_PRESS) {
-//                System.out.println("yay");
-//                //TODO - mouseDown boolean enabling/disabling
+//    public static class ColorPickerElement extends StringControllerElement {
+//        private boolean mouseDown;
+//        private final ColorController colorController;
+//        protected Dimension<Integer> inputFieldBounds;
+//        protected MutableDimension<Integer> colorPickerDim;
+//        private Dimension<Integer> sliderBounds;
+//
+//        public ColorPickerElement(ColorController control, YACLScreen screen, Dimension<Integer> dim) {
+//            super(control, screen, dim, true);
+//            this.colorController = control;
+//            setDimension(dim);
+//        }
+//
+//        @Override
+//        public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+////            int hueSliderX = colorPickerDim.x() - 30 - inputFieldBounds.width() - 40;
+////            int hueSliderY1 = colorPickerDim.y() + 10 - 20;
+////            int hueSliderXLimit = inputFieldBounds.xLimit() + 5;
+////            int hueSliderYLimit1 = colorPickerDim.yLimit() + 8 - 20;
+////            graphics.fill(hueSliderX, hueSliderY1, hueSliderXLimit, hueSliderYLimit1, 10, Color.YELLOW.getRGB());
+////            super.render(graphics, mouseX, mouseY, delta);
+//
+//            //FIXME - If the color picker is towards the top of the category, it will appear above the color controller instead of below
+//            //FIXME - The color preview doesn't have enough room for the translation string
+//            colorPickerDim.move(-inputFieldBounds.width() - 40, -20);
+//            int x = colorPickerDim.x() - 30;
+//            int y = colorPickerDim.y() - 35;
+//            int outline = 1; //"outline" width/height offset
+//
+//            //Main color preview
+//            //A single pixel is subtracted to allow for the "outline"
+//            //The outline is really just a big black box behind the other drawn items
+//            graphics.fill(x, y, colorPickerDim.xLimit() - outline, colorPickerDim.yLimit() + 1, 2, colorController.option().pendingValue().getRGB());
+//
+//            //HSL gradient
+//            int gradientX = colorPickerDim.xLimit();
+//            int gradientY = colorPickerDim.y() - 35;
+//            int gradientXLimit = inputFieldBounds.xLimit() + 5 - outline;
+//            int gradientYLimit = colorPickerDim.yLimit() + 1;
+//
+//            //White to pending color value, left to right
+//            float hue = getHue();
+//            float RGB = Color.HSBtoRGB(hue, 1, 1);
+//
+//            fillSidewaysGradient(graphics, gradientX, gradientY, gradientXLimit, gradientYLimit, 2, 0xFFFFFFFF, (int) RGB);
+//
+//            //Transparent to black, top to bottom
+//            graphics.fillGradient(gradientX, gradientY, gradientXLimit, gradientYLimit, 3,0x00000000, 0xFF000000);
+//
+//            //Hue slider
+//            int hueSliderY = colorPickerDim.y() + 10;
+//            int hueSliderYLimit = colorPickerDim.yLimit() + 8;
+//            drawRainbowGradient(graphics, x, hueSliderY, gradientXLimit, hueSliderYLimit, 2);
+//            //Slider thumb
+//            graphics.fill(getThumbX() - getThumbWidth() / 2, hueSliderY, getThumbX() + getThumbWidth() / 2, hueSliderYLimit, 5, -1);
+//            //Slider thumb shadow
+//            graphics.fill(getThumbX() - getThumbWidth() / 2 - 1, hueSliderY - 1, getThumbX() + getThumbWidth() / 2 + 1, hueSliderYLimit + 1, 4, 0xFF404040);
+//
+//
+//            //Outline
+//            //Simply draws a huge black box
+//            //Space was added between the main color preview and the gradient
+//            graphics.fill(x - outline, y - outline, gradientXLimit + outline, hueSliderYLimit + outline, 1, 0xFF000000);
+//
+//
+//            //FIXME - It would be much more ideal for the mouseClicked override to handle this instead
+//            //Methods used to determine mouse clicks
+//
+//            //Temporary workaround for mouseClicked not working
+//            //This detects when the left mouse button has been clicked anywhere on screen
+//            int button = GLFW.glfwGetMouseButton(this.client.getWindow().getWindow(), GLFW.GLFW_MOUSE_BUTTON_LEFT);
+//            mouseDown = button == GLFW.GLFW_PRESS;
+////            if(button == GLFW.GLFW_PRESS) {
+////                System.out.println("yay");
+////                //TODO - mouseDown boolean enabling/disabling
+////            }
+//
+//            if(mouseDown) {
+//                //Using the mouseClicked "override"(more like a method in this case in the meantime)
+//                //to make it easier for readability and for the future if the mouseClicked override is fixable
+//                mouseClicked(mouseX, mouseY, 0);
 //            }
-
-            if(mouseDown) {
-                //Using the mouseClicked "override"(more like a method in this case in the meantime)
-                //to make it easier for readability and for the future if the mouseClicked override is fixable
-                mouseClicked(mouseX, mouseY, 0);
-            }
-        }
-
-        @Override
-        public void setDimension(Dimension<Integer> dim) {
-            super.setDimension(dim);
-
-            int width = Math.max(6, Math.min(textRenderer.width(getValueText()), getUnshiftedLength()));
-            int previewSize = (dim.height() - getYPadding() * 2) / 2;
-            int trackWidth = dim.width() / 3;
-            if (optionNameString.isEmpty())
-                trackWidth = dim.width() / 2;
-
-            colorPickerDim = Dimension.ofInt(dim.xLimit() - getXPadding() - previewSize, dim.centerY() - previewSize / 2, previewSize, previewSize);
-            sliderBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - getThumbWidth() / 2 - trackWidth, dim.centerY() - 5, trackWidth, 10);
-            inputFieldBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - width, dim.centerY() - textRenderer.lineHeight / 2, width, textRenderer.lineHeight);
-        }
-
-        //SLIDER related overrides
-
-        public int getUnshiftedLength() {
-            if(control.option().name().getString().isEmpty())
-                return getDimension().width() - getXPadding() * 2;
-            return getDimension().width() / 8 * 5;
-        }
-
-        @Override
-        protected int getHoveredControlWidth() {
-//            return sliderBounds.width() + getUnhoveredControlWidth() + 6 + getThumbWidth() / 2;
-            return Math.min(textRenderer.width(control.formatValue()), getUnshiftedLength());
-        }
-
-        @Override
-        protected int getUnhoveredControlWidth() {
-            return textRenderer.width(getValueText());
-        }
-
-        public void setMouseDown(boolean mouseDown) {
-//            System.out.println("e");
-            this.mouseDown = mouseDown;
-        }
-
-        @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if(mouseDown) {
-                //TODO - Replace all variables like this with private vars?
-                int hueSliderX = colorPickerDim.x() - 30 - inputFieldBounds.width() - 40;
-                int hueSliderY = colorPickerDim.y() + 10;
-                int hueSliderXLimit = inputFieldBounds.xLimit() + 5;
-                int hueSliderYLimit = colorPickerDim.yLimit() + 8;
-//                System.out.println("button: " +  button);
-//                System.out.println("x: " + mouseX + "y: " + mouseY);
-//                System.out.println("x: " + hueSliderX + "y:" + hueSliderY);
-//                System.out.println("xLimit: " + hueSliderXLimit + "yLimit: " + hueSliderYLimit);
-
-                //Detects if the user has clicked the hue slider
-                if((mouseX >= hueSliderX && mouseX <= hueSliderXLimit)
-                        && (mouseY >= hueSliderY && mouseY <= hueSliderYLimit)) {
-                    System.out.println("yay");
-                    setHueFromMouse(mouseX);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public boolean mouseReleased(double mouseX, double mouseY, int button) {
-            System.out.println("yay2");
-            mouseDown = false;
-            return false;
-//            return super.mouseReleased(mouseX, mouseY, button);
-        }
-
-        @Override
-        public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-            System.out.println("yay3");
-            return false;
-//            return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
-        }
-
-        @Override
-        public boolean isMouseOver(double mouseX, double mouseY) {
-            return super.isMouseOver(mouseX, mouseY);
-        }
-
-        @Override
-        public boolean isHovered() {
-            return super.isHovered();
-        }
-
-        @Override
-        public boolean isFocused() {
-            return true;
-        }
-
-        protected void setHueFromMouse(double mouseX) {
-//            double value = (mouseX - colorPickerDim.x() - 30) / sliderBounds.width() * (inputFieldBounds.xLimit() + 5 - colorPickerDim.x() - 30) * 255;
-//            int red = ((int) value >> 16) & 255;
-//            int green = ((int) value >> 8) & 255;
-//            int blue = (int) value & 255;
-//            int rgb = red + green + blue;
-//            System.out.println("value: " + value);
-//            System.out.println("rgb: " + rgb);
-            System.out.println("color: " + colorController.option().pendingValue().getRGB());
-//            int rgb = colorController.option().pendingValue().getRGB();
-//            int red = (rgb >> 16) & 255;
-//            System.out.println("red: " );
-//            colorController.option().requestSet(new Color((int) value));
-        }
-
-        protected int getThumbX() {
-            //Calculates the thumb x based upon the pending value's hue
-            //Multiplying the adjustment by 1.9 instead of 2 seemed to give better results
-            double multiplyValue = 1.9;
-            int adjustmentValue = (int) ((inputFieldBounds.xLimit() + 5 - colorPickerDim.x() - 30) * getHue() * multiplyValue);
-
-            return Mth.clamp(colorPickerDim.x() - 30 + adjustmentValue, colorPickerDim.x() - 30, inputFieldBounds.xLimit() + 5);
-        }
-
-        protected float getHue() {
-            //Gets the hue of the pending value
-            Color pendingValue = colorController.option().pendingValue();
-            float[] HSL = Color.RGBtoHSB(pendingValue.getRed(), pendingValue.getGreen(), pendingValue.getBlue(), null);
-            return HSL[0];
-        }
-
-        protected int getThumbWidth() {
-            return 4;
-        }
-    }
+//        }
+//
+//        @Override
+//        public void setDimension(Dimension<Integer> dim) {
+//            super.setDimension(dim);
+//
+//            int width = Math.max(6, Math.min(textRenderer.width(getValueText()), getUnshiftedLength()));
+//            int previewSize = (dim.height() - getYPadding() * 2) / 2;
+//            int trackWidth = dim.width() / 3;
+//            if (optionNameString.isEmpty())
+//                trackWidth = dim.width() / 2;
+//
+//            colorPickerDim = Dimension.ofInt(dim.xLimit() - getXPadding() - previewSize, dim.centerY() - previewSize / 2, previewSize, previewSize);
+//            sliderBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - getThumbWidth() / 2 - trackWidth, dim.centerY() - 5, trackWidth, 10);
+//            inputFieldBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - width, dim.centerY() - textRenderer.lineHeight / 2, width, textRenderer.lineHeight);
+//        }
+//
+//        //SLIDER related overrides
+//
+//        public int getUnshiftedLength() {
+//            if(control.option().name().getString().isEmpty())
+//                return getDimension().width() - getXPadding() * 2;
+//            return getDimension().width() / 8 * 5;
+//        }
+//
+//        @Override
+//        protected int getHoveredControlWidth() {
+////            return sliderBounds.width() + getUnhoveredControlWidth() + 6 + getThumbWidth() / 2;
+//            return Math.min(textRenderer.width(control.formatValue()), getUnshiftedLength());
+//        }
+//
+//        @Override
+//        protected int getUnhoveredControlWidth() {
+//            return textRenderer.width(getValueText());
+//        }
+//
+//        public void setMouseDown(boolean mouseDown) {
+////            System.out.println("e");
+//            this.mouseDown = mouseDown;
+//        }
+//
+//        @Override
+//        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+//            if(mouseDown) {
+//                //TODO - Replace all variables like this with private vars?
+//                int hueSliderX = colorPickerDim.x() - 30 - inputFieldBounds.width() - 40;
+//                int hueSliderY = colorPickerDim.y() + 10;
+//                int hueSliderXLimit = inputFieldBounds.xLimit() + 5;
+//                int hueSliderYLimit = colorPickerDim.yLimit() + 8;
+////                System.out.println("button: " +  button);
+////                System.out.println("x: " + mouseX + "y: " + mouseY);
+////                System.out.println("x: " + hueSliderX + "y:" + hueSliderY);
+////                System.out.println("xLimit: " + hueSliderXLimit + "yLimit: " + hueSliderYLimit);
+//
+//                //Detects if the user has clicked the hue slider
+//                if((mouseX >= hueSliderX && mouseX <= hueSliderXLimit)
+//                        && (mouseY >= hueSliderY && mouseY <= hueSliderYLimit)) {
+//                    System.out.println("yay");
+//                    setHueFromMouse(mouseX);
+//                    return true;
+//                }
+//            }
+//            return false;
+//        }
+//
+//        @Override
+//        public boolean mouseReleased(double mouseX, double mouseY, int button) {
+//            System.out.println("yay2");
+//            mouseDown = false;
+//            return false;
+////            return super.mouseReleased(mouseX, mouseY, button);
+//        }
+//
+//        @Override
+//        public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+//            System.out.println("yay3");
+//            return false;
+////            return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+//        }
+//
+//        @Override
+//        public boolean isMouseOver(double mouseX, double mouseY) {
+//            return super.isMouseOver(mouseX, mouseY);
+//        }
+//
+//        @Override
+//        public boolean isHovered() {
+//            return super.isHovered();
+//        }
+//
+//        @Override
+//        public boolean isFocused() {
+//            return true;
+//        }
+//
+//        protected void setHueFromMouse(double mouseX) {
+////            double value = (mouseX - colorPickerDim.x() - 30) / sliderBounds.width() * (inputFieldBounds.xLimit() + 5 - colorPickerDim.x() - 30) * 255;
+////            int red = ((int) value >> 16) & 255;
+////            int green = ((int) value >> 8) & 255;
+////            int blue = (int) value & 255;
+////            int rgb = red + green + blue;
+////            System.out.println("value: " + value);
+////            System.out.println("rgb: " + rgb);
+//            System.out.println("color: " + colorController.option().pendingValue().getRGB());
+////            int rgb = colorController.option().pendingValue().getRGB();
+////            int red = (rgb >> 16) & 255;
+////            System.out.println("red: " );
+////            colorController.option().requestSet(new Color((int) value));
+//        }
+//
+//        protected int getThumbX() {
+//            //Calculates the thumb x based upon the pending value's hue
+//            //Multiplying the adjustment by 1.9 instead of 2 seemed to give better results
+//            double multiplyValue = 1.9;
+//            int adjustmentValue = (int) ((inputFieldBounds.xLimit() + 5 - colorPickerDim.x() - 30) * getHue() * multiplyValue);
+//
+//            return Mth.clamp(colorPickerDim.x() - 30 + adjustmentValue, colorPickerDim.x() - 30, inputFieldBounds.xLimit() + 5);
+//        }
+//
+//        protected float getHue() {
+//            //Gets the hue of the pending value
+//            Color pendingValue = colorController.option().pendingValue();
+//            float[] HSL = Color.RGBtoHSB(pendingValue.getRed(), pendingValue.getGreen(), pendingValue.getBlue(), null);
+//            return HSL[0];
+//        }
+//
+//        protected int getThumbWidth() {
+//            return 4;
+//        }
+//    }
 }

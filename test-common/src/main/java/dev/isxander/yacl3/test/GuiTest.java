@@ -393,15 +393,15 @@ public class GuiTest {
                                 .build())
                         .category(ConfigCategory.createBuilder()
                                 .name(Component.literal("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
-                                .option(Option.createBuilder(Color.class)
-                                        .name(Component.literal("Color Option"))
-                                        .binding(
-                                                defaults.colorOption,
-                                                () -> config.colorOption,
-                                                value -> config.colorOption = value
-                                        )
-                                        .customController(ColorController::new)
-                                        .build())
+//                                .option(Option.createBuilder(Color.class)
+//                                        .name(Component.literal("Color Option"))
+//                                        .binding(
+//                                                defaults.colorOption,
+//                                                () -> config.colorOption,
+//                                                value -> config.colorOption = value
+//                                        )
+//                                        .customController(ColorController::new)
+//                                        .build())
                                 .option(LabelOption.create(Component.literal("This is a test category!")))
                                 .build())
                         .category(ConfigCategory.createBuilder()
