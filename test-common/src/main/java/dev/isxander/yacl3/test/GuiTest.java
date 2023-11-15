@@ -277,7 +277,7 @@ public class GuiTest {
                                                         () -> config.formattingOption,
                                                         (value) -> config.formattingOption = value
                                                 )
-                                                .controller(EnumDropdownControllerBuilder.getFactory(formatting -> Component.literal(StringUtils.capitalize(formatting.getName()).replaceAll("_", " "))))
+                                                .controller(option -> EnumDropdownControllerBuilder.create(option).formatValue(formatting -> Component.literal(StringUtils.capitalize(formatting.getName()).replaceAll("_", " "))))
                                                 .build())
                                         .build())
                                 .group(OptionGroup.createBuilder()
