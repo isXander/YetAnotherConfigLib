@@ -1,7 +1,6 @@
 package dev.isxander.yacl3.config.v2.impl.serializer;
 
 import com.google.gson.*;
-import dev.isxander.yacl3.config.GsonConfigInstance;
 import dev.isxander.yacl3.config.v2.api.*;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.gui.utils.ItemRegistryHelper;
@@ -168,6 +167,7 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
 
     @Override
     @Deprecated
+    @SuppressWarnings("deprecation")
     public void load() {
         YACLConstants.LOGGER.warn("Calling ConfigSerializer#load() directly is deprecated. Please use ConfigClassHandler#load() instead.");
         config.load();
