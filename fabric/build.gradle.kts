@@ -48,6 +48,8 @@ dependencies {
         include(it)
     }
 
+    include(project(path = ":kotlin-extensions", configuration = "namedElements"))
+
     "common"(project(path = ":common", configuration = "namedElements")) { isTransitive = false }
     "shadowCommon"(project(path = ":common", configuration = "transformProductionFabric")) { isTransitive = false }
 }

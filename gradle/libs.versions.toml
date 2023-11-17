@@ -18,6 +18,7 @@ fabric_loader = "0.14.22"
 mixin_extras = "0.2.0"
 twelvemonkeys_imageio = "3.10.0"
 quilt_parsers = "0.2.1"
+kotlin = "1.9.10"
 
 # Fabric-like Dependencies
 fabric_api = "0.90.4+1.20.2"

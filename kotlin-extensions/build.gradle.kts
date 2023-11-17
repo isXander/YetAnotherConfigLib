@@ -1,9 +1,6 @@
 plugins {
     alias(libs.plugins.architectury.loom)
-}
-
-base {
-    archivesName.set("yet-another-config-lib")
+    kotlin("jvm") version libs.versions.kotlin.get()
 }
 
 architectury {
@@ -13,8 +10,7 @@ architectury {
 
 loom {
     silentMojangMappingsLicense()
-
-    accessWidenerPath.set(file("src/main/resources/yacl.accesswidener"))
+    accessWidenerPath.set(project(":common").loom.accessWidenerPath)
 }
 
 dependencies {
@@ -27,10 +23,8 @@ dependencies {
     })
     modImplementation(libs.fabric.loader)
 
-    implementation(libs.bundles.twelvemonkeys.imageio)
-    implementation(libs.bundles.quilt.parsers)
-
-    include(project(path = ":kotlin-extensions", configuration = "namedElements"))
+    implementation(project(path = ":common", configuration = "namedElements"))
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 java {
@@ -47,9 +41,9 @@ tasks {
 
 publishing {
     publications {
-        create<MavenPublication>("common") {
+        create<MavenPublication>("kotlin-extensions") {
             groupId = "dev.isxander.yacl"
-            artifactId = "yet-another-config-lib-common"
+            artifactId = "yet-another-config-lib-kotlin"
 
             from(components["java"])
         }

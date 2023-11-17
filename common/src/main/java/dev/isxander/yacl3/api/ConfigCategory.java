@@ -124,6 +124,8 @@ public interface ConfigCategory {
          */
         Builder groups(@NotNull Collection<OptionGroup> groups);
 
+        OptionGroup.Builder rootGroupBuilder();
+
         /**
          * Sets the tooltip to be used by the category.
          * Can be invoked twice to append more lines.

@@ -21,6 +21,7 @@ val enabledLoaders = settings.extra.properties["loaders"].toString().split(",").
 
 include("common")
 include("test-common")
+include("kotlin-extensions")
 
 if ("fabric" in enabledLoaders) {
     include("fabric")
