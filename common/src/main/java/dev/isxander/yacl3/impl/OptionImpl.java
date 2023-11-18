@@ -45,11 +45,12 @@ public final class OptionImpl<T> implements Option<T> {
         this.available = available;
         this.flags = flags;
         this.listeners = new ArrayList<>(listeners);
+
+        this.pendingValue = binding.getValue();
         this.controller = controlGetter.apply(this);
 
         addListener((opt, pending) -> description = descriptionFunction.apply(pending));
-
-        requestSet(binding().getValue());
+        triggerListeners(true);
     }
 
     @Override
