@@ -3,6 +3,8 @@ package dev.isxander.yacl3.gui;
 import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.utils.Dimension;
+import dev.isxander.yacl3.gui.controllers.ColorController;
+import dev.isxander.yacl3.gui.controllers.ColorPickerElement;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -29,6 +31,9 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     private String searchQuery = "";
     private final Consumer<DescriptionWithName> hoverEvent;
     private DescriptionWithName lastHoveredOption;
+
+    private ColorPickerElement currentColorPicker;
+    private boolean colorPickerVisible;
 
     public OptionListWidget(YACLScreen screen, ConfigCategory category, Minecraft client, int x, int y, int width, int height, Consumer<DescriptionWithName> hoverEvent) {
         super(client, x, y, width, height, true);
@@ -141,12 +146,61 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        for (Entry child : children()) {
-            if (child != getEntryAtPosition(mouseX, mouseY) && child instanceof OptionEntry optionEntry)
-                optionEntry.widget.unfocus();
+//        boolean clickedColorPicker = false;
+
+        if(colorPickerVisible && currentColorPicker != null) {
+            if(currentColorPicker.isMouseOver(mouseX, mouseY)) {
+                System.out.println("color picker clicked!!!!!!");
+                return false;
+            } else {
+                hideColorPicker();
+            }
+        } else {
+            for (Entry child : children()) {
+                if(child instanceof OptionEntry optionEntry) {
+                    if (optionEntry.widget instanceof ColorController.ColorControllerElement colorControllerElement) {
+                        setColorPicker(colorControllerElement.getColorPickerElement(), colorControllerElement.isColorPickerVisible());
+                        if (child == getEntryAtPosition(mouseX, mouseY)) {
+                            System.out.println("color controller element");
+                            if (colorControllerElement.mouseClicked(mouseX, mouseY, button)) {
+                                if (!colorControllerElement.isColorPickerVisible()) {
+                                    hideColorPicker();
+                                }
+                                System.out.println("color picker element");
+                                System.out.println("color picker visible: " + colorControllerElement.isColorPickerVisible());
+                                System.out.println("current color picker: " + currentColorPicker);
+                                return true;
+                            }
+                        }
+                    } else if (colorPickerVisible) {
+                        if(currentColorPicker.isMouseOver(mouseX, mouseY)) {
+                            return false;
+                        }
+                    }
+                }
+                if (child != getEntryAtPosition(mouseX, mouseY) && child instanceof OptionEntry optionEntry)
+                    optionEntry.widget.unfocus();
+            }
+
         }
 
+
+        System.out.println("color picker visible: " + colorPickerVisible);
+        System.out.println("current color picker: " + currentColorPicker);
+
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    public void setColorPicker(@Nullable ColorPickerElement currentColorPicker, boolean colorPickerVisible) {
+        this.currentColorPicker = currentColorPicker;
+        this.colorPickerVisible = colorPickerVisible;
+    }
+
+    public void hideColorPicker() {
+        if(this.currentColorPicker != null) {
+            currentColorPicker.hide();
+            this.setColorPicker(null, false);
+        }
     }
 
     @Override

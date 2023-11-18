@@ -1,6 +1,8 @@
 package dev.isxander.yacl3.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import dev.isxander.yacl3.gui.controllers.ColorController;
+import dev.isxander.yacl3.gui.controllers.ColorPickerElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -189,6 +191,14 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             for (GuiEventListener child : this.children()) {
+//                if(child instanceof ColorController.ColorControllerElement) {
+//                    System.out.println("yay");
+//                } else {
+//                    System.out.println("oof");
+//                }
+//                if(child instanceof ColorPickerElement) {
+//                    System.out.println("yippee");
+//                }
                 if (child.mouseClicked(mouseX, mouseY, button)) {
                     if (button == InputConstants.MOUSE_BUTTON_LEFT)
                         this.setDragging(true);

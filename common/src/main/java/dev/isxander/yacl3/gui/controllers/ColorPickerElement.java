@@ -1,21 +1,31 @@
 package dev.isxander.yacl3.gui.controllers;
 
+import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
+import dev.isxander.yacl3.gui.TooltipButtonWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.string.StringControllerElement;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.events.ContainerEventHandler;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
+import java.util.List;
 
-public class ColorPickerElement extends StringControllerElement {
+public class ColorPickerElement extends StringControllerElement implements ContainerEventHandler {
     private boolean mouseDown;
     private final ColorController colorController;
+    private final ColorController.ColorControllerElement controllerElement;
     protected Dimension<Integer> inputFieldBounds;
     protected MutableDimension<Integer> colorPickerDim;
     private Dimension<Integer> sliderBounds;
+
+    private final TooltipButtonWidget toggleColorPickerButton;
     private int outline = 1;
 
     private float[] HSL;
@@ -23,10 +33,22 @@ public class ColorPickerElement extends StringControllerElement {
     private float saturation;
     private float light;
 
-    public ColorPickerElement(ColorController control, YACLScreen screen, Dimension<Integer> dim) {
+    public ColorPickerElement(ColorController.ColorControllerElement element, ColorController control, YACLScreen screen, Dimension<Integer> dim) {
         super(control, screen, dim, true);
         this.colorController = control;
+        this.controllerElement = element;
+
+//        int previewSize = (dim.height() - getYPadding() * 2) / 2;
+//        int buttonX = dim.xLimit() - getXPadding() - previewSize - inputFieldBounds.width() - 8;
+//        int buttonY = dim.centerY() - previewSize / 2 - 2;
+
+        toggleColorPickerButton = new TooltipButtonWidget(screen, colorPickerDim.x(), colorPickerDim.y(), colorPickerDim.width(), colorPickerDim.height(),
+                Component.empty(), Component.literal("Toggle Color Picker"), btn -> {
+            System.out.println("color picker toggled!");
+        });
+
         setDimension(dim);
+
         this.HSL = getHSL();
         this.hue = getHue();
         this.saturation = getSaturation();
@@ -35,6 +57,8 @@ public class ColorPickerElement extends StringControllerElement {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+
+//        toggleColorPickerButton.render(graphics, mouseX, mouseY, delta);
 
         //DELETEME
 //            int hueSliderX = colorPickerDim.x() - 30 - inputFieldBounds.width() - 40;
@@ -174,27 +198,41 @@ public class ColorPickerElement extends StringControllerElement {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if(mouseDown) {
-            //TODO - Replace all variables like this with private vars?
-            int hueSliderX = colorPickerDim.x() - 30 - inputFieldBounds.width() - 40;
-            int hueSliderY = colorPickerDim.y() + 10;
-            int hueSliderXLimit = inputFieldBounds.xLimit() + 5;
-            int hueSliderYLimit = colorPickerDim.yLimit() + 8;
-//                System.out.println("button: " +  button);
-//                System.out.println("x: " + mouseX + "y: " + mouseY);
-//                System.out.println("x: " + hueSliderX + "y:" + hueSliderY);
-//                System.out.println("xLimit: " + hueSliderXLimit + "yLimit: " + hueSliderYLimit);
+    public List<? extends GuiEventListener> children() {
+        return ImmutableList.of(toggleColorPickerButton);
+    }
 
-            //Detects if the user has clicked the hue slider
-            if((mouseX >= hueSliderX && mouseX <= hueSliderXLimit)
-                    && (mouseY >= hueSliderY && mouseY <= hueSliderYLimit)) {
-                System.out.println("yay");
-                setHueFromMouse(mouseX);
-                return true;
-            }
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+
+        if (mouseX >= colorPickerDim.x() && mouseX <= colorPickerDim.xLimit()
+                && mouseY >= colorPickerDim.yLimit() && mouseY <= colorPickerDim.y()) { //y and yLimit flipped apparently?
+            return true;
         }
+
         return false;
+//        return super.mouseClicked(mouseX, mouseY, button);
+
+//        if(mouseDown) {
+//            //TODO - Replace all variables like this with private vars?
+//            int hueSliderX = colorPickerDim.x() - 30 - inputFieldBounds.width() - 40;
+//            int hueSliderY = colorPickerDim.y() + 10;
+//            int hueSliderXLimit = inputFieldBounds.xLimit() + 5;
+//            int hueSliderYLimit = colorPickerDim.yLimit() + 8;
+////                System.out.println("button: " +  button);
+////                System.out.println("x: " + mouseX + "y: " + mouseY);
+////                System.out.println("x: " + hueSliderX + "y:" + hueSliderY);
+////                System.out.println("xLimit: " + hueSliderXLimit + "yLimit: " + hueSliderYLimit);
+//
+//            //Detects if the user has clicked the hue slider
+//            if((mouseX >= hueSliderX && mouseX <= hueSliderXLimit)
+//                    && (mouseY >= hueSliderY && mouseY <= hueSliderYLimit)) {
+//                System.out.println("yay");
+//                setHueFromMouse(mouseX);
+//                return true;
+//            }
+//        }
+//        return false;
     }
 
     @Override
@@ -213,8 +251,37 @@ public class ColorPickerElement extends StringControllerElement {
     }
 
     @Override
+    public boolean isDragging() {
+        return false;
+    }
+
+    @Override
+    public void setDragging(boolean dragging) {
+
+    }
+
+    @Nullable
+    @Override
+    public GuiEventListener getFocused() {
+        return null;
+    }
+
+    @Override
+    public void setFocused(@Nullable GuiEventListener child) {
+
+    }
+
+    @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
-        return super.isMouseOver(mouseX, mouseY);
+
+        //Checks if the mouse is either over the color picker or the color controller
+        if (mouseX >= colorPickerDim.x() && mouseX <= colorPickerDim.xLimit()
+                && mouseY >= colorPickerDim.yLimit() && mouseY <= colorPickerDim.y()) { //y and yLimit flipped apparently?
+            return true;
+        }
+        //Checks for mouse over color controller
+//        return super.isMouseOver(mouseX, mouseY);
+        return false;
     }
 
     @Override
@@ -240,6 +307,10 @@ public class ColorPickerElement extends StringControllerElement {
 //            int red = (rgb >> 16) & 255;
 //            System.out.println("red: " );
 //            colorController.option().requestSet(new Color((int) value));
+    }
+
+    public void hide() {
+        this.controllerElement.setColorPickerVisible(false);
     }
 
     protected int getThumbX(int mouseX) {
