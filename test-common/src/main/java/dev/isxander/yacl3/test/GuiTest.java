@@ -14,6 +14,7 @@ import dev.isxander.yacl3.gui.controllers.string.number.DoubleFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.FloatFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.IntegerFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.LongFieldController;
+import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
@@ -24,6 +25,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import org.apache.commons.lang3.StringUtils;
 
 import java.awt.Color;
 import java.nio.file.Path;
@@ -267,6 +269,15 @@ public class GuiTest {
                                                         (value) -> config.item = value
                                                 )
                                                 .controller(ItemControllerBuilder::create)
+                                                .build())
+                                        .option(Option.<ChatFormatting>createBuilder()
+                                                .name(Component.literal("Enum Dropdown"))
+                                                .binding(
+                                                        defaults.formattingOption,
+                                                        () -> config.formattingOption,
+                                                        (value) -> config.formattingOption = value
+                                                )
+                                                .controller(option -> EnumDropdownControllerBuilder.create(option).formatValue(formatting -> Component.literal(StringUtils.capitalize(formatting.getName()).replaceAll("_", " "))))
                                                 .build())
                                         .build())
                                 .group(OptionGroup.createBuilder()
