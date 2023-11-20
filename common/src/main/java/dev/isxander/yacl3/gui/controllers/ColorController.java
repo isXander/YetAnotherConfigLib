@@ -149,7 +149,7 @@ public class ColorController implements IStringController<Color> {
             super.render(graphics, mouseX, mouseY, delta);
 
             if(colorPickerVisible) {
-                colorPickerElement = new ColorPickerElement(this, colorController, screen, getDimension());
+                colorPickerElement.setDimension(getDimension());
 
                 //FIXME - It would be much more ideal for the mouseClicked override in the color picker widget to handle this instead
                 //I couldn't get the mouseClicked override for the color picker widget to work
@@ -159,7 +159,7 @@ public class ColorController implements IStringController<Color> {
 
                 //Renders the color picker
                 colorPickerElement.render(graphics, mouseX, mouseY, delta);
-            } else if (!colorPickerVisible) {
+            } else {
                 colorPickerElement = null;
             }
         }
@@ -277,8 +277,7 @@ public class ColorController implements IStringController<Color> {
                 //TODO - Controller support?
                 //FIXME - Clicking another category whilst the color picker is visible keeps the color picker visible when returning
                 //Detects if the user has clicked the color preview
-                if(clickedColorPreview(mouseX, mouseY, button)) {
-                        colorPickerVisible = !colorPickerVisible;
+                if(clickedColorPreview(mouseX, mouseY)) {
                         playDownSound();
                 }
                 caretPos = Math.max(1, caretPos);
@@ -290,18 +289,30 @@ public class ColorController implements IStringController<Color> {
             return false;
         }
 
-        public boolean clickedColorPreview(double mouseX, double mouseY, int button) {
+        public boolean clickedColorPreview(double mouseX, double mouseY) {
             if((mouseX >= colorPreviewDim.x() && mouseX <= colorPreviewDim.xLimit())
-                    && (mouseY >= colorPreviewDim.y() && mouseY <= colorPreviewDim.yLimit()) && button == 0) {
+                    && (mouseY >= colorPreviewDim.y() && mouseY <= colorPreviewDim.yLimit())) {
+
                 return true;
             }
             return false;
+        }
+
+        public void setColorPickerOptions() {
+            colorPickerVisible = !colorPickerVisible;
+            if(colorPickerVisible) {
+                colorPickerElement = createColorPicker();
+            } else {
+                removeColorPicker();
+            }
         }
 
         @Override
         public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
             if(isAvailable() || !mouseDown)
                 return false;
+
+//            mouseDown = true;
 
             return true;
         }
@@ -317,17 +328,17 @@ public class ColorController implements IStringController<Color> {
 
         @Override
         public boolean isMouseOver(double mouseX, double mouseY) {
-            int x = colorPreviewDim.x() - inputFieldBounds.width() - 70;
-            int y = colorPreviewDim.y() - 55;
-            int xLimit = inputFieldBounds.xLimit() + 5;
-            int yLimit = colorPreviewDim.yLimit();
+//            int x = colorPreviewDim.x() - inputFieldBounds.width() - 70;
+//            int y = colorPreviewDim.y() - 55;
+//            int xLimit = inputFieldBounds.xLimit() + 5;
+//            int yLimit = colorPreviewDim.yLimit();
 
             //This is used to determine if the user has clicked within the color picker's boundaries or not
             //Should either of these variables be removed, clicking on the color picker will cause it to disappear
-            if(colorPickerVisible && mouseX >= x && mouseX <= xLimit && mouseY >= y && mouseY <= yLimit) {
-                inputFieldFocused = true;
-                return true;
-            }
+//            if(colorPickerVisible && mouseX >= x && mouseX <= xLimit && mouseY >= y && mouseY <= yLimit) {
+//                inputFieldFocused = true;
+//                return true;
+//            }
             //FIXME - Color picker "z fighting" options it is above is causing issues closing the color picker
             //FIXME - Technically, the z fighting is still an issue, as the option behind it becomes selected
             //FIXME - Example: Clicking on the string controller behind the color picker, then typing types into the controller
@@ -350,6 +361,15 @@ public class ColorController implements IStringController<Color> {
 
         public void setColorPickerVisible(boolean colorPickerVisible) {
             this.colorPickerVisible = colorPickerVisible;
+        }
+
+        public ColorPickerElement createColorPicker() {
+            return new ColorPickerElement(colorController, screen, getDimension(), this);
+        }
+
+        public void removeColorPicker() {
+            this.colorPickerVisible = false;
+            this.colorPickerElement = null;
         }
     }
 

@@ -12,7 +12,6 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.List;
 public class ColorPickerElement extends StringControllerElement implements ContainerEventHandler {
     private boolean mouseDown;
     private final ColorController colorController;
-    private final ColorController.ColorControllerElement controllerElement;
+    private final ColorController.ColorControllerElement entryWidget;
     protected Dimension<Integer> inputFieldBounds;
     protected MutableDimension<Integer> colorPickerDim;
     private Dimension<Integer> sliderBounds;
@@ -33,10 +32,10 @@ public class ColorPickerElement extends StringControllerElement implements Conta
     private float saturation;
     private float light;
 
-    public ColorPickerElement(ColorController.ColorControllerElement element, ColorController control, YACLScreen screen, Dimension<Integer> dim) {
+    public ColorPickerElement(ColorController control, YACLScreen screen, Dimension<Integer> dim, ColorController.ColorControllerElement entryWidget) {
         super(control, screen, dim, true);
         this.colorController = control;
-        this.controllerElement = element;
+        this.entryWidget = entryWidget;
 
 //        int previewSize = (dim.height() - getYPadding() * 2) / 2;
 //        int buttonX = dim.xLimit() - getXPadding() - previewSize - inputFieldBounds.width() - 8;
@@ -60,25 +59,8 @@ public class ColorPickerElement extends StringControllerElement implements Conta
 
 //        toggleColorPickerButton.render(graphics, mouseX, mouseY, delta);
 
-        //DELETEME
-//            int hueSliderX = colorPickerDim.x() - 30 - inputFieldBounds.width() - 40;
-//            int hueSliderY1 = colorPickerDim.y() + 10 - 20;
-//            int hueSliderXLimit = inputFieldBounds.xLimit() + 5;
-//            int hueSliderYLimit1 = colorPickerDim.yLimit() + 8 - 20;
-//            graphics.fill(hueSliderX, hueSliderY1, hueSliderXLimit, hueSliderYLimit1, 10, Color.YELLOW.getRGB());
-//            super.render(graphics, mouseX, mouseY, delta);
-
         //FIXME - If the color picker is towards the top of the category, it will appear above the color controller instead of below
         //FIXME - The color preview doesn't have enough room for the translation string
-
-//        graphics.fill(colorPickerDim.x(), colorPickerDim.y(), colorPickerDim.xLimit(), colorPickerDim.yLimit(), Color.YELLOW.getRGB());
-
-//        DELETEME
-//            colorPickerDim.move(-inputFieldBounds.width() - 40, -20);
-//            int x = colorPickerDim.x();
-//            int y = colorPickerDim.y();
-//            int outline = 1; //"outline" width/height offset
-
 
         //The main color preview's portion of the color picker as a whole
         //example: if previewPortion is equal to 7, then the color preview will take up
@@ -93,12 +75,6 @@ public class ColorPickerElement extends StringControllerElement implements Conta
         //Main color preview
         graphics.fill(colorPickerDim.x(), colorPickerDim.y() - sliderHeight - outline, colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion), colorPickerDim.yLimit(), 2, colorController.option().pendingValue().getRGB());
 
-        // DELETEME
-//         int gradientX = colorPickerDim.xLimit();
-//         int gradientY = colorPickerDim.y() - 35;
-//         int gradientXLimit = inputFieldBounds.xLimit() + 5 - outline;
-//         int gradientYLimit = colorPickerDim.yLimit() + 1;
-
         //HSL gradient
 
         //White to pending color's RGB, left to right
@@ -106,10 +82,6 @@ public class ColorPickerElement extends StringControllerElement implements Conta
 
         //Transparent to black, top to bottom
         graphics.fillGradient(colorPickerDim.xLimit(), colorPickerDim.y() - sliderHeight - outline, colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + 1, colorPickerDim.yLimit(), 3,0xFF000000, 0x00000000);
-
-        //DELETEME
-//        int hueSliderY = colorPickerDim.y() + 10;
-//        int hueSliderYLimit = colorPickerDim.yLimit() + 8;
 
         //Hue slider
         drawRainbowGradient(graphics, colorPickerDim.x(), colorPickerDim.y(), colorPickerDim.xLimit(), colorPickerDim.y() - sliderHeight, 2);
@@ -126,25 +98,32 @@ public class ColorPickerElement extends StringControllerElement implements Conta
         //Space was added between the color preview, HSL gradient, and rainbow gradients earlier
         graphics.fill(colorPickerDim.x() - outline, colorPickerDim.y() + outline, colorPickerDim.xLimit() + outline, colorPickerDim.yLimit() - outline, 1, 0xFF000000);
 
+        if(mouseDown) {
+            setHueFromMouseX(mouseX);
+        }
+
+
+        //Old mouse detection stuff
+        //DELETEME
 
         //FIXME - It would be much more ideal for the mouseClicked override to handle this instead
         //Methods used to determine mouse clicks
 
         //Temporary workaround for mouseClicked not working
         //This detects when the left mouse button has been clicked anywhere on screen
-        int button = GLFW.glfwGetMouseButton(this.client.getWindow().getWindow(), GLFW.GLFW_MOUSE_BUTTON_LEFT);
-        mouseDown = button == GLFW.GLFW_PRESS;
+//        int button = GLFW.glfwGetMouseButton(this.client.getWindow().getWindow(), GLFW.GLFW_MOUSE_BUTTON_LEFT);
+//        mouseDown = button == GLFW.GLFW_PRESS;
 //            if(button == GLFW.GLFW_PRESS) {
 //                System.out.println("yay");
 //                //TODO - mouseDown boolean enabling/disabling
 //            }
 
-        if(mouseDown) {
+//        if(mouseDown) {
             //Using the mouseClicked "override"(more like a method in this case in the meantime)
             //to make it easier for readability and for the future if the mouseClicked override is fixable
 //            mouseClicked(mouseX, mouseY, 0);
-            setHueFromX(mouseX);
-        }
+//            setHueFromX(mouseX);
+//        }
     }
 
     @Override
@@ -158,8 +137,8 @@ public class ColorPickerElement extends StringControllerElement implements Conta
         if (optionNameString.isEmpty())
             trackWidth = dim.width() / 2;
 
-//        colorPickerDim = Dimension.ofInt(dim.xLimit() - getXPadding() - colorPickerHeight, dim.centerY() - colorPickerHeight / 2, colorPickerHeight, colorPickerHeight);
-        sliderBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - getThumbWidth() / 2 - trackWidth, dim.centerY() - 5, trackWidth, 10);
+
+//        sliderBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - getThumbWidth() / 2 - trackWidth, dim.centerY() - 5, trackWidth, 10);
         inputFieldBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - width, dim.centerY() - textRenderer.lineHeight / 2, width, textRenderer.lineHeight);
 
         int colorPickerHeight = (dim.height() * -2) - 7;
@@ -169,7 +148,7 @@ public class ColorPickerElement extends StringControllerElement implements Conta
         //Would allow for the x/y(Limit) to work for the outline by adding + 1 to everything
         //Division would be used for the bigger color preview, light and saturation picker, and hue slider
         //to determine their dimensions
-        //FIXME - x/y, xLimit/yLimits are seemingly flipped
+        //FIXME - y/yLimit are flipped?
         colorPickerDim = Dimension.ofInt(colorPickerX - outline, dim.y() - outline, (dim.width() + dim.x() - colorPickerX) - outline, colorPickerHeight- outline);
     }
 
@@ -193,7 +172,6 @@ public class ColorPickerElement extends StringControllerElement implements Conta
     }
 
     public void setMouseDown(boolean mouseDown) {
-//            System.out.println("e");
         this.mouseDown = mouseDown;
     }
 
@@ -205,12 +183,23 @@ public class ColorPickerElement extends StringControllerElement implements Conta
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
 
-        if (mouseX >= colorPickerDim.x() && mouseX <= colorPickerDim.xLimit()
-                && mouseY >= colorPickerDim.yLimit() && mouseY <= colorPickerDim.y()) { //y and yLimit flipped apparently?
+        if(isMouseOver(mouseX, mouseY)) {
+            setHueFromMouseX(mouseX);
+            return true;
+        } else if (entryWidget.mouseClicked(mouseX, mouseY, button)) {
             return true;
         }
-
         return false;
+
+
+//        if (mouseX >= colorPickerDim.x() && mouseX <= colorPickerDim.xLimit()
+//                && mouseY >= colorPickerDim.yLimit() && mouseY <= colorPickerDim.y()) { //y and yLimit flipped apparently?
+//            return true;
+//        }
+
+        //old mouse clicking stuff from before dimension overhaul
+        //DELETEME
+//        return false;
 //        return super.mouseClicked(mouseX, mouseY, button);
 
 //        if(mouseDown) {
@@ -246,7 +235,7 @@ public class ColorPickerElement extends StringControllerElement implements Conta
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         System.out.println("yay3");
-        return false;
+        return true;
 //            return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 
@@ -279,8 +268,8 @@ public class ColorPickerElement extends StringControllerElement implements Conta
                 && mouseY >= colorPickerDim.yLimit() && mouseY <= colorPickerDim.y()) { //y and yLimit flipped apparently?
             return true;
         }
-        //Checks for mouse over color controller
 //        return super.isMouseOver(mouseX, mouseY);
+//        return controllerElement.isMouseOver(mouseX, mouseY);
         return false;
     }
 
@@ -294,23 +283,15 @@ public class ColorPickerElement extends StringControllerElement implements Conta
         return true;
     }
 
-    protected void setHueFromMouse(double mouseX) {
-//            double value = (mouseX - colorPickerDim.x() - 30) / sliderBounds.width() * (inputFieldBounds.xLimit() + 5 - colorPickerDim.x() - 30) * 255;
-//            int red = ((int) value >> 16) & 255;
-//            int green = ((int) value >> 8) & 255;
-//            int blue = (int) value & 255;
-//            int rgb = red + green + blue;
-//            System.out.println("value: " + value);
-//            System.out.println("rgb: " + rgb);
-        System.out.println("color: " + colorController.option().pendingValue().getRGB());
-//            int rgb = colorController.option().pendingValue().getRGB();
-//            int red = (rgb >> 16) & 255;
-//            System.out.println("red: " );
-//            colorController.option().requestSet(new Color((int) value));
+    public void hide() {
+        entryWidget.removeColorPicker();
     }
 
-    public void hide() {
-        this.controllerElement.setColorPickerVisible(false);
+    public boolean shouldStayVisible(double mouseX, double mouseY) {
+        if(entryWidget.clickedColorPreview(mouseX, mouseY)) {
+            return false;
+        }
+        return isMouseOver(mouseX, mouseY) || entryWidget.isMouseOver(mouseX, mouseY);
     }
 
     protected int getThumbX(int mouseX) {
@@ -337,33 +318,20 @@ public class ColorPickerElement extends StringControllerElement implements Conta
 //        return Mth.clamp(colorPickerDim.x() - 30 + adjustmentValue, colorPickerDim.x() - 30, inputFieldBounds.xLimit() + 5);
     }
 
-    public void setHueFromX(int mouseX) {
+    public void setHueFromMouseX(double mouseX) {
         //Changes the hue of the pending color based on the mouseX's pos.
         //relative to the colorPickerDim's x/xLimit
-
-//        Color hueChange;
-
         if(mouseX < colorPickerDim.x()) {
             this.hue = 0f;
-//            return;
         } else if (mouseX > colorPickerDim.xLimit()) {
             this.hue = 1f;
-//            return;
         } else {
-//            hueChange = Color.getHSBColor(mouseX, saturation, light);
-//            this.hue = 1.0f - mouseX;
-//            float newHue = (mouseX - colorPickerDim.x()) / 100f * 0.9f;
-//
-//            System.out.println(newHue);
-//            System.out.println(Mth.approachDegrees(newHue));
-
             float newHue = ((float) (mouseX - colorPickerDim.x()) / colorPickerDim.width());
 
             this.hue = Mth.clamp(newHue, 0f, 1.0f);
         }
 
         setColorControllerFromHSL();
-//        return 1;
     }
 
     public void setColorControllerFromHSL() {

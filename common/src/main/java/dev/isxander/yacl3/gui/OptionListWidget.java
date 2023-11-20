@@ -146,42 +146,40 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-//        boolean clickedColorPicker = false;
+        //Small workaround for the color picker not be hidden after clicking the color preview
+        boolean colorPickerHiddenThisClick = false;
 
+        //If the color picker is visible, attempts to stop clicks behind the color picker
         if(colorPickerVisible && currentColorPicker != null) {
-            if(currentColorPicker.isMouseOver(mouseX, mouseY)) {
-                System.out.println("color picker clicked!!!!!!");
+            if(currentColorPicker.shouldStayVisible(mouseX, mouseY)) {
+                System.out.println("color picker clicked!");
+                currentColorPicker.mouseClicked(mouseX, mouseY, button);
                 return false;
             } else {
+                //If the click hasn't happened with the color picker or color controller bounds
+                //the for loop gets called after this
                 hideColorPicker();
+                colorPickerHiddenThisClick = true;
             }
-        } else {
-            for (Entry child : children()) {
-                if(child instanceof OptionEntry optionEntry) {
-                    if (optionEntry.widget instanceof ColorController.ColorControllerElement colorControllerElement) {
+        }
+        for (Entry child : children()) {
+            if(child instanceof OptionEntry optionEntry) {
+
+                //If the clicked option is a color controller
+                if (optionEntry.widget instanceof ColorController.ColorControllerElement colorControllerElement) {
+                    if(colorControllerElement.clickedColorPreview(mouseX, mouseY)) {
+                        if(!colorPickerHiddenThisClick) {
+                            //Sets the color picker visible and element if not hidden already from the "hideColorPicker()" earlier
+                            colorControllerElement.setColorPickerOptions();
+                        }
+                        //Updates the color picker settings here
                         setColorPicker(colorControllerElement.getColorPickerElement(), colorControllerElement.isColorPickerVisible());
-                        if (child == getEntryAtPosition(mouseX, mouseY)) {
-                            System.out.println("color controller element");
-                            if (colorControllerElement.mouseClicked(mouseX, mouseY, button)) {
-                                if (!colorControllerElement.isColorPickerVisible()) {
-                                    hideColorPicker();
-                                }
-                                System.out.println("color picker element");
-                                System.out.println("color picker visible: " + colorControllerElement.isColorPickerVisible());
-                                System.out.println("current color picker: " + currentColorPicker);
-                                return true;
-                            }
-                        }
-                    } else if (colorPickerVisible) {
-                        if(currentColorPicker.isMouseOver(mouseX, mouseY)) {
-                            return false;
-                        }
                     }
                 }
-                if (child != getEntryAtPosition(mouseX, mouseY) && child instanceof OptionEntry optionEntry)
-                    optionEntry.widget.unfocus();
             }
 
+            if (child != getEntryAtPosition(mouseX, mouseY) && child instanceof OptionEntry optionEntry)
+                optionEntry.widget.unfocus();
         }
 
 
