@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.architectury.plugin)
     alias(libs.plugins.architectury.loom) apply false
-    alias(libs.plugins.loom.vineflower) apply false
 
     alias(libs.plugins.minotaur) apply false
     alias(libs.plugins.cursegradle) apply false
@@ -81,10 +80,6 @@ allprojects {
     }
 }
 
-subprojects {
-    apply(plugin = rootProject.libs.plugins.loom.vineflower.get().pluginId)
-}
-
 githubRelease {
     token(findProperty("GITHUB_TOKEN")?.toString())
 
@@ -101,6 +96,8 @@ githubRelease {
         { findProject(":fabric")?.tasks?.get("remapSourcesJar")?.outputs?.files },
         { findProject(":forge")?.tasks?.get("remapJar")?.outputs?.files },
         { findProject(":forge")?.tasks?.get("remapSourcesJar")?.outputs?.files },
+        { findProject(":neoforge")?.tasks?.get("remapJar")?.outputs?.files },
+        { findProject(":neoforge")?.tasks?.get("remapSourcesJar")?.outputs?.files },
     )
 }
 
@@ -115,4 +112,5 @@ tasks.register("buildAll") {
 
     findProject(":fabric")?.let { dependsOn(it.tasks["build"]) }
     findProject(":forge")?.let { dependsOn(it.tasks["build"]) }
+    findProject(":neoforge")?.let { dependsOn(it.tasks["build"]) }
 }

@@ -31,3 +31,8 @@ if ("forge" in enabledLoaders) {
     include("forge")
     include("test-forge")
 }
+
+if ("neoforge" in enabledLoaders) {
+    include("neoforge")
+    include("test-neoforge")
+}

@@ -12,7 +12,7 @@ plugins {
 
 architectury {
     platformSetupLoomIde()
-    forge()
+    neoForge()
 }
 
 loom {
@@ -20,18 +20,19 @@ loom {
 
     accessWidenerPath.set(project(":common").loom.accessWidenerPath)
 
-    forge {
-        mixinConfig("yacl.mixins.json")
+    neoForge {
 
-        convertAccessWideners.set(true)
-        extraAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
     }
+}
+
+repositories {
+    maven("https://maven.neoforged.net/releases/")
 }
 
 val common by configurations.registering
 val shadowCommon by configurations.registering
 configurations.compileClasspath.get().extendsFrom(common.get())
-configurations["developmentForge"].extendsFrom(common.get())
+configurations["developmentNeoForge"].extendsFrom(common.get())
 
 val minecraftVersion: String = libs.versions.minecraft.get()
 
@@ -43,7 +44,7 @@ dependencies {
             mappings("org.quiltmc:quilt-mappings:${libs.versions.minecraft.get()}+build.${libs.versions.quilt.mappings.get()}:intermediary-v2")
         officialMojangMappings()
     })
-    forge(libs.forge)
+    neoForge(libs.neoforge)
 
     libs.bundles.twelvemonkeys.imageio.let {
         implementation(it)
@@ -57,7 +58,7 @@ dependencies {
     }
 
     "common"(project(path = ":common", configuration = "namedElements")) { isTransitive = false }
-    "shadowCommon"(project(path = ":common", configuration = "transformProductionForge")) { isTransitive = false }
+    "shadowCommon"(project(path = ":common", configuration = "transformProductionNeoForge")) { isTransitive = false }
 }
 
 java {
@@ -70,7 +71,7 @@ tasks {
         val modName: String by rootProject
         val modDescription: String by rootProject
         val githubProject: String by rootProject
-        val majorForge = libs.versions.forge.get().substringAfter('-').split('.').first()
+        val majorNeoForge = libs.versions.neoforge.get().split('.').first()
 
         inputs.property("id", modId)
         inputs.property("group", project.group)
@@ -78,7 +79,7 @@ tasks {
         inputs.property("description", modDescription)
         inputs.property("version", project.version)
         inputs.property("github", githubProject)
-        inputs.property("major_forge", majorForge)
+        inputs.property("major_neoforge", majorNeoForge)
 
         filesMatching(listOf("META-INF/mods.toml", "pack.mcmeta")) {
             expand(
@@ -88,7 +89,7 @@ tasks {
                 "description" to modDescription,
                 "version" to project.version,
                 "github" to githubProject,
-                "major_forge" to majorForge,
+                "major_neoforge" to majorNeoForge,
             )
         }
     }
@@ -102,11 +103,11 @@ tasks {
     }
 
     remapJar {
+        atAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
         injectAccessWidener.set(true)
         inputFile.set(shadowJar.get().archiveFile)
         dependsOn(shadowJar)
         archiveClassifier.set(null as String?)
-
         from(rootProject.file("LICENSE"))
     }
 
@@ -142,12 +143,12 @@ if (modrinthId.isNotEmpty()) {
     modrinth {
         token.set(findProperty("modrinth.token")?.toString())
         projectId.set(modrinthId)
-        versionName.set("${project.version} (Forge)")
-        versionNumber.set("${project.version}-forge")
+        versionName.set("${project.version} (NeoForge)")
+        versionNumber.set("${project.version}-neoforge")
         versionType.set(if (isBeta) "beta" else "release")
         uploadFile.set(tasks["remapJar"])
         gameVersions.set(listOf("1.20.2"))
-        loaders.set(listOf("forge"))
+        loaders.set(listOf("neoforge"))
         changelog.set(changelogText)
         syncBodyFrom.set(rootProject.file("README.md").readText())
     }
@@ -160,13 +161,13 @@ if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
         apiKey = findProperty("curseforge.token")
         project(closureOf<me.hypherionmc.cursegradle.CurseProject> {
             mainArtifact(tasks["remapJar"], closureOf<me.hypherionmc.cursegradle.CurseArtifact> {
-                displayName = "[Forge] ${project.version}"
+                displayName = "[NeoForge] ${project.version}"
             })
 
             id = curseforgeId
             releaseType = if (isBeta) "beta" else "release"
             addGameVersion("1.20.2")
-            addGameVersion("Forge")
+            addGameVersion("NeoForge")
             addGameVersion("Java 17")
 
             changelog = changelogText
@@ -183,14 +184,14 @@ rootProject.tasks["releaseMod"].dependsOn(tasks["curseforge"])
 
 publishing {
     publications {
-        create<MavenPublication>("forge") {
+        create<MavenPublication>("neoforge") {
             groupId = "dev.isxander.yacl"
-            artifactId = "yet-another-config-lib-forge"
+            artifactId = "yet-another-config-lib-neoforge"
 
             from(components["java"])
         }
     }
 }
-tasks.findByPath("publishForgePublicationToReleasesRepository")?.let {
+tasks.findByPath("publishNeoforgePublicationToReleasesRepository")?.let {
     rootProject.tasks["releaseMod"].dependsOn(it)
 }
