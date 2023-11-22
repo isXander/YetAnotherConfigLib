@@ -89,8 +89,12 @@ public final class OptionImpl<T> implements Option<T> {
 
         this.available = available;
 
-        if (changed)
-            this.triggerListeners(false);
+        if (changed) {
+            if (!available) {
+                this.pendingValue = binding().getValue();
+            }
+            this.triggerListeners(!available);
+        }
     }
 
     @Override
