@@ -106,14 +106,13 @@ public class ColorController implements IStringController<Color> {
     public static class ColorControllerElement extends StringControllerElement {
         private final ColorController colorController;
         private final YACLScreen screen;
+        private ColorPickerElement colorPickerElement;
 
         protected MutableDimension<Integer> colorPreviewDim;
         private final List<Character> allowedChars;
         private boolean mouseDown = false;
         private boolean colorPickerVisible = false;
         private boolean hovered = false;
-
-        private ColorPickerElement colorPickerElement;
 
         public ColorControllerElement(ColorController control, YACLScreen screen, Dimension<Integer> dim) {
             super(control, screen, dim, true);
@@ -125,14 +124,10 @@ public class ColorController implements IStringController<Color> {
         @Override
         protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
             hovered = isMouseOver(mouseX, mouseY);
-            //Replace with drawHoveredControl???
             if (isHovered()) {
                 colorPreviewDim.move(-inputFieldBounds.width() - 8, -2);
                 colorPreviewDim.expand(4, 4);
                 super.drawValueText(graphics, mouseX, mouseY, delta);
-            } else {
-//                colorPickerVisible = false;
-//                colorPickerElement = null;
             }
 
             graphics.fill(colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), colorController.option().pendingValue().getRGB());
@@ -142,26 +137,9 @@ public class ColorController implements IStringController<Color> {
         @Override
         public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
             super.render(graphics, mouseX, mouseY, delta);
-
-            if(colorPickerVisible) {
+            if(colorPickerVisible)
                 colorPickerElement.setDimension(getDimension());
 
-                //FIXME - It would be much more ideal for the mouseClicked override in the color picker widget to handle this instead
-                //I couldn't get the mouseClicked override for the color picker widget to work
-                //The breakpoint I set for it would never activate no matter what
-                //I believe this is something I've done wrong, but I couldn't figure it out
-                colorPickerElement.setMouseDown(mouseDown);
-
-                //Renders the color picker
-//                colorPickerElement.render(graphics, mouseX, mouseY, delta);
-            } else {
-//                if(colorPickerElement != null) {
-//                    removeColorPicker();
-//                    screen.removeColorPickerWidget(colorPickerElement);
-//                    screen.renderables.remove(0);
-//                }
-//                colorPickerElement = null;
-            }
         }
 
         @Override
@@ -254,10 +232,10 @@ public class ColorController implements IStringController<Color> {
 
         @Override
         public boolean isHovered() {
-            if(!super.isHovered() || focused || !inputFieldFocused) {
+//            if(!super.isHovered() || focused || !inputFieldFocused) {
                 //Hides the color picker when option is no longer selected
 //                colorPickerVisible = false;
-            }
+//            }
 
             return hovered || inputFieldFocused;
         }
@@ -326,7 +304,6 @@ public class ColorController implements IStringController<Color> {
 
         @Override
         public void unfocus() {
-//            colorPickerVisible = false;
             removeColorPicker();
 
             super.unfocus();

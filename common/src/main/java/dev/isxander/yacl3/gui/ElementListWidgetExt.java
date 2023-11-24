@@ -1,8 +1,6 @@
 package dev.isxander.yacl3.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import dev.isxander.yacl3.gui.controllers.ColorController;
-import dev.isxander.yacl3.gui.controllers.ColorPickerElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -13,7 +11,6 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> extends ContainerObjectSelectionList<E> implements LayoutElement {

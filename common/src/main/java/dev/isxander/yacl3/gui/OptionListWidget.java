@@ -32,9 +32,6 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     private final Consumer<DescriptionWithName> hoverEvent;
     private DescriptionWithName lastHoveredOption;
 
-    private ColorPickerElement currentColorPicker;
-    private boolean colorPickerVisible;
-
     public OptionListWidget(YACLScreen screen, ConfigCategory category, Minecraft client, int x, int y, int width, int height, Consumer<DescriptionWithName> hoverEvent) {
         super(client, x, y, width, height, true);
         this.yaclScreen = screen;
@@ -146,59 +143,13 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        //Small workaround for the color picker not be hidden after clicking the color preview
-        boolean colorPickerHiddenThisClick = false;
-
-        //If the color picker is visible, attempts to stop clicks behind the color picker
-//        if(colorPickerVisible && currentColorPicker != null) {
-//            if(currentColorPicker.shouldStayVisible(mouseX, mouseY)) {
-//                System.out.println("color picker clicked!");
-//                currentColorPicker.mouseClicked(mouseX, mouseY, button);
-//                return false;
-//            } else {
-//                //If the click hasn't happened with the color picker or color controller bounds
-//                //the for loop gets called after this
-//                hideColorPicker();
-//                colorPickerHiddenThisClick = true;
-//            }
-//        }
         for (Entry child : children()) {
-//            if(child instanceof OptionEntry optionEntry) {
-
-                //If the clicked option is a color controller
-//                if (optionEntry.widget instanceof ColorController.ColorControllerElement colorControllerElement) {
-//                    if(colorControllerElement.clickedColorPreview(mouseX, mouseY)) {
-//                        if(!colorPickerHiddenThisClick) {
-//                            //Sets the color picker visible and element if not hidden already from the "hideColorPicker()" earlier
-//                            colorControllerElement.setColorPickerOptions();
-//                        }
-//                        //Updates the color picker settings here
-//                        setColorPicker(colorControllerElement.getColorPickerElement(), colorControllerElement.isColorPickerVisible());
-//                    }
-//                }
-//            }
             if (child != getEntryAtPosition(mouseX, mouseY) && child instanceof OptionEntry optionEntry)
                 optionEntry.widget.unfocus();
         }
 
-
-//        System.out.println("color picker visible: " + colorPickerVisible);
-//        System.out.println("current color picker: " + currentColorPicker);
-
         return super.mouseClicked(mouseX, mouseY, button);
     }
-
-//    public void setColorPicker(@Nullable ColorPickerElement currentColorPicker, boolean colorPickerVisible) {
-//        this.currentColorPicker = currentColorPicker;
-//        this.colorPickerVisible = colorPickerVisible;
-//    }
-//
-//    public void hideColorPicker() {
-//        if(this.currentColorPicker != null) {
-//            currentColorPicker.hide();
-//            this.setColorPicker(null, false);
-//        }
-//    }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {

@@ -1,23 +1,14 @@
 package dev.isxander.yacl3.gui.controllers;
 
-import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
-import dev.isxander.yacl3.gui.AbstractWidget;
-import dev.isxander.yacl3.gui.TooltipButtonWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.string.StringControllerElement;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Renderable;
-import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.narration.NarratableEntry;
-import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.List;
 
 public class ColorPickerElement extends StringControllerElement implements GuiEventListener {
     private boolean mouseDown;
@@ -182,57 +173,8 @@ public class ColorPickerElement extends StringControllerElement implements GuiEv
         if(isMouseOver(mouseX, mouseY)) {
             setHueFromMouseX(mouseX);
             return true;
-//        } else if (entryWidget.mouseClicked(mouseX, mouseY, button)) {
-//            return true;
         }
-
-//        return entryWidget.mouseClicked(mouseX, mouseY, button);
-//        entryWidget.setColorPickerVisible(false);
         return entryWidget.mouseClicked(mouseX, mouseY, button);
-//        selfDestruct();
-//        return false;
-
-
-//        entryWidget.removeColorPicker();
-//        selfDestruct();
-//        return false;
-
-
-//        if (mouseX >= colorPickerDim.x() && mouseX <= colorPickerDim.xLimit()
-//                && mouseY >= colorPickerDim.yLimit() && mouseY <= colorPickerDim.y()) { //y and yLimit flipped apparently?
-//            return true;
-//        }
-
-        //old mouse clicking stuff from before dimension overhaul
-        //DELETEME
-//        return false;
-//        return super.mouseClicked(mouseX, mouseY, button);
-
-//        if(mouseDown) {
-//            //TODO - Replace all variables like this with private vars?
-//            int hueSliderX = colorPickerDim.x() - 30 - inputFieldBounds.width() - 40;
-//            int hueSliderY = colorPickerDim.y() + 10;
-//            int hueSliderXLimit = inputFieldBounds.xLimit() + 5;
-//            int hueSliderYLimit = colorPickerDim.yLimit() + 8;
-////                System.out.println("button: " +  button);
-////                System.out.println("x: " + mouseX + "y: " + mouseY);
-////                System.out.println("x: " + hueSliderX + "y:" + hueSliderY);
-////                System.out.println("xLimit: " + hueSliderXLimit + "yLimit: " + hueSliderYLimit);
-//
-//            //Detects if the user has clicked the hue slider
-//            if((mouseX >= hueSliderX && mouseX <= hueSliderXLimit)
-//                    && (mouseY >= hueSliderY && mouseY <= hueSliderYLimit)) {
-//                System.out.println("yay");
-//                setHueFromMouse(mouseX);
-//                return true;
-//            }
-//        }
-//        return false;
-    }
-
-    public void selfDestruct() {
-//        screen.removeColorPickerWidget(this);
-//        entryWidget.setColorPickerVisible(false);
     }
 
     @Override
@@ -245,14 +187,12 @@ public class ColorPickerElement extends StringControllerElement implements GuiEv
         System.out.println("yay2");
         mouseDown = false;
         return false;
-//            return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         System.out.println("yay3");
         return true;
-//            return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 
 //    @Override
@@ -305,13 +245,6 @@ public class ColorPickerElement extends StringControllerElement implements GuiEv
         return super.mouseScrolled(mouseX, mouseY, amount, d);
     }
 
-    public boolean shouldStayVisible(double mouseX, double mouseY) {
-        if(entryWidget.clickedColorPreview(mouseX, mouseY)) {
-            return false;
-        }
-        return isMouseOver(mouseX, mouseY) || entryWidget.isMouseOver(mouseX, mouseY);
-    }
-
     protected int getThumbX(int mouseX) {
         int min = colorPickerDim.x();
         int max = colorPickerDim.xLimit();
@@ -355,6 +288,9 @@ public class ColorPickerElement extends StringControllerElement implements GuiEv
     public void setColorControllerFromHSL() {
         //Updates the current color controller's pending value based from HSL to RGB
         colorController.option().requestSet(Color.getHSBColor(hue, saturation, light));
+//        Color newColor = Color.getHSBColor(hue, saturation, light);
+//        String hex = Integer.toHexString(newColor.getRGB()).substring(2);
+//        colorController.setFromString(hex);
     }
 
     protected float[] getHSL() {
@@ -373,7 +309,7 @@ public class ColorPickerElement extends StringControllerElement implements GuiEv
     }
 
     protected float getLight() {
-        //Gets the light/brightness/value of the pending value
+        //Gets the light/brightness/value(has a few different names, all refer to the same thing) of the pending value
         return HSL[2];
     }
 
