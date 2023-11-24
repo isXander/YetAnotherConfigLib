@@ -2,6 +2,7 @@ package dev.isxander.yacl3.gui.controllers;
 
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
+import dev.isxander.yacl3.gui.AbstractWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.string.StringControllerElement;
 import net.minecraft.client.gui.GuiGraphics;
@@ -10,16 +11,14 @@ import net.minecraft.util.Mth;
 
 import java.awt.*;
 
-public class ColorPickerElement extends StringControllerElement implements GuiEventListener {
-    private boolean mouseDown;
+public class ColorPickerElement extends ControllerWidget implements GuiEventListener {
     private final ColorController colorController;
     private final ColorController.ColorControllerElement entryWidget;
-    protected Dimension<Integer> inputFieldBounds;
+    private final YACLScreen screen;
     protected MutableDimension<Integer> colorPickerDim;
-    private Dimension<Integer> sliderBounds;
-
-    private GuiEventListener focused;
-    private boolean dragging;
+    private boolean mouseDown;
+//    private GuiEventListener focused;
+//    private boolean dragging;
 
     private int outline = 1;
 
@@ -29,8 +28,9 @@ public class ColorPickerElement extends StringControllerElement implements GuiEv
     private float light;
 
     public ColorPickerElement(ColorController control, YACLScreen screen, Dimension<Integer> dim, ColorController.ColorControllerElement entryWidget) {
-        super(control, screen, dim, true);
+        super(control, screen, dim);
         this.colorController = control;
+        this.screen = screen;
         this.entryWidget = entryWidget;
 
         setDimension(dim);
@@ -84,49 +84,46 @@ public class ColorPickerElement extends StringControllerElement implements GuiEv
         //Simply draws a huge black box
         //Space was added between the color preview, HSL gradient, and rainbow gradients earlier
         graphics.fill(colorPickerDim.x() - outline, colorPickerDim.y() + outline, colorPickerDim.xLimit() + outline, colorPickerDim.yLimit() - outline, 1, 0xFF000000);
+    }
 
-//        if(mouseDown) {
-//            setHueFromMouseX(mouseX);
-//        }
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if(isMouseOver(mouseX, mouseY)) {
+            mouseDown = true;
+            setHueFromMouseX(mouseX);
+            return true;
+        }
+        return entryWidget.mouseClicked(mouseX, mouseY, button);
+    }
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        System.out.println("yay2");
+        mouseDown = false;
+        return false;
+    }
+    @Override
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        //Checks if the mouse is either over the color picker or the color controller
+        if (mouseX >= colorPickerDim.x() && mouseX <= colorPickerDim.xLimit()
+                && mouseY >= colorPickerDim.yLimit() && mouseY <= colorPickerDim.y()) { //y and yLimit flipped apparently?
+            return true;
+        }
+        return false;
+    }
 
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double amount, double d) {
+        return true;
+    }
 
-        //Old mouse detection stuff
-        //DELETEME
-
-        //FIXME - It would be much more ideal for the mouseClicked override to handle this instead
-        //Methods used to determine mouse clicks
-
-        //Temporary workaround for mouseClicked not working
-        //This detects when the left mouse button has been clicked anywhere on screen
-//        int button = GLFW.glfwGetMouseButton(this.client.getWindow().getWindow(), GLFW.GLFW_MOUSE_BUTTON_LEFT);
-//        mouseDown = button == GLFW.GLFW_PRESS;
-//            if(button == GLFW.GLFW_PRESS) {
-//                System.out.println("yay");
-//                //TODO - mouseDown boolean enabling/disabling
-//            }
-
-//        if(mouseDown) {
-            //Using the mouseClicked "override"(more like a method in this case in the meantime)
-            //to make it easier for readability and for the future if the mouseClicked override is fixable
-//            mouseClicked(mouseX, mouseY, 0);
-//            setHueFromX(mouseX);
-//        }
+    @Override
+    public boolean charTyped(char chr, int modifiers) {
+        return entryWidget.charTyped(chr, modifiers);
     }
 
     @Override
     public void setDimension(Dimension<Integer> dim) {
         super.setDimension(dim);
-
-        int width = Math.max(6, Math.min(textRenderer.width(getValueText()), getUnshiftedLength()));
-
-
-        int trackWidth = dim.width() / 3;
-        if (optionNameString.isEmpty())
-            trackWidth = dim.width() / 2;
-
-
-//        sliderBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - getThumbWidth() / 2 - trackWidth, dim.centerY() - 5, trackWidth, 10);
-        inputFieldBounds = Dimension.ofInt(dim.xLimit() - getXPadding() - width, dim.centerY() - textRenderer.lineHeight / 2, width, textRenderer.lineHeight);
 
         int colorPickerHeight = (dim.height() * -2) - 7;
         int colorPickerX = dim.centerX() - getXPadding() * 2;
@@ -139,11 +136,19 @@ public class ColorPickerElement extends StringControllerElement implements GuiEv
         colorPickerDim = Dimension.ofInt(colorPickerX - outline, dim.y() - outline, (dim.width() + dim.x() - colorPickerX) - outline, colorPickerHeight- outline);
     }
 
-    //SLIDER related overrides
+    @Override
+    public boolean isHovered() {
+        return super.isHovered();
+    }
 
     @Override
-    public void setFocused(boolean focused) {
-        super.setFocused(focused);
+    protected int getHoveredControlWidth() {
+        return Math.min(textRenderer.width(control.formatValue()), getUnshiftedLength());
+    }
+
+    @Override
+    protected int getUnhoveredControlWidth() {
+        return textRenderer.width(getValueText());
     }
 
     public int getUnshiftedLength() {
@@ -153,96 +158,8 @@ public class ColorPickerElement extends StringControllerElement implements GuiEv
     }
 
     @Override
-    protected int getHoveredControlWidth() {
-//            return sliderBounds.width() + getUnhoveredControlWidth() + 6 + getThumbWidth() / 2;
-        return Math.min(textRenderer.width(control.formatValue()), getUnshiftedLength());
-    }
-
-    @Override
-    protected int getUnhoveredControlWidth() {
-        return textRenderer.width(getValueText());
-    }
-
-    public void setMouseDown(boolean mouseDown) {
-        this.mouseDown = mouseDown;
-    }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-
-        if(isMouseOver(mouseX, mouseY)) {
-            setHueFromMouseX(mouseX);
-            return true;
-        }
-        return entryWidget.mouseClicked(mouseX, mouseY, button);
-    }
-
-    @Override
     public void unfocus() {
         super.unfocus();
-    }
-
-    @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        System.out.println("yay2");
-        mouseDown = false;
-        return false;
-    }
-
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        System.out.println("yay3");
-        return true;
-    }
-
-//    @Override
-//    public boolean isDragging() {
-//        return dragging;
-//    }
-//
-//    @Override
-//    public void setDragging(boolean dragging) {
-//        this.dragging = dragging;
-//    }
-//
-//    @Nullable
-//    @Override
-//    public GuiEventListener getFocused() {
-//        return this.focused;
-//    }
-//
-//    @Override
-//    public void setFocused(@Nullable GuiEventListener child) {
-//        this.focused = focused;
-//    }
-
-    @Override
-    public boolean isMouseOver(double mouseX, double mouseY) {
-
-        //Checks if the mouse is either over the color picker or the color controller
-        if (mouseX >= colorPickerDim.x() && mouseX <= colorPickerDim.xLimit()
-                && mouseY >= colorPickerDim.yLimit() && mouseY <= colorPickerDim.y()) { //y and yLimit flipped apparently?
-            return true;
-        }
-//        return super.isMouseOver(mouseX, mouseY);
-//        return controllerElement.isMouseOver(mouseX, mouseY);
-        return false;
-    }
-
-    @Override
-    public boolean isHovered() {
-        return super.isHovered();
-    }
-
-//    @Override
-//    public boolean isFocused() {
-//        return true;
-//    }
-
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount, double d) {
-        return super.mouseScrolled(mouseX, mouseY, amount, d);
     }
 
     protected int getThumbX(int mouseX) {
@@ -267,6 +184,10 @@ public class ColorPickerElement extends StringControllerElement implements GuiEv
 //        }
 
 //        return Mth.clamp(colorPickerDim.x() - 30 + adjustmentValue, colorPickerDim.x() - 30, inputFieldBounds.xLimit() + 5);
+    }
+
+    protected int getThumbWidth() {
+        return 4;
     }
 
     public void setHueFromMouseX(double mouseX) {
@@ -315,9 +236,5 @@ public class ColorPickerElement extends StringControllerElement implements GuiEv
 
     protected float getRgbFromHue() {
         return Color.HSBtoRGB(hue, 1, 1);
-    }
-
-    protected int getThumbWidth() {
-        return 4;
     }
 }

@@ -243,8 +243,7 @@ public class ColorController implements IStringController<Color> {
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (super.mouseClicked(mouseX, mouseY, button)) {
-                //TODO - Controller support?
-                //FIXME - Clicking another category whilst the color picker is visible keeps the color picker visible when returning
+                //TODO - Controller support/keyboard only support(enter key to "select" hue/saturation&value areas?)
                 //Detects if the user has clicked the color preview
                 if(clickedColorPreview(mouseX, mouseY)) {
                         playDownSound();
@@ -283,15 +282,11 @@ public class ColorController implements IStringController<Color> {
             if(isAvailable() || !mouseDown)
                 return false;
 
-//            mouseDown = true;
-
             return true;
         }
 
         @Override
         public boolean mouseReleased(double mouseX, double mouseY, int button) {
-//            if (isAvailable() && mouseDown)
-//                playDownSound();
             mouseDown = false;
 
             return super.mouseReleased(mouseX, mouseY, button);

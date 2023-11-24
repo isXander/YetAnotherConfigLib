@@ -345,10 +345,6 @@ public class YACLScreen extends Screen {
 
         }
 
-        public void createColorPicker(ColorPickerElement colorPickerElement) {
-
-        }
-
         @Override
         public void tick() {
             updateButtons();
