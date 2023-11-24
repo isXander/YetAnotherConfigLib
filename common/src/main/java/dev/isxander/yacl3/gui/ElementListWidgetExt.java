@@ -13,6 +13,7 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> extends ContainerObjectSelectionList<E> implements LayoutElement {
@@ -191,14 +192,6 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             for (GuiEventListener child : this.children()) {
-//                if(child instanceof ColorController.ColorControllerElement) {
-//                    System.out.println("yay");
-//                } else {
-//                    System.out.println("oof");
-//                }
-//                if(child instanceof ColorPickerElement) {
-//                    System.out.println("yippee");
-//                }
                 if (child.mouseClicked(mouseX, mouseY, button)) {
                     if (button == InputConstants.MOUSE_BUTTON_LEFT)
                         this.setDragging(true);

@@ -6,8 +6,9 @@ import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
 import dev.isxander.yacl3.api.utils.OptionUtils;
-import dev.isxander.yacl3.gui.tab.ScrollableNavigationBar;
+import dev.isxander.yacl3.gui.controllers.ColorPickerElement;
 import dev.isxander.yacl3.gui.tab.ListHolderWidget;
+import dev.isxander.yacl3.gui.tab.ScrollableNavigationBar;
 import dev.isxander.yacl3.gui.tab.TabExt;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
@@ -18,7 +19,6 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
@@ -46,6 +46,9 @@ public class YACLScreen extends Screen {
     public Component saveButtonMessage;
     public Tooltip saveButtonTooltipMessage;
     private int saveButtonMessageTime;
+
+    public ColorPickerElement currentColorPicker = null;
+    public boolean colorPickerVisible = false;
 
     public YACLScreen(YetAnotherConfigLib config, Screen parent) {
         super(config.title());
@@ -78,8 +81,38 @@ public class YACLScreen extends Screen {
         config.initConsumer().accept(this);
     }
 
+    public void addColorPickerWidget(ColorPickerElement colorPickerElement) {
+
+        //Safety check for the color picker
+        if (currentColorPicker != null) {
+            clearColorPickerWidget();
+        }
+
+        currentColorPicker = colorPickerElement;
+        colorPickerVisible = true;
+
+        //Preforms the same actions as "addRenderableWidget"
+        //expect the color picker is the first element in the group to ensure no mouse click "z-fighting" happens
+        this.renderables.add(0, currentColorPicker);
+        this.children.add(0, currentColorPicker);
+    }
+
+    public void clearColorPickerWidget() {
+        colorPickerVisible = false;
+    }
+
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        //Checks for the color picker at rendering to avoid a ConcurrentModificationException(CME) being thrown
+        //In the ContainerEventHandler class, an iterator is used to check for the mouseClicked methods of all children
+        //if we tried to remove the color picker from a mouseClicked event, a CME error would be thrown
+        if(!colorPickerVisible && currentColorPicker != null) {
+            synchronized (this) {
+                this.renderables.removeIf(renderable -> renderable instanceof ColorPickerElement);
+                this.children.removeIf(child -> child instanceof ColorPickerElement);
+            }
+            currentColorPicker = null;
+        }
         renderDirtBackground(graphics);
         super.render(graphics, mouseX, mouseY, delta);
     }
@@ -309,6 +342,10 @@ public class YACLScreen extends Screen {
 
         @Override
         public void doLayout(ScreenRectangle screenRectangle) {
+
+        }
+
+        public void createColorPicker(ColorPickerElement colorPickerElement) {
 
         }
 

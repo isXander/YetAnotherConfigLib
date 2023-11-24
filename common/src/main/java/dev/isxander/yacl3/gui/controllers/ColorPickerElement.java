@@ -3,12 +3,15 @@ package dev.isxander.yacl3.gui.controllers;
 import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
+import dev.isxander.yacl3.gui.AbstractWidget;
 import dev.isxander.yacl3.gui.TooltipButtonWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.string.StringControllerElement;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.List;
 
-public class ColorPickerElement extends StringControllerElement implements ContainerEventHandler {
+public class ColorPickerElement extends StringControllerElement implements GuiEventListener {
     private boolean mouseDown;
     private final ColorController colorController;
     private final ColorController.ColorControllerElement entryWidget;
@@ -24,7 +27,9 @@ public class ColorPickerElement extends StringControllerElement implements Conta
     protected MutableDimension<Integer> colorPickerDim;
     private Dimension<Integer> sliderBounds;
 
-    private final TooltipButtonWidget toggleColorPickerButton;
+    private GuiEventListener focused;
+    private boolean dragging;
+
     private int outline = 1;
 
     private float[] HSL;
@@ -36,15 +41,6 @@ public class ColorPickerElement extends StringControllerElement implements Conta
         super(control, screen, dim, true);
         this.colorController = control;
         this.entryWidget = entryWidget;
-
-//        int previewSize = (dim.height() - getYPadding() * 2) / 2;
-//        int buttonX = dim.xLimit() - getXPadding() - previewSize - inputFieldBounds.width() - 8;
-//        int buttonY = dim.centerY() - previewSize / 2 - 2;
-
-        toggleColorPickerButton = new TooltipButtonWidget(screen, colorPickerDim.x(), colorPickerDim.y(), colorPickerDim.width(), colorPickerDim.height(),
-                Component.empty(), Component.literal("Toggle Color Picker"), btn -> {
-            System.out.println("color picker toggled!");
-        });
 
         setDimension(dim);
 
@@ -98,9 +94,9 @@ public class ColorPickerElement extends StringControllerElement implements Conta
         //Space was added between the color preview, HSL gradient, and rainbow gradients earlier
         graphics.fill(colorPickerDim.x() - outline, colorPickerDim.y() + outline, colorPickerDim.xLimit() + outline, colorPickerDim.yLimit() - outline, 1, 0xFF000000);
 
-        if(mouseDown) {
-            setHueFromMouseX(mouseX);
-        }
+//        if(mouseDown) {
+//            setHueFromMouseX(mouseX);
+//        }
 
 
         //Old mouse detection stuff
@@ -154,6 +150,11 @@ public class ColorPickerElement extends StringControllerElement implements Conta
 
     //SLIDER related overrides
 
+    @Override
+    public void setFocused(boolean focused) {
+        super.setFocused(focused);
+    }
+
     public int getUnshiftedLength() {
         if(control.option().name().getString().isEmpty())
             return getDimension().width() - getXPadding() * 2;
@@ -176,20 +177,25 @@ public class ColorPickerElement extends StringControllerElement implements Conta
     }
 
     @Override
-    public List<? extends GuiEventListener> children() {
-        return ImmutableList.of(toggleColorPickerButton);
-    }
-
-    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
 
         if(isMouseOver(mouseX, mouseY)) {
             setHueFromMouseX(mouseX);
             return true;
-        } else if (entryWidget.mouseClicked(mouseX, mouseY, button)) {
-            return true;
+//        } else if (entryWidget.mouseClicked(mouseX, mouseY, button)) {
+//            return true;
         }
-        return false;
+
+//        return entryWidget.mouseClicked(mouseX, mouseY, button);
+//        entryWidget.setColorPickerVisible(false);
+        return entryWidget.mouseClicked(mouseX, mouseY, button);
+//        selfDestruct();
+//        return false;
+
+
+//        entryWidget.removeColorPicker();
+//        selfDestruct();
+//        return false;
 
 
 //        if (mouseX >= colorPickerDim.x() && mouseX <= colorPickerDim.xLimit()
@@ -224,6 +230,16 @@ public class ColorPickerElement extends StringControllerElement implements Conta
 //        return false;
     }
 
+    public void selfDestruct() {
+//        screen.removeColorPickerWidget(this);
+//        entryWidget.setColorPickerVisible(false);
+    }
+
+    @Override
+    public void unfocus() {
+        super.unfocus();
+    }
+
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         System.out.println("yay2");
@@ -239,26 +255,26 @@ public class ColorPickerElement extends StringControllerElement implements Conta
 //            return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 
-    @Override
-    public boolean isDragging() {
-        return false;
-    }
-
-    @Override
-    public void setDragging(boolean dragging) {
-
-    }
-
-    @Nullable
-    @Override
-    public GuiEventListener getFocused() {
-        return null;
-    }
-
-    @Override
-    public void setFocused(@Nullable GuiEventListener child) {
-
-    }
+//    @Override
+//    public boolean isDragging() {
+//        return dragging;
+//    }
+//
+//    @Override
+//    public void setDragging(boolean dragging) {
+//        this.dragging = dragging;
+//    }
+//
+//    @Nullable
+//    @Override
+//    public GuiEventListener getFocused() {
+//        return this.focused;
+//    }
+//
+//    @Override
+//    public void setFocused(@Nullable GuiEventListener child) {
+//        this.focused = focused;
+//    }
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
@@ -278,13 +294,15 @@ public class ColorPickerElement extends StringControllerElement implements Conta
         return super.isHovered();
     }
 
-    @Override
-    public boolean isFocused() {
-        return true;
-    }
+//    @Override
+//    public boolean isFocused() {
+//        return true;
+//    }
 
-    public void hide() {
-        entryWidget.removeColorPicker();
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double amount, double d) {
+        return super.mouseScrolled(mouseX, mouseY, amount, d);
     }
 
     public boolean shouldStayVisible(double mouseX, double mouseY) {
@@ -347,25 +365,16 @@ public class ColorPickerElement extends StringControllerElement implements Conta
     protected float getHue() {
         //Gets the hue of the pending value
         return HSL[0];
-//        Color pendingValue = colorController.option().pendingValue();
-//        float[] HSL = Color.RGBtoHSB(pendingValue.getRed(), pendingValue.getGreen(), pendingValue.getBlue(), null);
-//        return HSL[0];
     }
 
     protected float getSaturation() {
         //Gets the saturation of the pending value
         return HSL[1];
-//        Color pendingValue = colorController.option().pendingValue();
-//        float[] HSL = Color.RGBtoHSB(pendingValue.getRed(), pendingValue.getGreen(), pendingValue.getBlue(), null);
-//        return HSL[1];
     }
 
     protected float getLight() {
         //Gets the light/brightness/value of the pending value
         return HSL[2];
-//        Color pendingValue = colorController.option().pendingValue();
-//        float[] HSL = Color.RGBtoHSB(pendingValue.getRed(), pendingValue.getGreen(), pendingValue.getBlue(), null);
-//        return HSL[2];
     }
 
     protected float getRgbFromHue() {
