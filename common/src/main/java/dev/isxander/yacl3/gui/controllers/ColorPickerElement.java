@@ -2,25 +2,43 @@ package dev.isxander.yacl3.gui.controllers;
 
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
-import dev.isxander.yacl3.gui.AbstractWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
-import dev.isxander.yacl3.gui.controllers.string.StringControllerElement;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.util.Mth;
 
 import java.awt.*;
 
-public class ColorPickerElement extends ControllerWidget implements GuiEventListener {
+public class ColorPickerElement extends ControllerWidget<ColorController> implements GuiEventListener {
     private final ColorController colorController;
     private final ColorController.ColorControllerElement entryWidget;
     private final YACLScreen screen;
     protected MutableDimension<Integer> colorPickerDim;
     private boolean mouseDown;
-//    private GuiEventListener focused;
-//    private boolean dragging;
 
+    //The width of the black outline for the entire color picker
+    //Space is made in between various parts of the color picker using this variable
+    //example: If the outline is set to 1, then a 1 pixel wide black outline is rendered around
+    //the entire color picker, the main color preview, HSL gradient, and hue gradient
     private int outline = 1;
+
+    //The main color preview's portion of the color picker as a whole
+    //example: if previewPortion is set to 7, then the color preview will take up
+    //a 7th of the color picker's width
+    private int previewPortion = 7;
+
+    //The height in pixels of the hue slider
+    //example: if the sliderHeight is set to 7, then the hue slider will be 7 pixels, with some extra padding between
+    //the color preview and the HSL gradient to allow for an outline(determined by the "outline" int)
+    private int sliderHeight = 7;
+
+    //Hue
+    private int hueSliderX;
+
+    //Saturation & Light
+    private int satLightX;
+    private int satLightY;
+
 
     private float[] HSL;
     private float hue;
@@ -35,69 +53,73 @@ public class ColorPickerElement extends ControllerWidget implements GuiEventList
 
         setDimension(dim);
 
-        this.HSL = getHSL();
-        this.hue = getHue();
-        this.saturation = getSaturation();
-        this.light = getLight();
+        updateHSL();
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
 
-//        toggleColorPickerButton.render(graphics, mouseX, mouseY, delta);
+        updateHSL();
 
         //FIXME - If the color picker is towards the top of the category, it will appear above the color controller instead of below
         //FIXME - The color preview doesn't have enough room for the translation string
-
-        //The main color preview's portion of the color picker as a whole
-        //example: if previewPortion is equal to 7, then the color preview will take up
-        //a 7th of the color picker's width
-        int previewPortion = 7;
-
-        //The height in pixels of the hue slider
-        //example: if the sliderHeight is equal to 7, then the hue slider will be 7 pixels, with some extra padding between
-        //the color preview and the HSL gradient to allow for an outline(determined by the "outline" int)
-        int sliderHeight = 7;
 
         //Main color preview
         graphics.fill(colorPickerDim.x(), colorPickerDim.y() - sliderHeight - outline, colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion), colorPickerDim.yLimit(), 2, colorController.option().pendingValue().getRGB());
 
         //HSL gradient
 
-        //White to pending color's RGB, left to right
+        //White to pending color's RGB from hue, left to right
         fillSidewaysGradient(graphics, colorPickerDim.xLimit(), colorPickerDim.y() - sliderHeight - outline, colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + 1, colorPickerDim.yLimit(), 2, 0xFFFFFFFF, (int) getRgbFromHue());
 
         //Transparent to black, top to bottom
         graphics.fillGradient(colorPickerDim.xLimit(), colorPickerDim.y() - sliderHeight - outline, colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + 1, colorPickerDim.yLimit(), 3,0xFF000000, 0x00000000);
 
-        //Hue slider
+        //Hue gradient
+
+        //Hue rainbow gradient
         drawRainbowGradient(graphics, colorPickerDim.x(), colorPickerDim.y(), colorPickerDim.xLimit(), colorPickerDim.y() - sliderHeight, 2);
 
-
-        //Slider thumb
-        graphics.fill(getThumbX(mouseX) - getThumbWidth() / 2, colorPickerDim.y(), getThumbX(mouseX) + getThumbWidth() / 2, colorPickerDim.y() - sliderHeight, 5, -1);
-        //Slider thumb shadow
-        graphics.fill(getThumbX(mouseX) - getThumbWidth() / 2 - 1, colorPickerDim.y() + 1, getThumbX(mouseX) + getThumbWidth() / 2 + 1, colorPickerDim.y() - sliderHeight - 1, 4, 0xFF404040);
+        //Hue slider thumb
+        graphics.fill(getHueThumbX() - getThumbWidth() / 2, colorPickerDim.y(), getHueThumbX() + getThumbWidth() / 2, colorPickerDim.y() - sliderHeight, 5, -1);
+        //Hue slider thumb shadow
+        graphics.fill(getHueThumbX() - getThumbWidth() / 2 - 1, colorPickerDim.y() + 1, getHueThumbX() + getThumbWidth() / 2 + 1, colorPickerDim.y() - sliderHeight - 1, 4, 0xFF404040);
 
 
         //Outline
         //Simply draws a huge black box
-        //Space was added between the color preview, HSL gradient, and rainbow gradients earlier
+        //Space was added between the color preview, HSL gradient, and hue gradient earlier
         graphics.fill(colorPickerDim.x() - outline, colorPickerDim.y() + outline, colorPickerDim.xLimit() + outline, colorPickerDim.yLimit() - outline, 1, 0xFF000000);
+    }
+
+    public boolean clickedHueSlider(double mouseX, double mouseY) {
+        if(mouseY <= colorPickerDim.y() && mouseY >= colorPickerDim.y() - sliderHeight) {
+            //mini workaround for holding the mouse down past the x/xLimit
+            return mouseDown || mouseX >= colorPickerDim.x() && mouseX <= colorPickerDim.xLimit();
+        }
+
+        return false;
+    }
+
+    public void setColorFromMouseClick(double mouseX, double mouseY) {
+        //TODO - Allow for the mouse to be held down past the box, while not messing up the other part of the color picker
+        if(clickedHueSlider(mouseX, mouseY)) {
+            setHueFromMouseX(mouseX);
+        }
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if(isMouseOver(mouseX, mouseY)) {
             mouseDown = true;
-            setHueFromMouseX(mouseX);
+//            setHueFromMouseX(mouseX);
+            setColorFromMouseClick(mouseX, mouseY);
             return true;
         }
         return entryWidget.mouseClicked(mouseX, mouseY, button);
     }
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        System.out.println("yay2");
         mouseDown = false;
         return false;
     }
@@ -112,12 +134,29 @@ public class ColorPickerElement extends ControllerWidget implements GuiEventList
     }
 
     @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        if(mouseDown || isMouseOver(mouseX, mouseY)) {
+            setColorFromMouseClick(mouseX, mouseY);
+            return true;
+        }
+        return entryWidget.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+    }
+
+    @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount, double d) {
+        //Use to allow for small adjustments of the color?
         return true;
     }
 
     @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        //Done to allow for typing whilst the color picker is visible
+        return entryWidget.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
     public boolean charTyped(char chr, int modifiers) {
+        //Done to allow for typing whilst the color picker is visible
         return entryWidget.charTyped(chr, modifiers);
     }
 
@@ -162,28 +201,12 @@ public class ColorPickerElement extends ControllerWidget implements GuiEventList
         super.unfocus();
     }
 
-    protected int getThumbX(int mouseX) {
+    protected int getHueThumbX() {
         int min = colorPickerDim.x();
         int max = colorPickerDim.xLimit();
+        int value = (int) (colorPickerDim.x() + colorPickerDim.width() * this.hue);
 
-        return Mth.clamp(mouseX, min, max);
-//        if(min < mouseX) {
-////            mouseX -= min;
-//            return (mouseX < max) ? mouseX : max;
-//        }
-//        return min;
-
-        //Calculates the thumb x based upon the pending value's hue
-        //Multiplying the adjustment by 1.9 instead of 2 seemed to give better results
-//        double multiplyValue = 1.9;
-//        int adjustmentValue = (int) ((inputFieldBounds.xLimit() + 5 - colorPickerDim.x() - 30) * getHue() * multiplyValue);
-
-        //TODO - Make the thumb appear at the mouse's pos. clamped on the slider x/xLimit
-//        if(mouseDown) {
-//            return Mth.clamp()
-//        }
-
-//        return Mth.clamp(colorPickerDim.x() - 30 + adjustmentValue, colorPickerDim.x() - 30, inputFieldBounds.xLimit() + 5);
+        return Mth.clamp(value, min, max);
     }
 
     protected int getThumbWidth() {
@@ -196,11 +219,12 @@ public class ColorPickerElement extends ControllerWidget implements GuiEventList
         if(mouseX < colorPickerDim.x()) {
             this.hue = 0f;
         } else if (mouseX > colorPickerDim.xLimit()) {
-            this.hue = 1f;
+            //Sets the color to FF0001, which allows for the hue thumb slider to be at the very edge of the right
+            this.hue = 0.9991f;
         } else {
             float newHue = ((float) (mouseX - colorPickerDim.x()) / colorPickerDim.width());
 
-            this.hue = Mth.clamp(newHue, 0f, 1.0f);
+            this.hue = Mth.clamp(newHue, 0f, 0.9991f);
         }
 
         setColorControllerFromHSL();
@@ -209,9 +233,13 @@ public class ColorPickerElement extends ControllerWidget implements GuiEventList
     public void setColorControllerFromHSL() {
         //Updates the current color controller's pending value based from HSL to RGB
         colorController.option().requestSet(Color.getHSBColor(hue, saturation, light));
-//        Color newColor = Color.getHSBColor(hue, saturation, light);
-//        String hex = Integer.toHexString(newColor.getRGB()).substring(2);
-//        colorController.setFromString(hex);
+    }
+
+    protected void updateHSL() {
+        this.HSL = getHSL();
+        this.hue = getHue();
+        this.saturation = getSaturation();
+        this.light = getLight();
     }
 
     protected float[] getHSL() {
