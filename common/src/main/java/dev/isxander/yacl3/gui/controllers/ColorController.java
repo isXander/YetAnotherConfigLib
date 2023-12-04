@@ -131,7 +131,7 @@ public class ColorController implements IStringController<Color> {
             }
 
             graphics.fill(colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), colorController.option().pendingValue().getRGB());
-            drawOutline(graphics, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), 1, 0xFF000000);
+            drawOutline(graphics, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), 1, isMouseOverColorPreview(mouseX, mouseY) ? 0xFFFFFFFF : 0xFF000000);
         }
 
         @Override
@@ -139,7 +139,6 @@ public class ColorController implements IStringController<Color> {
             super.render(graphics, mouseX, mouseY, delta);
             if(colorPickerVisible)
                 colorPickerElement.setDimension(getDimension());
-
         }
 
         @Override
@@ -259,6 +258,10 @@ public class ColorController implements IStringController<Color> {
         }
 
         public boolean clickedColorPreview(double mouseX, double mouseY) {
+            return isMouseOverColorPreview(mouseX, mouseY);
+        }
+
+        public boolean isMouseOverColorPreview(double mouseX, double mouseY) {
             if((mouseX >= colorPreviewDim.x() && mouseX <= colorPreviewDim.xLimit())
                     && (mouseY >= colorPreviewDim.y() && mouseY <= colorPreviewDim.yLimit())) {
 

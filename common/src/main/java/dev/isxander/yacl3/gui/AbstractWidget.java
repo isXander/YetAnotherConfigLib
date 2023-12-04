@@ -120,13 +120,15 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
         int x = x2 - x1;
         int i = 6;
         //TODO - Some int array goofy stuff to reduce code
+        //FIXME - this code doesn't really make sense but it works
+        //A possible variable renaming/method introduction could help
 
         fillSidewaysGradient(graphics, x1 + (x / i), y1, x1, y2, z, red, yellow);
         fillSidewaysGradient(graphics, x1 + (x / i * 2), y1, x1 + (x / i), y2, z, yellow, green);
         fillSidewaysGradient(graphics, x1 + (x / i * 3), y1, x1 + (x / i * 2), y2, z, green, cyan);
         fillSidewaysGradient(graphics, x1 + (x / i * 4), y1, x1 + (x / i * 3), y2, z, cyan, blue);
         fillSidewaysGradient(graphics, x1 + (x / i * 5), y1, x1 + (x / i * 4), y2, z, blue, purple);
-        fillSidewaysGradient(graphics, x1 + (x / i * 6), y1, x1 + (x / i * 5), y2, z, purple, red);
+        fillSidewaysGradient(graphics, x2, y1, x1 + (x / i * 5), y2, z, purple, red);
     }
 
     protected int multiplyColor(int hex, float amount) {
