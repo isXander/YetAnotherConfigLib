@@ -14,17 +14,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> extends ContainerObjectSelectionList<E> implements LayoutElement {
-    protected int x, y;
-
     private double smoothScrollAmount = getScrollAmount();
     private boolean returnSmoothAmount = false;
     private final boolean doSmoothScrolling;
 
     public ElementListWidgetExt(Minecraft client, int x, int y, int width, int height, boolean smoothScrolling) {
-        super(client, width, height, y, y + height, 22);
-        this.x = this.x0 = x;
-        this.y = y;
-        this.x1 = this.x0 + width;
+        super(client, x, y, width, height);
         this.doSmoothScrolling = smoothScrolling;
         setRenderBackground(true);
         setRenderHeader(false, 0);
@@ -40,17 +35,17 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     @Override
     protected int getScrollbarPosition() {
         // default implementation does not respect left/right
-        return this.x1 - 2;
+        return this.getX() + this.getWidth() - 2;
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         smoothScrollAmount = Mth.lerp(Minecraft.getInstance().getDeltaFrameTime() * 0.5, smoothScrollAmount, getScrollAmount());
         returnSmoothAmount = true;
 
-        graphics.enableScissor(x0, y0, x1, y1);
+        graphics.enableScissor(this.getX(), this.getY(), this.getX() + this.getWidth(), this.getY() + this.getHeight());
 
-        super.render(graphics, mouseX, mouseY, delta);
+        super.renderWidget(graphics, mouseX, mouseY, delta);
 
         graphics.disableScissor();
 
@@ -58,12 +53,10 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     }
 
     public void updateDimensions(ScreenRectangle rectangle) {
-        this.x0 = rectangle.left();
-        this.y0 = rectangle.top();
-        this.x1 = rectangle.right();
-        this.y1 = rectangle.bottom();
-        this.width = rectangle.width();
-        this.height = rectangle.height();
+        this.setX(rectangle.left());
+        this.setY(rectangle.top());
+        this.setWidth(rectangle.width());
+        this.setHeight(rectangle.height());
     }
 
     /**
@@ -87,10 +80,10 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     protected E getEntryAtPosition(double x, double y) {
         y += getScrollAmount();
 
-        if (x < this.x0 || x > this.x1)
+        if (x < this.getX() || x > this.getX() + this.getWidth())
             return null;
 
-        int currentY = this.y0 - headerHeight + 4;
+        int currentY = this.getY() - headerHeight + 4;
         for (E entry : children()) {
             if (y >= currentY && y <= currentY + entry.getItemHeight()) {
                 return entry;
@@ -124,7 +117,7 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
 
     @Override
     protected int getRowTop(int index) {
-        int integer = y0 + 4 - (int) this.getScrollAmount() + headerHeight;
+        int integer = getY() + 4 - (int) this.getScrollAmount() + headerHeight;
         for (int i = 0; i < children().size() && i < index; i++)
             integer += children().get(i).getItemHeight();
         return integer;
@@ -141,45 +134,13 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
             int top = this.getRowTop(i);
             int bottom = top + entry.getItemHeight();
             int entryHeight = entry.getItemHeight() - 4;
-            if (bottom >= this.y0 && top <= this.y1) {
+            if (bottom >= this.getY() && top <= this.getY() + this.getHeight()) {
                 this.renderItem(graphics, mouseX, mouseY, delta, i, left, top, right, entryHeight);
             }
         }
     }
 
     /* END cloth config code */
-
-    @Override
-    public void setX(int i) {
-        this.x = x0 = i;
-        this.x1 = x0 + width;
-    }
-
-    @Override
-    public void setY(int i) {
-        this.y = y0 = i;
-        this.y1 = y0 + height;
-    }
-
-    @Override
-    public int getX() {
-        return x;
-    }
-
-    @Override
-    public int getY() {
-        return y;
-    }
-
-    @Override
-    public int getWidth() {
-        return width;
-    }
-
-    @Override
-    public int getHeight() {
-        return height;
-    }
 
     @Override
     public void visitWidgets(Consumer<AbstractWidget> consumer) {

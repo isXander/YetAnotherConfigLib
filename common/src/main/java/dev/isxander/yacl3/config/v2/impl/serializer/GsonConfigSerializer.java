@@ -1,11 +1,14 @@
 package dev.isxander.yacl3.config.v2.impl.serializer;
 
 import com.google.gson.*;
+import com.mojang.serialization.JsonOps;
+import dev.isxander.yacl3.config.GsonConfigInstance;
 import dev.isxander.yacl3.config.v2.api.*;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.gui.utils.ItemRegistryHelper;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 import dev.isxander.yacl3.platform.YACLPlatform;
+import net.minecraft.commands.ParserUtils;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -173,6 +176,18 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
         config.load();
     }
 
+    public static class StyleTypeAdapter implements JsonSerializer<Style>, JsonDeserializer<Style> {
+        @Override
+        public Style deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            return Style.Serializer.CODEC.parse(JsonOps.INSTANCE, json).result().orElse(Style.EMPTY);
+        }
+
+        @Override
+        public JsonElement serialize(Style src, Type typeOfSrc, JsonSerializationContext context) {
+            return Style.Serializer.CODEC.encodeStart(JsonOps.INSTANCE, src).result().orElse(JsonNull.INSTANCE);
+        }
+    }
+
     public static class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeserializer<Color> {
         @Override
         public Color deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
@@ -205,8 +220,8 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
         private UnaryOperator<GsonBuilder> gsonBuilder = builder -> builder
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .serializeNulls()
-                .registerTypeHierarchyAdapter(Component.class, new Component.Serializer())
-                .registerTypeHierarchyAdapter(Style.class, new Style.Serializer())
+                .registerTypeHierarchyAdapter(Component.class, new Component.SerializerAdapter())
+                .registerTypeHierarchyAdapter(Style.class, new StyleTypeAdapter())
                 .registerTypeHierarchyAdapter(Color.class, new ColorTypeAdapter())
                 .registerTypeHierarchyAdapter(Item.class, new ItemTypeAdapter())
                 .setPrettyPrinting();

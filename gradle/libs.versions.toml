@@ -10,9 +10,9 @@ github_release = "2.4.+"
 machete = "2.+"
 grgit = "5.0.+"
 
-minecraft = "1.20.2"
-quilt_mappings = "3"
-fabric_loader = "0.14.22"
+minecraft = "1.20.3"
+quilt_mappings = "0"
+fabric_loader = "0.14.23"
 
 # Common Dependencies
 mixin_extras = "0.2.0"
@@ -20,7 +20,7 @@ twelvemonkeys_imageio = "3.10.0"
 quilt_parsers = "0.2.1"
 
 # Fabric-like Dependencies
-fabric_api = "0.90.4+1.20.2"
+fabric_api = "0.90.11+1.20.3"
 
 # Forge Dependencies
 forge = "1.20.2-48.0.33"

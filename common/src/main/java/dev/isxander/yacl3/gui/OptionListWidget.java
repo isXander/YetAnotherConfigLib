@@ -31,7 +31,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     private DescriptionWithName lastHoveredOption;
 
     public OptionListWidget(YACLScreen screen, ConfigCategory category, Minecraft client, int x, int y, int width, int height, Consumer<DescriptionWithName> hoverEvent) {
-        super(client, x, y, width, height, true);
+        super(client, width, height, x, y, true);
         this.yaclScreen = screen;
         this.category = category;
         this.hoverEvent = hoverEvent;
@@ -183,7 +183,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
     @Override
     protected int getScrollbarPosition() {
-        return x1 - (int)(width * 0.05f);
+        return getX() + getWidth() - (int)(width * 0.05f);
     }
 
     public void recacheViewableChildren() {
