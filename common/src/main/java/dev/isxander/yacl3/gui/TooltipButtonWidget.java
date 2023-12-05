@@ -18,10 +18,4 @@ public class TooltipButtonWidget extends Button {
         if (tooltip != null)
             setTooltip(new YACLTooltip(tooltip, this));
     }
-
-    @Nullable
-    @Override
-    public Tooltip getTooltip() {
-        return super.getTooltip();
-    }
 }

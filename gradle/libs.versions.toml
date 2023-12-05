@@ -10,7 +10,7 @@ github_release = "2.4.+"
 machete = "2.+"
 grgit = "5.0.+"
 
-minecraft = "1.20.3-pre2"
+minecraft = "1.20.3"
 quilt_mappings = "0"
 fabric_loader = "0.14.23"
 
