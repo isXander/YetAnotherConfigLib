@@ -7,6 +7,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.PlainTextContents;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -120,7 +121,7 @@ public final class ConfigCategoryImpl implements ConfigCategory {
             MutableComponent concatenatedTooltip = Component.empty();
             boolean first = true;
             for (Component line : tooltipLines) {
-                if (line.getContents() == ComponentContents.EMPTY)
+                if (line.getContents() == PlainTextContents.EMPTY)
                     continue;
 
                 if (!first) concatenatedTooltip.append("\n");

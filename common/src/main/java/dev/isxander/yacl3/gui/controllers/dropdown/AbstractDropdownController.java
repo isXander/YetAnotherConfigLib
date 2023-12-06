@@ -26,8 +26,12 @@ public abstract class AbstractDropdownController<T> implements IStringController
 		this.allowAnyValue = allowAnyValue;
 	}
 
+	protected AbstractDropdownController(Option<T> option, List<String> allowedValues) {
+		this(option, allowedValues, false, false);
+	}
+
 	protected AbstractDropdownController(Option<T> option) {
-		this(option, Collections.emptyList(), false, false);
+		this(option, Collections.emptyList());
 	}
 
 	/**

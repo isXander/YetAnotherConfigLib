@@ -4,6 +4,7 @@ import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.platform.YACLPlatform;
+import net.minecraft.ChatFormatting;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
@@ -51,6 +52,8 @@ public class ConfigTest {
     public String stringSuggestions = "";
     @SerialEntry
     public Item item = Items.OAK_LOG;
+    @SerialEntry
+    public ChatFormatting formattingOption = ChatFormatting.RED;
 
     @SerialEntry
     public List<String> stringList = List.of("This is quite cool.", "You can add multiple items!", "And it is integrated so well into Option groups!");

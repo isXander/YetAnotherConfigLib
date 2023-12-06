@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.config;
 
 import com.google.gson.*;
+import dev.isxander.yacl3.config.v2.impl.serializer.GsonConfigSerializer;
 import dev.isxander.yacl3.gui.utils.ItemRegistryHelper;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -66,8 +67,8 @@ public class GsonConfigInstance<T> extends ConfigInstance<T> {
         this.path = path;
         this.gson = builder
                 .setExclusionStrategies(new ConfigExclusionStrategy())
-                .registerTypeHierarchyAdapter(Component.class, new Component.Serializer())
-                .registerTypeHierarchyAdapter(Style.class, new Style.Serializer())
+                .registerTypeHierarchyAdapter(Component.class, new Component.SerializerAdapter())
+                .registerTypeHierarchyAdapter(Style.class, new GsonConfigSerializer.StyleTypeAdapter())
                 .registerTypeHierarchyAdapter(Color.class, new ColorTypeAdapter())
                 .registerTypeHierarchyAdapter(Item.class, new ItemTypeAdapter())
                 .serializeNulls()
@@ -161,8 +162,8 @@ public class GsonConfigInstance<T> extends ConfigInstance<T> {
         private UnaryOperator<GsonBuilder> gsonBuilder = builder -> builder
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .serializeNulls()
-                .registerTypeHierarchyAdapter(Component.class, new Component.Serializer())
-                .registerTypeHierarchyAdapter(Style.class, new Style.Serializer())
+                .registerTypeHierarchyAdapter(Component.class, new Component.SerializerAdapter())
+                .registerTypeHierarchyAdapter(Style.class, new GsonConfigSerializer.StyleTypeAdapter())
                 .registerTypeHierarchyAdapter(Color.class, new ColorTypeAdapter())
                 .registerTypeHierarchyAdapter(Item.class, new ItemTypeAdapter());
 

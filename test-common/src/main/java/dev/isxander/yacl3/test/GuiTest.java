@@ -14,6 +14,7 @@ import dev.isxander.yacl3.gui.controllers.string.number.DoubleFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.FloatFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.IntegerFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.LongFieldController;
+import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
@@ -24,6 +25,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import org.apache.commons.lang3.StringUtils;
 
 import java.awt.Color;
 import java.nio.file.Path;
@@ -268,12 +270,21 @@ public class GuiTest {
                                                 )
                                                 .controller(ItemControllerBuilder::create)
                                                 .build())
+                                        .option(Option.<ChatFormatting>createBuilder()
+                                                .name(Component.literal("Enum Dropdown"))
+                                                .binding(
+                                                        defaults.formattingOption,
+                                                        () -> config.formattingOption,
+                                                        (value) -> config.formattingOption = value
+                                                )
+                                                .controller(option -> EnumDropdownControllerBuilder.create(option).formatValue(formatting -> Component.literal(StringUtils.capitalize(formatting.getName()).replaceAll("_", " "))))
+                                                .build())
                                         .build())
                                 .group(OptionGroup.createBuilder()
                                         .name(Component.literal("Options that aren't really options"))
                                         .option(ButtonOption.createBuilder()
                                                 .name(Component.literal("Button \"Option\""))
-                                                .action((screen, opt) -> SystemToast.add(Minecraft.getInstance().getToasts(), SystemToast.SystemToastIds.TUTORIAL_HINT, Component.literal("Button Pressed"), Component.literal("Button option was invoked!")))
+                                                .action((screen, opt) -> SystemToast.add(Minecraft.getInstance().getToasts(), SystemToast.SystemToastId.PERIODIC_NOTIFICATION, Component.literal("Button Pressed"), Component.literal("Button option was invoked!")))
                                                 .build())
                                         .option(LabelOption.create(
                                                 Component.empty()

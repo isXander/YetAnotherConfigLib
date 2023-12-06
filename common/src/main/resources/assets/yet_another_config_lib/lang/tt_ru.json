@@ -1,10 +1,13 @@
 {
   "modmenu.summaryTranslation.yacl": "Төзүче нигезендә Minecraft өчен көйләүләр китапханәсе.",
   "modmenu.descriptionTranslation.yacl": "YetAnotherConfigLib (yacl) — нәкъ менә кирәк нәрсә. Төзүче нигезендә Minecraft өчен көйләүләр китапханәсе.",
+  
   "yacl.control.boolean.true": "Дөрес",
   "yacl.control.boolean.false": "Ялган",
 
   "yacl.control.action.execute": "ҮТӘҮ",
+
+  "yacl.control.text.blank": "<буш>",
 
   "yacl.gui.save": "Үзгәрешләрне саклау",
   "yacl.gui.save.tooltip": "Кертелгән үзгәрешләрне даими итә.",

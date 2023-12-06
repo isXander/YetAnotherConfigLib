@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.config.v2.impl;
 
 import dev.isxander.yacl3.api.*;
+import dev.isxander.yacl3.config.ConfigEntry;
 import dev.isxander.yacl3.config.v2.api.*;
 import dev.isxander.yacl3.config.v2.api.autogen.AutoGen;
 import dev.isxander.yacl3.config.v2.api.autogen.OptionAccess;
@@ -46,12 +47,24 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
         this.instance = createNewObject();
         this.defaults = createNewObject();
 
-        this.fields = Arrays.stream(configClass.getDeclaredFields())
+        detectOldAnnotation(configClass.getDeclaredFields());
+
+        this.fields = discoverFields();
+        this.serializer = serializerFactory.apply(this);
+    }
+
+    private ConfigFieldImpl<?>[] discoverFields() {
+        return Arrays.stream(configClass.getDeclaredFields())
                 .peek(field -> field.setAccessible(true))
                 .filter(field -> field.isAnnotationPresent(SerialEntry.class) || field.isAnnotationPresent(AutoGen.class))
-                .map(field -> new ConfigFieldImpl<>(new ReflectionFieldAccess<>(field, instance), new ReflectionFieldAccess<>(field, defaults), this, field.getAnnotation(SerialEntry.class), field.getAnnotation(AutoGen.class)))
+                .map(field -> new ConfigFieldImpl<>(
+                        new ReflectionFieldAccess<>(field, instance),
+                        new ReflectionFieldAccess<>(field, defaults),
+                        this,
+                        field.getAnnotation(SerialEntry.class),
+                        field.getAnnotation(AutoGen.class)
+                ))
                 .toArray(ConfigFieldImpl[]::new);
-        this.serializer = serializerFactory.apply(this);
     }
 
     @Override
@@ -210,6 +223,13 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
         } catch (Exception e) {
             throw new YACLAutoGenException("Failed to create instance of config class '%s' with no-args constructor.".formatted(configClass.getName()), e);
         }
+    }
+
+    private void detectOldAnnotation(Field[] fields) {
+        boolean hasOldConfigEntry = Arrays.stream(fields)
+                .anyMatch(field -> field.isAnnotationPresent(ConfigEntry.class));
+
+        Validate.isTrue(!hasOldConfigEntry, "At least one field in %s is still annotated with the deprecated @ConfigEntry annotation. This is incorrect. Use @SerialEntry.".formatted(configClass.getName()));
     }
 
     public static class BuilderImpl<T> implements Builder<T> {
