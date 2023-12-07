@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.architectury.plugin)
     alias(libs.plugins.architectury.loom) apply false
-    alias(libs.plugins.loom.vineflower) apply false
 
     alias(libs.plugins.minotaur) apply false
     alias(libs.plugins.cursegradle) apply false
@@ -45,6 +44,8 @@ allprojects {
         maven("https://maven.isxander.dev/releases")
         maven("https://maven.isxander.dev/snapshots")
         maven("https://maven.quiltmc.org/repository/release")
+        maven("https://maven.neoforged.net/releases")
+        maven("https://maven.parchmentmc.org")
         maven("https://api.modrinth.com/maven") {
             name = "Modrinth"
             content {
@@ -79,10 +80,6 @@ allprojects {
             }
         }
     }
-}
-
-subprojects {
-    apply(plugin = rootProject.libs.plugins.loom.vineflower.get().pluginId)
 }
 
 githubRelease {

@@ -12,7 +12,7 @@ plugins {
 
 architectury {
     platformSetupLoomIde()
-    forge()
+    neoForge()
 }
 
 loom {
@@ -20,30 +20,25 @@ loom {
 
     accessWidenerPath.set(project(":common").loom.accessWidenerPath)
 
-    forge {
-        mixinConfig("yacl.mixins.json")
+    neoForge {
 
-        convertAccessWideners.set(true)
-        extraAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
     }
 }
 
 val common by configurations.registering
 val shadowCommon by configurations.registering
 configurations.compileClasspath.get().extendsFrom(common.get())
-configurations["developmentForge"].extendsFrom(common.get())
+configurations["developmentNeoForge"].extendsFrom(common.get())
 
 val minecraftVersion: String = libs.versions.minecraft.get()
 
 dependencies {
     minecraft(libs.minecraft)
     mappings(loom.layered {
-        val qm = libs.versions.quilt.mappings.get()
-        if (qm != "0")
-            mappings("org.quiltmc:quilt-mappings:${libs.versions.minecraft.get()}+build.${libs.versions.quilt.mappings.get()}:intermediary-v2")
         officialMojangMappings()
+        parchment(libs.parchment)
     })
-    forge(libs.forge)
+    neoForge(libs.neoforge)
 
     libs.bundles.twelvemonkeys.imageio.let {
         implementation(it)
@@ -70,7 +65,6 @@ tasks {
         val modName: String by rootProject
         val modDescription: String by rootProject
         val githubProject: String by rootProject
-        val majorForge = libs.versions.forge.get().substringAfter('-').split('.').first()
 
         inputs.property("id", modId)
         inputs.property("group", project.group)
@@ -78,7 +72,6 @@ tasks {
         inputs.property("description", modDescription)
         inputs.property("version", project.version)
         inputs.property("github", githubProject)
-        inputs.property("major_forge", majorForge)
 
         filesMatching(listOf("META-INF/mods.toml", "pack.mcmeta")) {
             expand(
@@ -88,7 +81,6 @@ tasks {
                 "description" to modDescription,
                 "version" to project.version,
                 "github" to githubProject,
-                "major_forge" to majorForge,
             )
         }
     }
@@ -143,11 +135,11 @@ if (modrinthId.isNotEmpty()) {
         token.set(findProperty("modrinth.token")?.toString())
         projectId.set(modrinthId)
         versionName.set("${project.version} (Forge)")
-        versionNumber.set("${project.version}-forge")
+        versionNumber.set("${project.version}-neoforge")
         versionType.set(if (isBeta) "beta" else "release")
         uploadFile.set(tasks["remapJar"])
-        gameVersions.set(listOf("1.20.2"))
-        loaders.set(listOf("forge", "neoforge"))
+        gameVersions.set(listOf("1.20.4"))
+        loaders.set(listOf("neoforge"))
         changelog.set(changelogText)
         syncBodyFrom.set(rootProject.file("README.md").readText())
     }
@@ -165,8 +157,7 @@ if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
 
             id = curseforgeId
             releaseType = if (isBeta) "beta" else "release"
-            addGameVersion("1.20.2")
-            addGameVersion("Forge")
+            addGameVersion("1.20.4")
             addGameVersion("NeoForge")
             addGameVersion("Java 17")
 

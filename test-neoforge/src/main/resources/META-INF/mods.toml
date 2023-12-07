@@ -1,0 +1,31 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+#issueTrackerURL = ""
+license = "LGPL-3.0-or-later"
+
+[[mods]]
+modId = "yacl_test"
+version = "1"
+displayName = "YACL Test"
+authors = "isXander"
+description = '''
+Test mod for YACL
+'''
+#logoFile = ""
+
+[[mixins]]
+config = "yacl-test.mixins.json"
+
+[[dependencies.yacl_test]]
+modId = "neoforge"
+mandatory = true
+versionRange = "[20,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.yacl_test]]
+modId = "minecraft"
+mandatory = true
+versionRange = "1.20.4"
+ordering = "NONE"
+side = "BOTH"

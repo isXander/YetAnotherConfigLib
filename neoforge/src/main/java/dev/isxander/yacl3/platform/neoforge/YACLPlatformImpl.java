@@ -1,8 +1,8 @@
-package dev.isxander.yacl3.platform.forge;
+package dev.isxander.yacl3.platform.neoforge;
 
 import dev.isxander.yacl3.platform.Env;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.fml.loading.FMLPaths;
 
 import java.nio.file.Path;
 

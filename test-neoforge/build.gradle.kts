@@ -7,7 +7,7 @@ plugins {
 
 architectury {
     platformSetupLoomIde()
-    forge()
+    neoForge()
 }
 
 loom {
@@ -15,28 +15,31 @@ loom {
 
     accessWidenerPath.set(project(":common").loom.accessWidenerPath)
 
-    forge {
-        convertAccessWideners.set(true)
-        extraAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
+    neoForge {
+
+    }
+
+    mods {
+        maybeCreate("forge").apply {
+            sourceSet(project(":neoforge").sourceSets.main.get())
+        }
     }
 }
 
 val common by configurations.registering
 val shadowCommon by configurations.registering
 configurations.compileClasspath.get().extendsFrom(common.get())
-configurations["developmentForge"].extendsFrom(common.get())
+configurations["developmentNeoForge"].extendsFrom(common.get())
 
 val minecraftVersion: String = libs.versions.minecraft.get()
 
 dependencies {
     minecraft(libs.minecraft)
     mappings(loom.layered {
-        val qm = libs.versions.quilt.mappings.get()
-        if (qm != "0")
-            mappings("org.quiltmc:quilt-mappings:${libs.versions.minecraft.get()}+build.${libs.versions.quilt.mappings.get()}:intermediary-v2")
         officialMojangMappings()
+        parchment(libs.parchment)
     })
-    forge(libs.forge)
+    neoForge(libs.neoforge)
 
     implementation(libs.twelvemonkeys.imageio.core)
     forgeRuntimeLibrary(libs.twelvemonkeys.imageio.core)
@@ -46,7 +49,7 @@ dependencies {
     forgeRuntimeLibrary(libs.bundles.quilt.parsers)
 
     "common"(project(path = ":test-common", configuration = "namedElements")) { isTransitive = false }
-    "common"(project(path = ":forge", configuration = "namedElements")) { isTransitive = false }
+    implementation(project(path = ":neoforge", configuration = "namedElements")) { isTransitive = false }
 
     "common"(project(path = ":common", configuration = "namedElements")) { isTransitive = false }
 }
@@ -65,7 +68,7 @@ tasks {
         inputFile.set(shadowJar.get().archiveFile)
         dependsOn(shadowJar)
 
-        archiveClassifier.set("forge-$minecraftVersion")
+        archiveClassifier.set("neoforge-$minecraftVersion")
     }
 
     jar {

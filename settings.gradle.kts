@@ -4,7 +4,7 @@ pluginManagement {
         gradlePluginPortal()
         maven("https://maven.fabricmc.net")
         maven("https://maven.architectury.dev/")
-        maven("https://maven.minecraftforge.net/")
+        maven("https://maven.neoforged.net/releases")
         maven("https://maven.quiltmc.org/repository/release")
     }
 }
@@ -27,7 +27,7 @@ if ("fabric" in enabledLoaders) {
     include("test-fabric")
 }
 
-if ("forge" in enabledLoaders) {
-    include("forge")
-    include("test-forge")
+if ("neoforge" in enabledLoaders) {
+    include("neoforge")
+    include("test-neoforge")
 }

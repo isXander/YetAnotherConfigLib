@@ -1,26 +1,29 @@
 modLoader = "javafml"
-loaderVersion = "[48,)"
+loaderVersion = "[1,)"
 #issueTrackerURL = ""
 license = "LGPL-3.0-or-later"
 
 [[mods]]
-modId = "yacl_test"
-version = "1"
-displayName = "YACL Test"
+modId = "${id}"
+version = "${version}"
+displayName = "${name}"
 authors = "isXander"
 description = '''
-Test mod for YACL
+${description}
 '''
-#logoFile = ""
+logoFile = "yacl-128x.png"
 
-[[dependencies.yacl_test]]
-modId = "forge"
+[[mixins]]
+config = "yacl.mixins.json"
+
+[["dependencies.${id}"]]
+modId = "neoforge"
 mandatory = true
-versionRange = "[48,)"
+versionRange = "[1,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.yacl_test]]
+[["dependencies.${id}"]]
 modId = "minecraft"
 mandatory = true
 versionRange = "[1.20.2,)"
