@@ -47,10 +47,16 @@ public class YACLScreen extends Screen {
     public Tooltip saveButtonTooltipMessage;
     private int saveButtonMessageTime;
 
+    private boolean pendingChanges;
+
     public YACLScreen(YetAnotherConfigLib config, Screen parent) {
         super(config.title());
         this.config = config;
         this.parent = parent;
+
+        OptionUtils.forEachOptions(config, option -> {
+            option.addListener((opt, val) -> onOptionChanged(opt));
+        });
     }
 
     @Override
@@ -151,16 +157,20 @@ public class YACLScreen extends Screen {
     }
 
     private boolean pendingChanges() {
-        AtomicBoolean pendingChanges = new AtomicBoolean(false);
-        OptionUtils.consumeOptions(config, (option) -> {
-            if (option.changed()) {
-                pendingChanges.set(true);
-                return true;
-            }
-            return false;
+        return pendingChanges;
+    }
+
+    private void onOptionChanged(Option<?> option) {
+        pendingChanges = false;
+
+        OptionUtils.consumeOptions(config, opt -> {
+            pendingChanges |= opt.changed();
+            return pendingChanges;
         });
 
-        return pendingChanges.get();
+        if (tabManager.getCurrentTab() instanceof CategoryTab categoryTab) {
+            categoryTab.updateButtons();
+        }
     }
 
     @Override
@@ -314,7 +324,6 @@ public class YACLScreen extends Screen {
 
         @Override
         public void tick() {
-            updateButtons();
             descriptionWidget.tick();
         }
 
@@ -324,14 +333,14 @@ public class YACLScreen extends Screen {
             return tooltip;
         }
 
-        private void updateButtons() {
+        public void updateButtons() {
             boolean pendingChanges = pendingChanges();
 
             undoButton.active = pendingChanges;
             saveFinishedButton.setMessage(pendingChanges ? Component.translatable("yacl.gui.save") : GuiUtils.translatableFallback("yacl.gui.done", CommonComponents.GUI_DONE));
-            saveFinishedButton.setTooltip(Tooltip.create(pendingChanges ? Component.translatable("yacl.gui.save.tooltip") : Component.translatable("yacl.gui.finished.tooltip")));
+            saveFinishedButton.setTooltip(new YACLTooltip(pendingChanges ? Component.translatable("yacl.gui.save.tooltip") : Component.translatable("yacl.gui.finished.tooltip"), saveFinishedButton));
             cancelResetButton.setMessage(pendingChanges ? GuiUtils.translatableFallback("yacl.gui.cancel", CommonComponents.GUI_CANCEL) : Component.translatable("controls.reset"));
-            cancelResetButton.setTooltip(Tooltip.create(pendingChanges ? Component.translatable("yacl.gui.cancel.tooltip") : Component.translatable("yacl.gui.reset.tooltip")));
+            cancelResetButton.setTooltip(new YACLTooltip(pendingChanges ? Component.translatable("yacl.gui.cancel.tooltip") : Component.translatable("yacl.gui.reset.tooltip"), cancelResetButton));
         }
     }
 
