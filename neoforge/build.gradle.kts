@@ -52,7 +52,7 @@ dependencies {
     }
 
     "common"(project(path = ":common", configuration = "namedElements")) { isTransitive = false }
-    "shadowCommon"(project(path = ":common", configuration = "transformProductionForge")) { isTransitive = false }
+    "shadowCommon"(project(path = ":common", configuration = "transformProductionNeoForge")) { isTransitive = false }
 }
 
 java {
