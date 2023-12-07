@@ -134,11 +134,11 @@ if (modrinthId.isNotEmpty()) {
     modrinth {
         token.set(findProperty("modrinth.token")?.toString())
         projectId.set(modrinthId)
-        versionName.set("${project.version} (Forge)")
+        versionName.set("${project.version} (NeoForge)")
         versionNumber.set("${project.version}-neoforge")
         versionType.set(if (isBeta) "beta" else "release")
         uploadFile.set(tasks["remapJar"])
-        gameVersions.set(listOf("1.20.4"))
+        gameVersions.set(listOf("1.20.4", "1.20.3"))
         loaders.set(listOf("neoforge"))
         changelog.set(changelogText)
         syncBodyFrom.set(rootProject.file("README.md").readText())
@@ -152,12 +152,13 @@ if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
         apiKey = findProperty("curseforge.token")
         project(closureOf<me.hypherionmc.cursegradle.CurseProject> {
             mainArtifact(tasks["remapJar"], closureOf<me.hypherionmc.cursegradle.CurseArtifact> {
-                displayName = "[Forge] ${project.version}"
+                displayName = "[NeoForge] ${project.version}"
             })
 
             id = curseforgeId
             releaseType = if (isBeta) "beta" else "release"
             addGameVersion("1.20.4")
+            addGameVersion("1.20.3")
             addGameVersion("NeoForge")
             addGameVersion("Java 17")
 
@@ -175,14 +176,14 @@ rootProject.tasks["releaseMod"].dependsOn(tasks["curseforge"])
 
 publishing {
     publications {
-        create<MavenPublication>("forge") {
+        create<MavenPublication>("neoforge") {
             groupId = "dev.isxander.yacl"
-            artifactId = "yet-another-config-lib-forge"
+            artifactId = "yet-another-config-lib-neoforge"
 
             from(components["java"])
         }
     }
 }
-tasks.findByPath("publishForgePublicationToReleasesRepository")?.let {
+tasks.findByPath("publishNeoforgePublicationToReleasesRepository")?.let {
     rootProject.tasks["releaseMod"].dependsOn(it)
 }
