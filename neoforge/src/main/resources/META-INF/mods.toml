@@ -19,13 +19,13 @@ config = "yacl.mixins.json"
 [["dependencies.${id}"]]
 modId = "neoforge"
 mandatory = true
-versionRange = "[1,)"
+versionRange = "[20,)"
 ordering = "NONE"
 side = "BOTH"
 
 [["dependencies.${id}"]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.20.2,)"
+versionRange = "[1.20.3,)"
 ordering = "NONE"
 side = "BOTH"
