@@ -85,7 +85,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         return targetHeight;
     }
 
-    public static ImageRendererFactory<AnimatedDynamicTextureImage> createGIFFromTexture(ResourceLocation textureLocation) {
+    public static ImageRendererFactory createGIFFromTexture(ResourceLocation textureLocation) {
         return () -> {
             ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
             Resource resource = resourceManager.getResource(textureLocation).orElseThrow();
@@ -94,11 +94,11 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         };
     }
 
-    public static ImageRendererFactory<AnimatedDynamicTextureImage> createGIFFromPath(Path path, ResourceLocation uniqueLocation) {
+    public static ImageRendererFactory createGIFFromPath(Path path, ResourceLocation uniqueLocation) {
         return () -> createGIFSupplier(new FileInputStream(path.toFile()), uniqueLocation);
     }
 
-    public static ImageRendererFactory<AnimatedDynamicTextureImage> createWEBPFromTexture(ResourceLocation textureLocation) {
+    public static ImageRendererFactory createWEBPFromTexture(ResourceLocation textureLocation) {
         return () -> {
             ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
             Resource resource = resourceManager.getResource(textureLocation).orElseThrow();
@@ -107,11 +107,11 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         };
     }
 
-    public static ImageRendererFactory<AnimatedDynamicTextureImage> createWEBPFromPath(Path path, ResourceLocation uniqueLocation) {
+    public static ImageRendererFactory createWEBPFromPath(Path path, ResourceLocation uniqueLocation) {
         return () -> createWEBPSupplier(new FileInputStream(path.toFile()), uniqueLocation);
     }
 
-    private static ImageRendererFactory.ImageSupplier<AnimatedDynamicTextureImage> createGIFSupplier(InputStream is, ResourceLocation uniqueLocation) {
+    private static ImageRendererFactory.ImageSupplier createGIFSupplier(InputStream is, ResourceLocation uniqueLocation) {
         try (is) {
             ImageReader reader = ImageIO.getImageReadersBySuffix("gif").next();
             reader.setInput(ImageIO.createImageInputStream(is));
@@ -135,7 +135,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         }
     }
 
-    private static ImageRendererFactory.ImageSupplier<AnimatedDynamicTextureImage> createWEBPSupplier(InputStream is, ResourceLocation uniqueLocation) {
+    private static ImageRendererFactory.ImageSupplier createWEBPSupplier(InputStream is, ResourceLocation uniqueLocation) {
         try (is) {
             ImageReader reader = new WebPImageReaderSpi().createReaderInstance();
             reader.setInput(ImageIO.createImageInputStream(is));
@@ -171,7 +171,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         }
     }
 
-    private static ImageRendererFactory.ImageSupplier<AnimatedDynamicTextureImage> createFromImageReader(ImageReader reader, AnimFrameProvider animationProvider, ResourceLocation uniqueLocation) throws Exception {
+    private static ImageRendererFactory.ImageSupplier createFromImageReader(ImageReader reader, AnimFrameProvider animationProvider, ResourceLocation uniqueLocation) throws Exception {
         if (reader.isSeekForwardOnly()) {
             throw new RuntimeException("Image reader is not seekable");
         }
