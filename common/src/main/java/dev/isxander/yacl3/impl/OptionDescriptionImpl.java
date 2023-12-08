@@ -88,7 +88,13 @@ public record OptionDescriptionImpl(Component text, CompletableFuture<Optional<I
         public Builder webpImage(ResourceLocation image) {
             Validate.isTrue(imageUnset, "Image already set!");
 
-            this.image = ImageRendererManager.registerImage(image, AnimatedDynamicTextureImage.createWEBPFromTexture(image)).thenApply(Optional::of);
+            Optional<ImageRenderer> completedImage = ImageRendererManager.getImage(image);
+            if (completedImage.isPresent()) {
+                this.image = CompletableFuture.completedFuture(completedImage);
+            } else {
+                this.image = ImageRendererManager.registerImage(image, AnimatedDynamicTextureImage.createWEBPFromTexture(image)).thenApply(Optional::of);
+            }
+
             imageUnset = false;
             return this;
         }
