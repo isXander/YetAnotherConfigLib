@@ -50,7 +50,7 @@ public class ResourceTextureImage implements ImageRenderer {
 
     }
 
-    public static ImageRendererFactory<ResourceTextureImage> createFactory(ResourceLocation location, float u, float v, int width, int height, int textureWidth, int textureHeight) {
-        return (ImageRendererFactory.OnThread<ResourceTextureImage>) () -> () -> new ResourceTextureImage(location, u, v, width, height, textureWidth, textureHeight);
+    public static ImageRendererFactory createFactory(ResourceLocation location, float u, float v, int width, int height, int textureWidth, int textureHeight) {
+        return (ImageRendererFactory.OnThread) () -> () -> new ResourceTextureImage(location, u, v, width, height, textureWidth, textureHeight);
     }
 }
