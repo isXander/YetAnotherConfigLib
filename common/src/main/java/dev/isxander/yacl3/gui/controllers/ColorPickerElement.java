@@ -11,6 +11,7 @@ import net.minecraft.util.Mth;
 import java.awt.*;
 
 public class ColorPickerElement extends ControllerWidget<ColorController> implements GuiEventListener {
+    private static final ResourceLocation COLOR_PICKER_LOCATION = new ResourceLocation("yet_another_config_lib", "textures/colorpicker/colorpicker.png");
     private final ColorController colorController;
     private final ColorController.ColorControllerElement entryWidget;
     private final YACLScreen screen;
@@ -19,26 +20,31 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
     protected MutableDimension<Integer> saturationLightDim;
     protected MutableDimension<Integer> hueGradientDim;
     private boolean mouseDown;
+    private boolean hueSliderDown;
+    private boolean satLightGradientDown;
+    private int hueThumbX;
+    private int satLightThumbX;
 
     //The width of the outline between each color picker element(color preview, saturation/light gradient, hue gradient)
     //Note: Additional space may need to be manually made upon increasing the outline
-    private int outline = 1;
-
-    //The x padding between the color preview and saturation/light gradient. Does NOT account for the outline on its own
-    private int paddingX = 1;
-
-    //The y padding between the hue gradient and color preview & saturation/light gradient. Does NOT account for the outline on its own
-    private int paddingY = 3;
+    int outline = 1;
 
     //The main color preview's portion of the color picker as a whole
     //example: if previewPortion is set to 7, then the color preview will take up
     //a 7th of the color picker's width
-    private int previewPortion = 7;
+    int previewPortion = 7;
 
     //The height in pixels of the hue slider
     //example: if the sliderHeight is set to 7, then the hue slider will be 7 pixels, with some extra padding between
     //the color preview and the HSL gradient to allow for an outline(determined by the "outline" int)
-    private int sliderHeight = 7;
+    int sliderHeight = 7;
+
+    //The x padding between the color preview and saturation/light gradient.
+    //Does NOT account for the outline on its own
+    int paddingX = 1;
+    //The y padding between the hue gradient and color preview & saturation/light gradient.
+    //Does NOT account for the outline on its own
+    int paddingY = 3;
 
 
     private float[] HSL;
@@ -55,12 +61,13 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
         setDimension(dim);
 
         updateHSL();
+        setThumbX();
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-
         updateHSL();
+
 
         //FIXME/FEAT - If the color picker is towards the top of the category, it will appear above the color controller instead of below
 
@@ -69,34 +76,33 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
         //outline
         graphics.fill(colorPickerDim.x() - outline, colorPickerDim.y() - outline, colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) - paddingX + outline, colorPickerDim.yLimit() - sliderHeight - paddingY + outline, 2, Color.black.getRGB());
 
-        //HSL gradient
+        //Saturation/light gradient
 
         //White to pending color's RGB from hue, left to right
-        fillSidewaysGradient(graphics, colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + paddingX + 1, colorPickerDim.y(), colorPickerDim.xLimit(), colorPickerDim.yLimit() - sliderHeight - paddingY, 3, (int) getRgbFromHue(), 0xFFFFFFFF);
-
+        fillSidewaysGradient(graphics, colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + paddingX + 1, colorPickerDim.y(), colorPickerDim.xLimit(), colorPickerDim.yLimit() - sliderHeight - paddingY, 3, (int) getRgbFromHueX(), 0xFFFFFFFF);
         //Transparent to black, top to bottom
         graphics.fillGradient(colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + paddingX + 1, colorPickerDim.y(), colorPickerDim.xLimit(), colorPickerDim.yLimit() - sliderHeight - paddingY, 4,0x00000000, 0xFF000000);
+        //Sat/light thumb - extra 1 pixel on left and top to make it centered
+        graphics.fill(satLightThumbX - getThumbWidth() / 2 - 1, getSatLightThumbY() + getThumbHeight() / 2 + 1, satLightThumbX + getThumbWidth() / 2, getSatLightThumbY() - getThumbHeight() / 2, 6, -1);
+        //Sat/light thumb shadow
+        graphics.fill(satLightThumbX - getThumbWidth() / 2 - 2, getSatLightThumbY() + getThumbHeight() / 2 + 2, satLightThumbX + getThumbWidth() / 2 + 1, getSatLightThumbY() - getThumbHeight() / 2 - 1, 5, 0xFF404040);
 
         //outline
         graphics.fill(colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + paddingX + 1 - outline, colorPickerDim.y() - outline, colorPickerDim.xLimit() + outline, colorPickerDim.yLimit() - sliderHeight - paddingY + outline, 2, Color.black.getRGB());
-
-
 
         //Hue gradient
 
         //Hue rainbow gradient
         drawRainbowGradient(graphics, colorPickerDim.x(), colorPickerDim.yLimit(), colorPickerDim.xLimit(), colorPickerDim.yLimit() - sliderHeight, 3);
-
         //Hue slider thumb
-        graphics.fill(getHueThumbX() - getThumbWidth() / 2, colorPickerDim.yLimit() + outline, getHueThumbX() + getThumbWidth() / 2, colorPickerDim.yLimit() - sliderHeight - outline, 5, -1);
+        graphics.fill(hueThumbX - getThumbWidth() / 2, colorPickerDim.yLimit() + outline, hueThumbX + getThumbWidth() / 2, colorPickerDim.yLimit() - sliderHeight - outline, 5, -1);
         //Hue slider thumb shadow
-        graphics.fill(getHueThumbX() - getThumbWidth() / 2 - 1, colorPickerDim.yLimit() + outline + 1, getHueThumbX() + getThumbWidth() / 2 + 1, colorPickerDim.yLimit() - sliderHeight - outline - 1, 4, 0xFF404040);
-
+        graphics.fill(hueThumbX - getThumbWidth() / 2 - 1, colorPickerDim.yLimit() + outline + 1, hueThumbX + getThumbWidth() / 2 + 1, colorPickerDim.yLimit() - sliderHeight - outline - 1, 4, 0xFF404040);
         //outline
         graphics.fill(colorPickerDim.x() - outline, colorPickerDim.yLimit() + outline, colorPickerDim.xLimit() + outline, colorPickerDim.yLimit() - sliderHeight - outline, 2, Color.black.getRGB());
 
-
         //Background
+//        graphics.blit(COLOR_PICKER_LOCATION, colorPickerDim.x(), colorPickerDim.yLimit(), 0, 0.0f, 0.0f, colorPickerDim.xLimit() + 30, 75, 128, 128);
         drawBackground(graphics, colorPickerDim.x() - outline, colorPickerDim.y() - outline, colorPickerDim.xLimit() + outline, colorPickerDim.yLimit() + outline, 1);
     }
 
@@ -131,18 +137,43 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
     }
 
     public boolean clickedHueSlider(double mouseX, double mouseY) {
+        if(satLightGradientDown) return false;
+
         if(mouseY <= colorPickerDim.yLimit() && mouseY >= colorPickerDim.yLimit() - sliderHeight) {
-            //mini workaround for holding the mouse down past the x/xLimit
-            return mouseDown || mouseX >= colorPickerDim.x() && mouseX <= colorPickerDim.xLimit();
+            if(mouseX >= colorPickerDim.x() && mouseX <= colorPickerDim.xLimit()) {
+                hueSliderDown = true;
+            }
         }
 
-        return false;
+        if(hueSliderDown) {
+            hueThumbX = (int) Mth.clamp(mouseX, colorPickerDim.x(), colorPickerDim.xLimit());
+        }
+
+        return hueSliderDown;
+    }
+
+    public boolean clickedSatLightGradient(double mouseX, double mouseY) {
+        if(hueSliderDown) return false;
+
+        if(mouseX >= colorPickerDim.x() + ((double) colorPickerDim.xLimit() / previewPortion) + paddingX && mouseX <= colorPickerDim.xLimit()) {
+            if(mouseY >= colorPickerDim.y() && mouseY <= colorPickerDim.yLimit() - sliderHeight - paddingY) {
+                satLightGradientDown = true;
+            }
+        }
+
+        if(satLightGradientDown) {
+            satLightThumbX = (int) Mth.clamp(mouseX, colorPickerDim.x() + ((double) colorPickerDim.xLimit() / previewPortion) + paddingX, colorPickerDim.xLimit());
+        }
+
+        return satLightGradientDown;
     }
 
     public void setColorFromMouseClick(double mouseX, double mouseY) {
-        //TODO - Allow for the mouse to be held down past the box, while not messing up the other part of the color picker
-        if(clickedHueSlider(mouseX, mouseY)) {
-            setHueFromMouseX(mouseX);
+        if(clickedSatLightGradient(mouseX, mouseY)) {
+            setSatLightFromMouse(mouseX, mouseY);
+        }
+        else if(clickedHueSlider(mouseX, mouseY)) {
+            setHueFromMouse(mouseX);
         }
     }
 
@@ -150,7 +181,8 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if(isMouseOver(mouseX, mouseY)) {
             mouseDown = true;
-//            setHueFromMouseX(mouseX);
+            hueSliderDown = false; //has to be called because mouseReleased doesn't always set these back
+            satLightGradientDown = false;
             setColorFromMouseClick(mouseX, mouseY);
             return true;
         }
@@ -159,6 +191,8 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         mouseDown = false;
+        hueSliderDown = false;
+        satLightGradientDown = false;
         return false;
     }
     @Override
@@ -196,6 +230,7 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
     @Override
     public boolean charTyped(char chr, int modifiers) {
         //Done to allow for typing whilst the color picker is visible
+        setThumbX();
         return entryWidget.charTyped(chr, modifiers);
     }
 
@@ -237,16 +272,38 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
         super.unfocus();
     }
 
+    public void setThumbX() {
+        //Sets the thumb x for both hue and sat/light
+        hueThumbX = getHueThumbX();
+        satLightThumbX = getSatLightThumbX();
+    }
+
     protected int getHueThumbX() {
         int min = colorPickerDim.x();
         int max = colorPickerDim.xLimit();
-        int value = (int) (colorPickerDim.x() + colorPickerDim.width() * this.hue);
+        int value = (int) (min + colorPickerDim.width() * this.hue);
 
-        //Checks if the hue is #FF0001
-        //This is done to keep symmetry when the slider is fully on the left or right
-        if(this.hue > 0.999f) {
-            value++;
-        }
+//        //Checks if the hue is #FF0001
+//        //This is done to keep symmetry when the slider is fully on the left or right
+//        if(this.hue > 0.999f) {
+//            value++;
+//        }
+        return Mth.clamp(value, min, max);
+    }
+
+    protected int getSatLightThumbX() {
+        int min = colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + paddingX + 1;
+        int max = colorPickerDim.xLimit();
+        int value = (int) (min + (colorPickerDim.width() - ((float) colorPickerDim.xLimit() / previewPortion)) * this.saturation);
+
+        return Mth.clamp(value, min, max);
+    }
+
+    protected int getSatLightThumbY() {
+        int min = colorPickerDim.y();
+        int max = colorPickerDim.yLimit() - sliderHeight - paddingY;
+        int value = (int) (min + (colorPickerDim.height() - sliderHeight - paddingY) * (1.0f - this.light));
+
         return Mth.clamp(value, min, max);
     }
 
@@ -254,18 +311,46 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
         return 4;
     }
 
-    public void setHueFromMouseX(double mouseX) {
+    protected int getThumbHeight() {
+        return 4;
+    }
+
+    public void setHueFromMouse(double mouseX) {
         //Changes the hue of the pending color based on the mouseX's pos.
         //relative to the colorPickerDim's x/xLimit
         if(mouseX < colorPickerDim.x()) {
             this.hue = 0f;
         } else if (mouseX > colorPickerDim.xLimit()) {
-            //Sets the color to FF0001, which allows for the hue thumb slider to be at the very edge of the right
-            this.hue = 0.9991f;
+            this.hue = 1f;
         } else {
             float newHue = ((float) (mouseX - colorPickerDim.x()) / colorPickerDim.width());
 
-            this.hue = Mth.clamp(newHue, 0f, 0.9991f);
+            this.hue = Mth.clamp(newHue, 0f, 1f);
+        }
+
+        setColorControllerFromHSL();
+    }
+
+    public void setSatLightFromMouse(double mouseX, double mouseY) {
+//        fillSidewaysGradient(graphics, colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + paddingX + 1, colorPickerDim.y(), colorPickerDim.xLimit(), colorPickerDim.yLimit() - sliderHeight - paddingY, 3, (int) getRgbFromHue(), 0xFFFFFFFF);
+        if(mouseX < colorPickerDim.x() + ((double) colorPickerDim.xLimit() / previewPortion)) {
+            this.saturation = 0f;
+        } else if (mouseX > colorPickerDim.xLimit()) {
+            this.saturation = 1f;
+        } else {
+            float newSat = ((float) (mouseX - (colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion))) / (colorPickerDim.width() - ((float) colorPickerDim.xLimit() / previewPortion)));
+
+            this.saturation = Mth.clamp(newSat, 0f, 1.0f);
+        }
+
+        if(mouseY < colorPickerDim.y()) {
+            this.light = 1f;
+        } else if (mouseY > colorPickerDim.yLimit() - sliderHeight - paddingY) {
+            this.light = 0f;
+        } else {
+            float newLight = ((float) (mouseY - colorPickerDim.y()) / (colorPickerDim.height() - sliderHeight - paddingY));
+
+            this.light = Mth.clamp(1f - newLight, 0f, 1.0f);
         }
 
         setColorControllerFromHSL();
@@ -273,7 +358,8 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
 
     public void setColorControllerFromHSL() {
         //Updates the current color controller's pending value based from HSL to RGB
-        colorController.option().requestSet(Color.getHSBColor(hue, saturation, light));
+        float trueHue = (float) (hueThumbX - colorPickerDim.x()) / colorPickerDim.width();
+        colorController.option().requestSet(Color.getHSBColor(trueHue, saturation, light));
     }
 
     protected void updateHSL() {
@@ -305,5 +391,11 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
 
     protected float getRgbFromHue() {
         return Color.HSBtoRGB(hue, 1, 1);
+    }
+
+    protected float getRgbFromHueX() {
+        float trueHue = (float) (hueThumbX - colorPickerDim.x()) / colorPickerDim.width();
+
+        return Color.HSBtoRGB(trueHue, 1, 1);
     }
 }
