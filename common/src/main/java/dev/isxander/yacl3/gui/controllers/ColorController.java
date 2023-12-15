@@ -149,8 +149,8 @@ public class ColorController implements IStringController<Color> {
         @Override
         public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
             super.render(graphics, mouseX, mouseY, delta);
-            if(colorPickerVisible)
-                colorPickerElement.setDimension(getDimension());
+//            if(colorPickerVisible)
+//                colorPickerElement.setDimension(getDimension());
         }
 
         @Override
@@ -173,8 +173,6 @@ public class ColorController implements IStringController<Color> {
                 updateControl();
             }
         }
-
-        //STRING related overrides
 
         @Override
         protected void doBackspace() {
@@ -239,15 +237,8 @@ public class ColorController implements IStringController<Color> {
             return false;
         }
 
-        //MOUSE related overrides
-
         @Override
         public boolean isHovered() {
-//            if(!super.isHovered() || focused || !inputFieldFocused) {
-                //Hides the color picker when option is no longer selected
-//                colorPickerVisible = false;
-//            }
-
             return hovered || inputFieldFocused;
         }
 

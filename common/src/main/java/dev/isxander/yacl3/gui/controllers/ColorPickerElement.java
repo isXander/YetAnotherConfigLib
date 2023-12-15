@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class ColorPickerElement extends ControllerWidget<ColorController> implements GuiEventListener {
     private static final ResourceLocation COLOR_PICKER_LOCATION = new ResourceLocation("yet_another_config_lib", "textures/colorpicker/colorpicker.png");
@@ -24,6 +25,7 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
     private boolean satLightGradientDown;
     private int hueThumbX;
     private int satLightThumbX;
+    private boolean charTyped;
 
     //The width of the outline between each color picker element(color preview, saturation/light gradient, hue gradient)
     //Note: Additional space may need to be manually made upon increasing the outline
@@ -66,6 +68,7 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+//        setDimension(entryWidget.getDimension());
         updateHSL();
 
 
@@ -83,9 +86,9 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
         //Transparent to black, top to bottom
         graphics.fillGradient(colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + paddingX + 1, colorPickerDim.y(), colorPickerDim.xLimit(), colorPickerDim.yLimit() - sliderHeight - paddingY, 4,0x00000000, 0xFF000000);
         //Sat/light thumb - extra 1 pixel on left and top to make it centered
-        graphics.fill(satLightThumbX - getThumbWidth() / 2 - 1, getSatLightThumbY() + getThumbHeight() / 2 + 1, satLightThumbX + getThumbWidth() / 2, getSatLightThumbY() - getThumbHeight() / 2, 6, -1);
+        graphics.fill(satLightThumbX - getThumbWidth() / 2 - 1, getSatLightThumbY() + getThumbHeight() / 2 + 1, satLightThumbX + getThumbWidth() / 2, getSatLightThumbY() - getThumbHeight() / 2, 7, -1);
         //Sat/light thumb shadow
-        graphics.fill(satLightThumbX - getThumbWidth() / 2 - 2, getSatLightThumbY() + getThumbHeight() / 2 + 2, satLightThumbX + getThumbWidth() / 2 + 1, getSatLightThumbY() - getThumbHeight() / 2 - 1, 5, 0xFF404040);
+        graphics.fill(satLightThumbX - getThumbWidth() / 2 - 2, getSatLightThumbY() + getThumbHeight() / 2 + 2, satLightThumbX + getThumbWidth() / 2 + 1, getSatLightThumbY() - getThumbHeight() / 2 - 1, 6, 0xFF404040);
 
         //outline
         graphics.fill(colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + paddingX + 1 - outline, colorPickerDim.y() - outline, colorPickerDim.xLimit() + outline, colorPickerDim.yLimit() - sliderHeight - paddingY + outline, 2, Color.black.getRGB());
@@ -230,7 +233,7 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
     @Override
     public boolean charTyped(char chr, int modifiers) {
         //Done to allow for typing whilst the color picker is visible
-        setThumbX();
+        charTyped = true;
         return entryWidget.charTyped(chr, modifiers);
     }
 
@@ -283,11 +286,6 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
         int max = colorPickerDim.xLimit();
         int value = (int) (min + colorPickerDim.width() * this.hue);
 
-//        //Checks if the hue is #FF0001
-//        //This is done to keep symmetry when the slider is fully on the left or right
-//        if(this.hue > 0.999f) {
-//            value++;
-//        }
         return Mth.clamp(value, min, max);
     }
 
@@ -367,6 +365,10 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
         this.hue = getHue();
         this.saturation = getSaturation();
         this.light = getLight();
+        if(charTyped) {
+            setThumbX();
+            charTyped = false;
+        }
     }
 
     protected float[] getHSL() {

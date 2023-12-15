@@ -112,6 +112,10 @@ public class YACLScreen extends Screen {
                 this.children.removeIf(child -> child instanceof ColorPickerElement);
             }
             currentColorPicker = null;
+        } else {
+//            if(currentColorPicker != null) {
+//                currentColorPicker.setDimension(currentColorPicker.getDimension().withY(107));
+//            }
         }
         renderDirtBackground(graphics);
         super.render(graphics, mouseX, mouseY, delta);
