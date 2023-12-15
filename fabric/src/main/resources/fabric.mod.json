@@ -17,7 +17,7 @@
   "environment": "*",
   "depends": {
     "fabricloader": ">=0.14.0",
-    "minecraft": "~1.20.2",
+    "minecraft": ["1.20.4", "1.20.3"],
     "java": ">=17",
     "fabric-resource-loader-v0": "*"
   },
@@ -25,6 +25,11 @@
     "yacl.mixins.json",
     "yacl-fabric.mixins.json"
   ],
+  "entrypoints": {
+    "client": [
+      "dev.isxander.yacl3.platform.fabric.YACLFabricEntrypoint"
+    ]
+  },
   "custom": {
     "modmenu": {
       "badges": ["library"]

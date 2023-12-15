@@ -127,12 +127,10 @@ public class GuiTest {
                                         .name(Component.literal("Slider Controllers"))
                                         .option(Option.<Integer>createBuilder()
                                                 .name(Component.literal("Int Slider"))
-                                                .instant(true)
                                                 .binding(
                                                         defaults.intSlider,
                                                         () -> config.intSlider,
                                                         value -> config.intSlider = value
-
                                                 )
                                                 .customController(opt -> new IntegerSliderController(opt, 0, 3, 1))
                                                 .build())

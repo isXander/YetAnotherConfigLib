@@ -66,7 +66,7 @@ public class DynamicTextureImage implements ImageRenderer {
         textureManager.release(uniqueLocation);
     }
 
-    public static ImageRendererFactory<DynamicTextureImage> fromPath(Path imagePath, ResourceLocation location) {
-        return (ImageRendererFactory.OnThread<DynamicTextureImage>) () -> () -> new DynamicTextureImage(NativeImage.read(new FileInputStream(imagePath.toFile())), location);
+    public static ImageRendererFactory fromPath(Path imagePath, ResourceLocation location) {
+        return (ImageRendererFactory.OnThread) () -> () -> new DynamicTextureImage(NativeImage.read(new FileInputStream(imagePath.toFile())), location);
     }
 }

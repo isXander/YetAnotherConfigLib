@@ -20,10 +20,8 @@ loom {
 dependencies {
     minecraft(libs.minecraft)
     mappings(loom.layered {
-        val qm = libs.versions.quilt.mappings.get()
-        if (qm != "0")
-            mappings("org.quiltmc:quilt-mappings:${libs.versions.minecraft.get()}+build.${libs.versions.quilt.mappings.get()}:intermediary-v2")
         officialMojangMappings()
+        parchment(libs.parchment)
     })
     modImplementation(libs.fabric.loader)
 

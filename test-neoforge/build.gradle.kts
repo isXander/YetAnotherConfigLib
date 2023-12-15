@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.libs
+
 plugins {
     alias(libs.plugins.architectury.loom)
     alias(libs.plugins.shadow)
@@ -5,21 +7,31 @@ plugins {
 
 architectury {
     platformSetupLoomIde()
-    fabric()
+    neoForge()
 }
 
 loom {
     silentMojangMappingsLicense()
 
     accessWidenerPath.set(project(":common").loom.accessWidenerPath)
+
+    neoForge {
+
+    }
+
+    mods {
+        maybeCreate("forge").apply {
+            sourceSet(project(":neoforge").sourceSets.main.get())
+        }
+    }
 }
 
 val common by configurations.registering
 val shadowCommon by configurations.registering
 configurations.compileClasspath.get().extendsFrom(common.get())
-configurations["developmentFabric"].extendsFrom(common.get())
+configurations["developmentNeoForge"].extendsFrom(common.get())
 
-val minecraftVersion = libs.versions.minecraft.get()
+val minecraftVersion: String = libs.versions.minecraft.get()
 
 dependencies {
     minecraft(libs.minecraft)
@@ -27,20 +39,24 @@ dependencies {
         officialMojangMappings()
         parchment(libs.parchment)
     })
-    modImplementation(libs.fabric.loader)
+    neoForge(libs.neoforge)
 
     implementation(libs.twelvemonkeys.imageio.core)
+    forgeRuntimeLibrary(libs.twelvemonkeys.imageio.core)
     implementation(libs.twelvemonkeys.imageio.webp)
+    forgeRuntimeLibrary(libs.twelvemonkeys.imageio.webp)
     implementation(libs.bundles.quilt.parsers)
+    forgeRuntimeLibrary(libs.bundles.quilt.parsers)
 
     "common"(project(path = ":test-common", configuration = "namedElements")) { isTransitive = false }
-    implementation(project(path = ":fabric", configuration = "namedElements"))
+    implementation(project(path = ":neoforge", configuration = "namedElements")) { isTransitive = false }
 
     "common"(project(path = ":common", configuration = "namedElements")) { isTransitive = false }
 }
 
 tasks {
     shadowJar {
+        exclude("fabric.mod.json")
         exclude("architectury.common.json")
 
         configurations = listOf(shadowCommon.get())
@@ -52,7 +68,7 @@ tasks {
         inputFile.set(shadowJar.get().archiveFile)
         dependsOn(shadowJar)
 
-        archiveClassifier.set("fabric-$minecraftVersion")
+        archiveClassifier.set("neoforge-$minecraftVersion")
     }
 
     jar {

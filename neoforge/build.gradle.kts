@@ -1,4 +1,7 @@
+import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.libs
 
 plugins {
     alias(libs.plugins.architectury.loom)
@@ -9,21 +12,25 @@ plugins {
 
 architectury {
     platformSetupLoomIde()
-    fabric()
+    neoForge()
 }
 
 loom {
     silentMojangMappingsLicense()
 
     accessWidenerPath.set(project(":common").loom.accessWidenerPath)
+
+    neoForge {
+
+    }
 }
 
 val common by configurations.registering
 val shadowCommon by configurations.registering
 configurations.compileClasspath.get().extendsFrom(common.get())
-configurations["developmentFabric"].extendsFrom(common.get())
+configurations["developmentNeoForge"].extendsFrom(common.get())
 
-val minecraftVersion = libs.versions.minecraft.get()
+val minecraftVersion: String = libs.versions.minecraft.get()
 
 dependencies {
     minecraft(libs.minecraft)
@@ -31,23 +38,21 @@ dependencies {
         officialMojangMappings()
         parchment(libs.parchment)
     })
-    modImplementation(libs.fabric.loader)
-
-    listOf(
-        "fabric-resource-loader-v0",
-    ).forEach { modApi(fabricApi.module(it, libs.versions.fabric.api.get())) }
+    neoForge(libs.neoforge)
 
     libs.bundles.twelvemonkeys.imageio.let {
         implementation(it)
         include(it)
+        forgeRuntimeLibrary(it)
     }
     libs.bundles.quilt.parsers.let {
         implementation(it)
         include(it)
+        forgeRuntimeLibrary(it)
     }
 
     "common"(project(path = ":common", configuration = "namedElements")) { isTransitive = false }
-    "shadowCommon"(project(path = ":common", configuration = "transformProductionFabric")) { isTransitive = false }
+    "shadowCommon"(project(path = ":common", configuration = "transformProductionNeoForge")) { isTransitive = false }
 }
 
 java {
@@ -56,10 +61,10 @@ java {
 
 tasks {
     processResources {
-        val modId: String by project
-        val modName: String by project
-        val modDescription: String by project
-        val githubProject: String by project
+        val modId: String by rootProject
+        val modName: String by rootProject
+        val modDescription: String by rootProject
+        val githubProject: String by rootProject
 
         inputs.property("id", modId)
         inputs.property("group", project.group)
@@ -68,7 +73,7 @@ tasks {
         inputs.property("version", project.version)
         inputs.property("github", githubProject)
 
-        filesMatching("fabric.mod.json") {
+        filesMatching(listOf("META-INF/mods.toml", "pack.mcmeta")) {
             expand(
                 "id" to modId,
                 "group" to project.group,
@@ -81,6 +86,7 @@ tasks {
     }
 
     shadowJar {
+        exclude("fabric.mod.json")
         exclude("architectury.common.json")
 
         configurations = listOf(shadowCommon.get())
@@ -119,6 +125,7 @@ components["java"].run {
         }
     }
 }
+
 val changelogText: String by ext
 val isBeta: Boolean by ext
 
@@ -127,12 +134,12 @@ if (modrinthId.isNotEmpty()) {
     modrinth {
         token.set(findProperty("modrinth.token")?.toString())
         projectId.set(modrinthId)
-        versionName.set("${project.version} (Fabric)")
-        versionNumber.set("${project.version}-fabric")
+        versionName.set("${project.version} (NeoForge)")
+        versionNumber.set("${project.version}-neoforge")
         versionType.set(if (isBeta) "beta" else "release")
         uploadFile.set(tasks["remapJar"])
-        gameVersions.set(listOf("1.20.3", "1.20.4"))
-        loaders.set(listOf("fabric", "quilt"))
+        gameVersions.set(listOf("1.20.4", "1.20.3"))
+        loaders.set(listOf("neoforge"))
         changelog.set(changelogText)
         syncBodyFrom.set(rootProject.file("README.md").readText())
     }
@@ -145,14 +152,14 @@ if (hasProperty("curseforge.token") && curseforgeId.isNotEmpty()) {
         apiKey = findProperty("curseforge.token")
         project(closureOf<me.hypherionmc.cursegradle.CurseProject> {
             mainArtifact(tasks["remapJar"], closureOf<me.hypherionmc.cursegradle.CurseArtifact> {
-                displayName = "[Fabric] ${project.version}"
+                displayName = "[NeoForge] ${project.version}"
             })
 
             id = curseforgeId
             releaseType = if (isBeta) "beta" else "release"
-            addGameVersion("1.20.3")
             addGameVersion("1.20.4")
-            addGameVersion("Fabric")
+            addGameVersion("1.20.3")
+            addGameVersion("NeoForge")
             addGameVersion("Java 17")
 
             changelog = changelogText
@@ -169,14 +176,14 @@ rootProject.tasks["releaseMod"].dependsOn(tasks["curseforge"])
 
 publishing {
     publications {
-        create<MavenPublication>("fabric") {
+        create<MavenPublication>("neoforge") {
             groupId = "dev.isxander.yacl"
-            artifactId = "yet-another-config-lib-fabric"
+            artifactId = "yet-another-config-lib-neoforge"
 
             from(components["java"])
         }
     }
 }
-tasks.findByPath("publishFabricPublicationToReleasesRepository")?.let {
+tasks.findByPath("publishNeoforgePublicationToReleasesRepository")?.let {
     rootProject.tasks["releaseMod"].dependsOn(it)
 }

@@ -1,18 +1,17 @@
 [versions]
 # Plugins
-architectury_loom = "1.3.+"
+architectury_loom = "1.4.+"
 architectury_plugin = "3.4.+"
 shadow = "7.1.+"
-loom_vineflower = "1.11.+"
 minotaur = "2.7.+"
 cursegradle = "2.+"
 github_release = "2.4.+"
 machete = "2.+"
 grgit = "5.0.+"
 
-minecraft = "1.20.3"
-quilt_mappings = "0"
-fabric_loader = "0.14.23"
+minecraft = "1.20.4"
+parchment = "2023.10.22"
+fabric_loader = "0.14.25"
 
 # Common Dependencies
 mixin_extras = "0.2.0"
@@ -20,14 +19,15 @@ twelvemonkeys_imageio = "3.10.0"
 quilt_parsers = "0.2.1"
 
 # Fabric-like Dependencies
-fabric_api = "0.90.11+1.20.3"
+fabric_api = "0.91.1+1.20.3"
 
 # Forge Dependencies
-forge = "1.20.2-48.0.33"
+neoforge = "20.4.0-beta"
 
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
 fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_loader" }
+parchment = { module = "org.parchmentmc.data:parchment-1.20.2", version.ref = "parchment" }
 
 # Common Dependencies
 mixin_extras_common = { module = "com.github.llamalad7.mixinextras:mixinextras-common", version.ref = "mixin_extras" }
@@ -44,7 +44,7 @@ quilt_parsers_gson = { module = "org.quiltmc.parsers:gson", version.ref = "quilt
 fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
 
 # Forge Dependencies
-forge = { module = "net.minecraftforge:forge", version.ref = "forge" }
+neoforge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
 
 [bundles]
 twelvemonkeys_imageio = [
@@ -63,7 +63,6 @@ quilt_parsers = [
 [plugins]
 architectury_loom = { id = "dev.architectury.loom", version.ref = "architectury_loom" }
 architectury_plugin = { id = "architectury-plugin", version.ref = "architectury_plugin" }
-loom_vineflower = { id = "io.github.juuxel.loom-vineflower", version.ref = "loom_vineflower" }
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
 
 minotaur = { id = "com.modrinth.minotaur", version.ref = "minotaur" }
