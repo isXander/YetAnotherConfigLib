@@ -15,10 +15,8 @@ import dev.isxander.yacl3.impl.utils.YACLConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.MultiLineLabel;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
@@ -31,7 +29,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class YACLScreen extends Screen {
@@ -118,10 +115,6 @@ public class YACLScreen extends Screen {
                 this.children.removeIf(child -> child instanceof ColorPickerElement);
             }
             currentColorPicker = null;
-        } else {
-//            if(currentColorPicker != null) {
-//                currentColorPicker.setDimension(currentColorPicker.getDimension().withY(107));
-//            }
         }
         renderDirtBackground(graphics);
         super.render(graphics, mouseX, mouseY, delta);

@@ -9,10 +9,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 import java.awt.*;
-import java.util.Objects;
 
 public class ColorPickerElement extends ControllerWidget<ColorController> implements GuiEventListener {
-    private static final ResourceLocation COLOR_PICKER_LOCATION = new ResourceLocation("yet_another_config_lib", "textures/colorpicker/colorpicker.png");
+    //Full path: yet_another_config_lib/textures/gui/sprites/controller/colorpicker.png or colorpicker.png.mcmeta
+    private static final ResourceLocation COLOR_PICKER_LOCATION = new ResourceLocation("yet_another_config_lib", "controller/colorpicker");
     private final ColorController colorController;
     private final ColorController.ColorControllerElement entryWidget;
     private final YACLScreen screen;
@@ -105,38 +105,7 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
         graphics.fill(colorPickerDim.x() - outline, colorPickerDim.yLimit() + outline, colorPickerDim.xLimit() + outline, colorPickerDim.yLimit() - sliderHeight - outline, 2, Color.black.getRGB());
 
         //Background
-//        graphics.blit(COLOR_PICKER_LOCATION, colorPickerDim.x(), colorPickerDim.yLimit(), 0, 0.0f, 0.0f, colorPickerDim.xLimit() + 30, 75, 128, 128);
-        drawBackground(graphics, colorPickerDim.x() - outline, colorPickerDim.y() - outline, colorPickerDim.xLimit() + outline, colorPickerDim.yLimit() + outline, 1);
-    }
-
-    public void drawBackground(GuiGraphics graphics, int x1, int y1, int x2, int y2, int z) {
-        //Renders a fake container background based on the size given
-        //This is done because all other container backgrounds(such as the inventory) are actually rendered using a texture
-
-        //The light grey color used in inventory containers
-        //Other colors used include: normal white and normal black
-        int grey = new Color(0xC6C6C6).getRGB();
-
-        //The center color(grey)
-        graphics.fill(x1 - 1, y1 - 1, x2 + 1, y2 + 1, z, grey);
-        drawRoundOutline(graphics, x1 - 1, y1 - 1, x2 + 1, y2 + 1, z, grey, 1);
-
-        //The white outline around the grey
-        drawRoundOutline(graphics, x1 - 2, y1 - 2, x2 + 2, y2 + 2, z, Color.white.getRGB(), 1);
-
-        //The black outline around the whole thing
-        drawRoundOutline(graphics, x1 - 3, y1 - 3, x2 + 3, y2 + 3, z, Color.black.getRGB(), 1);
-    }
-
-    protected void drawRoundOutline(GuiGraphics graphics, int x1, int y1, int x2, int y2, int z, int color, int pixels) {
-        graphics.fill(x1, y1, x2, y1 - pixels, z, color); //top bar
-        graphics.fill(x1, y2, x2, y2 + pixels, z, color); //bottom bar
-        graphics.fill(x1, y1, x1 - pixels, y2, z, color); //left bar
-        graphics.fill(x2, y1, x2 + pixels, y2, z, color); //right bar
-        graphics.fill(x1 + pixels, y1 - pixels, x1, y1 + pixels, z, color); //top left square
-        graphics.fill(x2 - pixels, y1 - pixels, x2, y1 + pixels, z, color); //top right square
-        graphics.fill(x1 + pixels, y2, x1, y2 - pixels, z, color); //bottom left square
-        graphics.fill(x2 - pixels, y2, x2, y2 - pixels, z, color); //bottom right square
+        graphics.blitSprite(COLOR_PICKER_LOCATION, colorPickerDim.x() - 5, colorPickerDim.y() - 5, 1, colorPickerDim.width() + 10, colorPickerDim.height() + 10);
     }
 
     public boolean clickedHueSlider(double mouseX, double mouseY) {
