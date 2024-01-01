@@ -11,7 +11,7 @@ import net.minecraft.util.Mth;
 import java.awt.*;
 
 public class ColorPickerElement extends ControllerWidget<ColorController> implements GuiEventListener {
-    //Full path: yet_another_config_lib/textures/gui/sprites/controller/colorpicker.png or colorpicker.png.mcmeta
+    //Full path: resources/assets/yet_another_config_lib/textures/gui/sprites/controller/colorpicker.png and colorpicker.png.mcmeta
     private static final ResourceLocation COLOR_PICKER_LOCATION = new ResourceLocation("yet_another_config_lib", "controller/colorpicker");
     private final ColorController colorController;
     private final ColorController.ColorControllerElement entryWidget;
@@ -44,6 +44,7 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
     //The x padding between the color preview and saturation/light gradient.
     //Does NOT account for the outline on its own
     int paddingX = 1;
+
     //The y padding between the hue gradient and color preview & saturation/light gradient.
     //Does NOT account for the outline on its own
     int paddingY = 3;
@@ -368,5 +369,9 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
         float trueHue = (float) (hueThumbX - colorPickerDim.x()) / colorPickerDim.width();
 
         return Color.HSBtoRGB(trueHue, 1, 1);
+    }
+
+    public ColorController.ColorControllerElement getEntryWidget() {
+        return entryWidget;
     }
 }

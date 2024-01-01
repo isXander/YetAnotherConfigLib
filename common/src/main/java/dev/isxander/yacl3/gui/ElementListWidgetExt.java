@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.controllers.ColorController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -139,8 +140,9 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
                 this.renderItem(graphics, mouseX, mouseY, delta, i, left, top, right, entryHeight);
             }
 
-            //DELETEME
+            //REPLACEME!
             //Temporary workaround for color picker widget floating when color controller isn't visible
+            //The following if statements for updating the color picker's y pos is not code from cloth config
             if(entry instanceof OptionListWidget.OptionEntry optionEntry) {
                 if(optionEntry.widget instanceof ColorController.ColorControllerElement colorElement) {
                     if(colorElement.isColorPickerVisible()) {
