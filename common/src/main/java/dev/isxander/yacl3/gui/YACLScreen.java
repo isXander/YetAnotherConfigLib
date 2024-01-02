@@ -7,17 +7,20 @@ import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
 import dev.isxander.yacl3.api.utils.OptionUtils;
 import dev.isxander.yacl3.gui.controllers.ColorPickerElement;
+import dev.isxander.yacl3.gui.controllers.PopupColorPickerScreen;
 import dev.isxander.yacl3.gui.tab.ListHolderWidget;
 import dev.isxander.yacl3.gui.tab.ScrollableNavigationBar;
 import dev.isxander.yacl3.gui.tab.TabExt;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
@@ -97,11 +100,34 @@ public class YACLScreen extends Screen {
 
         //Preforms the same actions as "addRenderableWidget"
         //expect the color picker is the first element in the group to ensure no mouse click "z-fighting" happens
-        this.renderables.add(0, currentColorPicker);
-        this.children.add(0, currentColorPicker);
+//        this.renderables.add(0, currentColorPicker);
+//        this.children.add(0, currentColorPicker);
+
+//        for (Tab tab : this.tabNavigationBar.tabs) {
+//            if(!(tab instanceof PlaceholderTab)) {
+//                CategoryTab categoryTab = (CategoryTab) tab;
+//                OptionListWidget optionListWidget = categoryTab.optionList.getList();
+//                optionListWidget.setScrollAmount(50);
+//            }
+//        }
+//        int scrollAmount = this.tabNavigationBar.tabManager.getCurrentTab()
+
+//        double scrollAmount = 0;
+//        int colorControllerY = 0;
+        OptionListWidget optionListWidget = null;
+        if(this.tabNavigationBar.tabManager.getCurrentTab() instanceof CategoryTab categoryTab) {
+            optionListWidget = categoryTab.optionList.getList();
+//            scrollAmount = optionListWidget.getScrollAmount();
+//            colorControllerY = optionListWidget.getActiveColorPickerY();
+        }
+        this.minecraft.setScreen(new PopupColorPickerScreen(this, optionListWidget, colorPickerElement));
+//        this.minecraft.setScreen(new PopupScreen.Builder(this, Component.literal("test")).setMessage(Component.literal("test 2")).addButton(Component.literal("test 3"), PopupScreen::onClose).build());
     }
 
     public void clearColorPickerWidget() {
+        if(Minecraft.getInstance().screen instanceof PopupColorPickerScreen popupColorPickerScreen) {
+            popupColorPickerScreen.onClose();
+        }
         colorPickerVisible = false;
     }
 
@@ -112,8 +138,8 @@ public class YACLScreen extends Screen {
         //if we tried to remove the color picker from a mouseClicked event, a CME error would be thrown
         if(!colorPickerVisible && currentColorPicker != null) {
             synchronized (this) {
-                this.renderables.removeIf(renderable -> renderable instanceof ColorPickerElement);
-                this.children.removeIf(child -> child instanceof ColorPickerElement);
+//                this.renderables.removeIf(renderable -> renderable instanceof ColorPickerElement);
+//                this.children.removeIf(child -> child instanceof ColorPickerElement);
             }
             currentColorPicker = null;
         }

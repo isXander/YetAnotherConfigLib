@@ -140,16 +140,16 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
                 this.renderItem(graphics, mouseX, mouseY, delta, i, left, top, right, entryHeight);
             }
 
-            //REPLACEME!
+            //DELETEME!
             //Temporary workaround for color picker widget floating when color controller isn't visible
             //The following if statements for updating the color picker's y pos is not code from cloth config
-            if(entry instanceof OptionListWidget.OptionEntry optionEntry) {
-                if(optionEntry.widget instanceof ColorController.ColorControllerElement colorElement) {
-                    if(colorElement.isColorPickerVisible()) {
-                        colorElement.getColorPickerElement().setDimension(colorElement.getColorPickerElement().getDimension().withY(top));
-                    }
-                }
-            }
+//            if(entry instanceof OptionListWidget.OptionEntry optionEntry) {
+//                if(optionEntry.widget instanceof ColorController.ColorControllerElement colorElement) {
+//                    if(colorElement.isColorPickerVisible()) {
+//                        colorElement.getColorPickerElement().setDimension(colorElement.getColorPickerElement().getDimension().withY(top));
+//                    }
+//                }
+//            }
         }
     }
 
@@ -157,6 +157,19 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
 
     @Override
     public void visitWidgets(Consumer<AbstractWidget> consumer) {
+    }
+
+    public int getActiveColorPickerY() {
+        for (E entry : children()) {
+            if(entry instanceof OptionListWidget.OptionEntry optionEntry) {
+                if(optionEntry.widget instanceof ColorController.ColorControllerElement colorControllerElement) {
+                    if(colorControllerElement.isColorPickerVisible()) {
+                        return getRowTop(this.children().indexOf(entry));
+                    }
+                }
+            }
+        }
+        return 0;
     }
 
     public abstract static class Entry<E extends Entry<E>> extends ContainerObjectSelectionList.Entry<E> {

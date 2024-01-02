@@ -3,6 +3,7 @@ package dev.isxander.yacl3.gui.controllers;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
 import dev.isxander.yacl3.gui.YACLScreen;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.resources.ResourceLocation;
@@ -158,8 +159,14 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
             satLightGradientDown = false;
             setColorFromMouseClick(mouseX, mouseY);
             return true;
+        } else if(entryWidget.isMouseOver(mouseX, mouseY)) {
+            return entryWidget.mouseClicked(mouseX, mouseY, button);
+        } else {
+            if(Minecraft.getInstance().screen instanceof PopupColorPickerScreen popupColorPickerScreen) {
+                popupColorPickerScreen.onClose();
+            }
+            return false;
         }
-        return entryWidget.mouseClicked(mouseX, mouseY, button);
     }
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
