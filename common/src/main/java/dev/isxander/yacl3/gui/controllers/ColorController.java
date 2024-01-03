@@ -106,6 +106,7 @@ public class ColorController implements IStringController<Color> {
 
         protected MutableDimension<Integer> colorPreviewDim;
         private final List<Character> allowedChars;
+        public boolean hoveredOverColorPreview = false;
         private boolean mouseDown = false;
         private boolean colorPickerVisible = false;
         private boolean hovered = false;
@@ -128,7 +129,7 @@ public class ColorController implements IStringController<Color> {
 
             graphics.fill(colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), colorController.option().pendingValue().getRGB());
             drawOutline(graphics, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), 1, 0xFF000000);
-            if(isMouseOverColorPreview(mouseX, mouseY)) {
+            if(isMouseOverColorPreview(mouseX, mouseY) || hoveredOverColorPreview) {
                 //Brightness detector in case a developer has their starting color bright
                 //Makes the outline indicating to a user that the mini color preview can be clicked a light grey rather than white
                 //For reference, there is about a 10 digit moving room in saturation and light

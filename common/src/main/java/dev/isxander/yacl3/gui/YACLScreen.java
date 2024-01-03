@@ -110,18 +110,14 @@ public class YACLScreen extends Screen {
 //                optionListWidget.setScrollAmount(50);
 //            }
 //        }
-//        int scrollAmount = this.tabNavigationBar.tabManager.getCurrentTab()
 
-//        double scrollAmount = 0;
-//        int colorControllerY = 0;
         OptionListWidget optionListWidget = null;
         if(this.tabNavigationBar.tabManager.getCurrentTab() instanceof CategoryTab categoryTab) {
             optionListWidget = categoryTab.optionList.getList();
-//            scrollAmount = optionListWidget.getScrollAmount();
-//            colorControllerY = optionListWidget.getActiveColorPickerY();
         }
-        this.minecraft.setScreen(new PopupColorPickerScreen(this, optionListWidget, colorPickerElement));
-//        this.minecraft.setScreen(new PopupScreen.Builder(this, Component.literal("test")).setMessage(Component.literal("test 2")).addButton(Component.literal("test 3"), PopupScreen::onClose).build());
+        if(optionListWidget != null) {
+            this.minecraft.setScreen(new PopupColorPickerScreen(this, optionListWidget, colorPickerElement));
+        }
     }
 
     public void clearColorPickerWidget() {
@@ -129,6 +125,7 @@ public class YACLScreen extends Screen {
             popupColorPickerScreen.onClose();
         }
         colorPickerVisible = false;
+        currentColorPicker = null;
     }
 
     @Override
@@ -141,7 +138,7 @@ public class YACLScreen extends Screen {
 //                this.renderables.removeIf(renderable -> renderable instanceof ColorPickerElement);
 //                this.children.removeIf(child -> child instanceof ColorPickerElement);
             }
-            currentColorPicker = null;
+//            currentColorPicker = null;
         }
         renderDirtBackground(graphics);
         super.render(graphics, mouseX, mouseY, delta);

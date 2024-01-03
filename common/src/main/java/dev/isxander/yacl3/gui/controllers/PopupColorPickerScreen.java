@@ -17,14 +17,11 @@ public class PopupColorPickerScreen extends Screen {
     public double smoothScrollAmount;
     public int controllerY;
     public int maxScroll;
-    private double prevMouseX = 0;
-    private double prevMouseY = 0;
     public PopupColorPickerScreen(YACLScreen backgroundYaclScreen, OptionListWidget optionListWidget, ColorPickerElement colorPicker) {
         super(Component.literal("Color Picker")); //translatable string?
         this.backgroundYaclScreen = backgroundYaclScreen;
         this.optionListWidget = optionListWidget;
         this.colorPicker = colorPicker;
-        //Move to init?
         this.scrollAmount = optionListWidget.getScrollAmount();
         this.controllerY = optionListWidget.getActiveColorPickerY();
         this.maxScroll = optionListWidget.getMaxScroll();
@@ -35,7 +32,6 @@ public class PopupColorPickerScreen extends Screen {
 
     @Override
     protected void init() {
-//        super.init();
         this.addRenderableWidget(this.colorPicker);
     }
 
@@ -44,24 +40,33 @@ public class PopupColorPickerScreen extends Screen {
         smoothScrollAmount = Mth.lerp(Minecraft.getInstance().getDeltaFrameTime() * 0.5, smoothScrollAmount, scrollAmount);
         double colorPickerY = colorPicker.getDimension().height() - smoothScrollAmount + initialScrollAmount + controllerY - 20;
         colorPicker.setDimension(colorPicker.getDimension().withY((int) colorPickerY));
-        prevMouseX = mouseX;
-        prevMouseY = mouseY;
-        this.backgroundYaclScreen.render(guiGraphics, -1, -1, partialTick);
+        if(colorPicker.getEntryWidget().isMouseOverColorPreview(mouseX, mouseY)) {
+            colorPicker.getEntryWidget().hoveredOverColorPreview = true;
+        } else {
+            colorPicker.getEntryWidget().hoveredOverColorPreview = false;
+        }
+        this.backgroundYaclScreen.render(guiGraphics, -1, -1, partialTick); //mouseX/Y set to -1 to prevent hovering outlines
+//        this.colorPicker.getEntryWidget().drawValueText(guiGraphics, mouseX, mouseY, partialTick);
+//        colorPreviewDim.move(-inputFieldBounds.width() - 8, -2);
+//        colorPreviewDim.expand(4, 4);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         backgroundYaclScreen.mouseScrolled(mouseX, mouseY, scrollX, scrollY); //mouseX & mouseY are needed here
-        scrollAmount = Mth.clamp(scrollAmount - (scrollY + scrollX) * 20, 0, maxScroll);
+        if(mouseY >= optionListWidget.getY()) { //prevents color picker scrolling while scrolling through category list
+            int scrollBarPos = backgroundYaclScreen.tabArea.width() / 3 * 2 + 1;
+            if(mouseX < scrollBarPos) { //prevent color picker scrolling while scrolling through a controller description
+                scrollAmount = Mth.clamp(scrollAmount - (scrollY + scrollX) * 20, 0, maxScroll);
+            }
+        }
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     @Override
     public void onClose() {
-//        backgroundYaclScreen.mouseScrolled(prevMouseX, prevMouseY, 0, scrollAmount);
-        this.minecraft.setScreen(this.backgroundYaclScreen);
-//        this.minecraft.screen.mouseScrolled(prevMouseX, prevMouseY, scrollAmount, scrollAmount);
+        this.minecraft.screen = backgroundYaclScreen;
+        colorPicker.getEntryWidget().removeColorPicker();
     }
-
 
 }
