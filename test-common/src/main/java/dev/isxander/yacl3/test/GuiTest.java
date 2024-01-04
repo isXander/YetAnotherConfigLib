@@ -389,6 +389,45 @@ public class GuiTest {
                                         .build())
                                 .build())
                         .category(ConfigCategory.createBuilder()
+                                .name(Component.literal("Color Picker Test"))
+                                .option(Option.<Color>createBuilder()
+                                        .name(Component.literal("Top Color Option"))
+                                        .binding(
+                                                defaults.topColorOption,
+                                                () -> config.topColorOption,
+                                                value -> config.topColorOption = value
+                                        )
+                                        .customController(ColorController::new)
+                                        .description(OptionDescription.of(Component.literal("A Color Controller's Color Picker will appear beneath the color if there is not enough room above it!")))
+                                        .build())
+                                .option(LabelOption.create(Component.literal("Enabling a Color Controller's Color Picker at the top of the screen will appear beneath it if there isn't enough room above!")))
+                                .option(Option.<Color>createBuilder()
+                                        .name(Component.literal("Alpha Color Option"))
+                                        .binding(
+                                                defaults.alphaColorOption,
+                                                () -> config.alphaColorOption,
+                                                value -> config.alphaColorOption = value
+                                        )
+                                        .customController(opt -> new ColorController(opt, true))
+                                        .description(OptionDescription.of(Component.literal("A Color Picker will also allow you to choose a Color Controller's alpha if it is enabled!")))
+                                        .build())
+                                .option(ButtonOption.createBuilder()
+                                        .name(Component.literal("Button \"Option\""))
+                                        .action((screen, opt) -> SystemToast.add(Minecraft.getInstance().getToasts(), SystemToast.SystemToastId.PERIODIC_NOTIFICATION, Component.literal("Button Pressed"), Component.literal("Button option was invoked!")))
+                                        .build())
+                                .option(LabelOption.create(Component.literal("You can try and hit the button above while the color picker below is visible, but you shouldn't be able to!")))
+                                .option(Option.<Color>createBuilder()
+                                        .name(Component.literal("Button Color Option"))
+                                        .binding(
+                                                defaults.buttonColorOption,
+                                                () -> config.buttonColorOption,
+                                                value -> config.buttonColorOption = value
+                                        )
+                                        .customController(ColorController::new)
+                                        .description(OptionDescription.of(Component.literal("Other controller's buttons are disabled while a color picker is visible!")))
+                                        .build())
+                                .build())
+                        .category(ConfigCategory.createBuilder()
                                 .name(Component.literal("Category Test"))
                                 .option(LabelOption.create(Component.literal("This is a test category!")))
                                 .build())
@@ -402,15 +441,6 @@ public class GuiTest {
                                 .build())
                         .category(ConfigCategory.createBuilder()
                                 .name(Component.literal("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"))
-//                                .option(Option.createBuilder(Color.class)
-//                                        .name(Component.literal("Color Option"))
-//                                        .binding(
-//                                                defaults.colorOption,
-//                                                () -> config.colorOption,
-//                                                value -> config.colorOption = value
-//                                        )
-//                                        .customController(ColorController::new)
-//                                        .build())
                                 .option(LabelOption.create(Component.literal("This is a test category!")))
                                 .build())
                         .category(ConfigCategory.createBuilder()

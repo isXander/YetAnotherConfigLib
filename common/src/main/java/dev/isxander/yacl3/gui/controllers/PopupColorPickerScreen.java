@@ -32,6 +32,7 @@ public class PopupColorPickerScreen extends Screen {
 
     @Override
     protected void init() {
+        //FIXME - Resizing window breaks backgroundYaclScreen, perhaps init() the yaclScreen?
         this.addRenderableWidget(this.colorPicker);
     }
 
@@ -46,15 +47,12 @@ public class PopupColorPickerScreen extends Screen {
             colorPicker.getEntryWidget().hoveredOverColorPreview = false;
         }
         this.backgroundYaclScreen.render(guiGraphics, -1, -1, partialTick); //mouseX/Y set to -1 to prevent hovering outlines
-//        this.colorPicker.getEntryWidget().drawValueText(guiGraphics, mouseX, mouseY, partialTick);
-//        colorPreviewDim.move(-inputFieldBounds.width() - 8, -2);
-//        colorPreviewDim.expand(4, 4);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         backgroundYaclScreen.mouseScrolled(mouseX, mouseY, scrollX, scrollY); //mouseX & mouseY are needed here
-        if(mouseY >= optionListWidget.getY()) { //prevents color picker scrolling while scrolling through category list
+        if(mouseY > optionListWidget.getY() + 1) { //prevents color picker scrolling while scrolling through category list
             int scrollBarPos = backgroundYaclScreen.tabArea.width() / 3 * 2 + 1;
             if(mouseX < scrollBarPos) { //prevent color picker scrolling while scrolling through a controller description
                 scrollAmount = Mth.clamp(scrollAmount - (scrollY + scrollX) * 20, 0, maxScroll);

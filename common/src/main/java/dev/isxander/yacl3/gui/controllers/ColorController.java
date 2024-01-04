@@ -327,6 +327,7 @@ public class ColorController implements IStringController<Color> {
             screen.clearColorPickerWidget();
             this.colorPickerVisible = false;
             this.colorPickerElement = null;
+            this.hoveredOverColorPreview = false; //set to false in favor of the manual checking here to be done
         }
     }
 }
