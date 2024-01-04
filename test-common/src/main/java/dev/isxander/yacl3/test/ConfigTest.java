@@ -43,6 +43,10 @@ public class ConfigTest {
     @SerialEntry
     public Color buttonColorOption = new Color(0, 255, 255);
     @SerialEntry
+    public Color alternativePreviewOutline = Color.white;
+    @SerialEntry
+    public Color anotherAlphaColorOption = new Color(3, 24, 255, 158);
+    @SerialEntry
     public double doubleField = 0.5;
     @SerialEntry
     public float floatField = 0.5f;

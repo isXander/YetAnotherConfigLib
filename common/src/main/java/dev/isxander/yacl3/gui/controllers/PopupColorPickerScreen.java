@@ -37,6 +37,11 @@ public class PopupColorPickerScreen extends Screen {
     }
 
     @Override
+    public void resize(Minecraft minecraft, int width, int height) {
+        minecraft.setScreen(backgroundYaclScreen);
+    }
+
+    @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         smoothScrollAmount = Mth.lerp(Minecraft.getInstance().getDeltaFrameTime() * 0.5, smoothScrollAmount, scrollAmount);
         double colorPickerY = colorPicker.getDimension().height() - smoothScrollAmount + initialScrollAmount + controllerY - 20;
