@@ -185,8 +185,7 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
     public void setColorFromMouseClick(double mouseX, double mouseY) {
         if(clickedSatLightGradient(mouseX, mouseY)) {
             setSatLightFromMouse(mouseX, mouseY);
-        }
-        else if(clickedHueSlider(mouseX, mouseY)) {
+        } else if(clickedHueSlider(mouseX, mouseY)) {
             setHueFromMouse(mouseX);
         } else if (allowAlpha && clickedAlphaSlider(mouseX, mouseY)) {
             setAlphaFromMouse(mouseX);

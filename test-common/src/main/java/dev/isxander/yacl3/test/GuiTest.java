@@ -435,7 +435,7 @@ public class GuiTest {
                                                 value -> config.alternativePreviewOutline = value
                                         )
                                         .customController(opt -> new ColorController(opt, true))
-                                        .description(OptionDescription.of(Component.literal("This helps users who don't know about the color picker discover it, even if a developer chooses a ligher color")))
+                                        .description(OptionDescription.of(Component.literal("This helps users who don't know about the color picker discover it, even if a developer chooses a lighter color")))
                                         .build())
                                 .option(LabelOption.create(Component.literal("An extra color controller with alpha enabled to show that it too has the alternative color outline")))
                                 .option(Option.<Color>createBuilder()

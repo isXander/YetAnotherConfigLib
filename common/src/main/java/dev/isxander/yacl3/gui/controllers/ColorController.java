@@ -107,9 +107,7 @@ public class ColorController implements IStringController<Color> {
         protected MutableDimension<Integer> colorPreviewDim;
         private final List<Character> allowedChars;
         public boolean hoveredOverColorPreview = false;
-        private boolean mouseDown = false;
         private boolean colorPickerVisible = false;
-        private boolean hovered = false;
 
         public ColorControllerElement(ColorController control, YACLScreen screen, Dimension<Integer> dim) {
             super(control, screen, dim, true);
@@ -141,13 +139,6 @@ public class ColorController implements IStringController<Color> {
                     drawOutline(graphics, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), 1, 0xFFFFFFFF);
                 }
             }
-        }
-
-        @Override
-        public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-            super.render(graphics, mouseX, mouseY, delta);
-//            if(colorPickerVisible)
-//                colorPickerElement.setDimension(getDimension());
         }
 
         @Override
@@ -235,30 +226,20 @@ public class ColorController implements IStringController<Color> {
         }
 
         @Override
-        public boolean isHovered() {
-            return hovered || inputFieldFocused;
-        }
-
-        @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (super.mouseClicked(mouseX, mouseY, button)) {
                 //Controller support/keyboard only support(enter key to "select" hue/saturation&value areas?)
                 //Detects if the user has clicked the color preview
-                if(clickedColorPreview(mouseX, mouseY)) {
+                if(isMouseOverColorPreview(mouseX, mouseY)) {
                         playDownSound();
                         createOrRemoveColorPicker();
                 }
                 caretPos = Math.max(1, caretPos);
                 setSelectionLength();
-                mouseDown = true;
                 return true;
             }
 
             return false;
-        }
-
-        public boolean clickedColorPreview(double mouseX, double mouseY) {
-            return isMouseOverColorPreview(mouseX, mouseY);
         }
 
         public boolean isMouseOverColorPreview(double mouseX, double mouseY) {
@@ -281,26 +262,6 @@ public class ColorController implements IStringController<Color> {
         }
 
         @Override
-        public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-            if(isAvailable() || !mouseDown)
-                return false;
-
-            return true;
-        }
-
-        @Override
-        public boolean mouseReleased(double mouseX, double mouseY, int button) {
-            mouseDown = false;
-
-            return super.mouseReleased(mouseX, mouseY, button);
-        }
-
-        @Override
-        public boolean isMouseOver(double mouseX, double mouseY) {
-            return super.isMouseOver(mouseX, mouseY);
-        }
-
-        @Override
         public void unfocus() {
             removeColorPicker();
 
@@ -313,10 +274,6 @@ public class ColorController implements IStringController<Color> {
 
         public boolean isColorPickerVisible() {
             return colorPickerVisible;
-        }
-
-        public void setColorPickerVisible(boolean colorPickerVisible) {
-            this.colorPickerVisible = colorPickerVisible;
         }
 
         public ColorPickerElement createColorPicker() {
