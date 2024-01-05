@@ -400,7 +400,7 @@ public class GuiTest {
                                         .customController(ColorController::new)
                                         .description(OptionDescription.of(Component.literal("A Color Controller's Color Picker will appear beneath the color if there is not enough room above it.")))
                                         .build())
-                                .option(LabelOption.create(Component.literal("Enabling a Color Controller's Color Picker at the top of the screen will appear beneath it if there isn't enough room above.")))
+                                .option(LabelOption.create(Component.literal("Enabling a Color Controller's Color Picker at the top of the screen will appear beneath it if there isn't enough room above. This also applies to color controllers with alpha enabled.")))
                                 .option(Option.<Color>createBuilder()
                                         .name(Component.literal("Alpha Color Option"))
                                         .binding(

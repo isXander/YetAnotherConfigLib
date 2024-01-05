@@ -139,17 +139,6 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
             if (bottom >= this.getY() && top <= this.getY() + this.getHeight()) {
                 this.renderItem(graphics, mouseX, mouseY, delta, i, left, top, right, entryHeight);
             }
-
-            //DELETEME!
-            //Temporary workaround for color picker widget floating when color controller isn't visible
-            //The following if statements for updating the color picker's y pos is not code from cloth config
-//            if(entry instanceof OptionListWidget.OptionEntry optionEntry) {
-//                if(optionEntry.widget instanceof ColorController.ColorControllerElement colorElement) {
-//                    if(colorElement.isColorPickerVisible()) {
-//                        colorElement.getColorPickerElement().setDimension(colorElement.getColorPickerElement().getDimension().withY(top));
-//                    }
-//                }
-//            }
         }
     }
 

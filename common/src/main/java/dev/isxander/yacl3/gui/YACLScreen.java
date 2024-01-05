@@ -98,19 +98,6 @@ public class YACLScreen extends Screen {
         currentColorPicker = colorPickerElement;
         colorPickerVisible = true;
 
-        //Preforms the same actions as "addRenderableWidget"
-        //expect the color picker is the first element in the group to ensure no mouse click "z-fighting" happens
-//        this.renderables.add(0, currentColorPicker);
-//        this.children.add(0, currentColorPicker);
-
-//        for (Tab tab : this.tabNavigationBar.tabs) {
-//            if(!(tab instanceof PlaceholderTab)) {
-//                CategoryTab categoryTab = (CategoryTab) tab;
-//                OptionListWidget optionListWidget = categoryTab.optionList.getList();
-//                optionListWidget.setScrollAmount(50);
-//            }
-//        }
-
         OptionListWidget optionListWidget = null;
         if(this.tabNavigationBar.tabManager.getCurrentTab() instanceof CategoryTab categoryTab) {
             optionListWidget = categoryTab.optionList.getList();
@@ -130,16 +117,6 @@ public class YACLScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        //Checks for the color picker at rendering to avoid a ConcurrentModificationException(CME) being thrown
-        //In the ContainerEventHandler class, an iterator is used to check for the mouseClicked methods of all children
-        //if we tried to remove the color picker from a mouseClicked event, a CME error would be thrown
-        if(!colorPickerVisible && currentColorPicker != null) {
-            synchronized (this) {
-//                this.renderables.removeIf(renderable -> renderable instanceof ColorPickerElement);
-//                this.children.removeIf(child -> child instanceof ColorPickerElement);
-            }
-//            currentColorPicker = null;
-        }
         renderDirtBackground(graphics);
         super.render(graphics, mouseX, mouseY, delta);
     }

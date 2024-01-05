@@ -17,6 +17,8 @@ import net.minecraft.sounds.SoundEvents;
 import org.joml.Matrix4f;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public abstract class AbstractWidget implements GuiEventListener, Renderable, NarratableEntry {
     private static final WidgetSprites SPRITES = new WidgetSprites(
@@ -102,33 +104,29 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
         //Has a custom "z" value in case needed for later
         VertexConsumer vertex = graphics.bufferSource().getBuffer(RenderType.gui());
         Matrix4f matrix4f = graphics.pose().last().pose();
-        vertex.vertex(matrix4f, x2, y2, z).color(startColor).endVertex();
-        vertex.vertex(matrix4f, x2, y1, z).color(startColor).endVertex();
-        vertex.vertex(matrix4f, x1, y1, z).color(endColor).endVertex();
-        vertex.vertex(matrix4f, x1, y2, z).color(endColor).endVertex();
+        vertex.vertex(matrix4f, x1, y1, z).color(startColor).endVertex();
+        vertex.vertex(matrix4f, x1, y2, z).color(startColor).endVertex();
+        vertex.vertex(matrix4f, x2, y2, z).color(endColor).endVertex();
+        vertex.vertex(matrix4f, x2, y1, z).color(endColor).endVertex();
     }
 
 
     protected void drawRainbowGradient(GuiGraphics graphics, int x1, int y1, int x2, int y2, int z) {
         //Draws a rainbow gradient, left to right
-        int red = Color.red.getRGB();
-        int yellow = Color.yellow.getRGB();
-        int green = Color.green.getRGB();
-        int cyan = Color.cyan.getRGB();
-        int blue = Color.blue.getRGB();
-        int purple = Color.magenta.getRGB();
-        int x = x2 - x1;
-        int i = 6;
-        //TODO - Some int array goofy stuff to reduce code
-        //FIXME - this code doesn't really make sense but it works
-        //A possible variable renaming/method introduction could help
-
-        fillSidewaysGradient(graphics, x1 + (x / i), y1, x1, y2, z, red, yellow);
-        fillSidewaysGradient(graphics, x1 + (x / i * 2), y1, x1 + (x / i), y2, z, yellow, green);
-        fillSidewaysGradient(graphics, x1 + (x / i * 3), y1, x1 + (x / i * 2), y2, z, green, cyan);
-        fillSidewaysGradient(graphics, x1 + (x / i * 4), y1, x1 + (x / i * 3), y2, z, cyan, blue);
-        fillSidewaysGradient(graphics, x1 + (x / i * 5), y1, x1 + (x / i * 4), y2, z, blue, purple);
-        fillSidewaysGradient(graphics, x2, y1, x1 + (x / i * 5), y2, z, purple, red);
+        int[] colors = new int[] {Color.red.getRGB(), Color.yellow.getRGB(), Color.green.getRGB(),
+        Color.cyan.getRGB(), Color.blue.getRGB(), Color.magenta.getRGB(), Color.red.getRGB()}; //all the colors in the gradient
+        int width = x2 - x1;
+        int maxColors = colors.length - 1;
+        for (int color = 0; color < maxColors; color++) {
+            //First checks if the final color is being rendered, if true -> uses x2 int instead of x1
+            //if false -> it adds the width divided by the max colors multiplied by the current color plus one to the x1 int
+            //the x2 int for the fillSidewaysGradient is the same formula, excluding the additional plus one.
+            //The gradient colors is determined by the color int and the color int plus one, which is why red is in the colors array twice
+            fillSidewaysGradient(graphics,
+                    x1 + (width / maxColors * color), y1,
+                    color == maxColors - 1 ? x2 : x1 + (width / maxColors * (color + 1)), y2,
+                    z, colors[color], colors[color + 1]);
+        }
     }
 
     protected int multiplyColor(int hex, float amount) {

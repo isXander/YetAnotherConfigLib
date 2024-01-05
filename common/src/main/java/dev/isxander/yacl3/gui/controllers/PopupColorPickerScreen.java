@@ -18,7 +18,7 @@ public class PopupColorPickerScreen extends Screen {
     public int controllerY;
     public int maxScroll;
     public PopupColorPickerScreen(YACLScreen backgroundYaclScreen, OptionListWidget optionListWidget, ColorPickerElement colorPicker) {
-        super(Component.literal("Color Picker")); //translatable string?
+        super(Component.literal("Color Picker")); //Gets narrated by the narrator - switch to translatable string?
         this.backgroundYaclScreen = backgroundYaclScreen;
         this.optionListWidget = optionListWidget;
         this.colorPicker = colorPicker;
@@ -32,7 +32,6 @@ public class PopupColorPickerScreen extends Screen {
 
     @Override
     protected void init() {
-        //FIXME - Resizing window breaks backgroundYaclScreen, perhaps init() the yaclScreen?
         this.addRenderableWidget(this.colorPicker);
     }
 

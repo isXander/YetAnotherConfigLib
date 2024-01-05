@@ -1,13 +1,11 @@
 package dev.isxander.yacl3.gui.controllers;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
@@ -82,6 +80,9 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         updateHSL();
 
+        int thumbWidth = 4;
+        int thumbHeight = 4;
+
         //transparent texture - must be rendered BEFORE the main color preview
         if(allowAlpha) {
             //blitOffset param acts exactly like z param in graphics.fill
@@ -95,13 +96,13 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
         //Saturation/light gradient
 
         //White to pending color's RGB from hue, left to right
-        fillSidewaysGradient(graphics, saturationLightDim.x(), saturationLightDim.y(), saturationLightDim.xLimit(), saturationLightDim.yLimit(), 3, (int) getRgbFromHueX(), 0xFFFFFFFF);
+        fillSidewaysGradient(graphics, saturationLightDim.x(), saturationLightDim.y(), saturationLightDim.xLimit(), saturationLightDim.yLimit(), 3, 0xFFFFFFFF, (int) getRgbFromHueX());
         //Transparent to black, top to bottom
         graphics.fillGradient(saturationLightDim.x(), saturationLightDim.y(), saturationLightDim.xLimit(), saturationLightDim.yLimit(), 4,0x00000000, 0xFF000000);
         //Sat/light thumb - extra 1 pixel on left and top to make it centered
-        graphics.fill(satLightThumbX - getThumbWidth() / 2 - 1, getSatLightThumbY() + getThumbHeight() / 2 + 1, satLightThumbX + getThumbWidth() / 2, getSatLightThumbY() - getThumbHeight() / 2, 7, -1);
+        graphics.fill(satLightThumbX - thumbWidth / 2 - 1, getSatLightThumbY() + thumbHeight / 2 + 1, satLightThumbX + thumbWidth / 2, getSatLightThumbY() - thumbHeight / 2, 7, -1);
         //Sat/light thumb shadow
-        graphics.fill(satLightThumbX - getThumbWidth() / 2 - 2, getSatLightThumbY() + getThumbHeight() / 2 + 2, satLightThumbX + getThumbWidth() / 2 + 1, getSatLightThumbY() - getThumbHeight() / 2 - 1, 6, 0xFF404040);
+        graphics.fill(satLightThumbX - thumbWidth / 2 - 2, getSatLightThumbY() + thumbHeight / 2 + 2, satLightThumbX + thumbWidth / 2 + 1, getSatLightThumbY() - thumbHeight / 2 - 1, 6, 0xFF404040);
         //outline
         graphics.fill(saturationLightDim.x() - outline, saturationLightDim.y() - outline, saturationLightDim.xLimit() + outline, saturationLightDim.yLimit() + outline, 2, Color.black.getRGB());
 
@@ -110,21 +111,21 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
         //Hue rainbow gradient
         drawRainbowGradient(graphics, hueGradientDim.x(), hueGradientDim.y(), hueGradientDim.xLimit(), hueGradientDim.yLimit(), 3);
         //Hue slider thumb
-        graphics.fill(hueThumbX - getThumbWidth() / 2, hueGradientDim.y() + outline, hueThumbX + getThumbWidth() / 2, hueGradientDim.yLimit() - outline, 5, -1);
+        graphics.fill(hueThumbX - thumbWidth / 2, hueGradientDim.y() - outline, hueThumbX + thumbWidth / 2, hueGradientDim.yLimit() + outline, 5, -1);
         //Hue slider thumb shadow
-        graphics.fill(hueThumbX - getThumbWidth() / 2 - 1, hueGradientDim.y() + outline + 1, hueThumbX + getThumbWidth() / 2 + 1, hueGradientDim.yLimit() - outline - 1, 4, 0xFF404040);
+        graphics.fill(hueThumbX - thumbWidth / 2 - 1, hueGradientDim.y() - outline - 1, hueThumbX + thumbWidth / 2 + 1, hueGradientDim.yLimit() + outline + 1, 4, 0xFF404040);
         //outline
-        graphics.fill(hueGradientDim.x() - outline, hueGradientDim.y() + outline, hueGradientDim.xLimit() + outline, hueGradientDim.yLimit() - outline, 2, Color.black.getRGB());
+        graphics.fill(hueGradientDim.x() - outline, hueGradientDim.y() - outline, hueGradientDim.xLimit() + outline, hueGradientDim.yLimit() + outline, 2, Color.black.getRGB());
 
         if(allowAlpha) {
             //Transparent texture
             graphics.blitSprite(TRANSPARENT_TEXTURE_LOCATION, alphaGradientDim.x(), alphaGradientDim.y(), 3, alphaGradientDim.width(), sliderHeight);
             //Pending color to transparent
-            fillSidewaysGradient(graphics, alphaGradientDim.x(), alphaGradientDim.y(), alphaGradientDim.xLimit(), alphaGradientDim.yLimit(), 4, 0x00000000, getRgbWithoutAlpha());
+            fillSidewaysGradient(graphics, alphaGradientDim.x(), alphaGradientDim.y(), alphaGradientDim.xLimit(), alphaGradientDim.yLimit(), 4, getRgbWithoutAlpha(), 0x00000000);
             //Alpha slider thumb
-            graphics.fill(alphaThumbX - getThumbWidth() / 2, alphaGradientDim.y() - outline, alphaThumbX + getThumbWidth() / 2, alphaGradientDim.yLimit() + outline, 6, -1);
+            graphics.fill(alphaThumbX - thumbWidth / 2, alphaGradientDim.y() - outline, alphaThumbX + thumbWidth / 2, alphaGradientDim.yLimit() + outline, 6, -1);
             //Alpha slider thumb shadow
-            graphics.fill(alphaThumbX - getThumbWidth() / 2 - 1, alphaGradientDim.y() - outline - 1, alphaThumbX + getThumbWidth() / 2 + 1, alphaGradientDim.yLimit() + outline + 1, 5, 0xFF404040);
+            graphics.fill(alphaThumbX - thumbWidth / 2 - 1, alphaGradientDim.y() - outline - 1, alphaThumbX + thumbWidth / 2 + 1, alphaGradientDim.yLimit() + outline + 1, 5, 0xFF404040);
             //outline
             graphics.fill(alphaGradientDim.x() - outline, alphaGradientDim.y() - outline, alphaGradientDim.xLimit() + outline, alphaGradientDim.yLimit() + outline, 2, Color.black.getRGB());
         }
@@ -136,7 +137,7 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
     public boolean clickedHueSlider(double mouseX, double mouseY) {
         if(satLightGradientDown || alphaSliderDown) return false;
 
-        if(mouseY <= hueGradientDim.y() && mouseY >= hueGradientDim.yLimit()) {
+        if(mouseY >= hueGradientDim.y() && mouseY <= hueGradientDim.yLimit()) {
             if(mouseX >= hueGradientDim.x() && mouseX <= hueGradientDim.xLimit()) {
                 hueSliderDown = true;
             }
@@ -196,7 +197,7 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if(isMouseOver(mouseX, mouseY)) {
             mouseDown = true;
-            hueSliderDown = false; //has to be called because mouseReleased doesn't always set these back
+            hueSliderDown = false;
             satLightGradientDown = false;
             alphaSliderDown = false;
             setColorFromMouseClick(mouseX, mouseY);
@@ -213,9 +214,6 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         mouseDown = false;
-        hueSliderDown = false;
-        satLightGradientDown = false;
-        alphaSliderDown = false;
         return false;
     }
     @Override
@@ -236,12 +234,6 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
             return true;
         }
         return entryWidget.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount, double d) {
-        //Use to allow for small adjustments of the color?
-        return true;
     }
 
     @Override
@@ -283,36 +275,10 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
 
         previewColorDim = Dimension.ofInt(colorPickerDim.x(), colorPickerDim.y(), (colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) - paddingX) - colorPickerDim.x(), (colorPickerDim.yLimit() - sliderHeight - paddingY) - colorPickerDim.y() - alphaSliderHeight);
         saturationLightDim = Dimension.ofInt(colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + paddingX + 1, colorPickerDim.y(), colorPickerDim.xLimit() - (colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + paddingX + 1), (colorPickerDim.yLimit() - sliderHeight - paddingY) - colorPickerDim.y() - alphaSliderHeight);
-        hueGradientDim = Dimension.ofInt(colorPickerDim.x(), colorPickerDim.yLimit() - alphaSliderHeight, colorPickerDim.width(), (colorPickerDim.yLimit() - sliderHeight) - colorPickerDim.yLimit());
+        hueGradientDim = Dimension.ofInt(colorPickerDim.x(), colorPickerDim.yLimit() - sliderHeight - alphaSliderHeight, colorPickerDim.width(), sliderHeight);
         if(allowAlpha) {
-            alphaGradientDim = Dimension.ofInt(hueGradientDim.x(), hueGradientDim.yLimit() + alphaSliderHeight, hueGradientDim.width(), sliderHeight);
+            alphaGradientDim = Dimension.ofInt(hueGradientDim.x(), hueGradientDim.y() + alphaSliderHeight, hueGradientDim.width(), sliderHeight);
         }
-    }
-
-    @Override
-    public boolean isHovered() {
-        return super.isHovered();
-    }
-
-    @Override
-    protected int getHoveredControlWidth() {
-        return Math.min(textRenderer.width(control.formatValue()), getUnshiftedLength());
-    }
-
-    @Override
-    protected int getUnhoveredControlWidth() {
-        return textRenderer.width(getValueText());
-    }
-
-    public int getUnshiftedLength() {
-        if(control.option().name().getString().isEmpty())
-            return getDimension().width() - getXPadding() * 2;
-        return getDimension().width() / 8 * 5;
-    }
-
-    @Override
-    public void unfocus() {
-        super.unfocus();
     }
 
     public void setThumbX() {
@@ -335,7 +301,7 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
     protected int getSatLightThumbX() {
         int min = saturationLightDim.x();
         int max = saturationLightDim.xLimit();
-        int value = (int) (min + (colorPickerDim.width() - ((float) colorPickerDim.xLimit() / previewPortion)) * this.saturation);
+        int value = (int) (min + (saturationLightDim.width() * this.saturation));
 
         return Mth.clamp(value, min, max);
     }
@@ -343,7 +309,7 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
     protected int getSatLightThumbY() {
         int min = saturationLightDim.y();
         int max = saturationLightDim.yLimit();
-        int value = (int) (min + (colorPickerDim.height() - sliderHeight - paddingY) * (1.0f - this.light));
+        int value = (int) (min + (saturationLightDim.height() * (1.0f - this.light)));
 
         return Mth.clamp(value, min, max);
     }
@@ -351,17 +317,9 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
     protected int getAlphaThumbX() {
         int min = alphaGradientDim.x();
         int max = alphaGradientDim.xLimit();
-        int value = (int) (max - (alphaGradientDim.width() * this.alpha / 255));
+        int value = max - (alphaGradientDim.width() * this.alpha / 255);
 
         return Mth.clamp(value, min, max);
-    }
-
-    protected int getThumbWidth() {
-        return 4;
-    }
-
-    protected int getThumbHeight() {
-        return 4;
     }
 
     public void setHueFromMouse(double mouseX) {
@@ -439,6 +397,11 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
         }
     }
 
+    @Override
+    protected int getHoveredControlWidth() {
+        return 0; //I'm not sure if this override is useful or not?
+    }
+
     protected float[] getHSL() {
         Color pendingValue = colorController.option().pendingValue();
         return Color.RGBtoHSB(pendingValue.getRed(), pendingValue.getGreen(), pendingValue.getBlue(), null);
@@ -461,10 +424,6 @@ public class ColorPickerElement extends ControllerWidget<ColorController> implem
 
     protected int getAlpha() {
         return colorController.option().pendingValue().getAlpha();
-    }
-
-    protected float getRgbFromHue() {
-        return Color.HSBtoRGB(hue, 1, 1);
     }
 
     protected float getRgbFromHueX() {

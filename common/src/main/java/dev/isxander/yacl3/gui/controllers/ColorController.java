@@ -242,7 +242,7 @@ public class ColorController implements IStringController<Color> {
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (super.mouseClicked(mouseX, mouseY, button)) {
-                //TODO - Controller support/keyboard only support(enter key to "select" hue/saturation&value areas?)
+                //Controller support/keyboard only support(enter key to "select" hue/saturation&value areas?)
                 //Detects if the user has clicked the color preview
                 if(clickedColorPreview(mouseX, mouseY)) {
                         playDownSound();
