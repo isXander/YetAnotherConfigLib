@@ -1,7 +1,6 @@
 package dev.isxander.yacl3.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.controllers.ColorController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

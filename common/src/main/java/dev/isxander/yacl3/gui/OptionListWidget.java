@@ -3,8 +3,6 @@ package dev.isxander.yacl3.gui;
 import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.utils.Dimension;
-import dev.isxander.yacl3.gui.controllers.ColorController;
-import dev.isxander.yacl3.gui.controllers.ColorPickerElement;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;

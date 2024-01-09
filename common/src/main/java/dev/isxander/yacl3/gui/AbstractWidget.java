@@ -17,8 +17,6 @@ import net.minecraft.sounds.SoundEvents;
 import org.joml.Matrix4f;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public abstract class AbstractWidget implements GuiEventListener, Renderable, NarratableEntry {
     private static final WidgetSprites SPRITES = new WidgetSprites(
