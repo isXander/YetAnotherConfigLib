@@ -101,7 +101,6 @@ public class ColorController implements IStringController<Color> {
 
     public static class ColorControllerElement extends StringControllerElement {
         private final ColorController colorController;
-        private final YACLScreen screen;
         private ColorPickerElement colorPickerElement;
 
         protected MutableDimension<Integer> colorPreviewDim;
@@ -112,7 +111,6 @@ public class ColorController implements IStringController<Color> {
         public ColorControllerElement(ColorController control, YACLScreen screen, Dimension<Integer> dim) {
             super(control, screen, dim, true);
             this.colorController = control;
-            this.screen = screen;
             this.allowedChars = ImmutableList.of('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
         }
 
@@ -228,7 +226,6 @@ public class ColorController implements IStringController<Color> {
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             if (super.mouseClicked(mouseX, mouseY, button)) {
-                //Controller support/keyboard only support(enter key to "select" hue/saturation&value areas?)
                 //Detects if the user has clicked the color preview
                 if(isMouseOverColorPreview(mouseX, mouseY)) {
                         playDownSound();
@@ -243,12 +240,7 @@ public class ColorController implements IStringController<Color> {
         }
 
         public boolean isMouseOverColorPreview(double mouseX, double mouseY) {
-            if((mouseX >= colorPreviewDim.x() && mouseX <= colorPreviewDim.xLimit())
-                    && (mouseY >= colorPreviewDim.y() && mouseY <= colorPreviewDim.yLimit())) {
-
-                return true;
-            }
-            return false;
+            return colorPreviewDim.isPointInside((int) mouseX, (int) mouseY);
         }
 
         public void createOrRemoveColorPicker() {
@@ -268,7 +260,7 @@ public class ColorController implements IStringController<Color> {
             super.unfocus();
         }
 
-        public ColorPickerElement getColorPickerElement() {
+        public ColorPickerElement colorPickerElement() {
             return colorPickerElement;
         }
 

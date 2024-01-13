@@ -18,7 +18,7 @@ public class PopupColorPickerScreen extends Screen {
     public int controllerY;
     public int maxScroll;
     public PopupColorPickerScreen(YACLScreen backgroundYaclScreen, OptionListWidget optionListWidget, ColorPickerElement colorPicker) {
-        super(Component.literal("Color Picker")); //Gets narrated by the narrator - switch to translatable string?
+        super(Component.translatable("yacl.control.color.color_picker_title")); //Gets narrated by the narrator - switch to translatable string?
         this.backgroundYaclScreen = backgroundYaclScreen;
         this.optionListWidget = optionListWidget;
         this.colorPicker = colorPicker;
@@ -63,6 +63,11 @@ public class PopupColorPickerScreen extends Screen {
             }
         }
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+    }
+
+    @Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        return colorPicker.charTyped(codePoint, modifiers);
     }
 
     @Override
