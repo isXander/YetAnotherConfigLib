@@ -147,7 +147,7 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     public void visitWidgets(Consumer<AbstractWidget> consumer) {
     }
 
-    public int getActiveColorPickerY() {
+    public int getActivePopupControllerY() {
         for (E entry : children()) {
             if(entry instanceof OptionListWidget.OptionEntry optionEntry) {
                 if(optionEntry.widget instanceof ColorController.ColorControllerElement colorControllerElement) {

@@ -247,7 +247,7 @@ public class ColorController implements IStringController<Color> {
             colorPickerVisible = !colorPickerVisible;
             if(colorPickerVisible) {
                 colorPickerElement = createColorPicker();
-                screen.addColorPickerWidget(colorPickerElement);
+                screen.addPopupControllerWidget(colorPickerElement);
             } else {
                 removeColorPicker();
             }
@@ -273,7 +273,7 @@ public class ColorController implements IStringController<Color> {
         }
 
         public void removeColorPicker() {
-            screen.clearColorPickerWidget();
+            screen.clearPopupControllerWidget();
             this.colorPickerVisible = false;
             this.colorPickerElement = null;
             this.hoveredOverColorPreview = false; //set to false in favor of the manual checking here to be done

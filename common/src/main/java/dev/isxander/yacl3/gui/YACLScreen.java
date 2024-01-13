@@ -6,8 +6,8 @@ import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
 import dev.isxander.yacl3.api.utils.OptionUtils;
-import dev.isxander.yacl3.gui.controllers.ColorPickerElement;
-import dev.isxander.yacl3.gui.controllers.PopupColorPickerScreen;
+import dev.isxander.yacl3.gui.controllers.PopupControllerScreen;
+import dev.isxander.yacl3.gui.controllers.ControllerPopupWidget;
 import dev.isxander.yacl3.gui.tab.ListHolderWidget;
 import dev.isxander.yacl3.gui.tab.ScrollableNavigationBar;
 import dev.isxander.yacl3.gui.tab.TabExt;
@@ -50,8 +50,8 @@ public class YACLScreen extends Screen {
 
     private boolean pendingChanges;
 
-    public ColorPickerElement currentColorPicker = null;
-    public boolean colorPickerVisible = false;
+    public ControllerPopupWidget currentPopupController = null;
+    public boolean popupControllerVisible = false;
 
     public YACLScreen(YetAnotherConfigLib config, Screen parent) {
         super(config.title());
@@ -88,31 +88,31 @@ public class YACLScreen extends Screen {
         config.initConsumer().accept(this);
     }
 
-    public void addColorPickerWidget(ColorPickerElement colorPickerElement) {
+    public void addPopupControllerWidget(ControllerPopupWidget controllerPopupWidget) {
 
         //Safety check for the color picker
-        if (currentColorPicker != null) {
-            clearColorPickerWidget();
+        if (currentPopupController != null) {
+            clearPopupControllerWidget();
         }
 
-        currentColorPicker = colorPickerElement;
-        colorPickerVisible = true;
+        currentPopupController = controllerPopupWidget;
+        popupControllerVisible = true;
 
         OptionListWidget optionListWidget = null;
         if(this.tabNavigationBar.tabManager.getCurrentTab() instanceof CategoryTab categoryTab) {
             optionListWidget = categoryTab.optionList.getList();
         }
         if(optionListWidget != null) {
-            this.minecraft.setScreen(new PopupColorPickerScreen(this, optionListWidget, colorPickerElement));
+            this.minecraft.setScreen(new PopupControllerScreen(this, optionListWidget, controllerPopupWidget));
         }
     }
 
-    public void clearColorPickerWidget() {
-        if(Minecraft.getInstance().screen instanceof PopupColorPickerScreen popupColorPickerScreen) {
-            popupColorPickerScreen.onClose();
+    public void clearPopupControllerWidget() {
+        if(Minecraft.getInstance().screen instanceof PopupControllerScreen popupControllerScreen) {
+            popupControllerScreen.onClose();
         }
-        colorPickerVisible = false;
-        currentColorPicker = null;
+        popupControllerVisible = false;
+        currentPopupController = null;
     }
 
     @Override
