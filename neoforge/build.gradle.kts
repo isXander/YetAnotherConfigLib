@@ -98,6 +98,7 @@ tasks {
         inputFile.set(shadowJar.get().archiveFile)
         dependsOn(shadowJar)
         archiveClassifier.set(null as String?)
+        atAccessWideners.set(listOf("yacl.accesswidener"))
 
         from(rootProject.file("LICENSE"))
     }
