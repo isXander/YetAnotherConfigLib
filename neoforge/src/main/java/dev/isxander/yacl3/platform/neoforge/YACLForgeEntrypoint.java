@@ -11,7 +11,6 @@ import net.neoforged.neoforge.common.NeoForge;
 public class YACLForgeEntrypoint {
     public YACLForgeEntrypoint(IEventBus modEventBus) {
         modEventBus.addListener(RegisterClientReloadListenersEvent.class, event -> {
-            System.out.println("image reload event");
             event.registerReloadListener(new YACLImageReloadListener());
         });
     }
