@@ -11,7 +11,7 @@ import net.minecraft.util.Mth;
 
 import java.awt.*;
 
-public class ColorPickerElement extends ControllerPopupWidget {
+public class ColorPickerElement extends ControllerPopupWidget<ColorController> {
     private static final ResourceLocation COLOR_PICKER_LOCATION = new ResourceLocation("yet_another_config_lib", "controller/colorpicker");
     private static final ResourceLocation TRANSPARENT_TEXTURE_LOCATION = new ResourceLocation("yet_another_config_lib", "controller/transparent");
     private final ColorController controller;

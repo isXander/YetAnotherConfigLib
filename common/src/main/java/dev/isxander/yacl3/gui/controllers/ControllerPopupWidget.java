@@ -7,9 +7,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 
-public abstract class ControllerPopupWidget extends ControllerWidget<Controller<?>> implements GuiEventListener {
+public abstract class ControllerPopupWidget<T extends Controller<?>> extends ControllerWidget<Controller<?>> implements GuiEventListener {
     public final ControllerWidget<?> entryWidget;
-    public ControllerPopupWidget(Controller<?> control, YACLScreen screen, Dimension<Integer> dim, ControllerWidget<?> entryWidget) {
+    public ControllerPopupWidget(T control, YACLScreen screen, Dimension<Integer> dim, ControllerWidget<?> entryWidget) {
         super(control, screen, dim);
         this.entryWidget = entryWidget;
     }

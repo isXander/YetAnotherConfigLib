@@ -50,7 +50,7 @@ public class YACLScreen extends Screen {
 
     private boolean pendingChanges;
 
-    public ControllerPopupWidget currentPopupController = null;
+    public ControllerPopupWidget<?> currentPopupController = null;
     public boolean popupControllerVisible = false;
 
     public YACLScreen(YetAnotherConfigLib config, Screen parent) {
@@ -88,7 +88,7 @@ public class YACLScreen extends Screen {
         config.initConsumer().accept(this);
     }
 
-    public void addPopupControllerWidget(ControllerPopupWidget controllerPopupWidget) {
+    public void addPopupControllerWidget(ControllerPopupWidget<?> controllerPopupWidget) {
 
         //Safety check for the color picker
         if (currentPopupController != null) {

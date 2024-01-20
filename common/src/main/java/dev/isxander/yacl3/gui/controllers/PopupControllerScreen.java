@@ -10,13 +10,13 @@ import net.minecraft.util.Mth;
 public class PopupControllerScreen extends Screen {
     private final YACLScreen backgroundYaclScreen;
     private final OptionListWidget optionListWidget;
-    private final ControllerPopupWidget controllerPopup;
+    private final ControllerPopupWidget<?> controllerPopup;
     public double initialScrollAmount;
     public double scrollAmount;
     public double smoothScrollAmount;
     public int controllerY;
     public int maxScroll;
-    public PopupControllerScreen(YACLScreen backgroundYaclScreen, OptionListWidget optionListWidget, ControllerPopupWidget controllerPopup) {
+    public PopupControllerScreen(YACLScreen backgroundYaclScreen, OptionListWidget optionListWidget, ControllerPopupWidget<?> controllerPopup) {
         super(controllerPopup.popupTitle()); //Gets narrated by the narrator - switch to translatable string?
         this.backgroundYaclScreen = backgroundYaclScreen;
         this.optionListWidget = optionListWidget;
