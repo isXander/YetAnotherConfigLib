@@ -12,6 +12,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
 import java.util.List;
@@ -107,6 +108,8 @@ public class ColorController implements IStringController<Color> {
         private final List<Character> allowedChars;
         public boolean hoveredOverColorPreview = false;
         private boolean colorPickerVisible = false;
+        private int previewOutlineFadeTicks = 0;
+        private boolean shouldFlashOutline = true;
 
         public ColorControllerElement(ColorController control, YACLScreen screen, Dimension<Integer> dim) {
             super(control, screen, dim, true);
@@ -117,26 +120,17 @@ public class ColorController implements IStringController<Color> {
         @Override
         protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
             hovered = isMouseOver(mouseX, mouseY);
+
             if (isHovered()) {
                 colorPreviewDim.move(-inputFieldBounds.width() - 8, -2);
                 colorPreviewDim.expand(4, 4);
+                previewOutlineFadeTicks++;
                 super.drawValueText(graphics, mouseX, mouseY, delta);
             }
 
             graphics.fill(colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), colorController.option().pendingValue().getRGB());
-            drawOutline(graphics, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), 1, 0xFF000000);
-            if(isMouseOverColorPreview(mouseX, mouseY) || hoveredOverColorPreview) {
-                //Brightness detector in case a developer has their starting color bright
-                //Makes the outline indicating to a user that the mini color preview can be clicked a light grey rather than white
-                //For reference, there is about a 10 digit moving room in saturation and light
-                Color pendingValue = colorController.option().pendingValue();
-                float[] HSL = Color.RGBtoHSB(pendingValue.getRed(), pendingValue.getGreen(), pendingValue.getBlue(), null);
-                if(HSL[1] < 0.1f && HSL[2] > 0.9f) {
-                    drawOutline(graphics, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), 1, 0xFFC6C6C6);
-                } else {
-                    drawOutline(graphics, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), 1, 0xFFFFFFFF);
-                }
-            }
+            Color outlineColor = getPreviewOutlineColor(hoveredOverColorPreview || isMouseOverColorPreview(mouseX, mouseY));
+            drawOutline(graphics, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), 1, outlineColor.getRGB());
         }
 
         @Override
@@ -230,6 +224,7 @@ public class ColorController implements IStringController<Color> {
                 if(isMouseOverColorPreview(mouseX, mouseY)) {
                         playDownSound();
                         createOrRemoveColorPicker();
+                        shouldFlashOutline = false;
                 }
                 caretPos = Math.max(1, caretPos);
                 setSelectionLength();
@@ -256,15 +251,73 @@ public class ColorController implements IStringController<Color> {
         @Override
         public void unfocus() {
             removeColorPicker();
-
+            previewOutlineFadeTicks = 0;
             super.unfocus();
+        }
+
+        public Color getPreviewOutlineColor(boolean colorPreviewHovered) {
+            Color outlineColor = new Color(0xFF000000);
+            Color highlightedColor = getHighlightedOutlineColor();
+
+            if(!hovered && !colorPreviewHovered) {
+                previewOutlineFadeTicks = 0;
+                return outlineColor;
+            }
+
+            int fadeInTicks = 80;
+            int fadeOutTicks = fadeInTicks + 120;
+
+            if(colorPreviewHovered) {
+                //white/light grey if the color preview is being hovered
+                previewOutlineFadeTicks = 0;
+                return highlightedColor;
+            } else if(shouldFlashOutline) {
+                if(previewOutlineFadeTicks <= fadeInTicks) {
+                    //fade to white
+                    return getFadedColor(outlineColor, highlightedColor, previewOutlineFadeTicks, fadeInTicks);
+                } else if (previewOutlineFadeTicks <= fadeOutTicks) {
+                    //fade to black
+                    return getFadedColor(highlightedColor, outlineColor, previewOutlineFadeTicks - fadeInTicks, fadeOutTicks - fadeInTicks);
+                }
+
+                if(previewOutlineFadeTicks >= fadeInTicks + fadeOutTicks + 10) {
+                    //reset fade
+                    previewOutlineFadeTicks = 0;
+                }
+            }
+
+            return outlineColor;
+        }
+
+        private Color getFadedColor(Color original, Color fadeToColor, int fadeTick, int maxFadeTicks) {
+            int red = fadeToColor.getRed() - original.getRed();
+            int green = fadeToColor.getGreen() - original.getGreen();
+            int blue = fadeToColor.getBlue() - original.getBlue();
+            return new Color(
+                    original.getRed() + ((red * fadeTick) / maxFadeTicks),
+                    original.getGreen() + ((green * fadeTick) / maxFadeTicks),
+                    original.getBlue() + ((blue * fadeTick) / maxFadeTicks)
+            );
+        }
+
+        private Color getHighlightedOutlineColor() {
+            //Brightness detector in case a developer has their starting color bright
+            //Makes the outline indicating to a user that the mini color preview can be clicked a light grey rather than white
+            //For reference, there is about a 10 digit moving room in saturation and light
+            Color pendingValue = colorController.option().pendingValue();
+            float[] HSL = Color.RGBtoHSB(pendingValue.getRed(), pendingValue.getGreen(), pendingValue.getBlue(), null);
+            Color highlightedColor = new Color(0xFFFFFFFF);
+            if(HSL[1] < 0.1f && HSL[2] > 0.9f) {
+                highlightedColor = new Color(0xFFC6C6C6);
+            }
+            return highlightedColor;
         }
 
         public ColorPickerElement colorPickerElement() {
             return colorPickerElement;
         }
 
-        public boolean isColorPickerVisible() {
+        public boolean colorPickerVisible() {
             return colorPickerVisible;
         }
 

@@ -151,7 +151,7 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
         for (E entry : children()) {
             if(entry instanceof OptionListWidget.OptionEntry optionEntry) {
                 if(optionEntry.widget instanceof ColorController.ColorControllerElement colorControllerElement) {
-                    if(colorControllerElement.isColorPickerVisible()) {
+                    if(colorControllerElement.colorPickerVisible()) {
                         return getRowTop(this.children().indexOf(entry));
                     }
                 }
