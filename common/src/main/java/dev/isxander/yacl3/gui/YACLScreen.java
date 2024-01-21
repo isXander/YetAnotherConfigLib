@@ -103,7 +103,7 @@ public class YACLScreen extends Screen {
             optionListWidget = categoryTab.optionList.getList();
         }
         if(optionListWidget != null) {
-            this.minecraft.setScreen(new PopupControllerScreen(this, optionListWidget, controllerPopupWidget));
+            this.minecraft.setScreen(new PopupControllerScreen(this, controllerPopupWidget));
         }
     }
 

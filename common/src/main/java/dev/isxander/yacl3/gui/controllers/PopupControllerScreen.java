@@ -1,6 +1,5 @@
 package dev.isxander.yacl3.gui.controllers;
 
-import dev.isxander.yacl3.gui.OptionListWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -9,7 +8,7 @@ import net.minecraft.client.gui.screens.Screen;
 public class PopupControllerScreen extends Screen {
     private final YACLScreen backgroundYaclScreen;
     private final ControllerPopupWidget<?> controllerPopup;
-    public PopupControllerScreen(YACLScreen backgroundYaclScreen, OptionListWidget optionListWidget, ControllerPopupWidget<?> controllerPopup) {
+    public PopupControllerScreen(YACLScreen backgroundYaclScreen, ControllerPopupWidget<?> controllerPopup) {
         super(controllerPopup.popupTitle()); //Gets narrated by the narrator
         this.backgroundYaclScreen = backgroundYaclScreen;
         this.controllerPopup = controllerPopup;
