@@ -93,12 +93,12 @@ githubRelease {
 
     val githubProject: String by rootProject
     val split = githubProject.split("/")
-    owner(split[0])
-    repo(split[1])
-    tagName("${project.version}")
-    targetCommitish(grgit.branch.current().name)
-    body(changelogText)
-    prerelease(isBeta)
+    owner.set(split[0])
+    repo.set(split[1])
+    tagName.set("${project.version}")
+    targetCommitish.set(grgit.branch.current().name)
+    body.set(changelogText)
+    prerelease.set(isBeta)
     releaseAssets(
         { findProject(":fabric")?.tasks?.get("remapJar")?.outputs?.files },
         { findProject(":fabric")?.tasks?.get("remapSourcesJar")?.outputs?.files },
