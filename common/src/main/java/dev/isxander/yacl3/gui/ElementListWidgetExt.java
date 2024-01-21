@@ -1,7 +1,6 @@
 package dev.isxander.yacl3.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import dev.isxander.yacl3.gui.controllers.ColorController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -145,19 +144,6 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
 
     @Override
     public void visitWidgets(Consumer<AbstractWidget> consumer) {
-    }
-
-    public int getActivePopupControllerY() {
-        for (E entry : children()) {
-            if(entry instanceof OptionListWidget.OptionEntry optionEntry) {
-                if(optionEntry.widget instanceof ColorController.ColorControllerElement colorControllerElement) {
-                    if(colorControllerElement.colorPickerVisible()) {
-                        return getRowTop(this.children().indexOf(entry));
-                    }
-                }
-            }
-        }
-        return 0;
     }
 
     public abstract static class Entry<E extends Entry<E>> extends ContainerObjectSelectionList.Entry<E> {

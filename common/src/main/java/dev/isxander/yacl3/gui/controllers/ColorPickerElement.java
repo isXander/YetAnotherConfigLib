@@ -123,7 +123,6 @@ public class ColorPickerElement extends ControllerPopupWidget<ColorController> {
             //Alpha slider thumb
             graphics.fill(alphaThumbX - thumbWidth / 2, alphaGradientDim.y() - outline, alphaThumbX + thumbWidth / 2, alphaGradientDim.yLimit() + outline, 6, -1);
         }
-
     }
 
     public boolean clickedHueSlider(double mouseX, double mouseY) {
@@ -252,8 +251,8 @@ public class ColorPickerElement extends ControllerPopupWidget<ColorController> {
         //Division is used for the main color preview, saturation/light picker, and hue slider to determine their dimensions
         colorPickerDim = Dimension.ofInt(colorPickerX, colorPickerY, dim.xLimit() - colorPickerX, colorPickerHeight);
 
-        //Add anything after the colorPickerDim.height to reduce the "strictness" of the detection
-        if(colorPickerDim.yLimit() - colorPickerDim.height() < screen.tabArea.top()){
+        //Add anything after the colorPickerDim.y() to reduce the "strictness" of the detection
+        if(colorPickerDim.y() < screen.tabArea.top()){
             colorPickerY = dim.yLimit() + sliderHeight;
             colorPickerDim = colorPickerDim.setY(colorPickerY);
         }

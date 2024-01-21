@@ -202,6 +202,14 @@ public class ColorController implements IStringController<Color> {
 
             int previewSize = (dim.height() - getYPadding() * 2) / 2;
             colorPreviewDim = Dimension.ofInt(dim.xLimit() - getXPadding() - previewSize, dim.centerY() - previewSize / 2, previewSize, previewSize);
+
+            if(colorPickerElement != null) {
+                colorPickerElement.setDimension(colorPickerElement.getDimension().withY(this.getDimension().y()));
+                //checks if the color controller is being partially rendered offscreen
+                if(this.getDimension().y() < screen.tabArea.top() || this.getDimension().yLimit() > screen.tabArea.bottom()) {
+                    removeColorPicker();
+                }
+            }
         }
 
         @Override
