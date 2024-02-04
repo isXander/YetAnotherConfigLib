@@ -101,7 +101,7 @@ public class ColorController implements IStringController<Color> {
 
     public static class ColorControllerElement extends StringControllerElement {
         private final ColorController colorController;
-        private ColorPickerElement colorPickerElement;
+        private ColorPickerWidget colorPickerWidget;
 
         protected MutableDimension<Integer> colorPreviewDim;
         private final List<Character> allowedChars;
@@ -203,8 +203,8 @@ public class ColorController implements IStringController<Color> {
             int previewSize = (dim.height() - getYPadding() * 2) / 2;
             colorPreviewDim = Dimension.ofInt(dim.xLimit() - getXPadding() - previewSize, dim.centerY() - previewSize / 2, previewSize, previewSize);
 
-            if(colorPickerElement != null) {
-                colorPickerElement.setDimension(colorPickerElement.getDimension().withY(this.getDimension().y()));
+            if(colorPickerWidget != null) {
+                colorPickerWidget.setDimension(colorPickerWidget.getDimension().withY(this.getDimension().y()));
                 //checks if the color controller is being partially rendered offscreen
                 if(this.getDimension().y() < screen.tabArea.top() || this.getDimension().yLimit() > screen.tabArea.bottom()) {
                     removeColorPicker();
@@ -248,8 +248,8 @@ public class ColorController implements IStringController<Color> {
         public void createOrRemoveColorPicker() {
             colorPickerVisible = !colorPickerVisible;
             if(colorPickerVisible) {
-                colorPickerElement = createColorPicker();
-                screen.addPopupControllerWidget(colorPickerElement);
+                colorPickerWidget = createColorPicker();
+                screen.addPopupControllerWidget(colorPickerWidget);
             } else {
                 removeColorPicker();
             }
@@ -257,7 +257,9 @@ public class ColorController implements IStringController<Color> {
 
         @Override
         public void unfocus() {
-            removeColorPicker();
+            if(colorPickerVisible) {
+                removeColorPicker();
+            }
             previewOutlineFadeTicks = 0;
             super.unfocus();
         }
@@ -320,22 +322,22 @@ public class ColorController implements IStringController<Color> {
             return highlightedColor;
         }
 
-        public ColorPickerElement colorPickerElement() {
-            return colorPickerElement;
+        public ColorPickerWidget colorPickerWidget() {
+            return colorPickerWidget;
         }
 
         public boolean colorPickerVisible() {
             return colorPickerVisible;
         }
 
-        public ColorPickerElement createColorPicker() {
-            return new ColorPickerElement(colorController, screen, getDimension(), this);
+        public ColorPickerWidget createColorPicker() {
+            return new ColorPickerWidget(colorController, screen, getDimension(), this);
         }
 
         public void removeColorPicker() {
             screen.clearPopupControllerWidget();
             this.colorPickerVisible = false;
-            this.colorPickerElement = null;
+            this.colorPickerWidget = null;
             this.hoveredOverColorPreview = false; //set to false in favor of the manual checking here to be done
         }
     }

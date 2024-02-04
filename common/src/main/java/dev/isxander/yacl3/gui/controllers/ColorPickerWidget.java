@@ -3,7 +3,6 @@ package dev.isxander.yacl3.gui.controllers;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
 import dev.isxander.yacl3.gui.YACLScreen;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +10,7 @@ import net.minecraft.util.Mth;
 
 import java.awt.*;
 
-public class ColorPickerElement extends ControllerPopupWidget<ColorController> {
+public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
     private static final ResourceLocation COLOR_PICKER_LOCATION = new ResourceLocation("yet_another_config_lib", "controller/colorpicker");
     private static final ResourceLocation TRANSPARENT_TEXTURE_LOCATION = new ResourceLocation("yet_another_config_lib", "controller/transparent");
     private final ColorController controller;
@@ -59,7 +58,7 @@ public class ColorPickerElement extends ControllerPopupWidget<ColorController> {
     private float light;
     private int alpha;
 
-    public ColorPickerElement(ColorController control, YACLScreen screen, Dimension<Integer> dim, ColorController.ColorControllerElement entryWidget) {
+    public ColorPickerWidget(ColorController control, YACLScreen screen, Dimension<Integer> dim, ColorController.ColorControllerElement entryWidget) {
         super(control, screen, dim, entryWidget);
         this.controller = control;
         this.entryWidget = entryWidget;
@@ -195,9 +194,7 @@ public class ColorPickerElement extends ControllerPopupWidget<ColorController> {
         } else if(entryWidget.isMouseOver(mouseX, mouseY)) {
             return entryWidget.mouseClicked(mouseX, mouseY, button);
         } else {
-            if(Minecraft.getInstance().screen instanceof PopupControllerScreen popupControllerScreen) {
-                popupControllerScreen.onClose();
-            }
+            close(); //removes color picker
             return false;
         }
     }
@@ -273,7 +270,6 @@ public class ColorPickerElement extends ControllerPopupWidget<ColorController> {
     @Override
     public void close() {
         entryWidget.removeColorPicker();
-        super.close();
     }
 
     @Override
