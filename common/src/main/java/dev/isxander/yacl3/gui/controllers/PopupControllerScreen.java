@@ -51,7 +51,6 @@ public class PopupControllerScreen extends Screen {
     @Override
     public void onClose() {
         this.minecraft.screen = backgroundYaclScreen;
-        controllerPopup.close();
     }
 
 }

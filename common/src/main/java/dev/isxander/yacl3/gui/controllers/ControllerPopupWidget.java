@@ -25,9 +25,7 @@ public abstract class ControllerPopupWidget<T extends Controller<?>> extends Con
         return entryWidget.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    public void close() {
-        screen.clearPopupControllerWidget();
-    }
+    public void close() {}
 
     public Component popupTitle() {
         return Component.translatable("yacl.control.text.blank");
