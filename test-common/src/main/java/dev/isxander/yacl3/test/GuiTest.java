@@ -27,7 +27,9 @@ import net.minecraft.world.item.Item;
 
 import java.awt.Color;
 import java.nio.file.Path;
+import java.util.AbstractMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class GuiTest {
@@ -334,6 +336,29 @@ public class GuiTest {
                                         .initial(Component.literal("Initial label"))
                                         .build())
                                 .build())
+                        .category(ConfigCategory.createBuilder()
+                                .name(Component.literal("Map Test"))
+                                .group(MapOption.<String, String>createBuilder()
+                                                                 .name(Component.literal("String Map"))
+                                                                 .binding(
+                                                                         defaults.stringMap,
+                                                                         () -> config.stringMap,
+                                                                         val -> config.stringMap = val
+                                                                 )
+                                                                 .keyController(StringControllerBuilder::create)
+                                                                 .valueController(StringControllerBuilder::create)
+                                                                 .initial(Map.entry("", ""))
+                                                                 .minimumNumberOfEntries(3)
+                                                                 .maximumNumberOfEntries(5)
+                                                                 .insertEntriesAtEnd(true)
+                                                                 .build())
+                                                .group(MapOption.<Component, Component>createBuilder()
+                                                                 .name(Component.literal("Useless Label Map"))
+                                                                 .binding(Binding.immutable(Map.of(Component.literal("It's quite impressive that literally every single controller works, without problem."), Component.literal("It's quite impressive that literally every single controller works, without problem."))))
+                                                                 .customController(LabelController::new, LabelController::new)
+                                                                 .initial(Map.entry(Component.literal("Initial key label"), Component.literal("Initial value label")))
+                                                                 .build())
+                                                .build())
                         .category(ConfigCategory.createBuilder()
                                 .name(Component.literal("Group Test"))
                                 .option(Option.createBuilder(boolean.class)

@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui.controllers;
 
 import dev.isxander.yacl3.api.Controller;
+import dev.isxander.yacl3.api.MapOptionEntry;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.AbstractWidget;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Simply renders some text as a label.
@@ -45,6 +47,11 @@ public class LabelController implements Controller<Component> {
 
     @Override
     public Component formatValue() {
+        // TODO: How should this be handled?
+        if (option() instanceof MapOptionEntry<?, ?> mapOptionEntry) {
+            return (Component) ((Map.Entry<?, ?>) mapOptionEntry.pendingValue()).getKey();
+        }
+
         return option().pendingValue();
     }
 
