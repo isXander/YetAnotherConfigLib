@@ -15,6 +15,7 @@ import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -41,6 +42,8 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         for (OptionGroup group : category.groups()) {
             if (group instanceof ListOption<?> listOption) {
                 listOption.addRefreshListener(() -> refreshListEntries(listOption, category));
+            } else if (group instanceof MapOption<?, ?> mapOption) {
+                mapOption.addRefreshListener(() -> refreshMapEntries(mapOption, category));
             }
         }
     }
@@ -51,9 +54,14 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         for (OptionGroup group : category.groups()) {
             GroupSeparatorEntry groupSeparatorEntry;
             if (!group.isRoot()) {
-                groupSeparatorEntry = group instanceof ListOption<?> listOption
-                        ? new ListGroupSeparatorEntry(listOption, yaclScreen)
-                        : new GroupSeparatorEntry(group, yaclScreen);
+                if (group instanceof ListOption<?> listOption) {
+                    groupSeparatorEntry = new ListGroupSeparatorEntry(listOption, yaclScreen);
+                } else if (group instanceof MapOption<?, ?> mapOption) {
+                    groupSeparatorEntry = new MapGroupSeparatorEntry(mapOption, yaclScreen);
+                } else {
+                    groupSeparatorEntry = new GroupSeparatorEntry(group, yaclScreen);
+                }
+
                 addEntry(groupSeparatorEntry);
             } else {
                 groupSeparatorEntry = null;
@@ -112,6 +120,44 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             OptionEntry optionEntry = new OptionEntry(listOptionEntry, category, listOption, groupSeparator, listOptionEntry.controller().provideWidget(yaclScreen, getDefaultEntryDimension()));
             addEntryBelow(lastEntry, optionEntry);
             groupSeparator.childEntries.add(optionEntry);
+            lastEntry = optionEntry;
+        }
+    }
+
+    private void refreshMapEntries(MapOption<?, ?> mapOption, ConfigCategory category) {
+        // Find group separator for group
+        OptionListWidget.MapGroupSeparatorEntry groupSeparator = super.children().stream().filter(
+                entry -> entry instanceof OptionListWidget.MapGroupSeparatorEntry mapGroupSeparatorEntry && mapGroupSeparatorEntry.group == mapOption).map(
+                OptionListWidget.MapGroupSeparatorEntry.class::cast).findAny().orElse(null);
+
+        if (groupSeparator == null) {
+            YACLConstants.LOGGER.warn("Can't find group separator to refresh map option entries for map option " + mapOption.name());
+            return;
+        }
+
+        var groupSeparatorChildEntries = groupSeparator.childEntries;
+        for (OptionListWidget.Entry entry : groupSeparatorChildEntries)
+            super.removeEntry(entry);
+        groupSeparatorChildEntries.clear();
+
+        // If no entries, below loop won't run where addEntryBelow() reaches viewable children
+        if (mapOption.options().isEmpty()) {
+            OptionListWidget.EmptyMapLabel emptyMapLabel = new EmptyMapLabel(groupSeparator, category);
+
+            addEntryBelow(groupSeparator, emptyMapLabel);
+            groupSeparatorChildEntries.add(emptyMapLabel);
+
+            return;
+        }
+
+        OptionListWidget.Entry lastEntry = groupSeparator;
+        for (MapOptionEntry<?, ?> mapOptionEntry : mapOption.options()) {
+            OptionListWidget.OptionEntry optionEntry = new OptionEntry(mapOptionEntry, category, mapOption, groupSeparator,
+                    mapOptionEntry.controller().provideWidget(yaclScreen, getDefaultEntryDimension())
+            );
+
+            addEntryBelow(lastEntry, optionEntry);
+            groupSeparatorChildEntries.add(optionEntry);
             lastEntry = optionEntry;
         }
     }
@@ -533,6 +579,71 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
     }
 
+    public class MapGroupSeparatorEntry extends GroupSeparatorEntry {
+        private final MapOption<?, ?> mapOption;
+        private final TextScaledButtonWidget resetListButton;
+        private final TooltipButtonWidget addListButton;
+
+        private MapGroupSeparatorEntry(MapOption<?, ?> group, Screen screen) {
+            super(group, screen);
+            this.mapOption = group;
+
+            this.resetListButton = new TextScaledButtonWidget(screen, getRowRight() - 20, -50, 20, 20, 2f, Component.literal("\u21BB"), button -> {
+                group.requestSetDefault();
+            });
+            group.addListener((opt, val) -> this.resetListButton.active = !opt.isPendingValueDefault() && opt.available());
+            this.resetListButton.active = !group.isPendingValueDefault() && group.available();
+
+
+            this.addListButton = new TooltipButtonWidget(yaclScreen, resetListButton.getX() - 20, -50, 20, 20, Component.literal("+"), Component.translatable("yacl.list.add_top"), btn -> {
+                group.insertNewEntry();
+                setExpanded(true);
+            });
+
+            updateExpandMinimizeText();
+            minimizeIfUnavailable();
+        }
+
+        @Override
+        public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            updateExpandMinimizeText(); // update every render because option could become available/unavailable at any time
+
+            super.render(graphics, index, y, x, entryWidth, entryHeight, mouseX, mouseY, hovered, tickDelta);
+
+            int buttonY = expandMinimizeButton.getY();
+
+            resetListButton.setY(buttonY);
+            addListButton.setY(buttonY);
+
+            resetListButton.render(graphics, mouseX, mouseY, tickDelta);
+            addListButton.render(graphics, mouseX, mouseY, tickDelta);
+        }
+
+        private void minimizeIfUnavailable() {
+            if (!mapOption.available() && isExpanded()) {
+                setExpanded(false);
+            }
+        }
+
+        @Override
+        protected void updateExpandMinimizeText() {
+            super.updateExpandMinimizeText();
+            expandMinimizeButton.active = mapOption == null || mapOption.available();
+            if (addListButton != null)
+                addListButton.active = expandMinimizeButton.active && mapOption.numberOfEntries() < mapOption.maximumNumberOfEntries();
+        }
+
+        @Override
+        public void setExpanded(boolean expanded) {
+            super.setExpanded(mapOption.available() && expanded);
+        }
+
+        @Override
+        public List<? extends GuiEventListener> children() {
+            return ImmutableList.of(expandMinimizeButton, addListButton, resetListButton);
+        }
+    }
+
     public class EmptyListLabel extends Entry {
         private final ListGroupSeparatorEntry parent;
         private final String groupName;
@@ -566,6 +677,43 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
         @Override
         public List<? extends NarratableEntry> narratables() {
+            return ImmutableList.of();
+        }
+    }
+
+    public class EmptyMapLabel extends Entry {
+        private final MapGroupSeparatorEntry parent;
+        private final String groupName;
+        private final String categoryName;
+
+        public EmptyMapLabel(MapGroupSeparatorEntry parent, ConfigCategory category) {
+            this.parent = parent;
+            this.groupName = parent.group.name().getString().toLowerCase();
+            this.categoryName = category.name().getString().toLowerCase();
+        }
+
+        @Override
+        public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            graphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable("yacl.list.empty").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), x + entryWidth / 2, y, -1);
+        }
+
+        @Override
+        public boolean isViewable() {
+            return parent.isExpanded() && (searchQuery.isEmpty() || groupName.contains(searchQuery));
+        }
+
+        @Override
+        public int getItemHeight() {
+            return 11;
+        }
+
+        @Override
+        public @NotNull List<? extends GuiEventListener> children() {
+            return ImmutableList.of();
+        }
+
+        @Override
+        public @NotNull List<? extends NarratableEntry> narratables() {
             return ImmutableList.of();
         }
     }

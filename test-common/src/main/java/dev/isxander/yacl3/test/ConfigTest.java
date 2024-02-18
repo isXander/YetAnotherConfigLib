@@ -9,6 +9,7 @@ import net.minecraft.world.item.Items;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Map;
 
 public class ConfigTest {
     public static final ConfigClassHandler<ConfigTest> GSON = ConfigClassHandler.createBuilder(ConfigTest.class)
@@ -56,6 +57,9 @@ public class ConfigTest {
     public List<String> stringList = List.of("This is quite cool.", "You can add multiple items!", "And it is integrated so well into Option groups!");
     @SerialEntry
     public List<Integer> intList = List.of(1, 2, 3);
+
+    @SerialEntry
+    public Map<String, String> stringMap = Map.of("Key", "Value", "This is a map!", "Fully integrated just like lists.");
 
     @SerialEntry
     public boolean groupTestRoot = false;
