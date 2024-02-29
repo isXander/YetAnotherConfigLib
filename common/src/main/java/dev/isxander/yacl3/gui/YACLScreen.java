@@ -84,12 +84,6 @@ public class YACLScreen extends Screen {
         config.initConsumer().accept(this);
     }
 
-    @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        renderDirtBackground(graphics);
-        super.render(graphics, mouseX, mouseY, delta);
-    }
-
     protected void finishOrSave() {
         saveButtonMessage = null;
 
@@ -176,6 +170,11 @@ public class YACLScreen extends Screen {
         if (tabManager.getCurrentTab() instanceof CategoryTab categoryTab) {
             categoryTab.updateButtons();
         }
+    }
+
+    @Override
+    protected void renderMenuBackground(GuiGraphics guiGraphics) {
+        this.renderMenuBackground(guiGraphics, 0, this.tabArea.top() + 1, this.width, this.tabArea.height());
     }
 
     @Override
@@ -341,11 +340,11 @@ public class YACLScreen extends Screen {
         public void updateButtons() {
             boolean pendingChanges = pendingChanges();
 
-            undoButton.active = pendingChanges;
-            saveFinishedButton.setMessage(pendingChanges ? Component.translatable("yacl.gui.save") : GuiUtils.translatableFallback("yacl.gui.done", CommonComponents.GUI_DONE));
-            saveFinishedButton.setTooltip(new YACLTooltip(pendingChanges ? Component.translatable("yacl.gui.save.tooltip") : Component.translatable("yacl.gui.finished.tooltip"), saveFinishedButton));
+            // TODO
+            undoButton.active = pendingChanges;            saveFinishedButton.setMessage(pendingChanges ? Component.translatable("yacl.gui.save") : GuiUtils.translatableFallback("yacl.gui.done", CommonComponents.GUI_DONE));
+            //saveFinishedButton.setTooltip(new YACLTooltip(pendingChanges ? Component.translatable("yacl.gui.save.tooltip") : Component.translatable("yacl.gui.finished.tooltip"), saveFinishedButton));
             cancelResetButton.setMessage(pendingChanges ? GuiUtils.translatableFallback("yacl.gui.cancel", CommonComponents.GUI_CANCEL) : Component.translatable("controls.reset"));
-            cancelResetButton.setTooltip(new YACLTooltip(pendingChanges ? Component.translatable("yacl.gui.cancel.tooltip") : Component.translatable("yacl.gui.reset.tooltip"), cancelResetButton));
+            //cancelResetButton.setTooltip(new YACLTooltip(pendingChanges ? Component.translatable("yacl.gui.cancel.tooltip") : Component.translatable("yacl.gui.reset.tooltip"), cancelResetButton));
         }
     }
 

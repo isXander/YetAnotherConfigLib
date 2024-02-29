@@ -244,6 +244,10 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
     }
 
+    @Override
+    protected void renderListBackground(GuiGraphics guiGraphics) {
+    }
+
     public abstract class Entry extends ElementListWidgetExt.Entry<Entry> {
         public boolean isViewable() {
             return true;

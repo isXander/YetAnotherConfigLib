@@ -1,6 +1,6 @@
 [versions]
 # Plugins
-architectury_loom = "1.4.+"
+architectury_loom = "1.5.+"
 architectury_plugin = "3.4.+"
 shadow = "7.1.+"
 minotaur = "2.7.+"
@@ -9,17 +9,17 @@ github_release = "2.4.+"
 machete = "2.+"
 grgit = "5.0.+"
 
-minecraft = "1.20.4"
-parchment = "2023.10.22"
-fabric_loader = "0.14.25"
+minecraft = "24w09a"
+parchment = "2023.12.10"
+fabric_loader = "0.15.7"
 
 # Common Dependencies
-mixin_extras = "0.2.0"
+mixin_extras = "0.3.2"
 twelvemonkeys_imageio = "3.10.0"
 quilt_parsers = "0.2.1"
 
 # Fabric-like Dependencies
-fabric_api = "0.91.1+1.20.3"
+fabric_api = "0.96.5+1.20.5"
 
 # Forge Dependencies
 neoforge = "20.4.0-beta"

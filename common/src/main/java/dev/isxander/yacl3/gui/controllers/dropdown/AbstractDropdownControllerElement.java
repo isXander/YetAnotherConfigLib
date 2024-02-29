@@ -226,7 +226,7 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 
 	public void renderDropdownBackground(GuiGraphics graphics, int numberOfItems) {
 		graphics.setColor(0.25f, 0.25f, 0.25f, 1.0f);
-		graphics.blit(Screen.BACKGROUND_LOCATION, getDimension().x(), getDimension().yLimit() + 2, 0, 0.0f, 0.0f, getDimension().width(), getDimension().height() * numberOfItems + 2, 32, 32);
+		graphics.blit(Screen.MENU_BACKGROUND, getDimension().x(), getDimension().yLimit() + 2, 0, 0.0f, 0.0f, getDimension().width(), getDimension().height() * numberOfItems + 2, 32, 32);
 		graphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 		graphics.renderOutline(getDimension().x(), getDimension().yLimit() + 2, getDimension().width(), getDimension().height() * numberOfItems, -1);
 	}

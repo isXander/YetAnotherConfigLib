@@ -21,7 +21,6 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     public ElementListWidgetExt(Minecraft client, int x, int y, int width, int height, boolean smoothScrolling) {
         super(client, x, y, width, height);
         this.doSmoothScrolling = smoothScrolling;
-        setRenderBackground(true);
         setRenderHeader(false, 0);
     }
 
@@ -124,7 +123,7 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     }
 
     @Override
-    protected void renderList(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    protected void renderListItems(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         int left = this.getRowLeft();
         int right = this.getRowWidth();
         int count = this.getItemCount();

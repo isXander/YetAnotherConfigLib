@@ -15,7 +15,8 @@ public class TooltipButtonWidget extends Button {
     public TooltipButtonWidget(Screen screen, int x, int y, int width, int height, Component message, Component tooltip, OnPress onPress) {
         super(x, y, width, height, message, onPress, DEFAULT_NARRATION);
         this.screen = screen;
-        if (tooltip != null)
-            setTooltip(new YACLTooltip(tooltip, this));
+        // TODO
+        if (tooltip != null);
+            //setTooltip(new YACLTooltip(tooltip, this));
     }
 }
