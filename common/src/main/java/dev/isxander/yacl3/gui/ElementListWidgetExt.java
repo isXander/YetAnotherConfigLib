@@ -123,6 +123,20 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     }
 
     @Override
+    protected void ensureVisible(E entry) {
+        int i = this.getRowTop(this.children().indexOf(entry));
+        int j = i - this.getY() - 4 - entry.getItemHeight();
+        if (j < 0) {
+            this.setScrollAmount(this.getScrollAmount() + j);
+        }
+
+        int k = this.getBottom() - i - entry.getItemHeight() * 2;
+        if (k < 0) {
+            this.setScrollAmount(this.getScrollAmount() - k);
+        }
+    }
+
+    @Override
     protected void renderListItems(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         int left = this.getRowLeft();
         int right = this.getRowWidth();
