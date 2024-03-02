@@ -83,7 +83,7 @@ public class GuiTest {
                                                                     .append(Component.literal("e").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("e")))))
                                                                     .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://isxander.dev")))
                                                             )
-                                                            .webpImage(new ResourceLocation("yacl3", "reach-around-placement.webp"))
+                                                            .webpImage(new ResourceLocation("yacl3", "textures/reach-around-placement.webp"))
                                                             .build())
                                                     .binding(
                                                             defaults.booleanToggle,
@@ -100,7 +100,7 @@ public class GuiTest {
                                                 .name(Component.literal("Custom Boolean Toggle"))
                                                 .description(val -> OptionDescription.createBuilder()
                                                         .text(Component.literal("You can customize controllers like so! YACL is truly infinitely customizable! This tooltip is long in order to demonstrate the cool, smooth scrolling of these descriptions. Did you know, they are also super clickable?! I know, cool right, YACL 3.x really is amazing."))
-                                                        .image(Path.of("D:\\Xander\\Downloads\\_MG_0860-Enhanced-NR.png"), new ResourceLocation("yacl", "f.webp")) // TODO: Add img file to git?
+                                                        .webpImage(new ResourceLocation("yacl3", "textures/sample-1.webp"))
                                                         .build())
                                                 .binding(
                                                         defaults.customBooleanToggle,
@@ -114,7 +114,10 @@ public class GuiTest {
                                                 .build())
                                         .option(Option.<Boolean>createBuilder()
                                                 .name(Component.literal("Tick Box"))
-                                                .description(OptionDescription.of(Component.literal("There are even alternate methods of displaying the same data type!")))
+                                                .description(OptionDescription.createBuilder()
+                                                        .text(Component.literal("There are even alternate methods of displaying the same data type!"))
+                                                        .webpImage(new ResourceLocation("yacl3", "textures/sample-2.webp"))
+                                                        .build())
                                                 .binding(
                                                         defaults.tickbox,
                                                         () -> config.tickbox,
@@ -127,6 +130,9 @@ public class GuiTest {
                                         .name(Component.literal("Slider Controllers"))
                                         .option(Option.<Integer>createBuilder()
                                                 .name(Component.literal("Int Slider"))
+                                                .description(OptionDescription.createBuilder()
+                                                        .webpImage(new ResourceLocation("yacl3", "textures/sample-3.webp"))
+                                                        .build())
                                                 .binding(
                                                         defaults.intSlider,
                                                         () -> config.intSlider,
@@ -136,6 +142,9 @@ public class GuiTest {
                                                 .build())
                                         .option(Option.<Double>createBuilder()
                                                 .name(Component.literal("Double Slider"))
+                                                .description(OptionDescription.createBuilder()
+                                                        .webpImage(new ResourceLocation("yacl3", "textures/sample-4.webp"))
+                                                        .build())
                                                 .binding(
                                                         defaults.doubleSlider,
                                                         () -> config.doubleSlider,
@@ -145,6 +154,9 @@ public class GuiTest {
                                                 .build())
                                         .option(Option.<Float>createBuilder()
                                                 .name(Component.literal("Float Slider"))
+                                                .description(OptionDescription.createBuilder()
+                                                        .webpImage(new ResourceLocation("yacl3", "textures/sample-5.webp"))
+                                                        .build())
                                                 .binding(
                                                         defaults.floatSlider,
                                                         () -> config.floatSlider,

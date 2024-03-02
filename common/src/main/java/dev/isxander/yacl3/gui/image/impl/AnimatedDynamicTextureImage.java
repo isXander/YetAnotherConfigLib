@@ -103,6 +103,10 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         };
     }
 
+    public static ImageRendererFactory createGIFFromResource(Resource resource, ResourceLocation resourceLocation) {
+        return () -> createGIFSupplier(resource.open(), resourceLocation);
+    }
+
     public static ImageRendererFactory createGIFFromPath(Path path, ResourceLocation uniqueLocation) {
         return () -> createGIFSupplier(new FileInputStream(path.toFile()), uniqueLocation);
     }
@@ -114,6 +118,10 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
 
             return createWEBPSupplier(resource.open(), textureLocation);
         };
+    }
+
+    public static ImageRendererFactory createWEBPFromResource(Resource resource, ResourceLocation resourceLocation) {
+        return () -> createWEBPSupplier(resource.open(), resourceLocation);
     }
 
     public static ImageRendererFactory createWEBPFromPath(Path path, ResourceLocation uniqueLocation) {

@@ -142,6 +142,11 @@ public class YACLScreen extends Screen {
             config.saveFunction().run();
 
             flags.forEach(flag -> flag.accept(minecraft));
+
+            pendingChanges = false;
+            if (tabManager.getCurrentTab() instanceof CategoryTab categoryTab) {
+                categoryTab.updateButtons();
+            }
         } else onClose();
     }
 

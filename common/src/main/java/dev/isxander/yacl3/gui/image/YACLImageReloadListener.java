@@ -28,8 +28,9 @@ public class YACLImageReloadListener implements PreparableReloadListener {
             Executor backgroundExecutor, 
             Executor gameExecutor
     ) {
+        YACLConstants.LOGGER.info("YACL is reloading images");
         Map<ResourceLocation, Resource> imageResources = resourceManager.listResources(
-                "",
+                "textures",
                 location -> ImageRendererManager.PRELOADED_IMAGE_FACTORIES
                         .stream()
                         .anyMatch(factory -> factory.predicate().test(location))
@@ -51,7 +52,7 @@ public class YACLImageReloadListener implements PreparableReloadListener {
             ImageRendererFactory imageFactory = ImageRendererManager.PRELOADED_IMAGE_FACTORIES
                     .stream()
                     .filter(factory -> factory.predicate().test(location))
-                    .map(factory -> factory.factory().apply(location))
+                    .map(factory -> factory.factory().apply(resource, location))
                     .findAny()
                     .orElseThrow();
 
@@ -93,6 +94,8 @@ public class YACLImageReloadListener implements PreparableReloadListener {
                 }
             });
         }
+
+        YACLConstants.LOGGER.info("YACL has found {} images", imageResources.size());
 
         return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
     }
