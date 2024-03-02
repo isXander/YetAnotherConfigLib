@@ -4,6 +4,8 @@
 
   "yacl.control.action.execute": "EXECUTE",
 
+  "yacl.control.color.color_picker_title": "Color Picker",
+
   "yacl.control.text.blank": "<blank>",
 
   "yacl.gui.save": "Save Changes",
@@ -28,4 +30,5 @@
   "yacl.restart.message": "One or more options needs you to restart the game to apply the changes.",
   "yacl.restart.yes": "Close Minecraft",
   "yacl.restart.no": "Ignore"
+
 }

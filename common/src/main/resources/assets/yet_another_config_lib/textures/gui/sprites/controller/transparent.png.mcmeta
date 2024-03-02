@@ -1,0 +1,10 @@
+{
+  "gui": {
+    "scaling": {
+      "type": "tile",
+      "width": 7,
+      "height": 7,
+      "border": 3
+    }
+  }
+}
