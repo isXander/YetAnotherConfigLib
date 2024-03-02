@@ -8,6 +8,7 @@ import dev.isxander.yacl3.gui.AbstractWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.string.IStringController;
 import dev.isxander.yacl3.gui.controllers.string.StringControllerElement;
+import dev.isxander.yacl3.platform.YACLConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -108,7 +109,6 @@ public class ColorController implements IStringController<Color> {
         public boolean hoveredOverColorPreview = false;
         private boolean colorPickerVisible = false;
         private int previewOutlineFadeTicks = 0;
-        private boolean shouldFlashOutline = true;
 
         public ColorControllerElement(ColorController control, YACLScreen screen, Dimension<Integer> dim) {
             super(control, screen, dim, true);
@@ -231,7 +231,10 @@ public class ColorController implements IStringController<Color> {
                 if(isMouseOverColorPreview(mouseX, mouseY)) {
                         playDownSound();
                         createOrRemoveColorPicker();
-                        shouldFlashOutline = false;
+                        if(YACLConfig.HANDLER.instance().showColorPickerIndicator) {
+                            YACLConfig.HANDLER.instance().showColorPickerIndicator = false;
+                            YACLConfig.HANDLER.save();
+                        }
                 }
                 caretPos = Math.max(1, caretPos);
                 setSelectionLength();
@@ -280,7 +283,7 @@ public class ColorController implements IStringController<Color> {
                 //white/light grey if the color preview is being hovered
                 previewOutlineFadeTicks = 0;
                 return highlightedColor;
-            } else if(shouldFlashOutline) {
+            } else if(YACLConfig.HANDLER.instance().showColorPickerIndicator) {
                 if(previewOutlineFadeTicks <= fadeInTicks) {
                     //fade to white
                     return getFadedColor(outlineColor, highlightedColor, previewOutlineFadeTicks, fadeInTicks);

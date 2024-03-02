@@ -12,5 +12,5 @@ public class YACLConfig {
                     .build())
             .build();
 
-    // place future configuration here
+    public boolean showColorPickerIndicator = true;
 }
