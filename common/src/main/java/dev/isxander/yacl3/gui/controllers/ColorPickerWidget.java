@@ -244,15 +244,15 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
             colorPickerY -= alphaSliderHeight;
         }
 
+        //Check if the color picker should be moved to beneath the controller
+        //Add additional numbers after colorPickerY to reduce the "strictness" of this detection
+        if(colorPickerY < screen.tabArea.top()) {
+            colorPickerY = dim.yLimit() + sliderHeight;
+        }
+
         //A single dimension for the entire color picker as a whole
         //Division is used for the main color preview, saturation/light picker, and hue slider to determine their dimensions
         colorPickerDim = Dimension.ofInt(colorPickerX, colorPickerY, dim.xLimit() - colorPickerX, colorPickerHeight);
-
-        //Add anything after the colorPickerDim.y() to reduce the "strictness" of the detection
-        if(colorPickerDim.y() < screen.tabArea.top()){
-            colorPickerY = dim.yLimit() + sliderHeight;
-            colorPickerDim = colorPickerDim.setY(colorPickerY);
-        }
 
         previewColorDim = Dimension.ofInt(colorPickerDim.x(), colorPickerDim.y(), (colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) - paddingX) - colorPickerDim.x(), (colorPickerDim.yLimit() - sliderHeight - paddingY) - colorPickerDim.y() - alphaSliderHeight);
         saturationLightDim = Dimension.ofInt(colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + paddingX + 1, colorPickerDim.y(), colorPickerDim.xLimit() - (colorPickerDim.x() + (colorPickerDim.xLimit() / previewPortion) + paddingX + 1), (colorPickerDim.yLimit() - sliderHeight - paddingY) - colorPickerDim.y() - alphaSliderHeight);

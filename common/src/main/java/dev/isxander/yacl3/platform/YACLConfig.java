@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.platform;
 
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
+import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 
 public class YACLConfig {
@@ -12,5 +13,6 @@ public class YACLConfig {
                     .build())
             .build();
 
+    @SerialEntry
     public boolean showColorPickerIndicator = true;
 }
