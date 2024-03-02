@@ -2,6 +2,7 @@ package dev.isxander.yacl3.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Axis;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
@@ -18,23 +19,25 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
+import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class YACLScreen extends Screen {
+    private static final ResourceLocation DARKER_BG = new ResourceLocation("textures/gui/menu_list_background.png");
+
     public final YetAnotherConfigLib config;
 
     private final Screen parent;
@@ -61,6 +64,8 @@ public class YACLScreen extends Screen {
 
     @Override
     protected void init() {
+        tabArea = new ScreenRectangle(0, 24 - 1, this.width, this.height - 24 + 1);
+
         int currentTab = tabNavigationBar != null
                 ? tabNavigationBar.tabs.indexOf(tabManager.getCurrentTab())
                 : 0;
@@ -76,12 +81,19 @@ public class YACLScreen extends Screen {
                 }).toList());
         tabNavigationBar.selectTab(currentTab, false);
         tabNavigationBar.arrangeElements();
-        ScreenRectangle navBarArea = tabNavigationBar.getRectangle();
-        tabArea = new ScreenRectangle(0, navBarArea.height() - 1, this.width, this.height - navBarArea.height() + 1);
         tabManager.setTabArea(tabArea);
         addRenderableWidget(tabNavigationBar);
 
         config.initConsumer().accept(this);
+    }
+
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+
+        if (tabManager.getCurrentTab() instanceof TabExt tab) {
+            tab.renderBackground(guiGraphics);
+        }
     }
 
     protected void finishOrSave() {
@@ -247,6 +259,8 @@ public class YACLScreen extends Screen {
         private final SearchFieldWidget searchField;
         private OptionDescriptionWidget descriptionWidget;
 
+        private final ScreenRectangle rightPaneDim;
+
         public CategoryTab(ConfigCategory category) {
             this.category = category;
             this.tooltip = Tooltip.create(category.tooltip());
@@ -255,6 +269,7 @@ public class YACLScreen extends Screen {
             int padding = columnWidth / 20;
             columnWidth = Math.min(columnWidth, 400);
             int paddedWidth = columnWidth - padding * 2;
+            rightPaneDim = new ScreenRectangle(width / 3 * 2, tabArea.top() + 1, width / 3, tabArea.height());
             MutableDimension<Integer> actionDim = Dimension.ofInt(width / 3 * 2 + width / 6, height - padding - 20, paddedWidth, 20);
 
             saveFinishedButton = Button.builder(Component.literal("Done"), btn -> finishOrSave())
@@ -287,7 +302,7 @@ public class YACLScreen extends Screen {
             );
 
             this.optionList = new ListHolderWidget<>(
-                    () -> new ScreenRectangle(tabArea.position(), tabArea.width() / 3 * 2 + 1, tabArea.height()),
+                    () -> new ScreenRectangle(tabArea.position(), tabArea.width() / 3 * 2, tabArea.height()),
                     new OptionListWidget(YACLScreen.this, category, minecraft, 0, 0, width / 3 * 2 + 1, height, desc -> {
                         descriptionWidget.setOptionDescription(desc);
                     })
@@ -319,6 +334,28 @@ public class YACLScreen extends Screen {
             consumer.accept(undoButton);
             consumer.accept(searchField);
             consumer.accept(descriptionWidget);
+        }
+
+        @Override
+        public void renderBackground(GuiGraphics graphics) {
+            RenderSystem.enableBlend();
+            // right pane darker db
+            graphics.blit(DARKER_BG, rightPaneDim.left(), rightPaneDim.top(), rightPaneDim.right() + 2, rightPaneDim.bottom() + 2, rightPaneDim.width() + 2, rightPaneDim.height() + 2, 32, 32);
+
+            // top separator for right pane
+            graphics.pose().pushPose();
+            graphics.pose().translate(0, 0, 10);
+            graphics.blit(CreateWorldScreen.HEADER_SEPARATOR, rightPaneDim.left() - 1, rightPaneDim.top() - 2, 0.0F, 0.0F, rightPaneDim.width() + 1, 2, 32, 2);
+            graphics.pose().popPose();
+
+            // left separator for right pane
+            graphics.pose().pushPose();
+            graphics.pose().translate(rightPaneDim.left(), rightPaneDim.top() - 1, 0);
+            graphics.pose().rotateAround(Axis.ZP.rotationDegrees(90), 0, 0, 1);
+            graphics.blit(CreateWorldScreen.FOOTER_SEPARATOR, 0, 0, 0f, 0f, rightPaneDim.height() + 1, 2, 32, 2);
+            graphics.pose().popPose();
+
+            RenderSystem.disableBlend();
         }
 
         @Override

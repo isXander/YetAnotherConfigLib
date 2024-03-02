@@ -135,8 +135,13 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     }
 
     @Override
+    public int getRowLeft() {
+        return super.getRowLeft() - SCROLLBAR_WIDTH;
+    }
+
+    @Override
     public int getRowWidth() {
-        return Math.min(396, (int)(width / 1.3f));
+        return getWidth() - SCROLLBAR_WIDTH - 20;
     }
 
     @Override
@@ -179,11 +184,6 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         return super.charTyped(chr, modifiers);
-    }
-
-    @Override
-    protected int getScrollbarPosition() {
-        return getX() + getWidth() - (int)(width * 0.05f);
     }
 
     public void recacheViewableChildren() {
@@ -246,6 +246,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
     @Override
     protected void renderListBackground(GuiGraphics guiGraphics) {
+        //super.renderListBackground();
     }
 
     public abstract class Entry extends ElementListWidgetExt.Entry<Entry> {

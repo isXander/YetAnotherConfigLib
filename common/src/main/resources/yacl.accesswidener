@@ -10,3 +10,4 @@ accessible field net/minecraft/client/gui/components/tabs/TabNavigationBar tabMa
 accessible field net/minecraft/client/gui/components/tabs/TabNavigationBar tabs Lcom/google/common/collect/ImmutableList;
 accessible field net/minecraft/client/gui/components/tabs/TabNavigationBar tabButtons Lcom/google/common/collect/ImmutableList;
 accessible method net/minecraft/client/gui/components/Tooltip <init> (Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/Component;)V
+accessible field net/minecraft/client/gui/components/AbstractSelectionList scrolling Z

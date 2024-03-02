@@ -14,9 +14,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> extends ContainerObjectSelectionList<E> implements LayoutElement {
+    protected static final int SCROLLBAR_WIDTH = 6;
+
     private double smoothScrollAmount = getScrollAmount();
     private boolean returnSmoothAmount = false;
     private final boolean doSmoothScrolling;
+    private boolean usingScrollbar;
 
     public ElementListWidgetExt(Minecraft client, int x, int y, int width, int height, boolean smoothScrolling) {
         super(client, x, y, width, height);
@@ -34,11 +37,15 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     @Override
     protected int getScrollbarPosition() {
         // default implementation does not respect left/right
-        return this.getX() + this.getWidth() - 2;
+        return this.getRight() - SCROLLBAR_WIDTH;
     }
 
     @Override
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        if (usingScrollbar) {
+            resetSmoothScrolling();
+        }
+
         smoothScrollAmount = Mth.lerp(Minecraft.getInstance().getDeltaFrameTime() * 0.5, smoothScrollAmount, getScrollAmount());
         returnSmoothAmount = true;
 
@@ -49,6 +56,24 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
         graphics.disableScissor();
 
         returnSmoothAmount = false;
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0 && mouseX >= getScrollbarPosition() && mouseX < getScrollbarPosition() + SCROLLBAR_WIDTH) {
+            usingScrollbar = true;
+        }
+
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (button == 0) {
+            usingScrollbar = false;
+        }
+
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     public void updateDimensions(ScreenRectangle rectangle) {
@@ -71,7 +96,7 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     }
 
     protected void resetSmoothScrolling() {
-        this.smoothScrollAmount = getScrollAmount();
+        this.smoothScrollAmount = super.getScrollAmount();
     }
 
     @Nullable
