@@ -1,33 +1,35 @@
+import dev.kikugie.stonecutter.gradle.StonecutterSettings
+
 pluginManagement {
     repositories {
         mavenCentral()
         gradlePluginPortal()
-        maven("https://maven.fabricmc.net")
-        maven("https://maven.architectury.dev/")
-        maven("https://maven.neoforged.net/releases")
-        maven("https://maven.quiltmc.org/repository/release")
+        maven("https://maven.fabricmc.net/")
+        maven("https://maven.architectury.dev")
+        maven("https://maven.neoforged.net/releases/")
+        maven("https://maven.minecraftforge.net/")
+        maven("https://maven.kikugie.dev/releases")
     }
 }
 
-dependencyResolutionManagement {
-    versionCatalogs {
-        create("libs")
-    }
+plugins {
+    id("dev.kikugie.stonecutter") version "0.3.2"
 }
 
+extensions.configure<StonecutterSettings> {
+    kotlinController(true)
+    centralScript("build.gradle.kts")
+    shared {
+        fun mc(mcVersion: String, name: String = mcVersion, loaders: Iterable<String>) {
+            for (loader in loaders) {
+                vers("$name-$loader", mcVersion)
+            }
+        }
+
+        mc("1.20.4", loaders = listOf("fabric", "neoforge"))
+        mc("1.20.1", loaders = listOf("fabric", "forge"))
+        mc("1.20.5-beta.1", name = "1.20.5-pre1", loaders = listOf("fabric"))
+    }
+    create(rootProject)
+}
 rootProject.name = "YetAnotherConfigLib"
-
-val enabledLoaders = settings.extra.properties["loaders"].toString().split(",").map { it.trim() }
-
-include("common")
-include("test-common")
-
-if ("fabric" in enabledLoaders) {
-    include("fabric")
-    include("test-fabric")
-}
-
-if ("neoforge" in enabledLoaders) {
-    include("neoforge")
-    include("test-neoforge")
-}

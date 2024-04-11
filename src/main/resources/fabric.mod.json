@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "version": "${version}",
+  "name": "${name}",
+  "description": "${description}",
+  "authors": [
+    "isXander"
+  ],
+  "contact": {
+    "homepage": "https://isxander.dev",
+    "issues": "https://github.com/${github}/issues",
+    "sources": "https://github.com/${github}"
+  },
+  "icon": "yacl-128x.png",
+  "license": "LGPL-3.0-or-later",
+  "environment": "*",
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "minecraft": "${mc}",
+    "java": ">=17",
+    "fabric-resource-loader-v0": "*"
+  },
+  "mixins": [
+    "yacl.mixins.json",
+    "yacl-fabric.mixins.json"
+  ],
+  "entrypoints": {
+    "client": [
+      "dev.isxander.yacl3.platform.PlatformEntrypoint"
+    ]
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["library"]
+    }
+  }
+}

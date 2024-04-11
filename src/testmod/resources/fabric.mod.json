@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "yacl_test",
+  "version": "1",
+  "name": "YACL Testmod",
+  "description": "",
+  "authors": [
+    "isXander"
+  ],
+  "contact": {
+    "homepage": "https://isxander.dev",
+    "issues": "https://github.com/${github}/issues",
+    "sources": "https://github.com/${github}"
+  },
+  "license": "LGPL-3.0-or-later",
+  "environment": "*",
+  "depends": {
+    "yet_another_config_lib_v3": "*"
+  },
+  "mixins": [
+    "yacl-test.mixins.json"
+  ],
+  "entrypoints": {
+    "client": [
+      "dev.isxander.yacl3.platform.PlatformEntrypoint"
+    ]
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["library"]
+    }
+  }
+}

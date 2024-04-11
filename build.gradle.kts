@@ -1,115 +1,293 @@
 plugins {
-    alias(libs.plugins.architectury.plugin)
-    alias(libs.plugins.architectury.loom) apply false
+    `java-library`
 
-    alias(libs.plugins.minotaur) apply false
-    alias(libs.plugins.cursegradle) apply false
-    alias(libs.plugins.github.release)
-    alias(libs.plugins.grgit)
+    id("dev.architectury.loom") version "1.6.+"
+
+    id("me.modmuss50.mod-publish-plugin") version "0.5.+"
+    `maven-publish`
+    id("org.ajoberstar.grgit") version "5.0.+"
+
+    id("io.github.p03w.machete") version "2.+"
 }
 
-architectury {
-    minecraft = libs.versions.minecraft.get()
-}
+val loader = loom.platform.get().name.lowercase()
+val isFabric = loader == "fabric"
+val isNeoforge = loader == "neoforge"
+val isForge = loader == "forge"
+val isForgeLike = isNeoforge || isForge
 
-version = "3.3.3+1.20.4"
+val mcVersion = stonecutter.current.version
+val mcDep = findProperty("fmj.mcDep")?.toString()
 
+group = "dev.isxander"
+val versionWithoutMC = "3.4.0"
+version = "$versionWithoutMC+${stonecutter.current.project}"
+val isAlpha = "alpha" in version.toString()
 val isBeta = "beta" in version.toString()
-val changelogText = rootProject.file("changelogs/${project.version}.md").takeIf { it.exists() }?.readText() ?: "No changelog provided."
-val snapshotVer = "${grgit.branch.current().name.replace('/', '.')}-SNAPSHOT"
 
-allprojects {
-    apply(plugin = "java")
-    apply(plugin = "maven-publish")
-    apply(plugin = "architectury-plugin")
+base {
+    archivesName.set(property("modName").toString())
+}
 
-    version = rootProject.version
-    group = "dev.isxander"
+java.toolchain {
+    //languageVersion.set(JavaLanguageVersion.of(17))
+}
 
-    if (System.getenv().containsKey("GITHUB_ACTIONS")) {
-        version = "$version+$snapshotVer"
+stonecutter.expression {
+    when (it) {
+        "controlify" -> isPropDefined("deps.controlify")
+        "mod-menu" -> isPropDefined("deps.modMenu")
+        "fabric" -> isFabric
+        "neoforge" -> isNeoforge
+        "forge" -> isForge
+        "!forge" -> !isForge
+        "forge-like" -> isForgeLike
+        else -> null
+    }
+}
+
+val testmod by sourceSets.creating {
+    compileClasspath += sourceSets.main.get().compileClasspath
+    runtimeClasspath += sourceSets.main.get().runtimeClasspath
+}
+
+loom {
+    accessWidenerPath.set(rootProject.file("src/main/resources/yacl.accesswidener"))
+
+    runs {
+        create("testmodClient") {
+            client()
+            name = "Testmod Client"
+            source(testmod)
+        }
+    }
+    if (stonecutter.current.isActive) {
+        runConfigs.all {
+            ideConfigGenerated(true)
+            runDir("../../run")
+        }
     }
 
-    pluginManager.withPlugin("base") {
-        val base = the<BasePluginExtension>()
-
-        base.archivesName.set("yet-another-config-lib-${project.name}")
+    if (isForge) {
+        forge {
+            convertAccessWideners.set(true)
+            mixinConfigs("yacl.mixins.json")
+        }
     }
 
-    ext["changelogText"] = changelogText
-    ext["isBeta"] = isBeta
+    createRemapConfigurations(testmod)
+}
+
+repositories {
+    mavenCentral()
+    maven("https://maven.terraformersmc.com")
+    maven("https://maven.isxander.dev/releases")
+    maven("https://maven.isxander.dev/snapshots")
+    maven("https://maven.quiltmc.org/repository/release")
+    maven("https://oss.sonatype.org/content/repositories/snapshots/")
+    maven("https://api.modrinth.com/maven") {
+        content {
+            includeGroup("maven.modrinth")
+        }
+    }
+    maven("https://maven.neoforged.net/releases/")
+}
+
+dependencies {
+    fun Dependency?.jij(): Dependency? = include(this!!)
+
+    minecraft("com.mojang:minecraft:${if (mcVersion.contains("beta")) "1.20.5-pre1" else mcVersion}")
+
+    mappings(loom.layered {
+        optionalProp("deps.quiltMappings") {
+            mappings("org.quiltmc:quilt-mappings:$mcVersion+build.$it:intermediary-v2")
+        }
+        officialMojangMappings()
+    })
+
+    if (isFabric) {
+        modImplementation("net.fabricmc:fabric-loader:${findProperty("deps.fabricLoader")}")
+
+        val fapiVersion = property("deps.fabricApi").toString()
+        listOf(
+            "fabric-resource-loader-v0",
+        ).forEach {
+            modImplementation(fabricApi.module(it, fapiVersion))
+        }
+        modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:$fapiVersion")
+    }
+    if (isNeoforge) {
+        "neoForge"("net.neoforged:neoforge:${findProperty("deps.neoforge")}")
+    }
+    if (isForge) {
+        "forge"("net.minecraftforge:forge:${findProperty("deps.forge")}")
+
+        // enable when it's needed
+//        val mixinExtras = findProperty("deps.mixinExtras")
+//        compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:$mixinExtras")!!)
+//        api("io.github.llamalad7:mixinextras-forge:$mixinExtras").jij()
+    }
+
+    listOf(
+        "imageio:imageio-core",
+        "imageio:imageio-webp",
+        "imageio:imageio-metadata",
+        "common:common-lang",
+        "common:common-io",
+        "common:common-image"
+    ).forEach {
+        implementation("com.twelvemonkeys.$it:${findProperty("deps.imageio")}").jij()
+    }
+
+    listOf(
+        "json",
+        "gson"
+    ).forEach {
+        implementation("org.quiltmc.parsers:$it:${findProperty("deps.quiltParsers")}").jij()
+    }
+
+    "testmodImplementation"(sourceSets.main.get().output)
+}
+
+java {
+    withSourcesJar()
+    //withJavadocJar()
+}
+
+tasks {
+    processResources {
+        val props = mutableMapOf(
+            "id" to findProperty("modId"),
+            "group" to project.group,
+            "name" to findProperty("modName"),
+            "description" to findProperty("modDescription"),
+            "version" to project.version,
+            "github" to findProperty("githubProject"),
+            "mc" to mcDep
+        )
+        optionalProp("fmj.yaclDep") {
+            props["yacl"] = it
+        }
+
+        props.forEach(inputs::property)
+
+        filesMatching("fabric.mod.json") { expand(props) }
+        filesMatching("META-INF/mods.toml") { expand(props) }
+    }
+
+    register("releaseMod") {
+        group = "mod"
+
+        dependsOn("publishMods")
+        dependsOn("publish")
+    }
+}
+
+machete {
+    json.enabled.set(false)
+}
+
+publishMods {
+    displayName.set("YetAnotherConfigLib $versionWithoutMC for MC $mcVersion")
+    file.set(tasks.remapJar.get().archiveFile)
+    changelog.set(
+        rootProject.file("changelogs/${versionWithoutMC}.md")
+            .takeIf { it.exists() }
+            ?.readText()
+            ?: "No changelog provided."
+    )
+    type.set(when {
+        isAlpha -> ALPHA
+        isBeta -> BETA
+        else -> STABLE
+    })
+    modLoaders.add("fabric")
+
+    // modrinth and curseforge use different formats for snapshots. this can be expressed globally
+    val stableMCVersions = listOf(stonecutter.current.project)
+
+    val modrinthId: String by project
+    if (modrinthId.isNotBlank() && hasProperty("modrinth.token")) {
+        modrinth {
+            projectId.set(modrinthId)
+            accessToken.set(findProperty("modrinth.token")?.toString())
+            minecraftVersions.addAll(stableMCVersions)
+
+            requires { slug.set("fabric-api") }
+        }
+
+        tasks.getByName("publishModrinth") {
+            dependsOn("optimizeOutputsOfRemapJar")
+        }
+    }
+
+    val curseforgeId: String by project
+    if (curseforgeId.isNotBlank() && hasProperty("curseforge.token")) {
+        curseforge {
+            projectId.set(curseforgeId)
+            accessToken.set(findProperty("curseforge.token")?.toString())
+            minecraftVersions.addAll(stableMCVersions)
+
+            requires { slug.set("fabric-api") }
+        }
+
+        tasks.getByName("publishCurseforge") {
+            dependsOn("optimizeOutputsOfRemapJar")
+        }
+    }
+
+    val githubProject: String by project
+    if (githubProject.isNotBlank() && hasProperty("github.token")) {
+        github {
+            repository.set(githubProject)
+            accessToken.set(findProperty("github.token")?.toString())
+            //commitish.set(grgit.branch.current().name)
+        }
+
+        tasks.getByName("publishGithub") {
+            dependsOn("optimizeOutputsOfRemapJar")
+        }
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mod") {
+            groupId = "dev.isxander"
+            artifactId = "zoomify"
+
+            from(components["java"])
+        }
+    }
 
     repositories {
-        mavenCentral()
-        maven("https://maven.isxander.dev/releases")
-        maven("https://maven.isxander.dev/snapshots")
-        maven("https://maven.quiltmc.org/repository/release")
-        maven("https://maven.neoforged.net/releases")
-        maven("https://maven.parchmentmc.org")
-        maven("https://api.modrinth.com/maven") {
-            name = "Modrinth"
-            content {
-                includeGroup("maven.modrinth")
-            }
-        }
-    }
-
-    pluginManager.withPlugin("publishing") {
-        val publishing = the<PublishingExtension>()
-
-        publishing.repositories {
-            val username = "XANDER_MAVEN_USER".let { System.getenv(it) ?: findProperty(it) }?.toString()
-            val password = "XANDER_MAVEN_PASS".let { System.getenv(it) ?: findProperty(it) }?.toString()
-            if (username != null && password != null) {
-                maven(url = "https://maven.isxander.dev/releases") {
-                    name = "Releases"
-                    credentials {
-                        this.username = username
-                        this.password = password
-                    }
+        val username = "XANDER_MAVEN_USER".let { System.getenv(it) ?: findProperty(it) }?.toString()
+        val password = "XANDER_MAVEN_PASS".let { System.getenv(it) ?: findProperty(it) }?.toString()
+        if (username != null && password != null) {
+            maven(url = "https://maven.isxander.dev/releases") {
+                name = "XanderReleases"
+                credentials {
+                    this.username = username
+                    this.password = password
                 }
-                maven(url = "https://maven.isxander.dev/snapshots") {
-                    name = "Snapshots"
-                    credentials {
-                        this.username = username
-                        this.password = password
-                    }
-                }
-            } else {
-                println("Xander Maven credentials not satisfied.")
             }
+            tasks.getByName("publishModPublicationToXanderReleasesRepository") {
+                dependsOn("optimizeOutputsOfRemapJar")
+            }
+        } else {
+            println("Xander Maven credentials not satisfied.")
         }
     }
 }
 
-githubRelease {
-    token(findProperty("GITHUB_TOKEN")?.toString())
-
-    val githubProject: String by rootProject
-    val split = githubProject.split("/")
-    owner(split[0])
-    repo(split[1])
-    tagName("${project.version}")
-    targetCommitish(grgit.branch.current().name)
-    body(changelogText)
-    prerelease(isBeta)
-    releaseAssets(
-        { findProject(":fabric")?.tasks?.get("remapJar")?.outputs?.files },
-        { findProject(":fabric")?.tasks?.get("remapSourcesJar")?.outputs?.files },
-        { findProject(":forge")?.tasks?.get("remapJar")?.outputs?.files },
-        { findProject(":forge")?.tasks?.get("remapSourcesJar")?.outputs?.files },
-    )
+tasks.getByName("generateMetadataFileForModPublication") {
+    dependsOn("optimizeOutputsOfRemapJar")
 }
 
-tasks.register("releaseMod") {
-    group = "mod"
-
-    dependsOn("githubRelease")
+fun <T> optionalProp(property: String, block: (String) -> T?) {
+    findProperty(property)?.toString()?.takeUnless { it.isBlank() }?.let(block)
 }
 
-tasks.register("buildAll") {
-    group = "mod"
-
-    findProject(":fabric")?.let { dependsOn(it.tasks["build"]) }
-    findProject(":forge")?.let { dependsOn(it.tasks["build"]) }
+fun isPropDefined(property: String): Boolean {
+    return property(property)?.toString()?.isNotBlank() ?: false
 }
