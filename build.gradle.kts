@@ -11,8 +11,7 @@ plugins {
 }
 
 val loader = loom.platform.get().name.lowercase()
-val isCommon = stonecutter.current.project.endsWith("common")
-val isFabric = loader == "fabric" && !isCommon // common uses fabric platform
+val isFabric = loader == "fabric"
 val isNeoforge = loader == "neoforge"
 val isForge = loader == "forge"
 val isForgeLike = isNeoforge || isForge
@@ -31,7 +30,7 @@ base {
 }
 
 java.toolchain {
-    languageVersion.set(JavaLanguageVersion.of(17))
+    //languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 stonecutter.expression {
@@ -76,10 +75,6 @@ loom {
         }
     }
 
-    mixin {
-        useLegacyMixinAp.set(false)
-    }
-
     createRemapConfigurations(testmod)
 }
 
@@ -99,12 +94,7 @@ repositories {
 }
 
 dependencies {
-    fun Dependency?.jij(): Dependency? {
-        if (!isCommon) {
-            include(this!!)
-        }
-        return this
-    }
+    fun Dependency?.jij(): Dependency? = include(this!!)
 
     minecraft("com.mojang:minecraft:${if (mcVersion.contains("beta")) "1.20.5-pre1" else mcVersion}")
 

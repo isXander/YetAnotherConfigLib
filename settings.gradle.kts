@@ -20,12 +20,9 @@ extensions.configure<StonecutterSettings> {
     kotlinController(true)
     centralScript("build.gradle.kts")
     shared {
-        fun mc(mcVersion: String, name: String = mcVersion, common: Boolean = true, loaders: Iterable<String>) {
+        fun mc(mcVersion: String, name: String = mcVersion, loaders: Iterable<String>) {
             for (loader in loaders) {
                 vers("$name-$loader", mcVersion)
-            }
-            if (common) {
-                vers("$name-common", mcVersion)
             }
         }
 

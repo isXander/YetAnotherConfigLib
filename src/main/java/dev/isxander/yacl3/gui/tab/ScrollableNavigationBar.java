@@ -23,11 +23,14 @@ public class ScrollableNavigationBar extends TabNavigationBar {
     private int scrollOffset;
     private int maxScrollOffset;
 
+    private final TabNavigationBarAccessor accessor;
+
     public ScrollableNavigationBar(int width, TabManager tabManager, Iterable<? extends Tab> tabs) {
         super(width, tabManager, ImmutableList.copyOf(tabs));
+        this.accessor = (TabNavigationBarAccessor) this;
 
         // add tab tooltips to the tab buttons
-        for (TabButton tabButton : this.tabButtons) {
+        for (TabButton tabButton : accessor.getTabButtons()) {
             if (tabButton.tab() instanceof TabExt tab) {
                 tabButton.setTooltip(tab.getTooltip());
             }
@@ -36,20 +39,21 @@ public class ScrollableNavigationBar extends TabNavigationBar {
 
     @Override
     public void arrangeElements() {
-        int noScrollWidth = this.width - NAVBAR_MARGIN*2;
+        ImmutableList<TabButton> tabButtons = accessor.getTabButtons();
+        int noScrollWidth = accessor.getWidth() - NAVBAR_MARGIN*2;
 
         int allTabsWidth = 0;
         // first pass: set the width of each tab button
-        for (TabButton tabButton : this.tabButtons) {
+        for (TabButton tabButton : tabButtons) {
             int buttonWidth = font.width(tabButton.getMessage()) + 20;
             allTabsWidth += buttonWidth;
             tabButton.setWidth(buttonWidth);
         }
 
         if (allTabsWidth < noScrollWidth) {
-            int equalWidth = noScrollWidth / this.tabButtons.size();
-            var smallTabs = this.tabButtons.stream().filter(btn -> btn.getWidth() < equalWidth).toList();
-            var bigTabs = this.tabButtons.stream().filter(btn -> btn.getWidth() >= equalWidth).toList();
+            int equalWidth = noScrollWidth / tabButtons.size();
+            var smallTabs = tabButtons.stream().filter(btn -> btn.getWidth() < equalWidth).toList();
+            var bigTabs = tabButtons.stream().filter(btn -> btn.getWidth() >= equalWidth).toList();
             int leftoverWidth = noScrollWidth - bigTabs.stream().mapToInt(AbstractWidget::getWidth).sum();
             int equalWidthForSmallTabs = leftoverWidth / smallTabs.size();
             for (TabButton tabButton : smallTabs) {
@@ -64,7 +68,7 @@ public class ScrollableNavigationBar extends TabNavigationBar {
         layout.setY(0);
         scrollOffset = 0;
 
-        layout.setX(Math.max((this.width - allTabsWidth) / 2, NAVBAR_MARGIN));
+        layout.setX(Math.max((accessor.getWidth() - allTabsWidth) / 2, NAVBAR_MARGIN));
         this.maxScrollOffset = Math.max(0, allTabsWidth - noScrollWidth);
     }
 
@@ -113,8 +117,12 @@ public class ScrollableNavigationBar extends TabNavigationBar {
     protected void ensureVisible(TabButton tabButton) {
         if (tabButton.getX() < NAVBAR_MARGIN) {
             this.setScrollOffset(this.scrollOffset - (NAVBAR_MARGIN - tabButton.getX()));
-        } else if (tabButton.getX() + tabButton.getWidth() > this.width - NAVBAR_MARGIN) {
-            this.setScrollOffset(this.scrollOffset + (tabButton.getX() + tabButton.getWidth() - (this.width - NAVBAR_MARGIN)));
+        } else if (tabButton.getX() + tabButton.getWidth() > accessor.getWidth() - NAVBAR_MARGIN) {
+            this.setScrollOffset(this.scrollOffset + (tabButton.getX() + tabButton.getWidth() - (accessor.getWidth() - NAVBAR_MARGIN)));
         }
+    }
+
+    public ImmutableList<Tab> getTabs() {
+        return accessor.getTabs();
     }
 }

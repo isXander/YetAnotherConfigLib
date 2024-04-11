@@ -1,7 +1,9 @@
-/*? if !forge {*/
 package dev.isxander.yacl3.mixin;
 
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
+import org.spongepowered.asm.mixin.Mixin;
+
+/*? if !forge {*/
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.navigation.FocusNavigationEvent;
@@ -9,12 +11,10 @@ import net.minecraft.client.gui.navigation.ScreenAxis;
 import net.minecraft.client.gui.navigation.ScreenDirection;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.List;
-
 
 @Mixin(ContainerEventHandler.class)
 public interface ContainerEventHandlerMixin {
@@ -30,7 +30,7 @@ public interface ContainerEventHandlerMixin {
     }
 }
 /*?} else {*//*
-@Mixin(targets = {})
+@Mixin(ContainerEventHandler.class)
 public class ContainerEventHandlerMixin {
 
 }
