@@ -83,7 +83,7 @@ public class GuiTest {
                                                                     .append(Component.literal("e").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("e")))))
                                                                     .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://isxander.dev")))
                                                             )
-                                                            .webpImage(new ResourceLocation("yacl3", "reach-around-placement.webp"))
+                                                            .webpImage(new ResourceLocation("yacl3-test", "reach-around-placement.webp"))
                                                             .build())
                                                     .binding(
                                                             defaults.booleanToggle,
@@ -100,7 +100,6 @@ public class GuiTest {
                                                 .name(Component.literal("Custom Boolean Toggle"))
                                                 .description(val -> OptionDescription.createBuilder()
                                                         .text(Component.literal("You can customize controllers like so! YACL is truly infinitely customizable! This tooltip is long in order to demonstrate the cool, smooth scrolling of these descriptions. Did you know, they are also super clickable?! I know, cool right, YACL 3.x really is amazing."))
-                                                        .image(Path.of("D:\\Xander\\Downloads\\_MG_0860-Enhanced-NR.png"), new ResourceLocation("yacl", "f.webp")) // TODO: Add img file to git?
                                                         .build())
                                                 .binding(
                                                         defaults.customBooleanToggle,
@@ -180,7 +179,8 @@ public class GuiTest {
                                                         () -> config.colorOption,
                                                         value -> config.colorOption = value
                                                 )
-                                                .customController(ColorController::new)
+                                                .controller(opt -> ColorControllerBuilder.create(opt)
+                                                        .allowAlpha(true))
                                                 .build())
                                         .build())
                                 .group(OptionGroup.createBuilder()
@@ -386,6 +386,67 @@ public class GuiTest {
                                                 )
                                                 .customController(TickBoxController::new)
                                                 .build())
+                                        .build())
+                                .build())
+                        .category(ConfigCategory.createBuilder()
+                                .name(Component.literal("Color Picker Test"))
+                                .option(Option.<Color>createBuilder()
+                                        .name(Component.literal("Top Color Option"))
+                                        .binding(
+                                                defaults.topColorOption,
+                                                () -> config.topColorOption,
+                                                value -> config.topColorOption = value
+                                        )
+                                        .customController(ColorController::new)
+                                        .description(OptionDescription.of(Component.literal("A Color Controller's Color Picker will appear beneath the color if there is not enough room above it.")))
+                                        .build())
+                                .option(LabelOption.create(Component.literal("Enabling a Color Controller's Color Picker at the top of the screen will appear beneath it if there isn't enough room above. This also applies to color controllers with alpha enabled.")))
+                                .option(Option.<Color>createBuilder()
+                                        .name(Component.literal("Alpha Color Option"))
+                                        .binding(
+                                                defaults.alphaColorOption,
+                                                () -> config.alphaColorOption,
+                                                value -> config.alphaColorOption = value
+                                        )
+                                        .customController(opt -> new ColorController(opt, true))
+                                        .description(OptionDescription.of(Component.literal("A Color Picker will also allow you to choose a Color Controller's alpha if it is enabled.")))
+                                        .build())
+                                .option(ButtonOption.createBuilder()
+                                        .name(Component.literal("Button \"Option\""))
+                                        .action((screen, opt) -> opt.setAvailable(false))
+                                        .build())
+                                .option(LabelOption.create(Component.literal("You can try and hit the button above while the color picker below is visible, but you shouldn't be able to.")))
+                                .option(Option.<Color>createBuilder()
+                                        .name(Component.literal("Button Color Option"))
+                                        .binding(
+                                                defaults.buttonColorOption,
+                                                () -> config.buttonColorOption,
+                                                value -> config.buttonColorOption = value
+                                        )
+                                        .customController(ColorController::new)
+                                        .description(OptionDescription.of(Component.literal("Other controller's buttons are disabled while a color picker is visible!")))
+                                        .build())
+                                .option(LabelOption.create(Component.literal("The color picker button will be outlined with a light grey color instead of white if the controller's color is very light. This is all determined using the hue and value(brightness) of the color.")))
+                                .option(Option.<Color>createBuilder()
+                                        .name(Component.literal("Alternative Color Outline"))
+                                        .binding(
+                                                defaults.alternativePreviewOutline,
+                                                () -> config.alternativePreviewOutline,
+                                                value -> config.alternativePreviewOutline = value
+                                        )
+                                        .customController(opt -> new ColorController(opt, true))
+                                        .description(OptionDescription.of(Component.literal("This helps users who don't know about the color picker discover it, even if a developer chooses a lighter color")))
+                                        .build())
+                                .option(LabelOption.create(Component.literal("An extra color controller with alpha enabled to show that it too has the alternative color outline")))
+                                .option(Option.<Color>createBuilder()
+                                        .name(Component.literal("Alpha Color Option 2"))
+                                        .binding(
+                                                defaults.anotherAlphaColorOption,
+                                                () -> config.anotherAlphaColorOption,
+                                                value -> config.anotherAlphaColorOption = value
+                                        )
+                                        .customController(opt -> new ColorController(opt, true))
+                                        .description(OptionDescription.of(Component.literal("Yay!!!!!!")))
                                         .build())
                                 .build())
                         .category(ConfigCategory.createBuilder()

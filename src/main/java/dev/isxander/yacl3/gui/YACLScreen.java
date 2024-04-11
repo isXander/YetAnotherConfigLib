@@ -7,19 +7,21 @@ import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
 import dev.isxander.yacl3.api.utils.OptionUtils;
-import dev.isxander.yacl3.gui.tab.ScrollableNavigationBar;
+import dev.isxander.yacl3.gui.controllers.PopupControllerScreen;
+import dev.isxander.yacl3.gui.controllers.ControllerPopupWidget;
 import dev.isxander.yacl3.gui.tab.ListHolderWidget;
+import dev.isxander.yacl3.gui.tab.ScrollableNavigationBar;
 import dev.isxander.yacl3.gui.tab.TabExt;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
@@ -34,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class YACLScreen extends Screen {
@@ -51,6 +52,9 @@ public class YACLScreen extends Screen {
     private int saveButtonMessageTime;
 
     private boolean pendingChanges;
+
+    public ControllerPopupWidget<?> currentPopupController = null;
+    public boolean popupControllerVisible = false;
 
     public YACLScreen(YetAnotherConfigLib config, Screen parent) {
         super(config.title());
@@ -85,6 +89,33 @@ public class YACLScreen extends Screen {
         addRenderableWidget(tabNavigationBar);
 
         config.initConsumer().accept(this);
+    }
+
+    public void addPopupControllerWidget(ControllerPopupWidget<?> controllerPopupWidget) {
+
+        //Safety check for the color picker
+        if (currentPopupController != null) {
+            clearPopupControllerWidget();
+        }
+
+        currentPopupController = controllerPopupWidget;
+        popupControllerVisible = true;
+
+        OptionListWidget optionListWidget = null;
+        if(this.tabNavigationBar.getTabManager().getCurrentTab() instanceof CategoryTab categoryTab) {
+            optionListWidget = categoryTab.optionList.getList();
+        }
+        if(optionListWidget != null) {
+            this.minecraft.setScreen(new PopupControllerScreen(this, controllerPopupWidget));
+        }
+    }
+
+    public void clearPopupControllerWidget() {
+        if(Minecraft.getInstance().screen instanceof PopupControllerScreen popupControllerScreen) {
+            popupControllerScreen.onClose();
+        }
+        popupControllerVisible = false;
+        currentPopupController = null;
     }
 
     /*? if <=1.20.4 {*/
