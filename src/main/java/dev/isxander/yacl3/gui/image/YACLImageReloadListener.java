@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui.image;
 
 import dev.isxander.yacl3.impl.utils.YACLConstants;
+import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -104,7 +105,7 @@ public class YACLImageReloadListener
     /*? if fabric {*/
     @Override
     public ResourceLocation getFabricId() {
-        return new ResourceLocation("yet_another_config_lib_v3", "image_reload_listener");
+        return YACLPlatform.rl("image_reload_listener");
     }
     /*?}*/
 }

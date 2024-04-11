@@ -83,7 +83,7 @@ public class GuiTest {
                                                                     .append(Component.literal("e").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("e")))))
                                                                     .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://isxander.dev")))
                                                             )
-                                                            .webpImage(new ResourceLocation("yacl3", "reach-around-placement.webp"))
+                                                            .webpImage(new ResourceLocation("yacl3-test", "reach-around-placement.webp"))
                                                             .build())
                                                     .binding(
                                                             defaults.booleanToggle,
@@ -100,7 +100,6 @@ public class GuiTest {
                                                 .name(Component.literal("Custom Boolean Toggle"))
                                                 .description(val -> OptionDescription.createBuilder()
                                                         .text(Component.literal("You can customize controllers like so! YACL is truly infinitely customizable! This tooltip is long in order to demonstrate the cool, smooth scrolling of these descriptions. Did you know, they are also super clickable?! I know, cool right, YACL 3.x really is amazing."))
-                                                        .image(Path.of("D:\\Xander\\Downloads\\_MG_0860-Enhanced-NR.png"), new ResourceLocation("yacl", "f.webp")) // TODO: Add img file to git?
                                                         .build())
                                                 .binding(
                                                         defaults.customBooleanToggle,
@@ -180,7 +179,8 @@ public class GuiTest {
                                                         () -> config.colorOption,
                                                         value -> config.colorOption = value
                                                 )
-                                                .customController(ColorController::new)
+                                                .controller(opt -> ColorControllerBuilder.create(opt)
+                                                        .allowAlpha(true))
                                                 .build())
                                         .build())
                                 .group(OptionGroup.createBuilder()
@@ -413,7 +413,7 @@ public class GuiTest {
                                         .build())
                                 .option(ButtonOption.createBuilder()
                                         .name(Component.literal("Button \"Option\""))
-                                        .action((screen, opt) -> SystemToast.add(Minecraft.getInstance().getToasts(), SystemToast.SystemToastId.PERIODIC_NOTIFICATION, Component.literal("Button Pressed"), Component.literal("Button option was invoked!")))
+                                        .action((screen, opt) -> opt.setAvailable(false))
                                         .build())
                                 .option(LabelOption.create(Component.literal("You can try and hit the button above while the color picker below is visible, but you shouldn't be able to.")))
                                 .option(Option.<Color>createBuilder()

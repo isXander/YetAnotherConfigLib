@@ -26,15 +26,29 @@ public class PopupControllerScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        controllerPopup.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-        this.backgroundYaclScreen.render(guiGraphics, -1, -1, partialTick); //mouseX/Y set to -1 to prevent hovering outlines
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        controllerPopup.renderBackground(graphics, mouseX, mouseY, delta);
+        this.backgroundYaclScreen.render(graphics, -1, -1, delta); //mouseX/Y set to -1 to prevent hovering outlines
+
+        super.render(graphics, mouseX, mouseY, delta);
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        backgroundYaclScreen.mouseScrolled(mouseX, mouseY, scrollX, scrollY); //mouseX & mouseY are needed here
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+    public void renderBackground(
+            GuiGraphics guiGraphics
+            /*? if >1.20.1 {*/,
+            int mouseX,
+            int mouseY,
+            float partialTick
+            /*?}*/
+    ) {
+
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, /*? if >1.20.1 {*/ double scrollX, /*?}*/ double scrollY) {
+        backgroundYaclScreen.mouseScrolled(mouseX, mouseY, /*? if >1.20.1 {*/ scrollX, /*?}*/ scrollY); //mouseX & mouseY are needed here
+        return super.mouseScrolled(mouseX, mouseY, /*? if >1.20.1 {*/ scrollX, /*?}*/ scrollY);
     }
 
     @Override

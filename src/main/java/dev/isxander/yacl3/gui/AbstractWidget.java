@@ -2,7 +2,7 @@ package dev.isxander.yacl3.gui;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.isxander.yacl3.api.utils.Dimension;
-import dev.isxander.yacl3.gui.utils.ButtonTextureRenderer;
+import dev.isxander.yacl3.gui.utils.YACLRenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -78,7 +78,7 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
         int width = x2 - x1;
         int height = y2 - y1;
 
-        ButtonTextureRenderer.render(graphics, x1, y1, width, height, enabled, hovered);
+        YACLRenderHelper.renderButtonTexture(graphics, x1, y1, width, height, enabled, hovered);
     }
 
     protected void drawOutline(GuiGraphics graphics, int x1, int y1, int x2, int y2, int width, int color) {
@@ -88,20 +88,20 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
         graphics.fill(x1, y1, x1 + width, y2, color);
     }
 
-    protected void fillSidewaysGradient(GuiGraphics graphics, int x1, int y1, int x2, int y2, int z, int startColor, int endColor) {
+    protected void fillSidewaysGradient(GuiGraphics graphics, int x1, int y1, int x2, int y2, int startColor, int endColor) {
         //Fills a gradient, left to right
         //Uses practically the same method as the GuiGraphics class, but with the x/y moved
         //Has a custom "z" value in case needed for later
         VertexConsumer vertex = graphics.bufferSource().getBuffer(RenderType.gui());
         Matrix4f matrix4f = graphics.pose().last().pose();
-        vertex.vertex(matrix4f, x1, y1, z).color(startColor).endVertex();
-        vertex.vertex(matrix4f, x1, y2, z).color(startColor).endVertex();
-        vertex.vertex(matrix4f, x2, y2, z).color(endColor).endVertex();
-        vertex.vertex(matrix4f, x2, y1, z).color(endColor).endVertex();
+        vertex.vertex(matrix4f, x1, y1, 0).color(startColor).endVertex();
+        vertex.vertex(matrix4f, x1, y2, 0).color(startColor).endVertex();
+        vertex.vertex(matrix4f, x2, y2, 0).color(endColor).endVertex();
+        vertex.vertex(matrix4f, x2, y1, 0).color(endColor).endVertex();
     }
 
 
-    protected void drawRainbowGradient(GuiGraphics graphics, int x1, int y1, int x2, int y2, int z) {
+    protected void drawRainbowGradient(GuiGraphics graphics, int x1, int y1, int x2, int y2) {
         //Draws a rainbow gradient, left to right
         int[] colors = new int[] {Color.red.getRGB(), Color.yellow.getRGB(), Color.green.getRGB(),
         Color.cyan.getRGB(), Color.blue.getRGB(), Color.magenta.getRGB(), Color.red.getRGB()}; //all the colors in the gradient
@@ -115,7 +115,7 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
             fillSidewaysGradient(graphics,
                     x1 + (width / maxColors * color), y1,
                     color == maxColors - 1 ? x2 : x1 + (width / maxColors * (color + 1)), y2,
-                    z, colors[color], colors[color + 1]);
+                    colors[color], colors[color + 1]);
         }
     }
 

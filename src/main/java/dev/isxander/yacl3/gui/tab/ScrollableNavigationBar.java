@@ -30,7 +30,7 @@ public class ScrollableNavigationBar extends TabNavigationBar {
         this.accessor = (TabNavigationBarAccessor) this;
 
         // add tab tooltips to the tab buttons
-        for (TabButton tabButton : accessor.getTabButtons()) {
+        for (TabButton tabButton : accessor.yacl$getTabButtons()) {
             if (tabButton.tab() instanceof TabExt tab) {
                 tabButton.setTooltip(tab.getTooltip());
             }
@@ -39,8 +39,8 @@ public class ScrollableNavigationBar extends TabNavigationBar {
 
     @Override
     public void arrangeElements() {
-        ImmutableList<TabButton> tabButtons = accessor.getTabButtons();
-        int noScrollWidth = accessor.getWidth() - NAVBAR_MARGIN*2;
+        ImmutableList<TabButton> tabButtons = accessor.yacl$getTabButtons();
+        int noScrollWidth = accessor.yacl$getWidth() - NAVBAR_MARGIN*2;
 
         int allTabsWidth = 0;
         // first pass: set the width of each tab button
@@ -63,12 +63,12 @@ public class ScrollableNavigationBar extends TabNavigationBar {
             allTabsWidth = noScrollWidth;
         }
 
-        Layout layout = ((TabNavigationBarAccessor) this).getLayout();
+        Layout layout = ((TabNavigationBarAccessor) this).yacl$getLayout();
         layout.arrangeElements();
         layout.setY(0);
         scrollOffset = 0;
 
-        layout.setX(Math.max((accessor.getWidth() - allTabsWidth) / 2, NAVBAR_MARGIN));
+        layout.setX(Math.max((accessor.yacl$getWidth() - allTabsWidth) / 2, NAVBAR_MARGIN));
         this.maxScrollOffset = Math.max(0, allTabsWidth - noScrollWidth);
     }
 
@@ -95,7 +95,7 @@ public class ScrollableNavigationBar extends TabNavigationBar {
     }
 
     public void setScrollOffset(int scrollOffset) {
-        Layout layout = ((TabNavigationBarAccessor) this).getLayout();
+        Layout layout = ((TabNavigationBarAccessor) this).yacl$getLayout();
 
         layout.setX(layout.getX() + this.scrollOffset);
         this.scrollOffset = Mth.clamp(scrollOffset, 0, maxScrollOffset);
@@ -117,12 +117,16 @@ public class ScrollableNavigationBar extends TabNavigationBar {
     protected void ensureVisible(TabButton tabButton) {
         if (tabButton.getX() < NAVBAR_MARGIN) {
             this.setScrollOffset(this.scrollOffset - (NAVBAR_MARGIN - tabButton.getX()));
-        } else if (tabButton.getX() + tabButton.getWidth() > accessor.getWidth() - NAVBAR_MARGIN) {
-            this.setScrollOffset(this.scrollOffset + (tabButton.getX() + tabButton.getWidth() - (accessor.getWidth() - NAVBAR_MARGIN)));
+        } else if (tabButton.getX() + tabButton.getWidth() > accessor.yacl$getWidth() - NAVBAR_MARGIN) {
+            this.setScrollOffset(this.scrollOffset + (tabButton.getX() + tabButton.getWidth() - (accessor.yacl$getWidth() - NAVBAR_MARGIN)));
         }
     }
 
     public ImmutableList<Tab> getTabs() {
-        return accessor.getTabs();
+        return accessor.yacl$getTabs();
+    }
+
+    public TabManager getTabManager() {
+        return accessor.yacl$getTabManager();
     }
 }

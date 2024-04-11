@@ -1,10 +1,11 @@
 package dev.isxander.yacl3.gui.utils;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
-public class ButtonTextureRenderer {
+public class YACLRenderHelper {
     /*? if >1.20.1 {*/
     private static final net.minecraft.client.gui.components.WidgetSprites SPRITES = new net.minecraft.client.gui.components.WidgetSprites(
             new ResourceLocation("widget/button"), // normal
@@ -16,7 +17,7 @@ public class ButtonTextureRenderer {
     private static final ResourceLocation SLIDER_LOCATION = new ResourceLocation("textures/gui/slider.png");
     *//*?}*/
 
-    public static void render(GuiGraphics graphics, int x, int y, int width, int height, boolean enabled, boolean focused) {
+    public static void renderButtonTexture(GuiGraphics graphics, int x, int y, int width, int height, boolean enabled, boolean focused) {
         /*? if >1.20.1 {*/
         graphics.blitSprite(SPRITES.get(enabled, focused), x, y, width, height);
         /*?} else {*//*
@@ -29,6 +30,14 @@ public class ButtonTextureRenderer {
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         graphics.blitNineSliced(SLIDER_LOCATION, x, y, width, height, 20, 4, 200, 20, 0, textureV);
+        *//*?}*/
+    }
+
+    public static ResourceLocation getSpriteLocation(String path) {
+        /*? if >1.20.3 {*/
+        return YACLPlatform.rl(path);
+        /*? } else {*//*
+        return YACLPlatform.rl("textures/gui/sprites/" + path + ".png");
         *//*?}*/
     }
 }

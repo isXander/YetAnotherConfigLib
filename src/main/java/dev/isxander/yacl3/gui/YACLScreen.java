@@ -102,7 +102,7 @@ public class YACLScreen extends Screen {
         popupControllerVisible = true;
 
         OptionListWidget optionListWidget = null;
-        if(this.tabNavigationBar.tabManager.getCurrentTab() instanceof CategoryTab categoryTab) {
+        if(this.tabNavigationBar.getTabManager().getCurrentTab() instanceof CategoryTab categoryTab) {
             optionListWidget = categoryTab.optionList.getList();
         }
         if(optionListWidget != null) {

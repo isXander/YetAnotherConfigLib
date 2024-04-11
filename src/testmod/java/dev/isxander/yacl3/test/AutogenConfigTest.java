@@ -24,7 +24,7 @@ import java.util.List;
 
 public class AutogenConfigTest {
     public static final ConfigClassHandler<AutogenConfigTest> INSTANCE = ConfigClassHandler.createBuilder(AutogenConfigTest.class)
-            .id(new ResourceLocation("yacl3", "config"))
+            .id(new ResourceLocation("yacl3-test", "config"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
                     .setPath(YACLPlatform.getConfigDir().resolve("yacl-test-v2.json5"))
                     .setJson5(true)
