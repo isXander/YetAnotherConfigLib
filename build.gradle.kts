@@ -54,15 +54,15 @@ val testmod by sourceSets.creating {
 loom {
     accessWidenerPath.set(rootProject.file("src/main/resources/yacl.accesswidener"))
 
+    runConfigs.all {
+        ideConfigGenerated(false)
+        runDir("../../run")
+    }
     runs {
         create("testmodClient") {
             client()
             name = "Testmod Client"
             source(testmod)
-        }
-    }
-    if (stonecutter.current.isActive) {
-        runConfigs.all {
             ideConfigGenerated(true)
             runDir("../../run")
         }

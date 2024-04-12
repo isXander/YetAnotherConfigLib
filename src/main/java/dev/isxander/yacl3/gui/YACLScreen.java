@@ -79,9 +79,12 @@ public class YACLScreen extends Screen {
         tabNavigationBar = new ScrollableNavigationBar(this.width, tabManager, config.categories()
                 .stream()
                 .map(category -> {
+                    if (category instanceof CustomTabProvider tabProvider) {
+                        return tabProvider.createTab(this, tabArea);
+                    }
                     if (category instanceof PlaceholderCategory placeholder)
-                        return new PlaceholderTab(placeholder);
-                    return new CategoryTab(category);
+                        return new PlaceholderTab(placeholder, this);
+                    return new CategoryTab(this, category, tabArea);
                 }).toList());
         tabNavigationBar.selectTab(currentTab, false);
         tabNavigationBar.arrangeElements();
@@ -135,7 +138,7 @@ public class YACLScreen extends Screen {
         }
     }
 
-    protected void finishOrSave() {
+    public void finishOrSave() {
         saveButtonMessage = null;
 
         if (pendingChanges()) {
@@ -164,7 +167,7 @@ public class YACLScreen extends Screen {
         } else onClose();
     }
 
-    protected void cancelOrReset() {
+    public void cancelOrReset() {
         if (pendingChanges()) { // if pending changes, button acts as a cancel button
             OptionUtils.forEachOptions(config, Option::forgetPendingValue);
             onClose();
@@ -173,7 +176,7 @@ public class YACLScreen extends Screen {
         }
     }
 
-    protected void undo() {
+    public void undo() {
         OptionUtils.forEachOptions(config, Option::forgetPendingValue);
     }
 
@@ -200,13 +203,13 @@ public class YACLScreen extends Screen {
         }
     }
 
-    private void setSaveButtonMessage(Component message, Component tooltip) {
+    public void setSaveButtonMessage(Component message, Component tooltip) {
         saveButtonMessage = message;
         saveButtonTooltipMessage = Tooltip.create(tooltip);
         saveButtonMessageTime = 0;
     }
 
-    private boolean pendingChanges() {
+    public boolean pendingChanges() {
         return pendingChanges;
     }
 
@@ -282,11 +285,12 @@ public class YACLScreen extends Screen {
         }
     }
 
-    public class CategoryTab implements TabExt {
+    public static class CategoryTab implements TabExt {
         /*? if >1.20.4 {*//*
         private static final ResourceLocation DARKER_BG = new ResourceLocation("textures/gui/menu_list_background.png");
         *//*?}*/
 
+        private final YACLScreen screen;
         private final ConfigCategory category;
         private final Tooltip tooltip;
 
@@ -299,39 +303,40 @@ public class YACLScreen extends Screen {
 
         private final ScreenRectangle rightPaneDim;
 
-        public CategoryTab(ConfigCategory category) {
+        public CategoryTab(YACLScreen screen, ConfigCategory category, ScreenRectangle tabArea) {
+            this.screen = screen;
             this.category = category;
             this.tooltip = Tooltip.create(category.tooltip());
 
-            int columnWidth = width / 3;
+            int columnWidth = screen.width / 3;
             int padding = columnWidth / 20;
             columnWidth = Math.min(columnWidth, 400);
             int paddedWidth = columnWidth - padding * 2;
-            rightPaneDim = new ScreenRectangle(width / 3 * 2, tabArea.top() + 1, width / 3, tabArea.height());
-            MutableDimension<Integer> actionDim = Dimension.ofInt(width / 3 * 2 + width / 6, height - padding - 20, paddedWidth, 20);
+            rightPaneDim = new ScreenRectangle(screen.width / 3 * 2, tabArea.top() + 1, screen.width / 3, tabArea.height());
+            MutableDimension<Integer> actionDim = Dimension.ofInt(screen.width / 3 * 2 + screen.width / 6, screen.height - padding - 20, paddedWidth, 20);
 
-            saveFinishedButton = Button.builder(Component.literal("Done"), btn -> finishOrSave())
+            saveFinishedButton = Button.builder(Component.literal("Done"), btn -> screen.finishOrSave())
                     .pos(actionDim.x() - actionDim.width() / 2, actionDim.y())
                     .size(actionDim.width(), actionDim.height())
                     .build();
 
             actionDim.expand(-actionDim.width() / 2 - 2, 0).move(-actionDim.width() / 2 - 2, -22);
-            cancelResetButton = Button.builder(Component.literal("Cancel"), btn -> cancelOrReset())
+            cancelResetButton = Button.builder(Component.literal("Cancel"), btn -> screen.cancelOrReset())
                     .pos(actionDim.x() - actionDim.width() / 2, actionDim.y())
                     .size(actionDim.width(), actionDim.height())
                     .build();
 
             actionDim.move(actionDim.width() + 4, 0);
-            undoButton = Button.builder(Component.translatable("yacl.gui.undo"), btn -> undo())
+            undoButton = Button.builder(Component.translatable("yacl.gui.undo"), btn -> screen.undo())
                     .pos(actionDim.x() - actionDim.width() / 2, actionDim.y())
                     .size(actionDim.width(), actionDim.height())
                     .tooltip(Tooltip.create(Component.translatable("yacl.gui.undo.tooltip")))
                     .build();
 
             searchField = new SearchFieldWidget(
-                    YACLScreen.this,
-                    font,
-                    width / 3 * 2 + width / 6 - paddedWidth / 2 + 1,
+                    screen,
+                    screen.font,
+                    screen.width / 3 * 2 + screen.width / 6 - paddedWidth / 2 + 1,
                     undoButton.getY() - 22,
                     paddedWidth - 2, 18,
                     Component.translatable("gui.recipebook.search_hint"),
@@ -341,14 +346,14 @@ public class YACLScreen extends Screen {
 
             this.optionList = new ListHolderWidget<>(
                     () -> new ScreenRectangle(tabArea.position(), tabArea.width() / 3 * 2, tabArea.height()),
-                    new OptionListWidget(YACLScreen.this, category, minecraft, 0, 0, width / 3 * 2 + 1, height, desc -> {
+                    new OptionListWidget(screen, category, screen.minecraft, 0, 0, screen.width / 3 * 2 + 1, screen.height, desc -> {
                         descriptionWidget.setOptionDescription(desc);
                     })
             );
 
             descriptionWidget = new OptionDescriptionWidget(
                     () -> new ScreenRectangle(
-                            width / 3 * 2 + padding,
+                            screen.width / 3 * 2 + padding,
                             tabArea.top() + padding,
                             paddedWidth,
                             searchField.getY() - 1 - tabArea.top() - padding * 2
@@ -415,7 +420,7 @@ public class YACLScreen extends Screen {
         }
 
         public void updateButtons() {
-            boolean pendingChanges = pendingChanges();
+            boolean pendingChanges = screen.pendingChanges();
 
             undoButton.active = pendingChanges;
             saveFinishedButton.setMessage(pendingChanges ? Component.translatable("yacl.gui.save") : GuiUtils.translatableFallback("yacl.gui.done", CommonComponents.GUI_DONE));
@@ -425,11 +430,13 @@ public class YACLScreen extends Screen {
         }
     }
 
-    public class PlaceholderTab implements TabExt {
+    public static class PlaceholderTab implements TabExt {
+        private final YACLScreen screen;
         private final PlaceholderCategory category;
         private final Tooltip tooltip;
 
-        public PlaceholderTab(PlaceholderCategory category) {
+        public PlaceholderTab(PlaceholderCategory category, YACLScreen screen) {
+            this.screen = screen;
             this.category = category;
             this.tooltip = Tooltip.create(category.tooltip());
         }
@@ -446,7 +453,7 @@ public class YACLScreen extends Screen {
 
         @Override
         public void doLayout(ScreenRectangle screenRectangle) {
-            minecraft.setScreen(category.screen().apply(minecraft, YACLScreen.this));
+            screen.minecraft.setScreen(category.screen().apply(screen.minecraft, screen));
         }
 
         @Override
