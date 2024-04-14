@@ -1,5 +1,6 @@
 plugins {
     `java-library`
+    kotlin("jvm") version "1.9.22"
 
     id("dev.architectury.loom") version "1.6.+"
 
@@ -27,10 +28,6 @@ val isBeta = "beta" in version.toString()
 
 base {
     archivesName.set(property("modName").toString())
-}
-
-java.toolchain {
-    //languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 stonecutter.expression {
@@ -85,11 +82,15 @@ repositories {
     maven("https://maven.isxander.dev/snapshots")
     maven("https://maven.quiltmc.org/repository/release")
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
-    maven("https://api.modrinth.com/maven") {
-        content {
-            includeGroup("maven.modrinth")
-        }
+    exclusiveContent {
+        forRepository { maven("https://api.modrinth.com/maven") }
+        filter { includeGroup("maven.modrinth") }
     }
+    exclusiveContent {
+        forRepository { maven("https://thedarkcolour.github.io/KotlinForForge/") }
+        filter { includeGroup("thedarkcolour") }
+    }
+
     maven("https://maven.neoforged.net/releases/")
 }
 
@@ -115,12 +116,18 @@ dependencies {
             modImplementation(fabricApi.module(it, fapiVersion))
         }
         modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:$fapiVersion")
+
+        modImplementation("net.fabricmc:fabric-language-kotlin:${findProperty("deps.fabricLangKotlin")}")
     }
     if (isNeoforge) {
         "neoForge"("net.neoforged:neoforge:${findProperty("deps.neoforge")}")
+
+        modImplementation("thedarkcolour:kotlinforforge-neoforge:${findProperty("deps.kotlinForForge")}")
     }
     if (isForge) {
         "forge"("net.minecraftforge:forge:${findProperty("deps.forge")}")
+
+        modImplementation("thedarkcolour:kotlinforforge:${findProperty("deps.kotlinForForge")}")
 
         // enable when it's needed
 //        val mixinExtras = findProperty("deps.mixinExtras")
@@ -175,7 +182,7 @@ tasks {
         filesMatching("META-INF/mods.toml") { expand(props) }
     }
 
-    register("releaseMod") {
+    val releaseMod by registering {
         group = "mod"
 
         dependsOn("publishMods")

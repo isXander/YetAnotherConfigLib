@@ -49,6 +49,12 @@ public class GuiTest {
                                             Minecraft.getInstance().setScreen(AutogenConfigTest.INSTANCE.generateGui().generateScreen(screen));
                                         })
                                         .build())
+                                .option(ButtonOption.createBuilder()
+                                        .name(Component.literal("Kotlin DSL Test"))
+                                        .action((screen, opt) -> {
+                                            Minecraft.getInstance().setScreen(DslTestKt.kotlinDslGui(screen));
+                                        })
+                                        .build())
                                 .group(OptionGroup.createBuilder()
                                         .name(Component.literal("Wiki"))
                                         .option(ButtonOption.createBuilder()

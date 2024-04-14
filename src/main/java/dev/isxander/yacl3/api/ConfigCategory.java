@@ -125,6 +125,13 @@ public interface ConfigCategory {
         Builder groups(@NotNull Collection<OptionGroup> groups);
 
         /**
+         * Fetches the builder for the root group of the category.
+         * This is the group that has no header and options are added through {@link Builder#option(Option)}.
+         * In its default implementation, this builder is severely limited and a lot of methods are unsupported.
+         */
+        OptionGroup.Builder rootGroupBuilder();
+
+        /**
          * Sets the tooltip to be used by the category.
          * Can be invoked twice to append more lines.
          * No need to wrap the text yourself, the gui does this itself.

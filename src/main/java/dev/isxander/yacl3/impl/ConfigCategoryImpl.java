@@ -46,6 +46,8 @@ public final class ConfigCategoryImpl implements ConfigCategory {
         private Component name;
 
         private final List<Option<?>> rootOptions = new ArrayList<>();
+        private final RootGroupBuilder rootGroupBuilder = new RootGroupBuilder();
+
         private final List<OptionGroup> groups = new ArrayList<>();
 
         private final List<Component> tooltipLines = new ArrayList<>();
@@ -107,6 +109,11 @@ public final class ConfigCategoryImpl implements ConfigCategory {
         }
 
         @Override
+        public OptionGroup.Builder rootGroupBuilder() {
+            return rootGroupBuilder;
+        }
+
+        @Override
         public ConfigCategory build() {
             Validate.notNull(name, "`name` must not be null to build `ConfigCategory`");
 
@@ -129,6 +136,40 @@ public final class ConfigCategoryImpl implements ConfigCategory {
             }
 
             return new ConfigCategoryImpl(name, ImmutableList.copyOf(combinedGroups), concatenatedTooltip);
+        }
+
+        private class RootGroupBuilder implements OptionGroup.Builder {
+            @Override
+            public OptionGroup.Builder name(@NotNull Component name) {
+                throw new UnsupportedOperationException("Cannot set name of root group!");
+            }
+
+            @Override
+            public OptionGroup.Builder description(@NotNull OptionDescription description) {
+                throw new UnsupportedOperationException("Cannot set name of root group!");
+            }
+
+            @Override
+            public OptionGroup.Builder option(@NotNull Option<?> option) {
+                ConfigCategoryImpl.BuilderImpl.this.option(option);
+                return this;
+            }
+
+            @Override
+            public OptionGroup.Builder options(@NotNull Collection<? extends Option<?>> options) {
+                ConfigCategoryImpl.BuilderImpl.this.options(options);
+                return this;
+            }
+
+            @Override
+            public OptionGroup.Builder collapsed(boolean collapsible) {
+                throw new UnsupportedOperationException("Cannot set collapsible of root group!");
+            }
+
+            @Override
+            public OptionGroup build() {
+                throw new UnsupportedOperationException("Cannot build root group!");
+            }
         }
     }
 }
