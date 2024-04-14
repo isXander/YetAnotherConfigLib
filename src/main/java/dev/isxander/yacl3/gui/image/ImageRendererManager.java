@@ -44,8 +44,10 @@ public class ImageRendererManager {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends ImageRenderer> CompletableFuture<T> registerImage(ResourceLocation id, ImageRendererFactory factory) {
-        System.out.println(PRELOADED_IMAGE_CACHE.get(id));
+    public static <T extends ImageRenderer> CompletableFuture<T> registerOrGetImage(ResourceLocation id, Supplier<ImageRendererFactory> factorySupplier) {
+        if (PRELOADED_IMAGE_CACHE.containsKey(id)) {
+            return CompletableFuture.completedFuture((T) PRELOADED_IMAGE_CACHE.get(id));
+        }
 
         if (IMAGE_CACHE.containsKey(id)) {
             return (CompletableFuture<T>) IMAGE_CACHE.get(id);
@@ -54,6 +56,7 @@ public class ImageRendererManager {
         var future = new CompletableFuture<ImageRenderer>();
         IMAGE_CACHE.put(id, future);
 
+        ImageRendererFactory factory = factorySupplier.get();
         SINGLE_THREAD_EXECUTOR.submit(() -> {
             Supplier<Optional<ImageRendererFactory.ImageSupplier>> supplier =
                     factory.requiresOffThreadPreparation()
@@ -64,6 +67,11 @@ public class ImageRendererManager {
         });
 
         return (CompletableFuture<T>) future;
+    }
+
+    @Deprecated
+    public static <T extends ImageRenderer> CompletableFuture<T> registerImage(ResourceLocation id, ImageRendererFactory factory) {
+        return registerOrGetImage(id, () -> factory);
     }
 
     private static <T extends ImageRenderer> void completeImageFactory(ResourceLocation id, Supplier<Optional<ImageRendererFactory.ImageSupplier>> supplier, CompletableFuture<ImageRenderer> future) {

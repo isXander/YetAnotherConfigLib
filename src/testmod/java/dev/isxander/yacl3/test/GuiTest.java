@@ -64,7 +64,7 @@ public class GuiTest {
     private static Screen getFullTestSuite(Screen parent) {
         AtomicReference<Option<Boolean>> booleanOption = new AtomicReference<>();
 
-        ConfigTest.GSON.serializer().load();
+        ConfigTest.GSON.load();
         return YetAnotherConfigLib.create(ConfigTest.GSON, (defaults, config, builder) -> builder
                         .title(Component.literal("Test GUI"))
                         .category(ConfigCategory.createBuilder()
@@ -83,7 +83,7 @@ public class GuiTest {
                                                                     .append(Component.literal("e").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("e")))))
                                                                     .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://isxander.dev")))
                                                             )
-                                                            .webpImage(new ResourceLocation("yacl3-test", "reach-around-placement.webp"))
+                                                            .webpImage(imageSample("sample1.webp"))
                                                             .build())
                                                     .binding(
                                                             defaults.booleanToggle,
@@ -113,7 +113,10 @@ public class GuiTest {
                                                 .build())
                                         .option(Option.<Boolean>createBuilder()
                                                 .name(Component.literal("Tick Box"))
-                                                .description(OptionDescription.of(Component.literal("There are even alternate methods of displaying the same data type!")))
+                                                .description(OptionDescription.createBuilder()
+                                                        .text(Component.literal("There are even alternate methods of displaying the same data type!"))
+                                                        .webpImage(imageSample("sample3.webp"))
+                                                        .build())
                                                 .binding(
                                                         defaults.tickbox,
                                                         () -> config.tickbox,
@@ -126,6 +129,9 @@ public class GuiTest {
                                         .name(Component.literal("Slider Controllers"))
                                         .option(Option.<Integer>createBuilder()
                                                 .name(Component.literal("Int Slider"))
+                                                .description(OptionDescription.createBuilder()
+                                                        .gifImage(imageSample("sample4.gif"))
+                                                        .build())
                                                 .binding(
                                                         defaults.intSlider,
                                                         () -> config.intSlider,
@@ -487,6 +493,10 @@ public class GuiTest {
                         })
                 )
                 .generateScreen(parent);
+    }
+
+    private static ResourceLocation imageSample(String name) {
+        return new ResourceLocation("yacl_test", "textures/images/" + name);
     }
 
     private static boolean myBooleanOption = true;

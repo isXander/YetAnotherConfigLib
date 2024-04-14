@@ -11,8 +11,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.Validate;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -41,7 +39,7 @@ public record OptionDescriptionImpl(Component text, CompletableFuture<Optional<I
             Validate.isTrue(width > 0, "Width must be greater than 0!");
             Validate.isTrue(height > 0, "Height must be greater than 0!");
 
-            this.image = ImageRendererManager.registerImage(image, ResourceTextureImage.createFactory(image, 0, 0, width, height, width, height)).thenApply(Optional::of);
+            this.image = ImageRendererManager.registerOrGetImage(image, () -> ResourceTextureImage.createFactory(image, 0, 0, width, height, width, height)).thenApply(Optional::of);
             imageUnset = false;
             return this;
         }
@@ -52,7 +50,7 @@ public record OptionDescriptionImpl(Component text, CompletableFuture<Optional<I
             Validate.isTrue(width > 0, "Width must be greater than 0!");
             Validate.isTrue(height > 0, "Height must be greater than 0!");
 
-            this.image = ImageRendererManager.registerImage(image, ResourceTextureImage.createFactory(image, u, v, width, height, textureWidth, textureHeight)).thenApply(Optional::of);
+            this.image = ImageRendererManager.registerOrGetImage(image, () -> ResourceTextureImage.createFactory(image, u, v, width, height, textureWidth, textureHeight)).thenApply(Optional::of);
             imageUnset = false;
             return this;
         }
@@ -61,7 +59,7 @@ public record OptionDescriptionImpl(Component text, CompletableFuture<Optional<I
         public Builder image(Path path, ResourceLocation uniqueLocation) {
             Validate.isTrue(imageUnset, "Image already set!");
 
-            this.image = ImageRendererManager.registerImage(uniqueLocation, DynamicTextureImage.fromPath(path, uniqueLocation)).thenApply(Optional::of);
+            this.image = ImageRendererManager.registerOrGetImage(uniqueLocation, () -> DynamicTextureImage.fromPath(path, uniqueLocation)).thenApply(Optional::of);
             imageUnset = false;
             return this;
         }
@@ -70,7 +68,7 @@ public record OptionDescriptionImpl(Component text, CompletableFuture<Optional<I
         public Builder gifImage(ResourceLocation image) {
             Validate.isTrue(imageUnset, "Image already set!");
 
-            this.image = ImageRendererManager.registerImage(image, AnimatedDynamicTextureImage.createGIFFromTexture(image)).thenApply(Optional::of);
+            this.image = ImageRendererManager.registerOrGetImage(image, () -> AnimatedDynamicTextureImage.createGIFFromTexture(image)).thenApply(Optional::of);
             imageUnset = false;
             return this;
         }
@@ -79,7 +77,7 @@ public record OptionDescriptionImpl(Component text, CompletableFuture<Optional<I
         public Builder gifImage(Path path, ResourceLocation uniqueLocation) {
             Validate.isTrue(imageUnset, "Image already set!");
 
-            this.image = ImageRendererManager.registerImage(uniqueLocation, AnimatedDynamicTextureImage.createGIFFromPath(path, uniqueLocation)).thenApply(Optional::of);
+            this.image = ImageRendererManager.registerOrGetImage(uniqueLocation, () -> AnimatedDynamicTextureImage.createGIFFromPath(path, uniqueLocation)).thenApply(Optional::of);
             imageUnset = false;
             return this;
         }
@@ -88,12 +86,7 @@ public record OptionDescriptionImpl(Component text, CompletableFuture<Optional<I
         public Builder webpImage(ResourceLocation image) {
             Validate.isTrue(imageUnset, "Image already set!");
 
-            Optional<ImageRenderer> completedImage = ImageRendererManager.getImage(image);
-            if (completedImage.isPresent()) {
-                this.image = CompletableFuture.completedFuture(completedImage);
-            } else {
-                this.image = ImageRendererManager.registerImage(image, AnimatedDynamicTextureImage.createWEBPFromTexture(image)).thenApply(Optional::of);
-            }
+            this.image = ImageRendererManager.registerOrGetImage(image, () -> AnimatedDynamicTextureImage.createWEBPFromTexture(image)).thenApply(Optional::of);
 
             imageUnset = false;
             return this;
@@ -103,7 +96,7 @@ public record OptionDescriptionImpl(Component text, CompletableFuture<Optional<I
         public Builder webpImage(Path path, ResourceLocation uniqueLocation) {
             Validate.isTrue(imageUnset, "Image already set!");
 
-            this.image = ImageRendererManager.registerImage(uniqueLocation, AnimatedDynamicTextureImage.createWEBPFromPath(path, uniqueLocation)).thenApply(Optional::of);
+            this.image = ImageRendererManager.registerOrGetImage(uniqueLocation, () -> AnimatedDynamicTextureImage.createWEBPFromPath(path, uniqueLocation)).thenApply(Optional::of);
             imageUnset = false;
             return this;
         }
