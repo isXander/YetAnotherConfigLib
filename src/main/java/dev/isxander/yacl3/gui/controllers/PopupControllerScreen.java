@@ -47,8 +47,16 @@ public class PopupControllerScreen extends Screen {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, /*? if >1.20.1 {*/ double scrollX, /*?}*/ double scrollY) {
+        if (controllerPopup.mouseScrolled(mouseX, mouseY, /*? if >1.20.1 {*/ scrollX, /*?}*/ scrollY)) {
+            return true;
+        }
         backgroundYaclScreen.mouseScrolled(mouseX, mouseY, /*? if >1.20.1 {*/ scrollX, /*?}*/ scrollY); //mouseX & mouseY are needed here
         return super.mouseScrolled(mouseX, mouseY, /*? if >1.20.1 {*/ scrollX, /*?}*/ scrollY);
+    }
+
+    @Override
+    public void mouseMoved(double mouseX, double mouseY) {
+        controllerPopup.mouseMoved(mouseX, mouseY);
     }
 
     @Override
