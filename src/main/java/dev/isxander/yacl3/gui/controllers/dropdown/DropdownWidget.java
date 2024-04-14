@@ -23,10 +23,6 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
 	// accepted value when the element is closed.
 	protected int selectedIndex = 0;
 
-	// Store previous mouse position so we can still use keyboard navigation while hovering over the popup
-	int previousMouseX = 0;
-	int previousMouseY = 0;
-
 	public DropdownWidget(AbstractDropdownController<T> control, YACLScreen screen, Dimension<Integer> dim, AbstractDropdownControllerElement<T, ?> dropdownElement) {
 		super(control, screen, dim, dropdownElement);
 		this.dropdownElement = dropdownElement;
@@ -57,13 +53,6 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
 		if (dropdownLength() == 0) return;
-
-		if (isMouseOver(mouseX, mouseY) && mouseX != previousMouseX && mouseY != previousMouseY) {
-			previousMouseX = mouseX;
-			previousMouseY = mouseY;
-			int index = (mouseY - dropdownDim.y()) / entryHeight();
-			selectVisibleItem(index);
-		}
 
 		PoseStack matrices = graphics.pose();
 		matrices.pushPose();
@@ -134,7 +123,15 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
 		return super.mouseScrolled(mouseX, mouseY, /*? if >1.20.1 {*/ scrollX, /*?}*/ scrollY);
 	}
 
-	@Override
+    @Override
+    public void mouseMoved(double mouseX, double mouseY) {
+        if (isMouseOver(mouseX, mouseY)) {
+            int index = (int) ((mouseY - dropdownDim.y()) / entryHeight());
+            selectVisibleItem(index);
+        }
+    }
+
+    @Override
 	public boolean isMouseOver(double mouseX, double mouseY) {
 		return dropdownDim.isPointInside((int) mouseX, (int) mouseY);
 	}

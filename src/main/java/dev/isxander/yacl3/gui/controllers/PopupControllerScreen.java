@@ -55,6 +55,11 @@ public class PopupControllerScreen extends Screen {
     }
 
     @Override
+    public void mouseMoved(double mouseX, double mouseY) {
+        controllerPopup.mouseMoved(mouseX, mouseY);
+    }
+
+    @Override
     public boolean charTyped(char codePoint, int modifiers) {
         return controllerPopup.charTyped(codePoint, modifiers);
     }
