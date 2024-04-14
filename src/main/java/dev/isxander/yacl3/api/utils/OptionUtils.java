@@ -4,8 +4,17 @@ import dev.isxander.yacl3.api.*;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class OptionUtils {
+    public static Stream<Option<?>> getFlatOptions(YetAnotherConfigLib yacl) {
+        return yacl.categories().stream()
+                .flatMap(category -> category.groups().stream())
+                .flatMap(group -> group instanceof ListOption<?> list
+                        ? Stream.of(list)
+                        : group.options().stream());
+    }
+
     /**
      * Consumes all options, ignoring groups and categories.
      * When consumer returns true, this function stops iterating.
