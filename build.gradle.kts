@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     `java-library`
     kotlin("jvm") version "1.9.22"
@@ -194,6 +196,21 @@ machete {
     json.enabled.set(false)
 }
 
+java {
+    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.withType<JavaCompile> {
+    options.release.set(findProperty("java.version")!!.toString().toInt())
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = findProperty("java.version")!!.toString()
+    }
+}
+
 publishMods {
     displayName.set("YetAnotherConfigLib $versionWithoutMC for MC $mcVersion")
     file.set(tasks.remapJar.get().archiveFile)
@@ -248,7 +265,7 @@ publishMods {
         github {
             repository.set(githubProject)
             accessToken.set(findProperty("github.token")?.toString())
-            //commitish.set(grgit.branch.current().name)
+            commitish.set(grgit.branch.current().name)
         }
 
         tasks.getByName("publishGithub") {
