@@ -25,6 +25,7 @@
     "yacl.mixins.json",
     "yacl-fabric.mixins.json"
   ],
+  "accessWidener": "yacl.accesswidener",
   "entrypoints": {
     "client": [
       "dev.isxander.yacl3.platform.PlatformEntrypoint"
