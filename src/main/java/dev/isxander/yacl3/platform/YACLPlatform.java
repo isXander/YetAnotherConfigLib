@@ -2,7 +2,6 @@ package dev.isxander.yacl3.platform;
 
 /*?if fabric {*/
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.resources.ResourceLocation;
 /*?} elif neoforge {*//*
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
@@ -11,6 +10,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
 *//*?}*/
 
+import net.minecraft.resources.ResourceLocation;
 import java.nio.file.Path;
 
 public final class YACLPlatform {
