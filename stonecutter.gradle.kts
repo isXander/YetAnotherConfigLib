@@ -12,3 +12,8 @@ stonecutter registerChiseled tasks.register("chiseledPublishMods", stonecutter.c
     group = "mod"
     ofTask("releaseMod")
 }
+
+stonecutter registerChiseled tasks.register("chiseledPublishSnapshots", stonecutter.chiseled) {
+    group = "mod"
+    ofTask("publishAllPublicationsToXanderSnapshotsRepository")
+}

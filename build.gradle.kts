@@ -301,6 +301,14 @@ publishing {
                     this.password = password
                 }
             }
+
+            maven(url = "https://maven.isxander.dev/snapshots") {
+                name = "XanderSnapshots"
+                credentials {
+                    this.username = username
+                    this.password = password
+                }
+            }
             tasks.getByName("publishModPublicationToXanderReleasesRepository") {
                 dependsOn("optimizeOutputsOfRemapJar")
             }

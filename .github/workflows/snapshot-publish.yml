@@ -31,8 +31,10 @@ jobs:
             ${{ runner.os }}-gradle-
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Build with Gradle
-        run: ./gradlew publishAllPublicationsToSnapshotsRepository --no-daemon
+      - name: Publish with Gradle
+        uses: Wandalen/wretry.action@master
+        with:
+          command: ./gradlew chiseledPublishSnapshots --no-daemon
         env:
           XANDER_MAVEN_USER: ${{ secrets.REPO_USERNAME }}
           XANDER_MAVEN_PASS: ${{ secrets.REPO_PASSWORD }}
