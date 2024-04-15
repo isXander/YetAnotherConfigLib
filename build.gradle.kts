@@ -99,7 +99,7 @@ repositories {
 dependencies {
     fun Dependency?.jij(): Dependency? = include(this!!)
 
-    minecraft("com.mojang:minecraft:${if (mcVersion.contains("beta")) "1.20.5-pre1" else mcVersion}")
+    minecraft("com.mojang:minecraft:${if (mcVersion.contains("beta")) "1.20.5-pre2" else mcVersion}")
 
     mappings(loom.layered {
         optionalProp("deps.quiltMappings") {
