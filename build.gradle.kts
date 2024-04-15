@@ -25,6 +25,12 @@ val mcDep = findProperty("fmj.mcDep")?.toString()
 group = "dev.isxander"
 val versionWithoutMC = "3.4.0"
 version = "$versionWithoutMC+${stonecutter.current.project}"
+
+val snapshotVer = "${grgit.branch.current().name.replace('/', '.')}-SNAPSHOT"
+if (System.getenv().containsKey("GITHUB_ACTIONS")) {
+    version = "$version+$snapshotVer"
+}
+
 val isAlpha = "alpha" in version.toString()
 val isBeta = "beta" in version.toString()
 
@@ -278,7 +284,7 @@ publishing {
     publications {
         create<MavenPublication>("mod") {
             groupId = "dev.isxander"
-            artifactId = "zoomify"
+            artifactId = "yet-another-config-lib"
 
             from(components["java"])
         }
