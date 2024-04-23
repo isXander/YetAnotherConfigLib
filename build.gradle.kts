@@ -259,10 +259,10 @@ publishMods {
         isBeta -> BETA
         else -> STABLE
     })
-    modLoaders.add("fabric")
+    modLoaders.add(loader)
 
     // modrinth and curseforge use different formats for snapshots. this can be expressed globally
-    val stableMCVersions = listOf(stonecutter.current.project)
+    val stableMCVersions = listOf(stonecutter.current.version)
 
     val modrinthId: String by project
     if (modrinthId.isNotBlank() && hasProperty("modrinth.token")) {

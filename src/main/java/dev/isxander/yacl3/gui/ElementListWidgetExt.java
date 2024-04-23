@@ -176,7 +176,7 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
             this.setScrollAmount(this.getScrollAmount() + j);
         }
 
-        int k = this.getBottom() - i - entry.getItemHeight() * 2;
+        int k = this.getY() + this.getHeight()  - i - entry.getItemHeight() * 2;
         if (k < 0) {
             this.setScrollAmount(this.getScrollAmount() - k);
         }

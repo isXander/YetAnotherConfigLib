@@ -8,7 +8,7 @@ stonecutter registerChiseled tasks.register("chiseledBuild", stonecutter.chisele
     ofTask("build")
 }
 
-stonecutter registerChiseled tasks.register("chiseledPublishMods", stonecutter.chiseled) {
+stonecutter registerChiseled tasks.register("chiseledReleaseMod", stonecutter.chiseled) {
     group = "mod"
     ofTask("releaseMod")
 }
