@@ -121,13 +121,13 @@ public class YACLScreen extends Screen {
         currentPopupController = null;
     }
 
-    /*? if <=1.20.4 {*/
+    /*? if <=1.20.4 {*//*
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         renderDirtBackground(graphics);
         super.render(graphics, mouseX, mouseY, delta);
     }
-    /*?}*/
+    *//*?}*/
 
     @Override
     public void renderBackground(GuiGraphics guiGraphics/*? if >1.20.1 {*/, int mouseX, int mouseY, float partialTick/*?}*/) {
@@ -286,9 +286,9 @@ public class YACLScreen extends Screen {
     }
 
     public static class CategoryTab implements TabExt {
-        /*? if >1.20.4 {*//*
+        /*? if >1.20.4 {*/
         private static final ResourceLocation DARKER_BG = new ResourceLocation("textures/gui/menu_list_background.png");
-        *//*?}*/
+        /*?}*/
 
         private final YACLScreen screen;
         private final ConfigCategory category;
@@ -379,7 +379,7 @@ public class YACLScreen extends Screen {
             consumer.accept(descriptionWidget);
         }
 
-        /*? if >1.20.4 {*//*
+        /*? if >1.20.4 {*/
         @Override
         public void renderBackground(GuiGraphics graphics) {
             RenderSystem.enableBlend();
@@ -401,7 +401,7 @@ public class YACLScreen extends Screen {
 
             RenderSystem.disableBlend();
         }
-        *//*?}*/
+        /*?}*/
 
         @Override
         public void doLayout(ScreenRectangle screenRectangle) {

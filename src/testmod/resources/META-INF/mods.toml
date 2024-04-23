@@ -15,11 +15,3 @@ authors = "isXander"
 [[mixins]]
 config = "yacl-test.mixins.json"
 
-[[dependencies.yacl_test]]
-modId = "neoforge"
-mandatory = true
-
-[[dependencies.yacl_test]]
-modId = "minecraft"
-mandatory = true
-

@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[1,)"
+loaderVersion = "${loaderVersion}"
 #issueTrackerURL = ""
 license = "LGPL-3.0-or-later"
 
@@ -17,15 +17,15 @@ logoFile = "yacl-128x.png"
 config = "yacl.mixins.json"
 
 [["dependencies.${id}"]]
-modId = "neoforge"
+modId = "${forgeId}"
 mandatory = true
-versionRange = "[20,)"
+versionRange = "${forgeConstraint}"
 ordering = "NONE"
 side = "BOTH"
 
 [["dependencies.${id}"]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.20.3,)"
+versionRange = "${mc}"
 ordering = "NONE"
 side = "BOTH"

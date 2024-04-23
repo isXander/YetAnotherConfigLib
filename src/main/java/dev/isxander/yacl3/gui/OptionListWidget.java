@@ -244,11 +244,11 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
     }
 
-    /*? if >1.20.4 {*//*
+    /*? if >1.20.4 {*/
     @Override
     protected void renderListBackground(GuiGraphics guiGraphics) {
     }
-    *//*?}*/
+    /*?}*/
 
     public abstract class Entry extends ElementListWidgetExt.Entry<Entry> {
         public boolean isViewable() {

@@ -13,11 +13,11 @@ public class YACLTooltip extends Tooltip {
         this.widget = widget;
     }
 
-    /*? if >1.20.4 {*//* // stonecutter cannot handle AND expressions
-    *//*? } elif >1.20.1 {*/
+    /*? if >1.20.4 {*/ // stonecutter cannot handle AND expressions
+    /*? } elif >1.20.1 {*//*
     @Override
     protected ClientTooltipPositioner createTooltipPositioner(boolean bl, boolean bl2, ScreenRectangle screenRectangle) {
         return new YACLTooltipPositioner(widget);
     }
-    /*?}*/
+    *//*?}*/
 }

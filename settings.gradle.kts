@@ -28,7 +28,7 @@ extensions.configure<StonecutterSettings> {
 
         mc("1.20.4", loaders = listOf("fabric", "neoforge"))
         mc("1.20.1", loaders = listOf("fabric", "forge"))
-        mc("1.20.5-beta.2", name = "1.20.5-pre2", loaders = listOf("fabric"))
+        mc("1.20.5", loaders = listOf("fabric"))
     }
     create(rootProject)
 }

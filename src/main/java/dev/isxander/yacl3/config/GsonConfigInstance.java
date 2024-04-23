@@ -68,11 +68,11 @@ public class GsonConfigInstance<T> extends ConfigInstance<T> {
         this.path = path;
         this.gson = builder
                 .setExclusionStrategies(new ConfigExclusionStrategy())
-                /*? if >1.20.4 { *//*
+                /*? if >1.20.4 { */
                 .registerTypeHierarchyAdapter(Component.class, new Component.SerializerAdapter(RegistryAccess.EMPTY))
-                *//*? } elif =1.20.4 {*/
+                /*? } elif =1.20.4 {*//*
                 .registerTypeHierarchyAdapter(Component.class, new Component.SerializerAdapter())
-                /*? } else {*//*
+                *//*? } else {*//*
                 .registerTypeHierarchyAdapter(Component.class, new Component.Serializer())
                 *//*?}*/
                 .registerTypeHierarchyAdapter(Style.class, /*? if >=1.20.4 {*/new GsonConfigSerializer.StyleTypeAdapter()/*?} else {*//*new Style.Serializer()*//*?}*/)
@@ -169,11 +169,11 @@ public class GsonConfigInstance<T> extends ConfigInstance<T> {
         private UnaryOperator<GsonBuilder> gsonBuilder = builder -> builder
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .serializeNulls()
-                /*? if >1.20.4 { *//*
+                /*? if >1.20.4 { */
                 .registerTypeHierarchyAdapter(Component.class, new Component.SerializerAdapter(RegistryAccess.EMPTY))
-                *//*? } elif =1.20.4 {*/
+                /*? } elif =1.20.4 {*//*
                 .registerTypeHierarchyAdapter(Component.class, new Component.SerializerAdapter())
-                /*? } else {*//*
+                *//*? } else {*//*
                 .registerTypeHierarchyAdapter(Component.class, new Component.Serializer())
                 *//*?}*/
                 .registerTypeHierarchyAdapter(Style.class, /*? if >=1.20.4 {*/new GsonConfigSerializer.StyleTypeAdapter()/*?} else {*//*new Style.Serializer()*//*?}*/)

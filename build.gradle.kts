@@ -20,7 +20,6 @@ val isForge = loader == "forge"
 val isForgeLike = isNeoforge || isForge
 
 val mcVersion = stonecutter.current.version
-val mcDep = findProperty("fmj.mcDep")?.toString()
 
 group = "dev.isxander"
 val versionWithoutMC = "3.4.0"
@@ -70,6 +69,21 @@ loom {
             source(testmod)
             ideConfigGenerated(true)
             runDir("../../run")
+
+            if (isForgeLike) {
+                mods {
+                    register("main") {
+                        sourceSet(sourceSets.main.get())
+                    }
+                    register("testMod") {
+                        sourceSet(testmod)
+                    }
+                }
+            }
+
+            if (isForge) {
+                programArgs("-mixin.config", "yacl-test.mixins.json")
+            }
         }
     }
 
@@ -103,7 +117,8 @@ repositories {
 }
 
 dependencies {
-    fun Dependency?.jij(): Dependency? = include(this!!)
+    fun Dependency?.jij() = this?.let(::include)
+    fun Dependency?.forgeRuntime() = this?.takeIf { isForgeLike }?.let { "forgeRuntimeLibrary"(it) }
 
     minecraft("com.mojang:minecraft:${if (mcVersion.contains("beta")) "1.20.5-pre2" else mcVersion}")
 
@@ -151,14 +166,14 @@ dependencies {
         "common:common-io",
         "common:common-image"
     ).forEach {
-        implementation("com.twelvemonkeys.$it:${findProperty("deps.imageio")}").jij()
+        implementation("com.twelvemonkeys.$it:${findProperty("deps.imageio")}").jij().forgeRuntime()
     }
 
     listOf(
         "json",
         "gson"
     ).forEach {
-        implementation("org.quiltmc.parsers:$it:${findProperty("deps.quiltParsers")}").jij()
+        implementation("org.quiltmc.parsers:$it:${findProperty("deps.quiltParsers")}").jij().forgeRuntime()
     }
 
     "testmodImplementation"(sourceSets.main.get().output)
@@ -171,23 +186,36 @@ java {
 
 tasks {
     processResources {
-        val props = mutableMapOf(
-            "id" to findProperty("modId"),
-            "group" to project.group,
-            "name" to findProperty("modName"),
-            "description" to findProperty("modDescription"),
-            "version" to project.version,
-            "github" to findProperty("githubProject"),
-            "mc" to mcDep
-        )
-        optionalProp("fmj.yaclDep") {
-            props["yacl"] = it
+        val props = buildMap {
+            put("id", findProperty("modId"))
+            put("group", project.group)
+            put("name", findProperty("modName"))
+            put("description", findProperty("modDescription"))
+            put("version", project.version)
+            put("github", findProperty("githubProject"))
+
+            if (isFabric) {
+                put("mc", findProperty("fmj.mcDep"))
+            }
+
+            if (isForgeLike) {
+                put("mc", findProperty("modstoml.mcDep"))
+                put("loaderVersion", findProperty("modstoml.loaderVersion"))
+                put("forgeId", findProperty("modstoml.forgeId"))
+                put("forgeConstraint", findProperty("modstoml.forgeConstraint"))
+            }
         }
 
         props.forEach(inputs::property)
 
-        filesMatching("fabric.mod.json") { expand(props) }
-        filesMatching("META-INF/mods.toml") { expand(props) }
+        if (isFabric) {
+            filesMatching("fabric.mod.json") { expand(props) }
+            exclude("META-INF/mods.toml")
+        }
+        if (isForgeLike) {
+            filesMatching("META-INF/mods.toml") { expand(props) }
+            exclude("fabric.mod.json")
+        }
     }
 
     val releaseMod by registering {
@@ -221,7 +249,7 @@ publishMods {
     displayName.set("YetAnotherConfigLib $versionWithoutMC for MC $mcVersion")
     file.set(tasks.remapJar.get().archiveFile)
     changelog.set(
-        rootProject.file("changelogs/${versionWithoutMC}.md")
+        rootProject.file("changelog.md")
             .takeIf { it.exists() }
             ?.readText()
             ?: "No changelog provided."
