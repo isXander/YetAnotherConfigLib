@@ -89,7 +89,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
 
         //Background
         /*? if >1.20.3 { */
-        graphics.blitSprite(COLOR_PICKER_LOCATION, colorPickerDim.x() - 5, colorPickerDim.y() - 5, 1, colorPickerDim.width() + 10, colorPickerDim.height() + 10);
+        graphics.blitSprite(COLOR_PICKER_LOCATION, colorPickerDim.x() - 5, colorPickerDim.y() - 5, colorPickerDim.width() + 10, colorPickerDim.height() + 10);
         /*? } else {*//*
         graphics.blitNineSliced(COLOR_PICKER_ATLAS, colorPickerDim.x() - 5, colorPickerDim.y() - 5, colorPickerDim.width() + 10, colorPickerDim.height() + 10, 3, 236, 34, 0, 0);
         *//*?}*/
@@ -100,7 +100,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         //transparent texture - must be rendered BEFORE the main color preview
         if(controller.allowAlpha()) {
             /*? if >1.20.3 { */
-            graphics.blitSprite(TRANSPARENT_TEXTURE_LOCATION, previewColorDim.x(), previewColorDim.y(), 3, previewColorDim.width(), previewColorDim.height());
+            graphics.blitSprite(TRANSPARENT_TEXTURE_LOCATION, previewColorDim.x(), previewColorDim.y(), previewColorDim.width(), previewColorDim.height());
             /*? } else {*//*
             graphics.blitRepeating(COLOR_PICKER_ATLAS, previewColorDim.x(), previewColorDim.y(), previewColorDim.width(), previewColorDim.height(), 236, 0, 8, 8);
             *//*?}*/
@@ -135,7 +135,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
             graphics.fill(alphaGradientDim.x() - outline, alphaGradientDim.y() - outline, alphaGradientDim.xLimit() + outline, alphaGradientDim.yLimit() + outline, Color.black.getRGB());
             //Transparent texture
             /*? if >1.20.3 { */
-            graphics.blitSprite(TRANSPARENT_TEXTURE_LOCATION, alphaGradientDim.x(), alphaGradientDim.y(), 3, alphaGradientDim.width(), sliderHeight);
+            graphics.blitSprite(TRANSPARENT_TEXTURE_LOCATION, alphaGradientDim.x(), alphaGradientDim.y(), alphaGradientDim.width(), sliderHeight);
             /*? } else {*//*
             graphics.blitRepeating(COLOR_PICKER_ATLAS, alphaGradientDim.x(), alphaGradientDim.y(), alphaGradientDim.width(), sliderHeight, 236, 0, 8, 8);
             *//*?}*/
