@@ -10,6 +10,7 @@ import net.minecraft.server.packs.PackType;
 public class PlatformEntrypoint implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        YACLConfig.HANDLER.load();
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new YACLImageReloadListener());
     }
 }
@@ -21,6 +22,7 @@ import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 @Mod("yet_another_config_lib_v3")
 public class PlatformEntrypoint {
     public PlatformEntrypoint(IEventBus modEventBus) {
+        YACLConfig.HANDLER.load();
         modEventBus.addListener(RegisterClientReloadListenersEvent.class, event -> {
             event.registerReloadListener(new YACLImageReloadListener());
         });
@@ -34,6 +36,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 @Mod("yet_another_config_lib_v3")
 public class PlatformEntrypoint {
     public PlatformEntrypoint() {
+        YACLConfig.HANDLER.load();
         FMLJavaModLoadingContext.get().getModEventBus().<RegisterClientReloadListenersEvent>addListener(event -> {
             event.registerReloadListener(new YACLImageReloadListener());
         });
