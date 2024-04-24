@@ -22,7 +22,7 @@ val isForgeLike = isNeoforge || isForge
 val mcVersion = stonecutter.current.version
 
 group = "dev.isxander"
-val versionWithoutMC = "3.4.0"
+val versionWithoutMC = "3.4.1"
 version = "$versionWithoutMC+${stonecutter.current.project}"
 
 val snapshotVer = "${grgit.branch.current().name.replace('/', '.')}-SNAPSHOT"

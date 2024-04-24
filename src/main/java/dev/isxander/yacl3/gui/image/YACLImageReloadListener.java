@@ -10,6 +10,7 @@ import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class YACLImageReloadListener
         /*?}*/
 {
     @Override
-    public CompletableFuture<Void> reload(
+    public @NotNull CompletableFuture<Void> reload(
             PreparationBarrier preparationBarrier, 
             ResourceManager resourceManager, 
             ProfilerFiller preparationsProfiler, 
@@ -34,7 +35,7 @@ public class YACLImageReloadListener
             Executor gameExecutor
     ) {
         Map<ResourceLocation, Resource> imageResources = resourceManager.listResources(
-                "",
+                "textures",
                 location -> ImageRendererManager.PRELOADED_IMAGE_FACTORIES
                         .stream()
                         .anyMatch(factory -> factory.predicate().test(location))
