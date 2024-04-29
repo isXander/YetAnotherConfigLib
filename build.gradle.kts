@@ -2,15 +2,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `java-library`
-    kotlin("jvm") version "1.9.22"
+    kotlin("jvm") version "1.9.23"
 
     id("dev.architectury.loom") version "1.6.+"
 
     id("me.modmuss50.mod-publish-plugin") version "0.5.+"
     `maven-publish`
     id("org.ajoberstar.grgit") version "5.0.+"
-
-    id("io.github.p03w.machete") version "2.+"
 }
 
 val loader = loom.platform.get().name.lowercase()
@@ -181,7 +179,6 @@ dependencies {
 
 java {
     withSourcesJar()
-    //withJavadocJar()
 }
 
 tasks {
@@ -210,11 +207,9 @@ tasks {
 
         if (isFabric) {
             filesMatching("fabric.mod.json") { expand(props) }
-            exclude("META-INF/mods.toml")
         }
         if (isForgeLike) {
-            filesMatching("META-INF/mods.toml") { expand(props) }
-            exclude("fabric.mod.json")
+            filesMatching(listOf("META-INF/mods.toml", "META-INF/neoforge.mods.toml")) { expand(props) }
         }
     }
 
@@ -224,10 +219,6 @@ tasks {
         dependsOn("publishMods")
         dependsOn("publish")
     }
-}
-
-machete {
-    json.enabled.set(false)
 }
 
 java {
@@ -273,10 +264,6 @@ publishMods {
 
             requires { slug.set("fabric-api") }
         }
-
-        tasks.getByName("publishModrinth") {
-            dependsOn("optimizeOutputsOfRemapJar")
-        }
     }
 
     val curseforgeId: String by project
@@ -288,10 +275,6 @@ publishMods {
 
             requires { slug.set("fabric-api") }
         }
-
-        tasks.getByName("publishCurseforge") {
-            dependsOn("optimizeOutputsOfRemapJar")
-        }
     }
 
     val githubProject: String by project
@@ -300,10 +283,6 @@ publishMods {
             repository.set(githubProject)
             accessToken.set(findProperty("github.token")?.toString())
             commitish.set(grgit.branch.current().name)
-        }
-
-        tasks.getByName("publishGithub") {
-            dependsOn("optimizeOutputsOfRemapJar")
         }
     }
 }
@@ -337,22 +316,14 @@ publishing {
                     this.password = password
                 }
             }
-            tasks.getByName("publishModPublicationToXanderReleasesRepository") {
-                dependsOn("optimizeOutputsOfRemapJar")
-            }
         } else {
             println("Xander Maven credentials not satisfied.")
         }
     }
 }
 
-tasks.getByName("generateMetadataFileForModPublication") {
-    dependsOn("optimizeOutputsOfRemapJar")
-}
-
-fun <T> optionalProp(property: String, block: (String) -> T?) {
+fun <T> optionalProp(property: String, block: (String) -> T?): T? =
     findProperty(property)?.toString()?.takeUnless { it.isBlank() }?.let(block)
-}
 
 fun isPropDefined(property: String): Boolean {
     return property(property)?.toString()?.isNotBlank() ?: false

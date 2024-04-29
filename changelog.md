@@ -6,6 +6,7 @@ This build supports the following versions:
 - Fabric 1.20.5
 - Forge 1.20.1
 - NeoForge 1.20.4
+- NeoForge 1.20.5
 
 ## Bug Fixes
 
