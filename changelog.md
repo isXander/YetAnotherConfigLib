@@ -1,4 +1,4 @@
-# YetAnotherConfigLib 3.4.1
+# YetAnotherConfigLib 3.4.2
 
 This build supports the following versions:
 - Fabric 1.20.1
@@ -9,5 +9,9 @@ This build supports the following versions:
 
 ## Bug Fixes
 
-- Fix conflict with Crowdin Translate
+- Fix YACL breaking fabric reload listener dependency order
+
+## Translation Updates
+
+- Added colour picker translations for Tatar ([#174](https://github.com/isXander/YetAnotherConfigLib/pull/174))
 
