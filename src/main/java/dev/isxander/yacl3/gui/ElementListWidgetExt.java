@@ -122,7 +122,7 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
 
     @Nullable
     @Override
-    protected E getEntryAtPosition(double x, double y) {
+    public E getEntryAtPosition(double x, double y) {
         y += getScrollAmount();
 
         if (x < this.getX() || x > this.getX() + this.getWidth())
@@ -183,11 +183,11 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     }
 
     @Override
-    /*? if >1.20.4 {*/
+    /*? if >1.20.4 {*//*
     protected void renderListItems(GuiGraphics graphics, int mouseX, int mouseY, float delta)
-    /*? } else {*//*
+    *//*? } else {*/
     protected void renderList(GuiGraphics graphics, int mouseX, int mouseY, float delta)
-    *//*?}*/
+    /*?}*/
     {
         int left = this.getRowLeft();
         int right = this.getRowWidth();
