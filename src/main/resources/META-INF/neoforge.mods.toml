@@ -30,6 +30,5 @@ versionRange = "${mc}"
 ordering = "NONE"
 side = "BOTH"
 
-
 [[accessTransformers]]
 file="accesstransformer.cfg"
