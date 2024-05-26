@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
@@ -164,6 +165,19 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         return true;
+    }
+
+    @Override
+    protected boolean isValidClickButton(int button) {
+        return button == InputConstants.MOUSE_BUTTON_LEFT || button == InputConstants.MOUSE_BUTTON_RIGHT;
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        if (this.getFocused() != null && this.isDragging() && isValidClickButton(button)) {
+            return this.getFocused().mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        }
+        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 
     @Override
