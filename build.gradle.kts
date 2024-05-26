@@ -20,7 +20,7 @@ val isForgeLike = isNeoforge || isForge
 val mcVersion = stonecutter.current.version
 
 group = "dev.isxander"
-val versionWithoutMC = "3.4.2"
+val versionWithoutMC = "3.4.3"
 version = "$versionWithoutMC+${stonecutter.current.project}"
 
 val snapshotVer = "${grgit.branch.current().name.replace('/', '.')}-SNAPSHOT"
@@ -207,9 +207,11 @@ tasks {
 
         if (isFabric) {
             filesMatching("fabric.mod.json") { expand(props) }
+            exclude(listOf("META-INF/mods.toml", "META-INF/neoforge.mods.toml"))
         }
         if (isForgeLike) {
             filesMatching(listOf("META-INF/mods.toml", "META-INF/neoforge.mods.toml")) { expand(props) }
+            exclude("fabric.mod.json")
         }
     }
 

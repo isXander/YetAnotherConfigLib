@@ -1,18 +1,13 @@
-# YetAnotherConfigLib 3.4.2
+# YetAnotherConfigLib 3.4.3
 
 This build supports the following versions:
 - Fabric 1.20.1
 - Fabric 1.20.4
-- Fabric 1.20.5
-- Forge 1.20.1
-- NeoForge 1.20.4
-- NeoForge 1.20.5
+- Fabric 1.20.6 (also supports 1.20.5)
 
 ## Bug Fixes
 
-- Fix YACL breaking fabric reload listener dependency order
+- Fix YACL's metadata not displaying properly in MultiMC and its forks.
+- Fix (Neo)Forge throwing an unusual error when a user accidentally puts YACL for fabric on forge.
 
-## Translation Updates
-
-- Added colour picker translations for Tatar ([#174](https://github.com/isXander/YetAnotherConfigLib/pull/174))
 

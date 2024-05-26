@@ -13,7 +13,7 @@ pluginManagement {
 }
 
 plugins {
-    id("dev.kikugie.stonecutter") version "0.3.2"
+    id("dev.kikugie.stonecutter") version "0.3.7"
 }
 
 extensions.configure<StonecutterSettings> {
@@ -28,7 +28,7 @@ extensions.configure<StonecutterSettings> {
 
         mc("1.20.4", loaders = listOf("fabric", "neoforge"))
         mc("1.20.1", loaders = listOf("fabric", "forge"))
-        mc("1.20.5", loaders = listOf("fabric", "neoforge"))
+        mc("1.20.6", loaders = listOf("fabric", "neoforge"))
     }
     create(rootProject)
 }
