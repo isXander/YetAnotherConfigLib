@@ -53,8 +53,9 @@ val testmod by sourceSets.creating {
     runtimeClasspath += sourceSets.main.get().runtimeClasspath
 }
 
+val accessWidenerName = "yacl.accesswidener"
 loom {
-    accessWidenerPath.set(rootProject.file("src/main/resources/yacl.accesswidener"))
+    accessWidenerPath.set(rootProject.file("src/main/resources/$accessWidenerName"))
 
     runConfigs.all {
         ideConfigGenerated(false)
@@ -228,13 +229,21 @@ java {
     sourceCompatibility = JavaVersion.VERSION_17
 }
 
-tasks.withType<JavaCompile> {
-    options.release.set(findProperty("java.version")!!.toString().toInt())
-}
+tasks {
+    withType<JavaCompile> {
+        options.release.set(findProperty("java.version")!!.toString().toInt())
+    }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = findProperty("java.version")!!.toString()
+    withType<KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = findProperty("java.version")!!.toString()
+        }
+    }
+
+    remapJar {
+        if (isNeoforge) {
+            atAccessWideners.add(accessWidenerName)
+        }
     }
 }
 
