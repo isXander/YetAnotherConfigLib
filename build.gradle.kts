@@ -20,7 +20,7 @@ val isForgeLike = isNeoforge || isForge
 val mcVersion = stonecutter.current.version
 
 group = "dev.isxander"
-val versionWithoutMC = "3.4.3"
+val versionWithoutMC = "3.4.4"
 version = "$versionWithoutMC+${stonecutter.current.project}"
 
 val snapshotVer = "${grgit.branch.current().name.replace('/', '.')}-SNAPSHOT"
@@ -222,14 +222,7 @@ tasks {
         dependsOn("publishMods")
         dependsOn("publish")
     }
-}
 
-java {
-    targetCompatibility = JavaVersion.VERSION_17
-    sourceCompatibility = JavaVersion.VERSION_17
-}
-
-tasks {
     withType<JavaCompile> {
         options.release.set(findProperty("java.version")!!.toString().toInt())
     }

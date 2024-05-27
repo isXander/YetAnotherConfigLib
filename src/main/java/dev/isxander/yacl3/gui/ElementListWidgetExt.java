@@ -82,10 +82,10 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
 
     /*? if >1.20.1 { */
     @Override
+    /*?}*/
     protected boolean isValidMouseClick(int button) {
         return button == InputConstants.MOUSE_BUTTON_LEFT || button == InputConstants.MOUSE_BUTTON_RIGHT;
     }
-    /*?}*/
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {

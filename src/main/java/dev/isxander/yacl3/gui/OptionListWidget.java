@@ -169,7 +169,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        if (this.getFocused() != null && this.isDragging() && isValidClickButton(button)) {
+        if (this.getFocused() != null && this.isDragging() && isValidMouseClick(button)) {
             return this.getFocused().mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
         }
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
