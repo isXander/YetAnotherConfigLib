@@ -168,11 +168,6 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     }
 
     @Override
-    protected boolean isValidClickButton(int button) {
-        return button == InputConstants.MOUSE_BUTTON_LEFT || button == InputConstants.MOUSE_BUTTON_RIGHT;
-    }
-
-    @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (this.getFocused() != null && this.isDragging() && isValidClickButton(button)) {
             return this.getFocused().mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
