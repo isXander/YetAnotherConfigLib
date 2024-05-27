@@ -10,6 +10,7 @@ import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Consumer;
 
@@ -78,6 +79,13 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
 
         returnSmoothAmount = false;
     }
+
+    /*? if >1.20.1 { */
+    @Override
+    protected boolean isValidMouseClick(int button) {
+        return button == InputConstants.MOUSE_BUTTON_LEFT || button == InputConstants.MOUSE_BUTTON_RIGHT;
+    }
+    /*?}*/
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
@@ -215,7 +223,7 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
             for (GuiEventListener child : this.children()) {
                 if (child.mouseClicked(mouseX, mouseY, button)) {
-                    if (button == InputConstants.MOUSE_BUTTON_LEFT)
+                    if (button == InputConstants.MOUSE_BUTTON_LEFT || button == InputConstants.MOUSE_BUTTON_RIGHT)
                         this.setDragging(true);
                     return true;
                 }
@@ -226,7 +234,7 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
 
         @Override
         public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-            if (isDragging() && button == InputConstants.MOUSE_BUTTON_LEFT) {
+            if (isDragging() && (button == InputConstants.MOUSE_BUTTON_LEFT || button == InputConstants.MOUSE_BUTTON_RIGHT)) {
                 for (GuiEventListener child : this.children()) {
                     if (child.mouseDragged(mouseX, mouseY, button, deltaX, deltaY))
                         return true;

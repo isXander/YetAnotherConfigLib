@@ -1,5 +1,6 @@
 package dev.isxander.yacl3.gui;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
@@ -201,6 +202,23 @@ public class YACLScreen extends Screen {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (super.mouseClicked(mouseX, mouseY, button)) {
+            this.setDragging(true);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        return this.getFocused() != null
+                && this.isDragging()
+                && (button == InputConstants.MOUSE_BUTTON_LEFT || button == InputConstants.MOUSE_BUTTON_RIGHT)
+                && this.getFocused().mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 
     public void setSaveButtonMessage(Component message, Component tooltip) {
