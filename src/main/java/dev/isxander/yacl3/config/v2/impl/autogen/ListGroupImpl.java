@@ -8,6 +8,7 @@ import dev.isxander.yacl3.config.v2.api.autogen.ListGroup;
 import dev.isxander.yacl3.config.v2.api.autogen.OptionFactory;
 import dev.isxander.yacl3.config.v2.api.autogen.OptionAccess;
 import dev.isxander.yacl3.config.v2.impl.FieldBackedBinding;
+import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -56,7 +57,7 @@ public class ListGroupImpl<T> implements OptionFactory<ListGroup, List<T>> {
 
         String imagePath = "textures/yacl3/" + field.parent().id().getPath() + "/" + field.access().name() + ".webp";
         imagePath = imagePath.toLowerCase().replaceAll("[^a-z0-9/._:-]", "_");
-        ResourceLocation imageLocation = new ResourceLocation(field.parent().id().getNamespace(), imagePath);
+        ResourceLocation imageLocation = YACLPlatform.rl(field.parent().id().getNamespace(), imagePath);
         if (Minecraft.getInstance().getResourceManager().getResource(imageLocation).isPresent()) {
             builder.webpImage(imageLocation);
         }

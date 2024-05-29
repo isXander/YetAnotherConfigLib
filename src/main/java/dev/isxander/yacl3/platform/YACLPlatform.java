@@ -14,8 +14,28 @@ import net.minecraft.resources.ResourceLocation;
 import java.nio.file.Path;
 
 public final class YACLPlatform {
+    public static ResourceLocation parseRl(String rl) {
+        /*? if >1.20.6 {*//*
+        return ResourceLocation.parse(rl);
+        *//*?} else {*/
+        return new ResourceLocation(rl);
+        /*?}*/
+    }
+
     public static ResourceLocation rl(String path) {
-        return new ResourceLocation("yet_another_config_lib_v3", path);
+        return rl("yet_another_config_lib_v3", path);
+    }
+
+    public static ResourceLocation mcRl(String path) {
+        return rl("minecraft", path);
+    }
+
+    public static ResourceLocation rl(String namespace, String path) {
+        /*? if >1.20.6 {*//*
+        return ResourceLocation.fromNamespaceAndPath(namespace, path);
+        *//*?} else {*/
+        return new ResourceLocation(namespace, path);
+        /*?}*/
     }
 
     public static Env getEnvironment() {

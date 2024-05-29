@@ -9,6 +9,7 @@ import dev.isxander.yacl3.config.v2.impl.FieldBackedBinding;
 import dev.isxander.yacl3.config.v2.impl.autogen.AutoGenUtils;
 import dev.isxander.yacl3.config.v2.impl.autogen.EmptyCustomImageFactory;
 import dev.isxander.yacl3.config.v2.impl.autogen.YACLAutoGenException;
+import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -90,7 +91,7 @@ public abstract class SimpleOptionFactory<A extends Annotation, T> implements Op
                 builder.customImage(imageFactory.createImage(value, field, storage).thenApply(Optional::of));
             } else if (!imageOverride.value().isEmpty()) {
                 String path = imageOverride.value();
-                ResourceLocation imageLocation = new ResourceLocation(field.parent().id().getNamespace(), path);
+                ResourceLocation imageLocation = YACLPlatform.rl(field.parent().id().getNamespace(), path);
                 String extension = path.substring(path.lastIndexOf('.') + 1);
 
                 switch (extension) {
@@ -105,7 +106,7 @@ public abstract class SimpleOptionFactory<A extends Annotation, T> implements Op
         } else {
             String imagePath = "textures/yacl3/" + field.parent().id().getPath() + "/" + field.access().name() + ".webp";
             imagePath = imagePath.toLowerCase().replaceAll("[^a-z0-9/._:-]", "_");
-            ResourceLocation imageLocation = new ResourceLocation(field.parent().id().getNamespace(), imagePath);
+            ResourceLocation imageLocation = YACLPlatform.rl(field.parent().id().getNamespace(), imagePath);
             if (Minecraft.getInstance().getResourceManager().getResource(imageLocation).isPresent()) {
                 builder.webpImage(imageLocation);
             }

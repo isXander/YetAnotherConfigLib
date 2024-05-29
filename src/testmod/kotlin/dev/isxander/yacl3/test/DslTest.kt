@@ -4,6 +4,7 @@ import dev.isxander.yacl3.api.OptionFlag
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder
 import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder
 import dev.isxander.yacl3.dsl.*
+import dev.isxander.yacl3.platform.YACLPlatform
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -85,7 +86,7 @@ fun kotlinDslGui(parent: Screen?) = YetAnotherConfigLib("namespace") {
                     addDefaultDescription(lines = 5)
 
                     text { Component.translatable("somecustomkey") }
-                    webpImage(ResourceLocation("namespace", "image.png"))
+                    webpImage(YACLPlatform.rl("namespace", "image.png"))
                 }
 
                 // KProperties are cool!

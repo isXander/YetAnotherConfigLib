@@ -15,6 +15,7 @@ import dev.isxander.yacl3.gui.tab.ScrollableNavigationBar;
 import dev.isxander.yacl3.gui.tab.TabExt;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
+import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -278,10 +279,6 @@ public class YACLScreen extends Screen {
             int drawY = y - 12;
 
             graphics.pose().pushPose();
-            Tesselator tesselator = Tesselator.getInstance();
-            BufferBuilder bufferBuilder = tesselator.getBuilder();
-            RenderSystem.setShader(GameRenderer::getPositionColorShader);
-            bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
             TooltipRenderUtil.renderTooltipBackground(
                     graphics,
                     drawX,
@@ -290,11 +287,6 @@ public class YACLScreen extends Screen {
                     height,
                     400
             );
-            RenderSystem.enableDepthTest();
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-            BufferUploader.drawWithShader(bufferBuilder.end());
-            RenderSystem.disableBlend();
             graphics.pose().translate(0.0, 0.0, 400.0);
 
             text.renderLeftAligned(graphics, drawX, drawY, lineHeight, -1);
@@ -305,7 +297,7 @@ public class YACLScreen extends Screen {
 
     public static class CategoryTab implements TabExt {
         /*? if >1.20.4 {*/
-        private static final ResourceLocation DARKER_BG = new ResourceLocation("textures/gui/menu_list_background.png");
+        private static final ResourceLocation DARKER_BG = YACLPlatform.mcRl("textures/gui/menu_list_background.png");
         /*?}*/
 
         private final YACLScreen screen;

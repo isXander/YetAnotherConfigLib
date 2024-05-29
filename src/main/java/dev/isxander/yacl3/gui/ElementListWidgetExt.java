@@ -63,7 +63,11 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
             resetSmoothScrolling();
         }
 
-        smoothScrollAmount = Mth.lerp(Minecraft.getInstance().getDeltaFrameTime() * 0.5, smoothScrollAmount, getScrollAmount());
+        smoothScrollAmount = Mth.lerp(
+                delta * 0.5,
+                smoothScrollAmount,
+                getScrollAmount()
+        );
         returnSmoothAmount = true;
 
 

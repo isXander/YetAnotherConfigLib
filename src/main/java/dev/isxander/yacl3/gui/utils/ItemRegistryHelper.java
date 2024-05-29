@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui.utils;
 
 
+import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -26,7 +27,7 @@ public final class ItemRegistryHelper {
      */
     public static boolean isRegisteredItem(String identifier) {
         try {
-            ResourceLocation itemIdentifier = new ResourceLocation(identifier.toLowerCase());
+            ResourceLocation itemIdentifier = YACLPlatform.parseRl(identifier.toLowerCase());
             return BuiltInRegistries.ITEM.containsKey(itemIdentifier);
         } catch (ResourceLocationException e) {
             return false;
@@ -43,7 +44,7 @@ public final class ItemRegistryHelper {
      */
     public static Item getItemFromName(String identifier, Item defaultItem) {
         try {
-            ResourceLocation itemIdentifier = new ResourceLocation(identifier.toLowerCase());
+            ResourceLocation itemIdentifier = YACLPlatform.parseRl(identifier.toLowerCase());
             if (BuiltInRegistries.ITEM.containsKey(itemIdentifier)) {
                 return BuiltInRegistries.ITEM.get(itemIdentifier);
             }

@@ -17,7 +17,7 @@ val isNeoforge = loader == "neoforge"
 val isForge = loader == "forge"
 val isForgeLike = isNeoforge || isForge
 
-val mcVersion = stonecutter.current.version
+val mcVersion = findProperty("mcVersion").toString()
 
 group = "dev.isxander"
 val versionWithoutMC = "3.4.4"
@@ -111,7 +111,6 @@ repositories {
         forRepository { maven("https://thedarkcolour.github.io/KotlinForForge/") }
         filter { includeGroup("thedarkcolour") }
     }
-
     maven("https://maven.neoforged.net/releases/")
 }
 
@@ -119,7 +118,7 @@ dependencies {
     fun Dependency?.jij() = this?.let(::include)
     fun Dependency?.forgeRuntime() = this?.takeIf { isForgeLike }?.let { "forgeRuntimeLibrary"(it) }
 
-    minecraft("com.mojang:minecraft:${if (mcVersion.contains("beta")) "1.20.5-pre2" else mcVersion}")
+    minecraft("com.mojang:minecraft:$mcVersion")
 
     mappings(loom.layered {
         optionalProp("deps.quiltMappings") {

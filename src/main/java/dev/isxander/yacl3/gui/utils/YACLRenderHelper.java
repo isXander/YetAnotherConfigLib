@@ -8,10 +8,10 @@ import net.minecraft.resources.ResourceLocation;
 public class YACLRenderHelper {
     /*? if >1.20.1 {*/
     private static final net.minecraft.client.gui.components.WidgetSprites SPRITES = new net.minecraft.client.gui.components.WidgetSprites(
-            new ResourceLocation("widget/button"), // normal
-            new ResourceLocation("widget/button_disabled"), // disabled & !focused
-            new ResourceLocation("widget/button_highlighted"), // !disabled & focused
-            new ResourceLocation("widget/slider_highlighted") // disabled & focused
+            YACLPlatform.mcRl("widget/button"), // normal
+            YACLPlatform.mcRl("widget/button_disabled"), // disabled & !focused
+            YACLPlatform.mcRl("widget/button_highlighted"), // !disabled & focused
+            YACLPlatform.mcRl("widget/slider_highlighted") // disabled & focused
     );
     /*?} else {*//*
     private static final ResourceLocation SLIDER_LOCATION = new ResourceLocation("textures/gui/slider.png");

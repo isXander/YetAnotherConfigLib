@@ -14,6 +14,7 @@ import dev.isxander.yacl3.gui.controllers.string.number.DoubleFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.FloatFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.IntegerFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.LongFieldController;
+import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.GraphicsStatus;
@@ -502,7 +503,7 @@ public class GuiTest {
     }
 
     private static ResourceLocation imageSample(String name) {
-        return new ResourceLocation("yacl_test", "textures/images/" + name);
+        return YACLPlatform.rl("yacl_test", "textures/images/" + name);
     }
 
     private static boolean myBooleanOption = true;
