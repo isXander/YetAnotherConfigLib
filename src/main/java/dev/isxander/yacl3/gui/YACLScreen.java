@@ -306,8 +306,8 @@ public class YACLScreen extends Screen {
 
         private ListHolderWidget<OptionListWidget> optionList;
         public final Button saveFinishedButton;
-        private final Button cancelResetButton;
-        private final Button undoButton;
+        public final Button cancelResetButton;
+        public final Button undoButton;
         private final SearchFieldWidget searchField;
         private OptionDescriptionWidget descriptionWidget;
 
