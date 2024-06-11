@@ -104,6 +104,9 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 
 	@Override
 	public boolean charTyped(char chr, int modifiers) {
+		if (!inputFieldFocused) {
+			return false;
+		}
 		if (!dropdownVisible) {
 			createDropdownWidget();
 		}
