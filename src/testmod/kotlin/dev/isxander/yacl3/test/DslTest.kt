@@ -1,131 +1,146 @@
 package dev.isxander.yacl3.test
 
+import com.mojang.serialization.Codec
 import dev.isxander.yacl3.api.OptionFlag
-import dev.isxander.yacl3.api.controller.BooleanControllerBuilder
-import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder
+import dev.isxander.yacl3.config.v3.JsonFileCodecConfig
+import dev.isxander.yacl3.config.v3.register
 import dev.isxander.yacl3.dsl.*
 import dev.isxander.yacl3.platform.YACLPlatform
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.resources.ResourceLocation
 
-object Foo {
-    var bar = true
-    var baz = 0
-}
+object CodecConfigKt : JsonFileCodecConfig(YACLPlatform.getConfigDir().resolve("codec_config_kt.json")) {
+    val myInt by register<Int>(0, Codec.INT)
 
-fun kotlinDslGui(parent: Screen?) = YetAnotherConfigLib("namespace") {
-    // default title with translation key:
-    // `yacl3.config.namespace.title`
-    /* NO CODE REQUIRED */
+    val myString by register<String>("default", Codec.STRING)
 
-    // or set the title
-    title(Component.literal("A cool title"))
+    val myBoolean by register<Boolean>(false, Codec.BOOL)
 
+    val myIdentifier by register<ResourceLocation>(YACLPlatform.rl("test"), ResourceLocation.CODEC)
 
-    // usual save function
-    save {
-        // run your save function!
+    val myText by register<Component>(Component.literal("Hello, World!"), ComponentSerialization.CODEC)
+
+    init {
+        if (!loadFromFile()) {
+            saveToFile()
+        }
     }
 
-    // get access to an option from the very root of the dsl!
-    categories["testCategory"]["testGroup"].getOption("testOption").onReady {
-        // do something with it
-    }
-
-    val testCategory by categories.registering {
-        // default name with translation key:
-        // `yacl3.config.namespace.testCategory.testGroup.name`
+    fun generateConfigScreen(lastScreen: Screen?) = YetAnotherConfigLib("namespace") {
+        // default title with translation key:
+        // `yacl3.config.namespace.title`
         /* NO CODE REQUIRED */
 
-        // or set the name
-        name { Component.literal("A cool category") }
+        // or set the title
+        title(Component.literal("A cool title"))
 
-        // custom tooltip
-        tooltipBuilder {
-            // add a line like this
-            +Component.translatable("somecustomkey")
 
-            // or like this
-            text(Component.translatable("somecustomkey"))
-
-            // or like this
-            text { Component.translatable("somecustomkey") }
+        // usual save function
+        save {
+            // run your save function!
+            saveToFile()
         }
 
-        // you can declare things with strings
-        group("testGroup") {
+        // get access to an option from the very root of the dsl!
+        categories["testCategory"]["testGroup"].futureRef<String>("myIntOption").onReady {
+            // do something with it
+        }
+
+        val testCategory by categories.registering {
             // default name with translation key:
             // `yacl3.config.namespace.testCategory.testGroup.name`
             /* NO CODE REQUIRED */
 
             // or set the name
-            name { Component.literal("A cool group") }
+            name { Component.literal("A cool category") }
 
+            // custom tooltip
+            tooltip {
+                // add a line like this
+                +Component.translatable("somecustomkey")
 
-            // custom description builder:
-            descriptionBuilder {
-                // blah blah blah
+                // or like this
+                text(Component.translatable("somecustomkey"))
+
+                // or like this
+                text { Component.translatable("somecustomkey") }
             }
 
-            // default description with translation key:
-            // `yacl3.config.namespace.testCategory.testGroup.description.1-5`
-            // not compatible with custom description builder
-            useDefaultDescription(lines = 5)
+            // creates a label with the id `testLabel`
+            val testLabel by rootOptions.registeringLabel
 
-            // you can define opts/groups/categories using this delegate syntax
-            val testOption by options.registering { // type is automatically inferred from binding
+            // you can declare things with strings
+            groups.register("testGroup") {
                 // default name with translation key:
-                // `yacl3.config.namespace.testCategory.testGroup.testOption.name`
+                // `yacl3.config.namespace.testCategory.testGroup.name`
                 /* NO CODE REQUIRED */
 
+                // or set the name
+                name { Component.literal("A cool group") }
+
+
                 // custom description builder:
-                descriptionBuilder { value -> // changes the desc based on the current value
-                    // description with translation key:
-                    // `yacl3.config.namespace.testCategory.testGroup.testOption.description.1-5`
-                    addDefaultDescription(lines = 5)
-
-                    text { Component.translatable("somecustomkey") }
-                    webpImage(YACLPlatform.rl("namespace", "image.png"))
+                descriptionBuilder {
+                    // default description with translation key:
+                    // `yacl3.config.namespace.testCategory.testGroup.description.1-5`
+                    // not compatible with custom description builder
+                    addDefaultText(lines = 5)
                 }
 
-                // KProperties are cool!
-                binding(Foo::bar, Foo.bar)
+                // you can define opts/groups/categories using this delegate syntax
+                val myIntOption by options.registering<Int> { // type is automatically inferred from binding
+                    // default name with translation key:
+                    // `yacl3.config.namespace.testCategory.testGroup.testOption.name`
+                    /* NO CODE REQUIRED */
 
-                // you can access other options like this!
-                // `options` field is from the enclosing group dsl
-                listener { opt, newVal ->
-                    options.get<Int>("otherTestOption").onReady { it.setAvailable(newVal) }
+                    // custom description builder:
+                    descriptionBuilderDyn { value -> // changes the desc based on the current value
+                        // description with translation key:
+                        // `yacl3.config.namespace.testCategory.testGroup.testOption.description.1-5`
+                        addDefaultText(lines = 5)
+
+                        text { Component.translatable("somecustomkey") }
+                        webpImage(YACLPlatform.rl("namespace", "image.png"))
+                    }
+
+                    // Codecs!
+                    binding = myInt.asBinding()
+
+                    // you can access other options like this!
+                    // `options` field is from the enclosing group dsl
+                    listener { opt, newVal ->
+                        options.futureRef<String>("myString").onReady {
+
+                        }
+                    }
+
+                    // or use a delegated property to create a reference to an option
+                    val myStringOption by options.ref<String>() // nullable
+
+                    // you can set available with a property
+                    available = true
+                    // ...or a block
+                    available { true }
+
+                    // cool custom controller functions
+                    controller = slider(range = 5..10, step = 1)
+
+                    // flags as usual
+                    flag(OptionFlag.ASSET_RELOAD)
                 }
 
-                // or even get an access to them before creation
-                options.get<Int>("otherTestOption").onReady {
-                    // do something with it
+                // codec config api automatically sets binding and name
+                val myStringOption = options.register(myString) {
+                    controller = stringField()
                 }
 
-                // you can set available with a block
-                available { true }
-
-                // regular controller stuff
-                // this will be DSLed at some point
-                controller(BooleanControllerBuilder::create) {
-                    // blah blah blah
+                val myBooleanOption = options.register(myBoolean) {
+                    // custom formatters for these cool controller functions
+                    controller = textSwitch { bool -> Component.literal(bool.toString()) }
                 }
-
-                // flags as usual
-                flag(OptionFlag.ASSET_RELOAD)
-            }
-
-            val otherTestOption by options.registering { // type is automatically inferred from binding
-                controller(IntegerSliderControllerBuilder::create) {
-                    range(0, 100)
-                    step(5)
-                }
-
-                binding(Foo::baz, Foo.baz)
-
-                // blah blah blah other stuff
             }
         }
-    }
-}.generateScreen(parent)
+    }.generateScreen(lastScreen)
+}

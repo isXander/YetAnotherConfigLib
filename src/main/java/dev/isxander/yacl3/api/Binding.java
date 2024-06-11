@@ -6,6 +6,7 @@ import net.minecraft.client.OptionInstance;
 import org.apache.commons.lang3.Validate;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -18,6 +19,10 @@ public interface Binding<T> {
     T getValue();
 
     T defaultValue();
+
+    default <U> Binding<U> xmap(Function<T, U> to, Function<U, T> from) {
+        return Binding.generic(to.apply(this.defaultValue()), () -> to.apply(this.getValue()), v -> this.setValue(from.apply(v)));
+    }
 
     /**
      * Creates a generic binding.

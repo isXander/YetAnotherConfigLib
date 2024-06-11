@@ -16,8 +16,8 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
     /*? if >1.20.1 {*/
     private static final ResourceLocation COLOR_PICKER_LOCATION = YACLPlatform.rl("controller/colorpicker");
     private static final ResourceLocation TRANSPARENT_TEXTURE_LOCATION = YACLPlatform.rl("controller/transparent");
-    /*? } else {*//*
-    // nineslice and repeating only work on a 256x atlas
+    /*?} else {*/
+    /*// nineslice and repeating only work on a 256x atlas
     private static final ResourceLocation COLOR_PICKER_ATLAS = YACLPlatform.rl("textures/gui/colorpicker-atlas.png");
     *//*?}*/
 
@@ -88,10 +88,10 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         graphics.pose().translate(0, 0, 10); // render over text
 
         //Background
-        /*? if >1.20.3 { */
+        /*? if >1.20.3 {*/
         graphics.blitSprite(COLOR_PICKER_LOCATION, colorPickerDim.x() - 5, colorPickerDim.y() - 5, colorPickerDim.width() + 10, colorPickerDim.height() + 10);
-        /*? } else {*//*
-        graphics.blitNineSliced(COLOR_PICKER_ATLAS, colorPickerDim.x() - 5, colorPickerDim.y() - 5, colorPickerDim.width() + 10, colorPickerDim.height() + 10, 3, 236, 34, 0, 0);
+        /*?} else {*/
+        /*graphics.blitNineSliced(COLOR_PICKER_ATLAS, colorPickerDim.x() - 5, colorPickerDim.y() - 5, colorPickerDim.width() + 10, colorPickerDim.height() + 10, 3, 236, 34, 0, 0);
         *//*?}*/
 
         //Main color preview
@@ -99,10 +99,10 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         graphics.fill(previewColorDim.x() - outline, previewColorDim.y() - outline, previewColorDim.xLimit() + outline, previewColorDim.yLimit() + outline, Color.black.getRGB());
         //transparent texture - must be rendered BEFORE the main color preview
         if(controller.allowAlpha()) {
-            /*? if >1.20.3 { */
+            /*? if >1.20.3 {*/
             graphics.blitSprite(TRANSPARENT_TEXTURE_LOCATION, previewColorDim.x(), previewColorDim.y(), previewColorDim.width(), previewColorDim.height());
-            /*? } else {*//*
-            graphics.blitRepeating(COLOR_PICKER_ATLAS, previewColorDim.x(), previewColorDim.y(), previewColorDim.width(), previewColorDim.height(), 236, 0, 8, 8);
+            /*?} else {*/
+            /*graphics.blitRepeating(COLOR_PICKER_ATLAS, previewColorDim.x(), previewColorDim.y(), previewColorDim.width(), previewColorDim.height(), 236, 0, 8, 8);
             *//*?}*/
         }
         //main color preview
@@ -134,10 +134,10 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
             //outline
             graphics.fill(alphaGradientDim.x() - outline, alphaGradientDim.y() - outline, alphaGradientDim.xLimit() + outline, alphaGradientDim.yLimit() + outline, Color.black.getRGB());
             //Transparent texture
-            /*? if >1.20.3 { */
+            /*? if >1.20.3 {*/
             graphics.blitSprite(TRANSPARENT_TEXTURE_LOCATION, alphaGradientDim.x(), alphaGradientDim.y(), alphaGradientDim.width(), sliderHeight);
-            /*? } else {*//*
-            graphics.blitRepeating(COLOR_PICKER_ATLAS, alphaGradientDim.x(), alphaGradientDim.y(), alphaGradientDim.width(), sliderHeight, 236, 0, 8, 8);
+            /*?} else {*/
+            /*graphics.blitRepeating(COLOR_PICKER_ATLAS, alphaGradientDim.x(), alphaGradientDim.y(), alphaGradientDim.width(), sliderHeight, 236, 0, 8, 8);
             *//*?}*/
             //Pending color to transparent
             fillSidewaysGradient(graphics, alphaGradientDim.x(), alphaGradientDim.y(), alphaGradientDim.xLimit(), alphaGradientDim.yLimit(), getRgbWithoutAlpha(), 0x00000000);

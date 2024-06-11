@@ -1,4 +1,4 @@
-/*? if neoforge { *//*
+/*? if neoforge {*//*
 package dev.isxander.yacl3.test;
 
 import net.neoforged.fml.common.Mod;

@@ -2,13 +2,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `java-library`
-    kotlin("jvm") version "1.9.23"
+    kotlin("jvm")
 
-    id("dev.architectury.loom") version "1.6.+"
+    id("dev.architectury.loom")
 
-    id("me.modmuss50.mod-publish-plugin") version "0.5.+"
+    id("me.modmuss50.mod-publish-plugin")
     `maven-publish`
-    id("org.ajoberstar.grgit") version "5.0.+"
+    id("org.ajoberstar.grgit")
 }
 
 val loader = loom.platform.get().name.lowercase()
@@ -20,7 +20,7 @@ val isForgeLike = isNeoforge || isForge
 val mcVersion = findProperty("mcVersion").toString()
 
 group = "dev.isxander"
-val versionWithoutMC = "3.4.4"
+val versionWithoutMC = "3.5.0"
 version = "$versionWithoutMC+${stonecutter.current.project}"
 
 val snapshotVer = "${grgit.branch.current().name.replace('/', '.')}-SNAPSHOT"
@@ -33,19 +33,6 @@ val isBeta = "beta" in version.toString()
 
 base {
     archivesName.set(property("modName").toString())
-}
-
-stonecutter.expression {
-    when (it) {
-        "controlify" -> isPropDefined("deps.controlify")
-        "mod-menu" -> isPropDefined("deps.modMenu")
-        "fabric" -> isFabric
-        "neoforge" -> isNeoforge
-        "forge" -> isForge
-        "!forge" -> !isForge
-        "forge-like" -> isForgeLike
-        else -> null
-    }
 }
 
 val testmod by sourceSets.creating {

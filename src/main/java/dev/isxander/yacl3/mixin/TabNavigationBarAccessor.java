@@ -13,8 +13,8 @@ public interface TabNavigationBarAccessor {
     /*? if >1.20.4 {*/
     @Accessor("layout")
     net.minecraft.client.gui.layouts.LinearLayout yacl$getLayout();
-    /*? } else {*//*
-    @Accessor("layout")
+    /*?} else {*/
+    /*@Accessor("layout")
     net.minecraft.client.gui.layouts.GridLayout yacl$getLayout();
     *//*?}*/
 

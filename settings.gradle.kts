@@ -1,4 +1,4 @@
-import dev.kikugie.stonecutter.gradle.StonecutterSettings
+import dev.kikugie.stonecutter.StonecutterSettings
 
 pluginManagement {
     repositories {
@@ -9,11 +9,12 @@ pluginManagement {
         maven("https://maven.neoforged.net/releases/")
         maven("https://maven.minecraftforge.net/")
         maven("https://maven.kikugie.dev/releases")
+        maven("https://maven.kikugie.dev/snapshots")
     }
 }
 
 plugins {
-    id("dev.kikugie.stonecutter") version "0.3.5"
+    id("dev.kikugie.stonecutter") version "0.4-beta.3"
 }
 
 extensions.configure<StonecutterSettings> {
@@ -22,7 +23,7 @@ extensions.configure<StonecutterSettings> {
     shared {
         fun mc(mcVersion: String, name: String = mcVersion, loaders: Iterable<String>) {
             for (loader in loaders) {
-                versions("$name-$loader")
+                vers("$name-$loader", mcVersion)
             }
         }
 

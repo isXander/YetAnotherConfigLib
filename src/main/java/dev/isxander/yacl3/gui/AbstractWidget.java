@@ -100,12 +100,12 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
         vertex.addVertex(matrix4f, x1, y2, 0).setColor(startColor);
         vertex.addVertex(matrix4f, x2, y2, 0).setColor(endColor);
         vertex.addVertex(matrix4f, x2, y1, 0).setColor(endColor);
-        *//*? } else { */
+        *//*?} else {*/
         vertex.vertex(matrix4f, x1, y1, 0).color(startColor).endVertex();
         vertex.vertex(matrix4f, x1, y2, 0).color(startColor).endVertex();
         vertex.vertex(matrix4f, x2, y2, 0).color(endColor).endVertex();
         vertex.vertex(matrix4f, x2, y1, 0).color(endColor).endVertex();
-        /*? } */
+        /*?}*/
     }
 
 

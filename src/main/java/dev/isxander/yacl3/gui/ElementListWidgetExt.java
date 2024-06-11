@@ -25,8 +25,8 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     public ElementListWidgetExt(Minecraft client, int x, int y, int width, int height, boolean smoothScrolling) {
         /*? if >1.20.2 {*/
         super(client, width, x, y, height);
-        /*? } else {*//*
-        super(client, width, height, y, y + height, 22);
+        /*?} else {*/
+        /*super(client, width, height, y, y + height, 22);
         this.x0 = x;
         this.x1 = x + width;
         *//*?}*/
@@ -53,10 +53,10 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     }
 
     @Override
-    /*? if >1.20.2 { */
+    /*? if >1.20.2 {*/
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta)
-    /*?} else { *//*
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta)
+    /*?} else {*/
+    /*public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta)
     *//*?}*/
     {
         if (usingScrollbar) {
@@ -73,10 +73,10 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
 
         graphics.enableScissor(this.getX(), this.getY(), this.getX() + this.getWidth(), this.getY() + this.getHeight());
 
-        /*? if >1.20.2 { */
+        /*? if >1.20.2 {*/
         super.renderWidget(graphics, mouseX, mouseY, delta);
-        /*?} else { *//*
-        super.render(graphics, mouseX, mouseY, delta);
+        /*?} else {*/
+        /*super.render(graphics, mouseX, mouseY, delta);
         *//*?}*/
 
         graphics.disableScissor();
@@ -84,7 +84,7 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
         returnSmoothAmount = false;
     }
 
-    /*? if >1.20.1 { */
+    /*? if >1.20.1 {*/
     @Override
     /*?}*/
     protected boolean isValidMouseClick(int button) {
@@ -197,8 +197,8 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     @Override
     /*? if >1.20.4 {*/
     protected void renderListItems(GuiGraphics graphics, int mouseX, int mouseY, float delta)
-    /*? } else {*//*
-    protected void renderList(GuiGraphics graphics, int mouseX, int mouseY, float delta)
+    /*?} else {*/
+    /*protected void renderList(GuiGraphics graphics, int mouseX, int mouseY, float delta)
     *//*?}*/
     {
         int left = this.getRowLeft();
@@ -252,8 +252,8 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
         }
     }
 
-    /*? if <1.20.3 {*//*
-    @Override
+    /*? if <1.20.3 {*/
+    /*@Override
     public int getX() {
         return x0;
     }

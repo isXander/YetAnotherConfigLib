@@ -1,6 +1,6 @@
 package dev.isxander.yacl3.platform;
 
-/*?if fabric {*/
+/*? if fabric {*/
 import net.fabricmc.loader.api.FabricLoader;
 /*?} elif neoforge {*//*
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -39,7 +39,7 @@ public final class YACLPlatform {
     }
 
     public static Env getEnvironment() {
-        /*?if fabric {*/
+        /*? if fabric {*/
         return switch (FabricLoader.getInstance().getEnvironmentType()) {
             case CLIENT -> Env.CLIENT;
             case SERVER -> Env.SERVER;
@@ -53,7 +53,7 @@ public final class YACLPlatform {
     }
 
     public static Path getConfigDir() {
-        /*?if fabric {*/
+        /*? if fabric {*/
         return FabricLoader.getInstance().getConfigDir();
         /*?} elif forge-like {*//*
         return FMLPaths.CONFIGDIR.get();
@@ -61,7 +61,7 @@ public final class YACLPlatform {
     }
 
     public static boolean isDevelopmentEnv() {
-        /*?if fabric {*/
+        /*? if fabric {*/
         return FabricLoader.getInstance().isDevelopmentEnvironment();
         /*?} elif forge-like {*//*
         return !FMLEnvironment.production;

@@ -53,7 +53,7 @@ public class GuiTest {
                                 .option(ButtonOption.createBuilder()
                                         .name(Component.literal("Kotlin DSL Test"))
                                         .action((screen, opt) -> {
-                                            Minecraft.getInstance().setScreen(DslTestKt.kotlinDslGui(screen));
+                                            Minecraft.getInstance().setScreen(CodecConfigKt.INSTANCE.generateConfigScreen(screen));
                                         })
                                         .build())
                                 .group(OptionGroup.createBuilder()

@@ -123,8 +123,8 @@ public class YACLScreen extends Screen {
         currentPopupController = null;
     }
 
-    /*? if <=1.20.4 {*//*
-    @Override
+    /*? if <=1.20.4 {*/
+    /*@Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         renderDirtBackground(graphics);
         super.render(graphics, mouseX, mouseY, delta);

@@ -63,8 +63,8 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
 		graphics.blit(
 				/*? if >1.20.4 {*/
 				Screen.MENU_BACKGROUND,
-				/*?} else {*//*
-				Screen.BACKGROUND_LOCATION,
+				/*?} else {*/
+				/*Screen.BACKGROUND_LOCATION,
 				*//*?}*/
 				dropdownDim.x(), dropdownDim.y(), 0,
 				0.0f, 0.0f,

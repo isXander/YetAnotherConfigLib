@@ -13,15 +13,15 @@ public class YACLRenderHelper {
             YACLPlatform.mcRl("widget/button_highlighted"), // !disabled & focused
             YACLPlatform.mcRl("widget/slider_highlighted") // disabled & focused
     );
-    /*?} else {*//*
-    private static final ResourceLocation SLIDER_LOCATION = new ResourceLocation("textures/gui/slider.png");
+    /*?} else {*/
+    /*private static final ResourceLocation SLIDER_LOCATION = new ResourceLocation("textures/gui/slider.png");
     *//*?}*/
 
     public static void renderButtonTexture(GuiGraphics graphics, int x, int y, int width, int height, boolean enabled, boolean focused) {
         /*? if >1.20.1 {*/
         graphics.blitSprite(SPRITES.get(enabled, focused), x, y, width, height);
-        /*?} else {*//*
-        int textureV;
+        /*?} else {*/
+        /*int textureV;
         if (enabled) {
             textureV = focused ? 60 : 40;
         } else {
@@ -36,8 +36,8 @@ public class YACLRenderHelper {
     public static ResourceLocation getSpriteLocation(String path) {
         /*? if >1.20.3 {*/
         return YACLPlatform.rl(path);
-        /*? } else {*//*
-        return YACLPlatform.rl("textures/gui/sprites/" + path + ".png");
+        /*?} else {*/
+        /*return YACLPlatform.rl("textures/gui/sprites/" + path + ".png");
         *//*?}*/
     }
 }
