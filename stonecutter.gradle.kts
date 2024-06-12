@@ -7,7 +7,7 @@ plugins {
     id("me.modmuss50.mod-publish-plugin") version "0.5.+" apply false
     id("org.ajoberstar.grgit") version "5.0.+" apply false
 }
-stonecutter active "1.20.6-fabric" /* [SC] DO NOT EDIT */
+stonecutter active "1.21-fabric" /* [SC] DO NOT EDIT */
 
 stonecutter.configureEach {
     val platform = project.property("loom.platform")

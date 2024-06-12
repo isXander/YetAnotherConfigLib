@@ -23,6 +23,9 @@ typealias FutureOption<T> = CompletableFuture<Option<T>>
 fun <T> CompletableFuture<OptionRegistrar>.futureRef(id: String): FutureOption<T> =
     thenCompose { it.futureRef(id) }
 
+fun <T> CompletableFuture<OptionRegistrar>.futureRef(): RegisterableDelegateProvider<FutureOption<T>> =
+    RegisterableDelegateProvider({ this.futureRef(it) }, null)
+
 fun YetAnotherConfigLib(id: String, block: RootDsl.() -> Unit) =
     RootDslImpl(id).apply(block).build()
 

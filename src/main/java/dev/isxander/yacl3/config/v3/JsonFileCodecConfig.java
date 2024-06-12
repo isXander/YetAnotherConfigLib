@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
 @ApiStatus.Experimental
-public abstract class JsonFileCodecConfig extends CodecConfig {
+public abstract class JsonFileCodecConfig<T extends JsonFileCodecConfig<T>> extends CodecConfig<T> {
     private final Path configPath;
     private final Gson gson;
 

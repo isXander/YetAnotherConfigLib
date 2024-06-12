@@ -15,11 +15,11 @@ import java.nio.file.Path;
 
 public final class YACLPlatform {
     public static ResourceLocation parseRl(String rl) {
-        /*? if >1.20.6 {*//*
+        /*? if >1.20.6 {*/
         return ResourceLocation.parse(rl);
-        *//*?} else {*/
-        return new ResourceLocation(rl);
-        /*?}*/
+        /*?} else {*/
+        /*return new ResourceLocation(rl);
+        *//*?}*/
     }
 
     public static ResourceLocation rl(String path) {
@@ -31,11 +31,11 @@ public final class YACLPlatform {
     }
 
     public static ResourceLocation rl(String namespace, String path) {
-        /*? if >1.20.6 {*//*
+        /*? if >1.20.6 {*/
         return ResourceLocation.fromNamespaceAndPath(namespace, path);
-        *//*?} else {*/
-        return new ResourceLocation(namespace, path);
-        /*?}*/
+        /*?} else {*/
+        /*return new ResourceLocation(namespace, path);
+        *//*?}*/
     }
 
     public static Env getEnvironment() {

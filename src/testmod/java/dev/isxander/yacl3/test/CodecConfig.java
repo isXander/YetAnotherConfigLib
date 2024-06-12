@@ -6,12 +6,13 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import dev.isxander.yacl3.config.v3.ConfigEntry;
 import dev.isxander.yacl3.config.v3.JsonFileCodecConfig;
+import dev.isxander.yacl3.config.v3.ReadonlyConfigEntry;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.ResourceLocation;
 
-public class CodecConfig extends JsonFileCodecConfig {
+public class CodecConfig extends JsonFileCodecConfig<CodecConfig> {
     public static final CodecConfig INSTANCE = new CodecConfig();
 
     public final ConfigEntry<Integer> myInt =
@@ -26,8 +27,8 @@ public class CodecConfig extends JsonFileCodecConfig {
     public final ConfigEntry<Component> myText =
             register("my_text", Component.literal("Hello"), ComponentSerialization.CODEC);
 
-    public final ConfigEntry<InnerCodecConfig> myInnerConfig =
-            register("my_inner_config", InnerCodecConfig.INSTANCE, InnerCodecConfig.INSTANCE);
+    public final ReadonlyConfigEntry<InnerCodecConfig> myInnerConfig =
+            register("my_inner_config", InnerCodecConfig.INSTANCE);
 
     public static class InnerCodecConfig extends dev.isxander.yacl3.config.v3.CodecConfig<InnerCodecConfig> {
         public static final InnerCodecConfig INSTANCE = new InnerCodecConfig();
