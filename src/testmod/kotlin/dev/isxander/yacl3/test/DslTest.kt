@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.resources.ResourceLocation
 
-object CodecConfigKt : JsonFileCodecConfig(YACLPlatform.getConfigDir().resolve("codec_config_kt.json")) {
+object CodecConfigKt : JsonFileCodecConfig<CodecConfigKt>(YACLPlatform.getConfigDir().resolve("codec_config_kt.json")) {
     val myInt by register<Int>(0, Codec.INT)
 
     val myString by register<String>("default", Codec.STRING)

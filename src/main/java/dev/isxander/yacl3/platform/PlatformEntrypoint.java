@@ -14,8 +14,8 @@ public class PlatformEntrypoint implements ClientModInitializer {
         ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new YACLImageReloadListener());
     }
 }
-/*?} elif neoforge {*//*
-import net.neoforged.bus.api.IEventBus;
+/*?} elif neoforge {*/
+/*import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 

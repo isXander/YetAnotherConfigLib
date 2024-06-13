@@ -1,0 +1,17 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+#issueTrackerURL = ""
+license = "LGPL-3.0-or-later"
+
+[[mods]]
+modId = "yacl_test"
+version = "1"
+displayName = "YACL Testmod"
+description = '''
+Test mod for YACL
+'''
+authors = "isXander"
+
+[[mixins]]
+config = "yacl-test.mixins.json"
+
