@@ -40,7 +40,7 @@ YACL has the favour of hindsight. Whilst developing this fresh library, I can ma
 
 ## Usage
 
-[The wiki](https://github.com/isXander/YetAnotherConfigLib/wiki/Usage) contains a full documentation on how to use YACL.
+See [The documentation site](https://docs.isxander.dev/yet-another-config-lib) for how to use YACL in your mod.
 
 ## Screenshots
 
