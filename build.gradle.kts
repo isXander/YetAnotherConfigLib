@@ -242,8 +242,13 @@ publishMods {
     })
     modLoaders.add(loader)
 
+    fun versionList(prop: String) = findProperty(prop)?.toString()
+        ?.split(',')
+        ?.map { it.trim() }
+        ?: emptyList()
+
     // modrinth and curseforge use different formats for snapshots. this can be expressed globally
-    val stableMCVersions = listOf(stonecutter.current.version)
+    val stableMCVersions = versionList("pub.stableMC")
 
     val modrinthId: String by project
     if (modrinthId.isNotBlank() && hasProperty("modrinth.token")) {
@@ -251,6 +256,7 @@ publishMods {
             projectId.set(modrinthId)
             accessToken.set(findProperty("modrinth.token")?.toString())
             minecraftVersions.addAll(stableMCVersions)
+            minecraftVersions.addAll(versionList("pub.modrinthMC"))
 
             requires { slug.set("fabric-api") }
         }
@@ -262,6 +268,7 @@ publishMods {
             projectId.set(curseforgeId)
             accessToken.set(findProperty("curseforge.token")?.toString())
             minecraftVersions.addAll(stableMCVersions)
+            minecraftVersions.addAll(versionList("pub.curseforgeMC"))
 
             requires { slug.set("fabric-api") }
         }
