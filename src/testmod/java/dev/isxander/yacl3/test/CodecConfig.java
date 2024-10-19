@@ -9,7 +9,6 @@ import dev.isxander.yacl3.config.v3.JsonFileCodecConfig;
 import dev.isxander.yacl3.config.v3.ReadonlyConfigEntry;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.ResourceLocation;
 
 public class CodecConfig extends JsonFileCodecConfig<CodecConfig> {
@@ -24,8 +23,11 @@ public class CodecConfig extends JsonFileCodecConfig<CodecConfig> {
     public final ConfigEntry<ResourceLocation> myIdentifier =
             register("my_identifier", YACLPlatform.rl("test"), ResourceLocation.CODEC);
 
+    //? if >=1.21.2 {
     public final ConfigEntry<Component> myText =
-            register("my_text", Component.literal("Hello"), ComponentSerialization.CODEC);
+            register("my_text", Component.literal("Hello"),
+                    net.minecraft.network.chat.ComponentSerialization.CODEC);
+    //?}
 
     public final ReadonlyConfigEntry<InnerCodecConfig> myInnerConfig =
             register("my_inner_config", InnerCodecConfig.INSTANCE);

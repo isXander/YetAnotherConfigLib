@@ -34,12 +34,15 @@ public interface Option<T> {
      */
     @NotNull Controller<T> controller();
 
+    @NotNull StateManager<T> stateManager();
+
     /**
      * Binding for the option.
      * Controls setting, getting and default value.
      *
      * @see Binding
      */
+    @Deprecated
     @NotNull Binding<T> binding();
 
     /**
@@ -101,9 +104,12 @@ public interface Option<T> {
         return true;
     }
 
+    void addEventListener(OptionEventListener<T> listener);
+
     /**
      * Adds a listener for when the pending value changes
      */
+    @Deprecated
     void addListener(BiConsumer<Option<T>, T> changedListener);
 
     static <T> Builder<T> createBuilder() {
@@ -146,6 +152,10 @@ public interface Option<T> {
          */
         Builder<T> description(@NotNull Function<T, OptionDescription> descriptionFunction);
 
+        /**
+         * Supplies a controller for this option. A controller is the GUI control to interact with the option.
+         * @return this builder
+         */
         Builder<T> controller(@NotNull Function<Option<T>, ControllerBuilder<T>> controllerBuilder);
 
         /**
@@ -156,9 +166,12 @@ public interface Option<T> {
          */
         Builder<T> customController(@NotNull Function<Option<T>, Controller<T>> control);
 
+        Builder<T> stateManager(@NotNull StateManager<T> stateManager);
+
         /**
          * Sets the binding for the option.
          * Used for default, getter and setter.
+         * Under-the-hood, this creates a state manager that is individual to the option, sharing state with no options.
          *
          * @see Binding
          */
@@ -196,12 +209,17 @@ public interface Option<T> {
          */
         Builder<T> flags(@NotNull Collection<? extends OptionFlag> flags);
 
+        Builder<T> addListener(@NotNull OptionEventListener<T> listener);
+
+        Builder<T> addListeners(@NotNull Collection<OptionEventListener<T>> listeners);
+
         /**
          * Instantly invokes the binder's setter when modified in the GUI.
          * Prevents the user from undoing the change
          * <p>
          * Does not support {@link Option#flags()}!
          */
+        @Deprecated
         Builder<T> instant(boolean instant);
 
         /**
@@ -209,6 +227,7 @@ public interface Option<T> {
          *
          * @see Option#addListener(BiConsumer)
          */
+        @Deprecated
         Builder<T> listener(@NotNull BiConsumer<Option<T>, T> listener);
 
         /**
@@ -216,6 +235,7 @@ public interface Option<T> {
          *
          * @see Option#addListener(BiConsumer)
          */
+        @Deprecated
         Builder<T> listeners(@NotNull Collection<BiConsumer<Option<T>, T>> listeners);
 
         Option<T> build();

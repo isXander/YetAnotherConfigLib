@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public final class ListOptionImpl<T> implements ListOption<T> {
     private final Component name;
     private final OptionDescription description;
-    private final Binding<List<T>> binding;
+    private final StateManager<List<T>> stateManager;
     private final Supplier<T> initialValue;
     private final List<ListOptionEntry<T>> entries;
     private final boolean collapsed;
@@ -32,14 +32,14 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     private final ImmutableSet<OptionFlag> flags;
     private final EntryFactory entryFactory;
 
-    private final List<BiConsumer<Option<List<T>>, List<T>>> listeners;
+    private final List<OptionEventListener<List<T>>> listeners;
     private final List<Runnable> refreshListeners;
-    private int listenerTriggerDepth = 0;
+    private int currentListenerDepth = 0;
 
-    public ListOptionImpl(@NotNull Component name, @NotNull OptionDescription description, @NotNull Binding<List<T>> binding, @NotNull Supplier<T> initialValue, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available, int minimumNumberOfEntries, int maximumNumberOfEntries, boolean insertEntriesAtEnd, Collection<BiConsumer<Option<List<T>>, List<T>>> listeners) {
+    public ListOptionImpl(@NotNull Component name, @NotNull OptionDescription description, @NotNull StateManager<List<T>> stateManager, @NotNull Supplier<T> initialValue, @NotNull Function<ListOptionEntry<T>, Controller<T>> controllerFunction, ImmutableSet<OptionFlag> flags, boolean collapsed, boolean available, int minimumNumberOfEntries, int maximumNumberOfEntries, boolean insertEntriesAtEnd, Collection<OptionEventListener<List<T>>> listeners) {
         this.name = name;
         this.description = description;
-        this.binding = new SafeBinding<>(binding);
+        this.stateManager = stateManager;
         this.initialValue = initialValue;
         this.entryFactory = new EntryFactory(controllerFunction);
         this.entries = createEntries(binding().getValue());
@@ -52,7 +52,10 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         this.listeners = new ArrayList<>();
         this.listeners.addAll(listeners);
         this.refreshListeners = new ArrayList<>();
-        callListeners(true);
+
+        this.stateManager.addListener((oldValue, newValue) ->
+                triggerListener(OptionEventListener.Event.STATE_CHANGE, false));
+        triggerListener(OptionEventListener.Event.INITIAL, false);
     }
 
     @Override
@@ -81,8 +84,17 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     }
 
     @Override
+    public @NotNull StateManager<List<T>> stateManager() {
+        return stateManager;
+    }
+
+    @Override
+    @Deprecated
     public @NotNull Binding<List<T>> binding() {
-        return binding;
+        if (stateManager instanceof ProvidesBindingForDeprecation) {
+            return ((ProvidesBindingForDeprecation<List<T>>) stateManager).getBinding();
+        }
+        throw new UnsupportedOperationException("Binding is not available for this option - using a new state manager which does not directly expose the binding as it may not have one.");
     }
 
     @Override
@@ -177,8 +189,12 @@ public final class ListOptionImpl<T> implements ListOption<T> {
 
         this.available = available;
 
-        if (changed)
-            callListeners(false);
+        if (changed) {
+            if (!available) {
+                this.stateManager.sync();
+            }
+            this.triggerListener(OptionEventListener.Event.AVAILABILITY_CHANGE, !available);
+        }
     }
 
     @Override
@@ -195,8 +211,14 @@ public final class ListOptionImpl<T> implements ListOption<T> {
     }
 
     @Override
+    public void addEventListener(OptionEventListener<List<T>> listener) {
+        this.listeners.add(listener);
+    }
+
+    @Override
+    @Deprecated
     public void addListener(BiConsumer<Option<List<T>>, List<T>> changedListener) {
-        this.listeners.add(changedListener);
+        addEventListener((opt, event) -> changedListener.accept(opt, opt.pendingValue()));
     }
 
     @Override
@@ -213,30 +235,26 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         return values.stream().map(entryFactory::create).collect(Collectors.toList());
     }
 
-    void callListeners(boolean bypass) {
-        List<T> pendingValue = pendingValue();
-        if (bypass || listenerTriggerDepth == 0) {
-            if (listenerTriggerDepth > 10) {
-                throw new IllegalStateException("Listener trigger depth exceeded 10! This means a listener triggered a listener etc etc 10 times deep. This is likely a bug in the mod using YACL!");
+    void triggerListener(OptionEventListener.Event event, boolean allowDepth) {
+        if (allowDepth || currentListenerDepth == 0) {
+            Validate.isTrue(
+                    currentListenerDepth <= 10,
+                    "Listener depth exceeded 10! Possible cyclic listener pattern: a listener triggered an event that triggered the initial event etc etc."
+            );
+
+            currentListenerDepth++;
+
+            for (OptionEventListener<List<T>> listener : listeners) {
+                listener.onEvent(this, event);
             }
 
-            this.listenerTriggerDepth++;
-
-            for (BiConsumer<Option<List<T>>, List<T>> listener : listeners) {
-                try {
-                    listener.accept(this, pendingValue);
-                } catch (Exception e) {
-                    YACLConstants.LOGGER.error("Exception whilst triggering listener for option '%s'".formatted(name.getString()), e);
-                }
-            }
-
-            this.listenerTriggerDepth--;
+            currentListenerDepth--;
         }
     }
 
     private void onRefresh() {
         refreshListeners.forEach(Runnable::run);
-        callListeners(true);
+        triggerListener(OptionEventListener.Event.OTHER, true);
     }
 
     private class EntryFactory {
@@ -256,7 +274,6 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         private Component name = Component.empty();
         private OptionDescription description = OptionDescription.EMPTY;
         private Function<ListOptionEntry<T>, Controller<T>> controllerFunction;
-        private Binding<List<T>> binding = null;
         private final Set<OptionFlag> flags = new HashSet<>();
         private Supplier<T> initialValue;
         private boolean collapsed = false;
@@ -264,7 +281,10 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         private int minimumNumberOfEntries = 0;
         private int maximumNumberOfEntries = Integer.MAX_VALUE;
         private boolean insertEntriesAtEnd = false;
-        private final List<BiConsumer<Option<List<T>>, List<T>>> listeners = new ArrayList<>();
+        private final List<OptionEventListener<List<T>>> listeners = new ArrayList<>();
+
+        private Binding<List<T>> binding;
+        private StateManager<List<T>> stateManager;
 
         @Override
         public Builder<T> name(@NotNull Component name) {
@@ -315,8 +335,18 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         }
 
         @Override
+        public Builder<T> state(@NotNull StateManager<List<T>> stateManager) {
+            Validate.notNull(stateManager, "`stateManager` cannot be null");
+            Validate.isTrue(binding == null, "Cannot set state manager if binding is already set");
+
+            this.stateManager = stateManager;
+            return this;
+        }
+
+        @Override
         public Builder<T> binding(@NotNull Binding<List<T>> binding) {
             Validate.notNull(binding, "`binding` cannot be null");
+            Validate.isTrue(stateManager == null, "Cannot set binding if state manager is already set");
 
             this.binding = binding;
             return this;
@@ -379,24 +409,52 @@ public final class ListOptionImpl<T> implements ListOption<T> {
         }
 
         @Override
-        public Builder<T> listener(@NotNull BiConsumer<Option<List<T>>, List<T>> listener) {
+        public Builder<T> addListener(@NotNull OptionEventListener<List<T>> listener) {
+            Validate.notNull(listener, "`listener` must not be null");
+
             this.listeners.add(listener);
             return this;
         }
 
         @Override
+        public Builder<T> addListeners(@NotNull Collection<@NotNull OptionEventListener<List<T>>> optionEventListeners) {
+            Validate.notNull(optionEventListeners, "`optionEventListeners` must not be null");
+
+            this.listeners.addAll(optionEventListeners);
+            return this;
+        }
+
+        @Override
+        public Builder<T> listener(@NotNull BiConsumer<Option<List<T>>, List<T>> listener) {
+            Validate.notNull(listener, "`listener` must not be null");
+
+            return this.addListener((opt, event) -> listener.accept(opt, opt.pendingValue()));
+        }
+
+        @Override
         public Builder<T> listeners(@NotNull Collection<BiConsumer<Option<List<T>>, List<T>>> listeners) {
-            this.listeners.addAll(listeners);
+            Validate.notNull(listeners, "`listeners` must not be null");
+
+            this.addListeners(listeners.stream()
+                    .map(listener ->
+                            (OptionEventListener<List<T>>) (opt, event) ->
+                                    listener.accept(opt, opt.pendingValue())
+                    ).toList()
+            );
             return this;
         }
 
         @Override
         public ListOption<T> build() {
             Validate.notNull(controllerFunction, "`controller` must not be null");
-            Validate.notNull(binding, "`binding` must not be null");
             Validate.notNull(initialValue, "`initialValue` must not be null");
+            Validate.isTrue(stateManager != null || binding != null, "Either a state manager or binding must be set");
 
-            return new ListOptionImpl<>(name, description, binding, initialValue, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available, minimumNumberOfEntries, maximumNumberOfEntries, insertEntriesAtEnd, listeners);
+            if (stateManager == null) {
+                stateManager = StateManager.createSimple(binding);
+            }
+
+            return new ListOptionImpl<>(name, description, stateManager, initialValue, controllerFunction, ImmutableSet.copyOf(flags), collapsed, available, minimumNumberOfEntries, maximumNumberOfEntries, insertEntriesAtEnd, listeners);
         }
     }
 }

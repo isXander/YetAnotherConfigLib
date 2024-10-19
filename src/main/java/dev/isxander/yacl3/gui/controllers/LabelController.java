@@ -88,8 +88,6 @@ public class LabelController implements Controller<Component> {
             graphics.pose().pushPose();
             graphics.pose().translate(0, 0, 100);
             if (isMouseOver(mouseX, mouseY)) {
-                YACLScreen.renderMultilineTooltip(graphics, textRenderer, wrappedTooltip, getDimension().centerX(), getDimension().y() - 5, getDimension().yLimit() + 5, screen.width, screen.height);
-
                 Style style = getStyle(mouseX, mouseY);
                 if (style != null && style.getHoverEvent() != null) {
                     HoverEvent hoverEvent = style.getHoverEvent();

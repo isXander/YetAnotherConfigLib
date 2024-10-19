@@ -3,9 +3,11 @@ package dev.isxander.yacl3.gui.controllers;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
 import dev.isxander.yacl3.gui.YACLScreen;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.gui.utils.YACLRenderHelper;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -89,7 +91,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
 
         //Background
         /*? if >1.20.3 {*/
-        graphics.blitSprite(COLOR_PICKER_LOCATION, colorPickerDim.x() - 5, colorPickerDim.y() - 5, colorPickerDim.width() + 10, colorPickerDim.height() + 10);
+        GuiUtils.blitSprite(graphics, COLOR_PICKER_LOCATION, colorPickerDim.x() - 5, colorPickerDim.y() - 5, colorPickerDim.width() + 10, colorPickerDim.height() + 10);
         /*?} else {*/
         /*graphics.blitNineSliced(COLOR_PICKER_ATLAS, colorPickerDim.x() - 5, colorPickerDim.y() - 5, colorPickerDim.width() + 10, colorPickerDim.height() + 10, 3, 236, 34, 0, 0);
         *//*?}*/
@@ -100,7 +102,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         //transparent texture - must be rendered BEFORE the main color preview
         if(controller.allowAlpha()) {
             /*? if >1.20.3 {*/
-            graphics.blitSprite(TRANSPARENT_TEXTURE_LOCATION, previewColorDim.x(), previewColorDim.y(), previewColorDim.width(), previewColorDim.height());
+            GuiUtils.blitSprite(graphics, TRANSPARENT_TEXTURE_LOCATION, previewColorDim.x(), previewColorDim.y(), previewColorDim.width(), previewColorDim.height());
             /*?} else {*/
             /*graphics.blitRepeating(COLOR_PICKER_ATLAS, previewColorDim.x(), previewColorDim.y(), previewColorDim.width(), previewColorDim.height(), 236, 0, 8, 8);
             *//*?}*/
@@ -112,7 +114,9 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         //outline
         graphics.fill(saturationLightDim.x() - outline, saturationLightDim.y() - outline, saturationLightDim.xLimit() + outline, saturationLightDim.yLimit() + outline, Color.black.getRGB());
         //White to pending color's RGB from hue, left to right
-        fillSidewaysGradient(graphics, saturationLightDim.x(), saturationLightDim.y(), saturationLightDim.xLimit(), saturationLightDim.yLimit(), 0xFFFFFFFF, (int) getRgbFromHueX());
+        GuiUtils.drawSpecial(graphics, bufferSource -> {
+            fillSidewaysGradient(graphics, saturationLightDim.x(), saturationLightDim.y(), saturationLightDim.xLimit(), saturationLightDim.yLimit(), 0xFFFFFFFF, (int) getRgbFromHueX(), bufferSource.getBuffer(RenderType.gui()));
+        });
         //Transparent to black, top to bottom
         graphics.fillGradient(saturationLightDim.x(), saturationLightDim.y(), saturationLightDim.xLimit(), saturationLightDim.yLimit(), 0x00000000, 0xFF000000);
         //Sat/light thumb shadow
@@ -135,12 +139,14 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
             graphics.fill(alphaGradientDim.x() - outline, alphaGradientDim.y() - outline, alphaGradientDim.xLimit() + outline, alphaGradientDim.yLimit() + outline, Color.black.getRGB());
             //Transparent texture
             /*? if >1.20.3 {*/
-            graphics.blitSprite(TRANSPARENT_TEXTURE_LOCATION, alphaGradientDim.x(), alphaGradientDim.y(), alphaGradientDim.width(), sliderHeight);
+            GuiUtils.blitSprite(graphics, TRANSPARENT_TEXTURE_LOCATION, alphaGradientDim.x(), alphaGradientDim.y(), alphaGradientDim.width(), sliderHeight);
             /*?} else {*/
             /*graphics.blitRepeating(COLOR_PICKER_ATLAS, alphaGradientDim.x(), alphaGradientDim.y(), alphaGradientDim.width(), sliderHeight, 236, 0, 8, 8);
             *//*?}*/
             //Pending color to transparent
-            fillSidewaysGradient(graphics, alphaGradientDim.x(), alphaGradientDim.y(), alphaGradientDim.xLimit(), alphaGradientDim.yLimit(), getRgbWithoutAlpha(), 0x00000000);
+            GuiUtils.drawSpecial(graphics, bufferSource -> {
+                fillSidewaysGradient(graphics, alphaGradientDim.x(), alphaGradientDim.y(), alphaGradientDim.xLimit(), alphaGradientDim.yLimit(), getRgbWithoutAlpha(), 0x00000000, bufferSource.getBuffer(RenderType.gui()));
+            });
             //Alpha slider thumb shadow
             graphics.fill(alphaThumbX - thumbWidth / 2 - 1, alphaGradientDim.y() - outline - 1, alphaThumbX + thumbWidth / 2 + 1, alphaGradientDim.yLimit() + outline + 1, 0xFF404040);
             //Alpha slider thumb

@@ -31,6 +31,11 @@ public class HiddenNameListOptionEntry<T> implements ListOptionEntry<T> {
     }
 
     @Override
+    public @NotNull StateManager<T> stateManager() {
+        return option.stateManager();
+    }
+
+    @Override
     public @NotNull Controller<T> controller() {
         return option.controller();
     }
@@ -101,9 +106,13 @@ public class HiddenNameListOptionEntry<T> implements ListOptionEntry<T> {
     }
 
     @Override
+    @Deprecated
     public void addListener(BiConsumer<Option<T>, T> changedListener) {
         option.addListener(changedListener);
     }
 
-
+    @Override
+    public void addEventListener(OptionEventListener<T> listener) {
+        option.addEventListener(listener);
+    }
 }

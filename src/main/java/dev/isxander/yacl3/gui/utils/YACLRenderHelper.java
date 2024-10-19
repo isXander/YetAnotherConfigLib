@@ -19,7 +19,7 @@ public class YACLRenderHelper {
 
     public static void renderButtonTexture(GuiGraphics graphics, int x, int y, int width, int height, boolean enabled, boolean focused) {
         /*? if >1.20.1 {*/
-        graphics.blitSprite(SPRITES.get(enabled, focused), x, y, width, height);
+        GuiUtils.blitSprite(graphics, SPRITES.get(enabled, focused), x, y, width, height);
         /*?} else {*/
         /*int textureV;
         if (enabled) {

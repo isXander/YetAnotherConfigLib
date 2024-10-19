@@ -260,7 +260,7 @@ public class ColorController implements IStringController<Color> {
 
         @Override
         public void unfocus() {
-            if(colorPickerVisible) {
+            if (colorPickerVisible) {
                 removeColorPicker();
             }
             previewOutlineFadeTicks = 0;
@@ -271,7 +271,7 @@ public class ColorController implements IStringController<Color> {
             Color outlineColor = new Color(0xFF000000);
             Color highlightedColor = getHighlightedOutlineColor();
 
-            if(!hovered && !colorPreviewHovered) {
+            if (!hovered && !colorPreviewHovered) {
                 previewOutlineFadeTicks = 0;
                 return outlineColor;
             }
@@ -279,11 +279,11 @@ public class ColorController implements IStringController<Color> {
             int fadeInTicks = 80;
             int fadeOutTicks = fadeInTicks + 120;
 
-            if(colorPreviewHovered) {
+            if (colorPreviewHovered) {
                 //white/light grey if the color preview is being hovered
                 previewOutlineFadeTicks = 0;
                 return highlightedColor;
-            } else if(YACLConfig.HANDLER.instance().showColorPickerIndicator) {
+            } else if (YACLConfig.HANDLER.instance().showColorPickerIndicator) {
                 if(previewOutlineFadeTicks <= fadeInTicks) {
                     //fade to white
                     return getFadedColor(outlineColor, highlightedColor, previewOutlineFadeTicks, fadeInTicks);

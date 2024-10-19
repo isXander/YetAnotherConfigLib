@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui.controllers.string;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import dev.isxander.yacl3.api.OptionEventListener;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.ControllerWidget;
@@ -39,8 +40,10 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         inputFieldFocused = false;
         selectionLength = 0;
         emptyText = Component.literal("Click to type...").withStyle(ChatFormatting.GRAY);
-        control.option().addListener((opt, val) -> {
-            inputField = control.getString();
+        control.option().addEventListener((opt, event) -> {
+            if (event == OptionEventListener.Event.STATE_CHANGE) {
+                inputField = control.getString();
+            }
         });
         setDimension(dim);
     }

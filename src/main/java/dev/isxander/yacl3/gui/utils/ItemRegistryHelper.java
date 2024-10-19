@@ -46,7 +46,7 @@ public final class ItemRegistryHelper {
         try {
             ResourceLocation itemIdentifier = YACLPlatform.parseRl(identifier.toLowerCase());
             if (BuiltInRegistries.ITEM.containsKey(itemIdentifier)) {
-                return BuiltInRegistries.ITEM.get(itemIdentifier);
+                return MiscUtil.getFromRegistry(BuiltInRegistries.ITEM, itemIdentifier);
             }
         } catch (ResourceLocationException ignored) {
         }
@@ -80,14 +80,15 @@ public final class ItemRegistryHelper {
         if (sep == -1) {
             filterPredicate = identifier ->
                     identifier.getPath().contains(value)
-                            || BuiltInRegistries.ITEM.get(identifier).getDescription().getString().toLowerCase().contains(value.toLowerCase());
+                            || MiscUtil.getFromRegistry(BuiltInRegistries.ITEM, identifier)
+                                    /*? if >=1.21.2 {*/ .getName() /*?} else {*/ /*.getDescription() *//*?}*/
+                                    .getString().toLowerCase().contains(value.toLowerCase());
         } else {
             String namespace = value.substring(0, sep);
             String path = value.substring(sep + 1);
             filterPredicate = identifier -> identifier.getNamespace().equals(namespace) && identifier.getPath().startsWith(path);
         }
-        return BuiltInRegistries.ITEM.holders()
-                .map(holder -> holder.key().location())
+        return BuiltInRegistries.ITEM.keySet().stream()
                 .filter(filterPredicate)
                 /*
                  Sort items as follows based on the given "value" string's path:

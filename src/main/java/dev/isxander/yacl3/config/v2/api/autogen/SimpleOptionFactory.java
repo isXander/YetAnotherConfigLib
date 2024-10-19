@@ -37,7 +37,7 @@ public abstract class SimpleOptionFactory<A extends Annotation, T> implements Op
                 })
                 .available(this.available(annotation, field, optionAccess))
                 .flags(this.flags(annotation, field, optionAccess))
-                .listener((opt, v) -> this.listener(annotation, field, optionAccess, opt, v))
+                .addListener((opt, event) -> this.listener(annotation, field, optionAccess, opt, opt.pendingValue()))
                 .build();
 
         postInit(annotation, field, optionAccess, option);

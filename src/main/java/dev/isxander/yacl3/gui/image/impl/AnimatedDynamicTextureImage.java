@@ -7,7 +7,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
 import dev.isxander.yacl3.debug.DebugProperties;
 import dev.isxander.yacl3.gui.image.ImageRendererFactory;
-import dev.isxander.yacl3.impl.utils.YACLConstants;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -16,7 +16,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.FastColor;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -71,7 +70,8 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
             GlStateManager._texParameter(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MIN_FILTER, GlConst.GL_LINEAR);
         }
 
-        graphics.blit(
+        GuiUtils.blitGuiTex(
+                graphics,
                 uniqueLocation,
                 0, 0,
                 frameWidth * currentCol, frameHeight * currentRow,
@@ -251,19 +251,16 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
 
             for (int w = 0; w < bi.getWidth(); w++) {
                 for (int h = 0; h < bi.getHeight(); h++) {
-                    int rgb = bi.getRGB(w, h);
-                    int r = FastColor.ARGB32.red(rgb);
-                    int g = FastColor.ARGB32.green(rgb);
-                    int b = FastColor.ARGB32.blue(rgb);
-                    int a = FastColor.ARGB32.alpha(rgb);
+                    int argb = bi.getRGB(w, h);
 
                     int col = i % cols;
                     int row = (int) Math.floor(i / (double)cols);
 
-                    image.setPixelRGBA(
+                    GuiUtils.setPixelARGB(
+                            image,
                             frameWidth * col + w + xOffset,
                             frameHeight * row + h + yOffset,
-                            FastColor.ABGR32.color(a, b, g, r) // NativeImage uses ABGR for some reason
+                            argb
                     );
                 }
             }

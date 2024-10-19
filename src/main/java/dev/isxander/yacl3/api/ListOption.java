@@ -93,6 +93,8 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
          */
         Builder<T> customController(@NotNull Function<ListOptionEntry<T>, Controller<T>> control);
 
+        Builder<T> state(@NotNull StateManager<List<T>> stateManager);
+
         /**
          * Sets the binding for the option.
          * Used for default, getter and setter.
@@ -158,6 +160,10 @@ public interface ListOption<T> extends OptionGroup, Option<List<T>> {
          * @see OptionGroup#collapsed()
          */
         Builder<T> collapsed(boolean collapsible);
+
+        ListOption.Builder<T> addListener(@NotNull OptionEventListener<List<T>> listener);
+
+        ListOption.Builder<T> addListeners(@NotNull Collection<OptionEventListener<List<T>>> listeners);
 
         /**
          * Adds a listener to the option. Invoked upon changing any of the list's entries.

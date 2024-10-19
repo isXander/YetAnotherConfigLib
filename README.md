@@ -1,7 +1,3 @@
-<center><div align="center">
-
-![](https://raw.githubusercontent.com/isXander/YetAnotherConfigLib/1.19/src/main/resources/yacl-128x.png)
-
 # YetAnotherConfigLib
 
 ![Enviroment](https://img.shields.io/badge/Enviroment-Client-purple)
@@ -13,42 +9,76 @@
 
 [![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/isxander)
 
-Yet Another Config Lib, like, what were you expecting?
-  
-[![](https://www.bisecthosting.com/partners/custom-banners/08bbd3ff-5c0d-4480-8738-de0f070a04dd.png)](https://bisecthosting.com/xander)
+A mod designed to fit a modder's needs for client-side configuration.
 
-</div></center>
+[![](https://www.bisecthosting.com/partners/custom-banners/08bbd3ff-5c0d-4480-8738-de0f070a04dd.png)](https://bisecthosting.com/xander)
 
 ## Why does this mod even exist?
 
 This mod was made to fill a hole in this area of Fabric modding. The existing main config libraries don't achieve what I want from them:
 
-- **[Cloth Config API](https://modrinth.com/mod/cloth-config)**:<br/>**It's stale.** The developer of cloth has clarified that they are likely not going to add any more features. They don't want to touch it. ([citation](https://user-images.githubusercontent.com/43245524/206530322-3ae46008-5356-468e-9a73-63b859364d4e.png))
-- **[SpruceUI](https://github.com/LambdAurora/SpruceUI)**:<br/>**It isn't designed for configuration.** In this essence the design feels cluttered. Further details available in [this issue](https://github.com/isXander/Zoomify/issues/85).
-- **[MidnightLib](https://modrinth.com/mod/midnightlib)**:<br/>**It has cosmetics among other utilities.** It may not be large but some players (including me) wouldn't want cosmetics out of nowhere.
-- **[OwoLib](https://modrinth.com/mod/owo-lib)**:<br/>**It's content focused.** It does a lot of other things as well as config, adding to the size.
+- **[Cloth Config API](https://modrinth.com/mod/cloth-config)**: **It's stale.** The developer of cloth has clarified that they are likely not going to add any more features. They don't want to touch it. ([citation](https://user-images.githubusercontent.com/43245524/206530322-3ae46008-5356-468e-9a73-63b859364d4e.png))
+- **[SpruceUI](https://github.com/LambdAurora/SpruceUI)**: **It isn't designed for configuration.** In this essence the design feels cluttered. Further details available in [this issue](https://github.com/isXander/Zoomify/issues/85).
+- **[MidnightLib](https://modrinth.com/mod/midnightlib)**: **It has cosmetics among other utilities.** It may not be large but some players (including me) wouldn't want cosmetics out of nowhere.
+- **[OwoLib](https://modrinth.com/mod/owo-lib)**: **It's content focused.** It does a lot of other things as well as config, adding to the size.
 
 As you can see, there's sadly a drawback with all of them and this is where YetAnotherConfigLib comes in.
 
-## How is YACL better?
+## Why use YACL?
 
-YACL has the favour of hindsight. Whilst developing this fresh library, I can make sure that it does everything right:
+### Features
 
-- **Client sided library.** YACL is built for client mods only, making it a smaller size.
-- **Easy API.** YACL takes inspiration from [Sodium's](https://modrinth.com/mod/sodium) internal configuration library.
-- **It's styled to fit in Minecraft.** YACL's GUI is designed to fit right in.
+YACL has a ton of configuration features:
 
-## Usage
+- Custom control widgets
+    - Create your own unique "controller" if the default set does not suit your needs
+- Rich descriptions
+    - Clickable & hoverable text, powered by vanilla's Text component system
+    - WebP (including animated) image previews
+    - Custom rich-renderable section to replace image
+- Multiple controllers for the same type:
+    - Sliders or fields for numbers
+    - Dropdowns, cyclers, or raw text fields for strings
+    - Tickboxes or ON/OFF text display for booleans
+    - ...and more!
+- Fully-featured color picker
+- Accessible with full compatibility for keyboard control (optimised for Controlify usage)
+- High organisation with tabs (categories) and collapsable groups
+- Built-in serialization/deserialization techniques so you can skip the error-prone config code
+- Full alternative Kotlin DSL
+
+### Version support
+
+YACL supports a huge amount of versions, all kept up to date and released simultaneously, thanks to the amazing
+[Stonecutter](https://stonecutter.kikugie.dev/) build tool.
+
+| Version                 | Fabric | Forge | NeoForge |
+|-------------------------|--------|-------|----------|
+| **1.20.1**              | ✅      | ✅     | ⛔        |
+| **1.20.4**              | ✅      | ⛔     | ✅        |
+| **1.20.5 - 1.20.6**     | ✅      | ⛔     | ✅        |
+| **1.21.0 - 1.21.1**     | ✅      | ⛔     | ✅        |
+| **1.21.2** (RC version) | ✅      | ⛔     | ⛔        |
+
+That's **9** different targets, supporting versions that are 500+ days old!
+
+_**Note**: Forge (LexForge) is not and will not be supported past 1.20.1. 
+If you're a developer, please port to NeoForge.
+If you're a user, you may find that all your favourite mods have already done so._
+
+Each is a separate build, so make sure your users get the correct YACL version for their target of choice.
+
+### Design
+
+YACL is designed to fit right in with the vanilla GUI aesthetic, and will evolve with Minecraft itself. Take a look at
+the gallery to see how even in all the currently supported versions, YACL's design looks different to fit in with
+vanilla GUI updates.
+
+![image preview](https://cdn.modrinth.com/data/1eAoo2KR/images/5862570281f5109119c11f21a1bba52b6a2ab17f.png)
+
+## Usage for Developers
 
 [The wiki](https://github.com/isXander/YetAnotherConfigLib/wiki/Usage) contains a full documentation on how to use YACL.
-
-## Screenshots
-
-<center><div align="center">
-
-![java_A3zdbksGkC](https://user-images.githubusercontent.com/43245524/206924832-293b0780-2a8c-4b09-8765-155318d09ed9.png)
-
-</div></center>
 
 ## License
 

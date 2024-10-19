@@ -14,6 +14,7 @@ import dev.isxander.yacl3.gui.controllers.string.number.DoubleFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.FloatFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.IntegerFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.LongFieldController;
+import dev.isxander.yacl3.impl.SelfContainedBinding;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
@@ -116,7 +117,7 @@ public class GuiTest {
                                                 .controller(opt -> BooleanControllerBuilder.create(opt)
                                                         .formatValue(state -> state ? Component.literal("Amazing") : Component.literal("Not Amazing"))
                                                         .coloured(true))
-                                                .listener((opt, val) -> booleanOption.get().setAvailable(val))
+                                                .addListener((opt, event) -> booleanOption.get().setAvailable(opt.pendingValue()))
                                                 .build())
                                         .option(Option.<Boolean>createBuilder()
                                                 .name(Component.literal("Tick Box"))
@@ -137,6 +138,7 @@ public class GuiTest {
                                         .option(Option.<Integer>createBuilder()
                                                 .name(Component.literal("Int Slider"))
                                                 .description(OptionDescription.createBuilder()
+                                                        // noinspection deprecated
                                                         .gifImage(imageSample("sample4.gif"))
                                                         .build())
                                                 .binding(
@@ -462,6 +464,7 @@ public class GuiTest {
                                         .description(OptionDescription.of(Component.literal("Yay!!!!!!")))
                                         .build())
                                 .build())
+                        .category(sharedStateCategory())
                         .category(ConfigCategory.createBuilder()
                                 .name(Component.literal("Category Test"))
                                 .option(LabelOption.create(Component.literal("This is a test category!")))
@@ -496,10 +499,67 @@ public class GuiTest {
                                 .build())
                         .save(() -> {
                             Minecraft.getInstance().options.save();
-                            ConfigTest.GSON.serializer().save();
+                            ConfigTest.GSON.save();
                         })
                 )
                 .generateScreen(parent);
+    }
+
+    private static ConfigCategory sharedStateCategory() {
+        ConfigCategory.Builder builder = ConfigCategory.createBuilder()
+                .name(Component.literal("Shared State Test"));
+
+        StateManager<Boolean> sharedBoolean = StateManager.createSimple(new SelfContainedBinding<>(true));
+        builder.option(Option.<Boolean>createBuilder()
+                .name(Component.literal("Shared Boolean"))
+                .stateManager(sharedBoolean)
+                .controller(TickBoxControllerBuilder::create)
+                .build());
+        builder.option(Option.<Boolean>createBuilder()
+                .name(Component.literal("Shared Boolean"))
+                .stateManager(sharedBoolean)
+                .controller(BooleanControllerBuilder::create)
+                .build());
+
+        StateManager<String> sharedString = StateManager.createSimple(new SelfContainedBinding<>(""));
+        builder.option(Option.<String>createBuilder()
+                .name(Component.literal("Shared String"))
+                .stateManager(sharedString)
+                .controller(StringControllerBuilder::create)
+                .build());
+        builder.option(Option.<String>createBuilder()
+                .name(Component.literal("Shared String"))
+                .stateManager(sharedString)
+                .controller(StringControllerBuilder::create)
+                .build());
+
+        StateManager<Integer> sharedInt = StateManager.createSimple(new SelfContainedBinding<>(0));
+        builder.option(Option.<Integer>createBuilder()
+                .name(Component.literal("Shared Int"))
+                .stateManager(sharedInt)
+                .controller(opt -> IntegerSliderControllerBuilder.create(opt)
+                        .range(0, 10).step(1))
+                .build());
+        builder.option(Option.<Integer>createBuilder()
+                .name(Component.literal("Shared Int"))
+                .stateManager(sharedInt)
+                .controller(IntegerFieldControllerBuilder::create)
+                .build());
+
+        StateManager<Color> sharedColor = StateManager.createSimple(new SelfContainedBinding<>(Color.RED));
+        builder.option(Option.<Color>createBuilder()
+                .name(Component.literal("Shared Color"))
+                .stateManager(sharedColor)
+                .controller(ColorControllerBuilder::create)
+                .build());
+        builder.option(Option.<Color>createBuilder()
+                .name(Component.literal("Shared Color"))
+                .stateManager(sharedColor)
+                .controller(opt -> ColorControllerBuilder.create(opt)
+                        .allowAlpha(true))
+                .build());
+
+        return builder.build();
     }
 
     private static ResourceLocation imageSample(String name) {

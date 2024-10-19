@@ -1,13 +1,13 @@
 plugins {
     id("dev.kikugie.stonecutter")
-    id("dev.architectury.loom") version "1.6.+" apply false
+    id("dev.architectury.loom") version "1.7.+" apply false
 
     kotlin("jvm") version "1.9.23" apply false
 
     id("me.modmuss50.mod-publish-plugin") version "0.5.+" apply false
     id("org.ajoberstar.grgit") version "5.0.+" apply false
 }
-stonecutter active "1.21-fabric" /* [SC] DO NOT EDIT */
+stonecutter active "1.21.2-fabric" /* [SC] DO NOT EDIT */
 
 stonecutter.configureEach {
     val platform = project.property("loom.platform")
@@ -36,4 +36,9 @@ stonecutter registerChiseled tasks.register("chiseledReleaseMod", stonecutter.ch
 stonecutter registerChiseled tasks.register("chiseledPublishSnapshots", stonecutter.chiseled) {
     group = "mod"
     ofTask("publishAllPublicationsToXanderSnapshotsRepository")
+}
+
+stonecutter registerChiseled tasks.register("chiseledRunTestmod", stonecutter.chiseled) {
+    group = "mod"
+    ofTask("runTestmodClient")
 }

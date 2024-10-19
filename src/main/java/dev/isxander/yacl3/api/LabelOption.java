@@ -26,6 +26,8 @@ public interface LabelOption extends Option<Component> {
     }
 
     interface Builder {
+        Builder state(@NotNull StateManager<Component> stateManager);
+
         /**
          * Appends a line to the label
          */

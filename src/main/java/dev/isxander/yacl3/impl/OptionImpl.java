@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -17,40 +18,39 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal
-public final class OptionImpl<T> implements Option<T> {
+public class OptionImpl<T> implements Option<T> {
     private final Component name;
     private OptionDescription description;
     private final Controller<T> controller;
-    private final Binding<T> binding;
     private boolean available;
 
     private final ImmutableSet<OptionFlag> flags;
 
-    private T pendingValue;
-
-    private final List<BiConsumer<Option<T>, T>> listeners;
-    private int listenerTriggerDepth = 0;
+    private final StateManager<T> stateManager;
+    private final List<OptionEventListener<T>> listeners;
+    private int currentListenerDepth;
 
     public OptionImpl(
             @NotNull Component name,
             @NotNull Function<T, OptionDescription> descriptionFunction,
             @NotNull Function<Option<T>, Controller<T>> controlGetter,
-            @NotNull Binding<T> binding,
+            @NotNull StateManager<T> stateManager,
             boolean available,
             ImmutableSet<OptionFlag> flags,
-            @NotNull Collection<BiConsumer<Option<T>, T>> listeners
+            @NotNull Collection<OptionEventListener<T>> listeners
     ) {
         this.name = name;
-        this.binding = new SafeBinding<>(binding);
         this.available = available;
         this.flags = flags;
         this.listeners = new ArrayList<>(listeners);
 
-        this.pendingValue = binding.getValue();
+        this.stateManager = stateManager;
         this.controller = controlGetter.apply(this);
 
-        addListener((opt, pending) -> description = descriptionFunction.apply(pending));
-        triggerListeners(true);
+        this.stateManager.addListener((oldValue, newValue) ->
+                triggerListener(OptionEventListener.Event.STATE_CHANGE, false));
+        addEventListener((opt, event) -> description = descriptionFunction.apply(opt.pendingValue()));
+        triggerListener(OptionEventListener.Event.INITIAL, false);
     }
 
     @Override
@@ -74,8 +74,17 @@ public final class OptionImpl<T> implements Option<T> {
     }
 
     @Override
+    public @NotNull StateManager<T> stateManager() {
+        return stateManager;
+    }
+
+    @Override
+    @Deprecated
     public @NotNull Binding<T> binding() {
-        return binding;
+        if (stateManager instanceof ProvidesBindingForDeprecation) {
+            return ((ProvidesBindingForDeprecation<T>) stateManager).getBinding();
+        }
+        throw new UnsupportedOperationException("Binding is not available for this option - using a new state manager which does not directly expose the binding as it may not have one.");
     }
 
     @Override
@@ -91,9 +100,9 @@ public final class OptionImpl<T> implements Option<T> {
 
         if (changed) {
             if (!available) {
-                this.pendingValue = binding().getValue();
+                this.stateManager.sync();
             }
-            this.triggerListeners(!available);
+            this.triggerListener(OptionEventListener.Event.AVAILABILITY_CHANGE, !available);
         }
     }
 
@@ -104,26 +113,25 @@ public final class OptionImpl<T> implements Option<T> {
 
     @Override
     public boolean changed() {
-        return !binding().getValue().equals(pendingValue);
+        return !this.stateManager.isSynced();
     }
 
     @Override
     public @NotNull T pendingValue() {
-        return pendingValue;
+        return this.stateManager.get();
     }
 
     @Override
     public void requestSet(@NotNull T value) {
         Validate.notNull(value, "`value` cannot be null");
 
-        pendingValue = value;
-        this.triggerListeners(true);
+        this.stateManager.set(value);
     }
 
     @Override
     public boolean applyValue() {
         if (changed()) {
-            binding().setValue(pendingValue);
+            this.stateManager.apply();
             return true;
         }
         return false;
@@ -131,41 +139,44 @@ public final class OptionImpl<T> implements Option<T> {
 
     @Override
     public void forgetPendingValue() {
-        requestSet(binding().getValue());
+        this.stateManager.sync();
     }
 
     @Override
     public void requestSetDefault() {
-        requestSet(binding().defaultValue());
+        this.stateManager.resetToDefault(StateManager.ResetAction.BY_OPTION);
     }
 
     @Override
     public boolean isPendingValueDefault() {
-        return binding().defaultValue().equals(pendingValue());
+        return this.stateManager.isDefault();
     }
 
     @Override
-    public void addListener(BiConsumer<Option<T>, T> changedListener) {
-        this.listeners.add(changedListener);
+    public void addEventListener(OptionEventListener<T> listener) {
+        this.listeners.add(listener);
     }
 
-    private void triggerListeners(boolean bypass) {
-        if (bypass || listenerTriggerDepth == 0) {
-            if (listenerTriggerDepth > 10) {
-                throw new IllegalStateException("Listener trigger depth exceeded 10! This means a listener triggered a listener etc etc 10 times deep. This is likely a bug in the mod using YACL!");
+    @Override
+    @Deprecated
+    public void addListener(BiConsumer<Option<T>, T> changedListener) {
+        addEventListener((opt, event) -> changedListener.accept(opt, opt.pendingValue()));
+    }
+
+    private void triggerListener(OptionEventListener.Event event, boolean allowDepth) {
+        if (allowDepth || currentListenerDepth == 0) {
+            Validate.isTrue(
+                    currentListenerDepth <= 10,
+                    "Listener depth exceeded 10! Possible cyclic listener pattern: a listener triggered an event that triggered the initial event etc etc."
+            );
+
+            currentListenerDepth++;
+
+            for (OptionEventListener<T> listener : listeners) {
+                listener.onEvent(this, event);
             }
 
-            this.listenerTriggerDepth++;
-
-            for (BiConsumer<Option<T>, T> listener : listeners) {
-                try {
-                    listener.accept(this, pendingValue);
-                } catch (Exception e) {
-                    YACLConstants.LOGGER.error("Exception whilst triggering listener for option '%s'".formatted(name.getString()), e);
-                }
-            }
-
-            this.listenerTriggerDepth--;
+            currentListenerDepth--;
         }
     }
 
@@ -177,15 +188,17 @@ public final class OptionImpl<T> implements Option<T> {
 
         private Function<Option<T>, Controller<T>> controlGetter;
 
-        private Binding<T> binding;
 
         private boolean available = true;
 
-        private boolean instant = false;
-
         private final Set<OptionFlag> flags = new HashSet<>();
 
-        private final List<BiConsumer<Option<T>, T>> listeners = new ArrayList<>();
+        private final List<OptionEventListener<T>> listeners = new ArrayList<>();
+
+        private @Nullable Binding<T> binding;
+        private boolean instantDeprecated = false;
+
+        private @Nullable StateManager<T> stateManager;
 
         @Override
         public Builder<T> name(@NotNull Component name) {
@@ -222,8 +235,20 @@ public final class OptionImpl<T> implements Option<T> {
         }
 
         @Override
+        public Builder<T> stateManager(@NotNull StateManager<T> stateManager) {
+            Validate.notNull(stateManager, "`stateManager` cannot be null");
+
+            Validate.isTrue(binding == null, "Cannot set state manager when binding is set");
+            Validate.isTrue(!instantDeprecated, "Cannot set state manager when instant is set");
+
+            this.stateManager = stateManager;
+            return this;
+        }
+
+        @Override
         public Builder<T> binding(@NotNull Binding<T> binding) {
             Validate.notNull(binding, "`binding` cannot be null");
+            Validate.isTrue(stateManager == null, "Cannot set binding when state manager is set");
 
             this.binding = binding;
             return this;
@@ -235,8 +260,7 @@ public final class OptionImpl<T> implements Option<T> {
             Validate.notNull(getter, "`getter` must not be null");
             Validate.notNull(setter, "`setter` must not be null");
 
-            this.binding = Binding.generic(def, getter, setter);
-            return this;
+            return binding(Binding.generic(def, getter, setter));
         }
 
         @Override
@@ -262,34 +286,70 @@ public final class OptionImpl<T> implements Option<T> {
         }
 
         @Override
+        @Deprecated
         public Builder<T> instant(boolean instant) {
-            this.instant = instant;
+            Validate.isTrue(stateManager == null, "Cannot set instant when state manager is set");
+            YACLConstants.LOGGER.error("Option.Builder#instant is deprecated behaviour. Please use a custom state manager instead: `.state(StateManager.createInstant(Binding))`");
+
+            this.instantDeprecated = instant;
             return this;
         }
 
         @Override
-        public Builder<T> listener(@NotNull BiConsumer<Option<T>, T> listener) {
+        public Builder<T> addListener(@NotNull OptionEventListener<T> listener) {
+            Validate.notNull(listener, "`listener` must not be null");
+
             this.listeners.add(listener);
             return this;
         }
 
         @Override
+        public Builder<T> addListeners(@NotNull Collection<@NotNull OptionEventListener<T>> optionEventListeners) {
+            Validate.notNull(optionEventListeners, "`optionEventListeners` must not be null");
+
+            this.listeners.addAll(optionEventListeners);
+            return this;
+        }
+
+        @Override
+        public Builder<T> listener(@NotNull BiConsumer<Option<T>, T> listener) {
+            Validate.notNull(listener, "`listener` must not be null");
+
+            return this.addListener((opt, event) -> listener.accept(opt, opt.pendingValue()));
+        }
+
+        @Override
         public Builder<T> listeners(@NotNull Collection<BiConsumer<Option<T>, T>> listeners) {
-            this.listeners.addAll(listeners);
+            Validate.notNull(listeners, "`listeners` must not be null");
+
+            this.addListeners(listeners.stream()
+                    .map(listener ->
+                            (OptionEventListener<T>) (opt, event) ->
+                                    listener.accept(opt, opt.pendingValue())
+                    ).toList()
+            );
             return this;
         }
 
         @Override
         public Option<T> build() {
             Validate.notNull(controlGetter, "`control` must not be null when building `Option`");
-            Validate.notNull(binding, "`binding` must not be null when building `Option`");
-            Validate.isTrue(!instant || flags.isEmpty(), "instant application does not support option flags");
 
-            if (instant) {
-                listeners.add((opt, pendingValue) -> opt.applyValue());
+            if (instantDeprecated) {
+                if (binding == null) {
+                    throw new IllegalStateException("Cannot build option with instant when binding is not set");
+                }
+                Validate.isTrue(flags.isEmpty(), "instant application does not support option flags");
+
+                this.stateManager = StateManager.createInstant(binding);
+            } else if (binding != null) {
+                stateManager = StateManager.createSimple(binding);
             }
+            Validate.notNull(stateManager, "State manager must be set, either by using .binding() to create a simple manager or .state() to create an advanced one");
 
-            return new OptionImpl<>(name, descriptionFunction, controlGetter, binding, available, ImmutableSet.copyOf(flags), listeners);
+            Validate.isTrue(!stateManager.isAlwaysSynced() || flags.isEmpty(), "Always synced state managers do not support option flags.");
+
+            return new OptionImpl<>(name, descriptionFunction, controlGetter, stateManager, available, ImmutableSet.copyOf(flags), listeners);
         }
     }
 }

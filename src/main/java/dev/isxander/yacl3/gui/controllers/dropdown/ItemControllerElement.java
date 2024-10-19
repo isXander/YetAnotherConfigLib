@@ -3,6 +3,7 @@ package dev.isxander.yacl3.gui.controllers.dropdown;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.utils.ItemRegistryHelper;
+import dev.isxander.yacl3.gui.utils.MiscUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -43,7 +44,7 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 		List<ResourceLocation> identifiers = ItemRegistryHelper.getMatchingItemIdentifiers(inputField).toList();
 		currentItem = ItemRegistryHelper.getItemFromName(inputField, null);
 		for (ResourceLocation identifier : identifiers) {
-			matchingItems.put(identifier, BuiltInRegistries.ITEM.get(identifier));
+			matchingItems.put(identifier, MiscUtil.getFromRegistry(BuiltInRegistries.ITEM, identifier));
 		}
 		return identifiers;
 	}
@@ -86,6 +87,11 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 		if (inputFieldFocused)
 			return Component.literal(inputField);
 
-		return itemController.option().pendingValue().getDescription();
+		return itemController.option().pendingValue()
+                //? if >=1.21.2 {
+                .getName();
+                //?} else {
+                /*.getDescription();
+                *///?}
 	}
 }

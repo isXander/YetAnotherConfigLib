@@ -13,124 +13,57 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.BiConsumer;
 
-@ApiStatus.Internal
-public final class LabelOptionImpl implements LabelOption {
-    private final Component label;
-    private final Component name = Component.literal("Label Option");
-    private final OptionDescription description;
-    private final Component tooltip = Component.empty();
-    private final LabelController labelController;
-    private final Binding<Component> binding;
+public class LabelOptionImpl extends OptionImpl<Component> implements LabelOption {
+    public LabelOptionImpl(
+            @NotNull StateManager<Component> stateManager,
+            @NotNull Collection<OptionEventListener<Component>> optionEventListeners
+    ) {
+        super(
+                Component.literal("Label Option"),
+                OptionDescription::of,
+                LabelController::new,
+                stateManager,
+                true,
+                ImmutableSet.of(),
+                optionEventListeners
+        );
+    }
 
     public LabelOptionImpl(Component label) {
-        Validate.notNull(label, "`label` must not be null");
-
-        this.label = label;
-        this.labelController = new LabelController(this);
-        this.binding = Binding.immutable(label);
-        this.description = OptionDescription.createBuilder()
-                .text(this.label)
-                .build();
+        this(
+                StateManager.createImmutable(label),
+                ImmutableSet.of()
+        );
     }
 
     @Override
     public @NotNull Component label() {
-        return label;
-    }
-
-    @Override
-    public @NotNull Component name() {
-        return name;
-    }
-
-    @Override
-    public @NotNull OptionDescription description() {
-        return description;
-    }
-
-    @Override
-    public @NotNull Component tooltip() {
-        return tooltip;
-    }
-
-    @Override
-    public @NotNull Controller<Component> controller() {
-        return labelController;
-    }
-
-    @Override
-    public @NotNull Binding<Component> binding() {
-        return binding;
-    }
-
-    @Override
-    public boolean available() {
-        return true;
+        return stateManager().get();
     }
 
     @Override
     public void setAvailable(boolean available) {
-        throw new UnsupportedOperationException("Label options cannot be disabled.");
-    }
-
-    @Override
-    public @NotNull ImmutableSet<OptionFlag> flags() {
-        return ImmutableSet.of();
-    }
-
-    @Override
-    public boolean changed() {
-        return false;
-    }
-
-    @Override
-    public @NotNull Component pendingValue() {
-        return label;
-    }
-
-    @Override
-    public void requestSet(@NotNull Component value) {
-
-    }
-
-    @Override
-    public boolean applyValue() {
-        return false;
-    }
-
-    @Override
-    public void forgetPendingValue() {
-
-    }
-
-    @Override
-    public void requestSetDefault() {
-
-    }
-
-    @Override
-    public boolean isPendingValueDefault() {
-        return true;
-    }
-
-    @Override
-    public boolean canResetToDefault() {
-        return false;
-    }
-
-    @Override
-    public void addListener(BiConsumer<Option<Component>, Component> changedListener) {
-
+        throw new UnsupportedOperationException("Cannot change availability of label option");
     }
 
     @ApiStatus.Internal
-    public static final class BuilderImpl implements Builder {
+    public static final class BuilderImpl implements LabelOption.Builder {
+        private StateManager<Component> stateManager;
         private final List<Component> lines = new ArrayList<>();
 
         @Override
-        public Builder line(@NotNull Component line) {
+        public LabelOption.Builder state(@NotNull StateManager<Component> stateManager) {
+            Validate.notNull(stateManager, "`stateManager` must not be null");
+            Validate.isTrue(this.lines.isEmpty(), "Cannot set state manager if lines have already been defined");
+
+            this.stateManager = stateManager;
+            return this;
+        }
+
+        @Override
+        public LabelOption.Builder line(@NotNull Component line) {
+            Validate.isTrue(stateManager == null, ".line() is a helper to create a state manager for you at build. If you have defined a custom state manager, do not use .line()");
             Validate.notNull(line, "`line` must not be null");
 
             this.lines.add(line);
@@ -138,23 +71,30 @@ public final class LabelOptionImpl implements LabelOption {
         }
 
         @Override
-        public Builder lines(@NotNull Collection<? extends Component> lines) {
+        public LabelOption.Builder lines(@NotNull Collection<? extends Component> lines) {
+            Validate.isTrue(stateManager == null, ".lines() is a helper to create a state manager for you at build. If you have defined a custom state manager, do not use .lines()");
+
             this.lines.addAll(lines);
             return this;
         }
 
         @Override
         public LabelOption build() {
-            MutableComponent text = Component.empty();
-            Iterator<Component> iterator = lines.iterator();
-            while (iterator.hasNext()) {
-                text.append(iterator.next());
+            Validate.isTrue(stateManager != null || !lines.isEmpty(), "Cannot build label option without a state manager or lines");
 
-                if (iterator.hasNext())
-                    text.append("\n");
+            if (!lines.isEmpty()) {
+                MutableComponent text = Component.empty();
+                Iterator<Component> iterator = lines.iterator();
+                while (iterator.hasNext()) {
+                    text.append(iterator.next());
+
+                    if (iterator.hasNext())
+                        text.append("\n");
+                }
+                this.stateManager = StateManager.createSimple(new SelfContainedBinding<>(text));
             }
 
-            return new LabelOptionImpl(text);
+            return new LabelOptionImpl(this.stateManager, ImmutableSet.of());
         }
     }
 }

@@ -7,6 +7,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import dev.isxander.yacl3.debug.DebugProperties;
 import dev.isxander.yacl3.gui.image.ImageRenderer;
 import dev.isxander.yacl3.gui.image.ImageRendererFactory;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -51,7 +52,7 @@ public class DynamicTextureImage implements ImageRenderer {
             GlStateManager._texParameter(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MIN_FILTER, GlConst.GL_LINEAR);
         }
 
-        graphics.blit(uniqueLocation, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
+        GuiUtils.blitGuiTex(graphics, uniqueLocation, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
 
         graphics.pose().popPose();
 

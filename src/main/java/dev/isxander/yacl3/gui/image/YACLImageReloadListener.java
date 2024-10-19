@@ -29,19 +29,20 @@ public class YACLImageReloadListener
     public @NotNull CompletableFuture<Void> reload(
             PreparationBarrier preparationBarrier,
             @NotNull ResourceManager resourceManager,
-            @NotNull ProfilerFiller preparationsProfiler,
+            //? if <1.21.2 {
+            /*@NotNull ProfilerFiller preparationsProfiler,
             @NotNull ProfilerFiller reloadProfiler,
+            *///?}
             @NotNull Executor backgroundExecutor,
             @NotNull Executor gameExecutor
     ) {
-        return prepare(resourceManager, preparationsProfiler, backgroundExecutor)
+        return prepare(resourceManager, backgroundExecutor)
                 .thenCompose(preparationBarrier::wait)
-                .thenCompose(suppliers -> apply(suppliers, reloadProfiler, gameExecutor));
+                .thenCompose(suppliers -> apply(suppliers, gameExecutor));
     }
 
     private CompletableFuture<List<Optional<SupplierPreparation>>> prepare(
             ResourceManager manager,
-            ProfilerFiller profiler,
             Executor executor
     ) {
         Map<ResourceLocation, Resource> imageResources = manager.listResources(
@@ -72,7 +73,6 @@ public class YACLImageReloadListener
 
     private CompletableFuture<Void> apply(
             List<Optional<SupplierPreparation>> suppliers,
-            ProfilerFiller profiler,
             Executor executor
     ) {
         return CompletableFuture.allOf(suppliers.stream()

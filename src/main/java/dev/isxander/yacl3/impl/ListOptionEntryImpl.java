@@ -49,6 +49,11 @@ public final class ListOptionEntryImpl<T> implements ListOptionEntry<T> {
     }
 
     @Override
+    public @NotNull StateManager<T> stateManager() {
+        throw new UnsupportedOperationException("ListOptionEntryImpl does not support state managers");
+    }
+
+    @Override
     public @NotNull Binding<T> binding() {
         return binding;
     }
@@ -109,6 +114,11 @@ public final class ListOptionEntryImpl<T> implements ListOptionEntry<T> {
     }
 
     @Override
+    public void addEventListener(OptionEventListener<T> listener) {
+
+    }
+
+    @Override
     public void addListener(BiConsumer<Option<T>, T> changedListener) {
 
     }
@@ -138,7 +148,7 @@ public final class ListOptionEntryImpl<T> implements ListOptionEntry<T> {
         @Override
         public void setValue(T newValue) {
             value = newValue;
-            group.callListeners(true);
+            group.triggerListener(OptionEventListener.Event.OTHER, true);
         }
 
         @Override

@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import dev.isxander.yacl3.debug.DebugProperties;
 import dev.isxander.yacl3.gui.image.ImageRenderer;
 import dev.isxander.yacl3.gui.image.ImageRendererFactory;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
@@ -38,7 +39,7 @@ public class ResourceTextureImage implements ImageRenderer {
             GlStateManager._texParameter(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MIN_FILTER, GlConst.GL_LINEAR);
         }
 
-        graphics.blit(location, 0, 0, this.u, this.v, this.width, this.height, this.textureWidth, this.textureHeight);
+        GuiUtils.blitGuiTex(graphics, location, 0, 0, this.u, this.v, this.width, this.height, this.textureWidth, this.textureHeight);
 
         graphics.pose().popPose();
 

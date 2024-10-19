@@ -173,7 +173,8 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     }
 
     @Override
-    protected int getRowTop(int index) {
+    /*? if >=1.21.2 {*/ public /*?} else {*/ /*protected *//*?}*/
+    int getRowTop(int index) {
         int integer = getY() + 4 - (int) this.getScrollAmount() + headerHeight;
         for (int i = 0; i < children().size() && i < index; i++)
             integer += children().get(i).getItemHeight();

@@ -8,6 +8,8 @@ import dev.isxander.yacl3.dsl.*
 import dev.isxander.yacl3.platform.YACLPlatform
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
+// 1.20.1 doesn't have a component codec
+//? if >1.20.1
 import net.minecraft.network.chat.ComponentSerialization
 import net.minecraft.resources.ResourceLocation
 
@@ -20,6 +22,8 @@ object CodecConfigKt : JsonFileCodecConfig<CodecConfigKt>(YACLPlatform.getConfig
 
     val myIdentifier by register<ResourceLocation>(YACLPlatform.rl("test"), ResourceLocation.CODEC)
 
+    // 1.20.1 doesn't have a component codec
+    //? if >1.20.1
     val myText by register<Component>(Component.literal("Hello, World!"), ComponentSerialization.CODEC)
 
     init {
@@ -110,7 +114,7 @@ object CodecConfigKt : JsonFileCodecConfig<CodecConfigKt>(YACLPlatform.getConfig
 
                     // you can access other options like this!
                     // `options` field is from the enclosing group dsl
-                    listener { opt, newVal ->
+                    addListener { opt, event ->
                         options.futureRef<String>("myString").onReady {
 
                         }

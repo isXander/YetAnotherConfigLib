@@ -17,10 +17,9 @@ import java.util.function.Consumer;
 public final class ButtonOptionImpl implements ButtonOption {
     private final Component name;
     private final OptionDescription description;
-    private final BiConsumer<YACLScreen, ButtonOption> action;
+    private final StateManager<BiConsumer<YACLScreen, ButtonOption>> stateManager;
     private boolean available;
     private final Controller<BiConsumer<YACLScreen, ButtonOption>> controller;
-    private final Binding<BiConsumer<YACLScreen, ButtonOption>> binding;
 
     public ButtonOptionImpl(
             @NotNull Component name,
@@ -31,10 +30,9 @@ public final class ButtonOptionImpl implements ButtonOption {
     ) {
         this.name = name;
         this.description = description;
-        this.action = action;
+        this.stateManager = StateManager.createImmutable(action);
         this.available = available;
         this.controller = text != null ? new ActionController(this, text) : new ActionController(this);
-        this.binding = new EmptyBinderImpl();
     }
 
     @Override
@@ -54,7 +52,7 @@ public final class ButtonOptionImpl implements ButtonOption {
 
     @Override
     public BiConsumer<YACLScreen, ButtonOption> action() {
-        return action;
+        return stateManager().get();
     }
 
     @Override
@@ -73,8 +71,13 @@ public final class ButtonOptionImpl implements ButtonOption {
     }
 
     @Override
+    public @NotNull StateManager<BiConsumer<YACLScreen, ButtonOption>> stateManager() {
+        return this.stateManager;
+    }
+
+    @Override
     public @NotNull Binding<BiConsumer<YACLScreen, ButtonOption>> binding() {
-        return binding;
+        return new EmptyBinderImpl();
     }
 
     @Override
@@ -115,6 +118,11 @@ public final class ButtonOptionImpl implements ButtonOption {
     @Override
     public boolean isPendingValueDefault() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void addEventListener(OptionEventListener<BiConsumer<YACLScreen, ButtonOption>> listener) {
+
     }
 
     @Override
