@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component;
 import java.util.function.Function;
 
 public class DoubleFieldControllerBuilderImpl extends AbstractControllerBuilderImpl<Double> implements DoubleFieldControllerBuilder {
-    private double min = Double.MIN_VALUE;
+    private double min = -Double.MAX_VALUE;
     private double max = Double.MAX_VALUE;
     private ValueFormatter<Double> formatter = DoubleSliderController.DEFAULT_FORMATTER::apply;
 
