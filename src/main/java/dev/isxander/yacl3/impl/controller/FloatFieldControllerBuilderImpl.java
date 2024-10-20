@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component;
 import java.util.function.Function;
 
 public class FloatFieldControllerBuilderImpl extends AbstractControllerBuilderImpl<Float> implements FloatFieldControllerBuilder {
-    private float min = Float.MIN_VALUE;
+    private float min = -Float.MAX_VALUE;
     private float max = Float.MAX_VALUE;
     private ValueFormatter<Float> formatter = FloatSliderController.DEFAULT_FORMATTER::apply;
 
