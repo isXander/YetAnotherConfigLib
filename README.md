@@ -78,7 +78,7 @@ vanilla GUI updates.
 
 ## Usage for Developers
 
-[The wiki](https://github.com/isXander/YetAnotherConfigLib/wiki/Usage) contains a full documentation on how to use YACL.
+See [The documentation site](https://docs.isxander.dev/yet-another-config-lib) for how to use YACL in your mod.
 
 ## License
 
