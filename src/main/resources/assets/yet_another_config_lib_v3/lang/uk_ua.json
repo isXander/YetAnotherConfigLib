@@ -1,0 +1,35 @@
+{
+  "yacl.control.boolean.true": "Правда",
+  "yacl.control.boolean.false": "Брехня",
+
+  "yacl.control.action.execute": "ВИКОНАТИ",
+
+  "yacl.control.color.color_picker_title": "Вибір кольору",
+  "yacl.control.dropdown.dropdown_widget_title": "Випадаючий список",
+
+  "yacl.control.text.blank": "<blank>",
+
+  "yacl.gui.save": "Зберегти зміни",
+  "yacl.gui.save.tooltip": "Робить внесені зміни постійними.",
+  "yacl.gui.finished.tooltip": "Закриває GUI.",
+  "yacl.gui.cancel.tooltip": "Забуває відкладені зміни і закриває GUI.",
+  "yacl.gui.reset.tooltip": "Скидає всі параметри до значень за замовчуванням. (Це можна повернути!)",
+  "yacl.gui.undo": "Скасувати",
+  "yacl.gui.undo.tooltip": "Повертає всі параметри до того, якими вони були до редагування.",
+  "yacl.gui.fail_apply": "Не вдалося застосувати",
+  "yacl.gui.fail_apply.tooltip": "Виникла помилка, і зміни не вдалося застосувати.",
+  "yacl.gui.save_before_exit": "Збережіть перед виходом!",
+  "yacl.gui.save_before_exit.tooltip": "Зберегти або скасувати, щоб вийти з GUI.",
+
+  "yacl.list.move_up": "Рухати вверх",
+  "yacl.list.move_down": "Рухати вниз",
+  "yacl.list.remove": "Видалити",
+  "yacl.list.add_top": "Новий запис",
+  "yacl.list.empty": "Список порожній",
+
+  "yacl.restart.title": "Конфігурація потребує перезапуску!",
+  "yacl.restart.message": "Щоб застосувати зміни, потрібно перезапустити гру в одному або декількох варіантах.",
+  "yacl.restart.yes": "Закрити Minecraft",
+  "yacl.restart.no": "Ігнорувати"
+
+}
