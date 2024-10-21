@@ -75,7 +75,7 @@ public interface ConfigCategory {
          * To add to another group, use {@link Builder#group(OptionGroup)}.
          * To construct an option, use {@link Option#createBuilder()}
          *
-         * @param condition only if true is the option added
+         * @param condition whether to add the option
          * @return this
          */
         @Override
@@ -89,8 +89,8 @@ public interface ConfigCategory {
          * To add to another group, use {@link Builder#group(OptionGroup)}.
          * To construct an option, use {@link Option#createBuilder()}
          *
-         * @param condition only if true is the option added
-         * @param optionSupplier to be called to initialise the option. called immediately only if condition is true
+         * @param condition whether to add the option
+         * @param optionSupplier to be called to initialise the option. called immediately if and only if condition is true
          * @return this
          */
         @Override
@@ -116,6 +116,40 @@ public interface ConfigCategory {
          * To construct a group, use {@link OptionGroup#createBuilder()}
          */
         Builder group(@NotNull OptionGroup group);
+
+        /**
+         * Adds an option group.
+         * To add an option to the root group, use {@link Builder#option(Option)}
+         * To construct a group, use {@link OptionGroup#createBuilder()}
+         *
+         * @param groupSupplier to be called to initialise the group. called immediately
+         */
+        default Builder group(@NotNull Supplier<@NotNull OptionGroup> groupSupplier) {
+            return group(groupSupplier.get());
+        }
+
+        /**
+         * Adds an option group if a condition is met.
+         * To add an option to the root group, use {@link Builder#optionIf(boolean, Option)}.
+         * To construct a group, use {@link OptionGroup#createBuilder()}
+         *
+         * @param condition whether to add the group
+         */
+        default Builder groupIf(boolean condition, @NotNull OptionGroup group) {
+            return condition ? group(group) : this;
+        }
+
+        /**
+         * Adds an option group if a condition is met.
+         * To add an option to the root group, use {@link Builder#optionIf(boolean, Option)}.
+         * To construct a group, use {@link OptionGroup#createBuilder()}
+         *
+         * @param condition whether to add the group
+         * @param groupSupplier to be called to initialise the group. called immediately if and only if condition is true
+         */
+        default Builder groupIf(boolean condition, @NotNull Supplier<@NotNull OptionGroup> groupSupplier) {
+            return condition ? group(groupSupplier) : this;
+        }
 
         /**
          * Adds multiple option groups.

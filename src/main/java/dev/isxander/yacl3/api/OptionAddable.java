@@ -24,7 +24,7 @@ public interface OptionAddable {
     /**
      * Adds an option to an abstract builder if a condition is met.
      * To construct an option, use {@link Option#createBuilder()}
-     * @param condition only if true is the option added
+     * @param condition whether to add the option
      * @param option the option to add
      * @return this
      */
@@ -35,8 +35,8 @@ public interface OptionAddable {
     /**
      * Adds an option to an abstract builder if a condition is met.
      * To construct an option, use {@link Option#createBuilder()}
-     * @param condition only if true is the option added
-     * @param optionSupplier to be called to initialise the option. called immediately only if condition is true
+     * @param condition whether to add the option
+     * @param optionSupplier to be called to initialise the option. called immediately if and only if condition is true
      * @return this
      */
     default OptionAddable optionIf(boolean condition, @NotNull Supplier<@NotNull Option<?>> optionSupplier) {
