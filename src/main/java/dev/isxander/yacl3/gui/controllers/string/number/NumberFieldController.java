@@ -44,7 +44,8 @@ public abstract class NumberFieldController<T extends Number> implements ISlider
     @Override
     public void setFromString(String value) {
         try {
-            setPendingValue(Mth.clamp(NUMBER_FORMAT.parse(value).doubleValue(), min(), max()));
+            String transformed = transformInput(value);
+            setPendingValue(Mth.clamp(NUMBER_FORMAT.parse(transformed).doubleValue(), min(), max()));
         } catch (ParseException ignore) {
             YACLConstants.LOGGER.warn("Failed to parse number: {}", value);
         }
@@ -57,7 +58,8 @@ public abstract class NumberFieldController<T extends Number> implements ISlider
 
     @Override
     public boolean isInputValid(String input) {
-        input = input.replace(DECIMAL_FORMAT_SYMBOLS.getGroupingSeparator() + "", "");
+        input = transformInput(input);
+
         ParsePosition parsePosition = new ParsePosition(0);
         NUMBER_FORMAT.parse(input, parsePosition);
         return parsePosition.getIndex() == input.length();
@@ -76,5 +78,12 @@ public abstract class NumberFieldController<T extends Number> implements ISlider
     @Override
     public double interval() {
         return -1;
+    }
+
+    protected String transformInput(String input) {
+        if (input.isEmpty()) input = "0";
+        if (input.equals("-")) input = "-0";
+
+        return input.replace(DECIMAL_FORMAT_SYMBOLS.getGroupingSeparator() + "", "");
     }
 }
