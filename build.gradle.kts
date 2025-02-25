@@ -251,6 +251,8 @@ msPublishing {
         // modrinth and curseforge use different formats for snapshots. this can be expressed globally
         val stableMCVersions = versionList("pub.stableMC")
 
+        changelog = rootProject.file("changelog.md").readText()
+
         val modrinthId: String by project
         if (modrinthId.isNotBlank() && hasProperty("modrinth.token")) {
             modrinth {
