@@ -252,6 +252,11 @@ msPublishing {
         val stableMCVersions = versionList("pub.stableMC")
 
         changelog = rootProject.file("changelog.md").readText()
+        type = when {
+            isAlpha -> ALPHA
+            isBeta -> BETA
+            else -> STABLE
+        }
 
         val modrinthId: String by project
         if (modrinthId.isNotBlank() && hasProperty("modrinth.token")) {
