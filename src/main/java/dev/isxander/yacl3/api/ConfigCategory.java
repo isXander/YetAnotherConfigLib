@@ -61,7 +61,7 @@ public interface ConfigCategory {
          * To add to another group, use {@link Builder#group(OptionGroup)}.
          * To construct an option, use {@link Option#createBuilder()}
          *
-         * @param optionSupplier to be called to initialise the option. called immediately
+         * @param optionSupplier to be called to initialise the option. Called immediately.
          * @return this
          */
         @Override
@@ -90,7 +90,7 @@ public interface ConfigCategory {
          * To construct an option, use {@link Option#createBuilder()}
          *
          * @param condition whether to add the option
-         * @param optionSupplier to be called to initialise the option. called immediately if and only if condition is true
+         * @param optionSupplier to be called to initialise the option. Called immediately if and only if condition is true.
          * @return this
          */
         @Override
@@ -122,7 +122,7 @@ public interface ConfigCategory {
          * To add an option to the root group, use {@link Builder#option(Option)}
          * To construct a group, use {@link OptionGroup#createBuilder()}
          *
-         * @param groupSupplier to be called to initialise the group. called immediately
+         * @param groupSupplier to be called to initialise the group. Called immediately.
          */
         default Builder group(@NotNull Supplier<@NotNull OptionGroup> groupSupplier) {
             return group(groupSupplier.get());
@@ -145,7 +145,7 @@ public interface ConfigCategory {
          * To construct a group, use {@link OptionGroup#createBuilder()}
          *
          * @param condition whether to add the group
-         * @param groupSupplier to be called to initialise the group. called immediately if and only if condition is true
+         * @param groupSupplier to be called to initialise the group. Called immediately if and only if condition is true.
          */
         default Builder groupIf(boolean condition, @NotNull Supplier<@NotNull OptionGroup> groupSupplier) {
             return condition ? group(groupSupplier) : this;

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Main class of the mod.
@@ -75,19 +76,87 @@ public interface YetAnotherConfigLib {
 
         /**
          * Adds a new category.
-         * To create a category you need to use {@link ConfigCategory#createBuilder()}
+         * To create a category you need to use {@link ConfigCategory#createBuilder()}.
          *
          * @see YetAnotherConfigLib#categories()
          */
         Builder category(@NotNull ConfigCategory category);
 
         /**
+         * Adds a new category.
+         * To create a category you need to use {@link ConfigCategory#createBuilder()}.
+         *
+         * @param categorySupplier to be called to initialise the category. Called immediately.
+         * @see YetAnotherConfigLib#categories()
+         */
+        default Builder category(@NotNull Supplier<@NotNull ConfigCategory> categorySupplier) {
+            return category(categorySupplier.get());
+        }
+
+        /**
+         * Adds a new category if a condition is met.
+         * To create a category you need to use {@link ConfigCategory#createBuilder()}.
+         *
+         * @param condition whether to add the category
+         * @see YetAnotherConfigLib#categories()
+         */
+        default Builder categoryIf(boolean condition, @NotNull ConfigCategory category) {
+            return condition ? category(category) : this;
+        }
+
+        /**
+         * Adds a new category if a condition is met.
+         * To create a category you need to use {@link ConfigCategory#createBuilder()}.
+         *
+         * @param condition        whether to add the category
+         * @param categorySupplier to be called to initialise the category. Called immediately if and only if condition is true.
+         * @see YetAnotherConfigLib#categories()
+         */
+        default Builder categoryIf(boolean condition, @NotNull Supplier<@NotNull ConfigCategory> categorySupplier) {
+            return condition ? category(categorySupplier) : this;
+        }
+
+        /**
          * Adds multiple categories at once.
-         * To create a category you need to use {@link ConfigCategory#createBuilder()}
+         * To create a category you need to use {@link ConfigCategory#createBuilder()}.
          *
          * @see YetAnotherConfigLib#categories()
          */
-        Builder categories(@NotNull Collection<? extends ConfigCategory> categories);
+        Builder categories(@NotNull Collection<? extends @NotNull ConfigCategory> categories);
+
+        /**
+         * Adds multiple categories at once.
+         * To create a category you need to use {@link ConfigCategory#createBuilder()}.
+         *
+         * @param categoriesSupplier to be called to initialise the categories. Called immediately.
+         * @see YetAnotherConfigLib#categories()
+         */
+        default Builder categories(@NotNull Supplier<@NotNull Collection<? extends @NotNull ConfigCategory>> categoriesSupplier) {
+            return categories(categoriesSupplier.get());
+        }
+
+        /**
+         * Adds multiple categories at once if a condition is met.
+         * To create a category you need to use {@link ConfigCategory#createBuilder()}.
+         *
+         * @param condition whether to add the categories
+         * @see YetAnotherConfigLib#categories()
+         */
+        default Builder categoriesIf(boolean condition, @NotNull Collection<? extends @NotNull ConfigCategory> categories) {
+            return condition ? categories(categories) : this;
+        }
+
+        /**
+         * Adds multiple categories at once if a condition is met.
+         * To create a category you need to use {@link ConfigCategory#createBuilder()}.
+         *
+         * @param condition          whether to add the categories
+         * @param categoriesSupplier to be called to initialise the categories. Called immediately if and only if condition is true.
+         * @see YetAnotherConfigLib#categories()
+         */
+        default Builder categoriesIf(boolean condition, @NotNull Supplier<@NotNull Collection<? extends @NotNull ConfigCategory>> categoriesSupplier) {
+            return condition ? categories(categoriesSupplier) : this;
+        }
 
         /**
          * Used to define a save function for when user clicks the Save Changes button

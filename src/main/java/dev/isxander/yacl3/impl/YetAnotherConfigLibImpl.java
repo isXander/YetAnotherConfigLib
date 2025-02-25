@@ -87,7 +87,7 @@ public final class YetAnotherConfigLibImpl implements YetAnotherConfigLib {
         }
 
         @Override
-        public Builder categories(@NotNull Collection<? extends ConfigCategory> categories) {
+        public Builder categories(@NotNull Collection<? extends @NotNull ConfigCategory> categories) {
             Validate.notNull(categories, "`categories` cannot be null");
 
             this.categories.addAll(categories);

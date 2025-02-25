@@ -15,7 +15,7 @@ public interface OptionAddable {
     /**
      * Adds an option to an abstract builder.
      * To construct an option, use {@link Option#createBuilder()}
-     * @param optionSupplier to be called to initialise the option. called immediately
+     * @param optionSupplier to be called to initialise the option. Called immediately.
      */
     default OptionAddable option(@NotNull Supplier<@NotNull Option<?>> optionSupplier) {
         return option(optionSupplier.get());
@@ -36,7 +36,7 @@ public interface OptionAddable {
      * Adds an option to an abstract builder if a condition is met.
      * To construct an option, use {@link Option#createBuilder()}
      * @param condition whether to add the option
-     * @param optionSupplier to be called to initialise the option. called immediately if and only if condition is true
+     * @param optionSupplier to be called to initialise the option. Called immediately if and only if condition is true.
      * @return this
      */
     default OptionAddable optionIf(boolean condition, @NotNull Supplier<@NotNull Option<?>> optionSupplier) {
