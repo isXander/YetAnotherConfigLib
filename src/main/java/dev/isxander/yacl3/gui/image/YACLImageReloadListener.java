@@ -98,10 +98,14 @@ public class YACLImageReloadListener
     private record SupplierPreparation(ResourceLocation location, ImageRendererFactory.ImageSupplier supplier) {
     }
 
+    public ResourceLocation getId() {
+        return YACLPlatform.rl("image_reload_listener");
+    }
+
     /*? if fabric {*/
     @Override
     public ResourceLocation getFabricId() {
-        return YACLPlatform.rl("image_reload_listener");
+        return this.getId();
     }
     /*?}*/
 

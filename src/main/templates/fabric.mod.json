@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "id": "${id}",
-  "version": "${version}",
-  "name": "${name}",
-  "description": "${description}",
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
   "authors": [
-    "isXander"
+    "${mod_author}"
   ],
   "contact": {
     "homepage": "https://isxander.dev",
@@ -13,18 +13,14 @@
     "sources": "https://github.com/${github}"
   },
   "icon": "yacl-128x.png",
-  "license": "LGPL-3.0-or-later",
+  "license": "${mod_license}",
   "environment": "*",
   "depends": {
     "fabricloader": ">=0.15.0",
     "minecraft": "${mc}",
     "java": ">=17",
-    "fabric-resource-loader-v0": "*"
+    "fabric-api": ">=${fapi}"
   },
-  "mixins": [
-    "yacl.mixins.json",
-    "yacl-fabric.mixins.json"
-  ],
   "accessWidener": "yacl.accesswidener",
   "entrypoints": {
     "client": [

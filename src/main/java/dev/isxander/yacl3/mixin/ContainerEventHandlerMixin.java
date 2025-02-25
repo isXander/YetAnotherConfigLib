@@ -29,8 +29,8 @@ public interface ContainerEventHandlerMixin {
         return instance.children();
     }
 }
-/*?} else {*//*
-@Mixin(ContainerEventHandler.class)
+/*?} else {*/
+/*@Mixin(ContainerEventHandler.class)
 public class ContainerEventHandlerMixin {
 
 }

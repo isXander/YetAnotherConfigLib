@@ -1,29 +1,25 @@
 modLoader = "javafml"
 loaderVersion = "${loaderVersion}"
 #issueTrackerURL = ""
-license = "LGPL-3.0-or-later"
+license = "${mod_license}"
 
 [[mods]]
-modId = "${id}"
-version = "${version}"
-displayName = "${name}"
-authors = "isXander"
+modId = "${mod_id}"
+version = "${mod_version}"
+displayName = "${mod_name}"
+authors = "${mod_author}"
 description = '''
-${description}
+${mod_description}
 '''
 logoFile = "yacl-128x.png"
 
-[[mixins]]
-config = "yacl.mixins.json"
-
-[["dependencies.${id}"]]
-modId = "${forgeId}"
+[["dependencies.${mod_id}"]]
+modId = "forge"
 mandatory = true
-versionRange = "${forgeConstraint}"
 ordering = "NONE"
 side = "BOTH"
 
-[["dependencies.${id}"]]
+[["dependencies.${mod_id}"]]
 modId = "minecraft"
 mandatory = true
 versionRange = "${mc}"

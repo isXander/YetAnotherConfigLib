@@ -9,8 +9,8 @@ public class Entrypoint {
 
     }
 }
-*//*?} elif forge {*//*
-package dev.isxander.yacl3.test;
+*//*?} elif forge {*/
+/*package dev.isxander.yacl3.test;
 
 import net.minecraftforge.fml.common.Mod;
 

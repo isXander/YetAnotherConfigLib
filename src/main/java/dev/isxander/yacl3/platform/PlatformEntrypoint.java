@@ -17,19 +17,26 @@ public class PlatformEntrypoint implements ClientModInitializer {
 /*?} elif neoforge {*/
 /*import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
+import net.neoforged.neoforge.client.event.*;
 
 @Mod("yet_another_config_lib_v3")
 public class PlatformEntrypoint {
     public PlatformEntrypoint(IEventBus modEventBus) {
         YACLConfig.HANDLER.load();
-        modEventBus.addListener(RegisterClientReloadListenersEvent.class, event -> {
+        //? if >=1.21.4 {
+        modEventBus.addListener(AddClientReloadListenersEvent.class, event -> {
+            var listener = new YACLImageReloadListener();
+            event.addListener(listener.getId(), listener);
+        });
+        //?} else {
+        /^modEventBus.addListener(RegisterClientReloadListenersEvent.class, event -> {
             event.registerReloadListener(new YACLImageReloadListener());
         });
+        ^///?}
     }
 }
-*//*?} elif forge {*//*
-import net.minecraftforge.fml.common.Mod;
+*//*?} elif forge {*/
+/*import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 

@@ -93,6 +93,9 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
                 smoothScrollAmount,
                 scrollAmount()
         );
+        if (Math.abs(smoothScrollAmount - scrollAmount()) < 1e-5) {
+            smoothScrollAmount = scrollAmount();
+        }
         returnSmoothAmount = true;
 
 
@@ -230,13 +233,15 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
 
     @Override
     protected void ensureVisible(E entry) {
-        int i = this.getRowTop(this.children().indexOf(entry));
-        int j = i - this.getY() - 4 - entry.getItemHeight();
+        int entryIndex = this.children().indexOf(entry);
+
+        int top = this.getRowTop(entryIndex);
+        int j = top - this.getY() - 4 - entry.getItemHeight();
         if (j < 0) {
             this.setScrollAmount(this.scrollAmount() + j);
         }
 
-        int k = this.getY() + this.getHeight()  - i - entry.getItemHeight() * 2;
+        int k = this.getY() + this.getHeight()  - top - entry.getItemHeight() * 2;
         if (k < 0) {
             this.setScrollAmount(this.scrollAmount() - k);
         }

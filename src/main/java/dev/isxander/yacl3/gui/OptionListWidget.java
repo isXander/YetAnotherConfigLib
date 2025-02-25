@@ -16,6 +16,7 @@ import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -207,7 +208,7 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
     }
 
-    @Override
+    @Override @NotNull
     public List<Entry> children() {
         return viewableChildren;
     }

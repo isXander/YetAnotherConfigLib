@@ -5,8 +5,8 @@ import net.fabricmc.loader.api.FabricLoader;
 /*?} elif neoforge {*/
 /*import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
-*//*?} elif forge {*//*
-import net.minecraftforge.fml.loading.FMLEnvironment;
+*//*?} elif forge {*/
+/*import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
 *//*?}*/
 
@@ -44,7 +44,7 @@ public final class YACLPlatform {
             case CLIENT -> Env.CLIENT;
             case SERVER -> Env.SERVER;
         };
-        /*?} elif forge-like {*/
+        /*?} elif forgelike {*/
         /*return switch (FMLEnvironment.dist) {
             case CLIENT -> Env.CLIENT;
             case DEDICATED_SERVER -> Env.SERVER;
@@ -55,7 +55,7 @@ public final class YACLPlatform {
     public static Path getConfigDir() {
         /*? if fabric {*/
         return FabricLoader.getInstance().getConfigDir();
-        /*?} elif forge-like {*/
+        /*?} elif forgelike {*/
         /*return FMLPaths.CONFIGDIR.get();
         *//*?}*/
     }
@@ -63,7 +63,7 @@ public final class YACLPlatform {
     public static boolean isDevelopmentEnv() {
         /*? if fabric {*/
         return FabricLoader.getInstance().isDevelopmentEnvironment();
-        /*?} elif forge-like {*/
+        /*?} elif forgelike {*/
         /*return !FMLEnvironment.production;
         *//*?}*/
     }
