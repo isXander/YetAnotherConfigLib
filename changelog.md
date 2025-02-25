@@ -1,4 +1,4 @@
-# YetAnotherConfigLib 3.6.2
+# YetAnotherConfigLib 3.6.3
 
 This version of YACL has many different version targets.
 Ensure you download the correct version of YACL for your MC version.
@@ -18,8 +18,5 @@ Ensure you download the correct version of YACL for your MC version.
 
 ## Changes
 
-- Update to support 1.21.4 (many thanks to Riflusso for this port)
-- Add `groupIf` to `ConfigCategory.Builder` (thanks Kevin)
-- Pass down middle-mouse clicks to widgets in ElementListWidgetExt (thanks Protonull)
-- Fix Greek translation (many thanks to Darkhax for this)
-- Update Kotlin to 2.0.21
+- Add `categoryIf` to `YetAnotherConfigLib.Builder` (thanks Kevin)
+- More translations
