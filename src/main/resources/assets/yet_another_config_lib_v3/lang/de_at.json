@@ -1,0 +1,35 @@
+{
+  "yacl.control.boolean.true": "Aktiviert",
+  "yacl.control.boolean.false": "Deaktiviert",
+
+  "yacl.control.action.execute": "AUSFÜHREN",
+
+  "yacl.control.color.color_picker_title": "Farbauswahl",
+  "yacl.control.dropdown.dropdown_widget_title": "Dropdown-Auswahlmenü",
+
+  "yacl.control.text.blank": "<leer>",
+
+  "yacl.gui.save": "Änderungen speichern",
+  "yacl.gui.save.tooltip": "Macht die vorgenommenen Änderungen dauerhaft.",
+  "yacl.gui.finished.tooltip": "Schließt die GUI.",
+  "yacl.gui.cancel.tooltip": "Ignoriere Änderungen und schließt die GUI.",
+  "yacl.gui.reset.tooltip": "Setzt alle Optionen auf die Standardeinstellungen zurück. (Dies ist umkehrbar!)",
+  "yacl.gui.undo": "Rückgängig",
+  "yacl.gui.undo.tooltip": "Setzt alle Optionen auf den Stand vor der Bearbeitung zurück.",
+  "yacl.gui.fail_apply": "Nicht angewendet",
+  "yacl.gui.fail_apply.tooltip": "Es ist ein Fehler aufgetreten, und die Änderungen konnten nicht übernommen werden.",
+  "yacl.gui.save_before_exit": "Vor dem Verlassen speichern!",
+  "yacl.gui.save_before_exit.tooltip": "Speichern oder Abbrechen, um die GUI zu verlassen.",
+
+  "yacl.list.move_up": "Nach oben",
+  "yacl.list.move_down": "Nach unten",
+  "yacl.list.remove": "Entfernen",
+  "yacl.list.add_top": "Neuer Eintrag",
+  "yacl.list.empty": "Liste ist leer",
+
+  "yacl.restart.title": "Konfig erfordert Neustart!",
+  "yacl.restart.message": "Bei einer oder mehreren Optionen muss das Spiel neu gestartet werden, um die Änderungen zu übernehmen.",
+  "yacl.restart.yes": "Minecraft schließen",
+  "yacl.restart.no": "Ignorieren"
+
+}
