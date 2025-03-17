@@ -1,12 +1,14 @@
 package dev.isxander.yacl3.gui.utils;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import dev.isxander.yacl3.debug.DebugProperties;
 import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -27,10 +29,21 @@ public class GuiUtils {
     public static Function<ResourceLocation, RenderType> GUI_TEXTURED_FILTERED = Util.memoize(
             location -> RenderType.create(
                     "yacl:gui_textured_filtered",
+                    //? if <1.21.5 {
+                    DefaultVertexFormat.POSITION_TEX_COLOR,
+                    VertexFormat.Mode.QUADS,
+                    //?}
                     786432,
-                    RenderPipelines.GUI_TEXTURED,
+                    //? if >=1.21.5 {
+                    /*net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,
+                    *///?}
                     RenderType.CompositeState.builder()
                             .setTextureState(new RenderType.TextureStateShard(location, TriState.TRUE, false))
+                            //? if <1.21.5 {
+                            .setShaderState(RenderStateShard.POSITION_TEXTURE_COLOR_SHADER)
+                            .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+                            .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
+                            //?}
                             .createCompositeState(false)
             )
     );

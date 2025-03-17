@@ -9,4 +9,5 @@ accessible method net/minecraft/client/gui/components/Tooltip <init> (Lnet/minec
 # CompositeStateBuilders got protected in 1.21.5. You need them for creating `RenderType`s.
 #?if >=1.21.5 {
 accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder setTextureState (Lnet/minecraft/client/renderer/RenderStateShard$EmptyTextureStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
+accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder createCompositeState (Z)Lnet/minecraft/client/renderer/RenderType$CompositeState;
 #?}
