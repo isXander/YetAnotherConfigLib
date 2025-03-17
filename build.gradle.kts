@@ -281,6 +281,8 @@ publishMods {
         else -> STABLE
     }
 
+    modLoaders.add(loader)
+
     val modrinthId: String by project
     if (modrinthId.isNotBlank() && hasProperty("modrinth.token")) {
         modrinth {
