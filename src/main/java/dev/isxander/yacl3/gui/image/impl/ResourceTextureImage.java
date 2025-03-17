@@ -1,5 +1,6 @@
 package dev.isxander.yacl3.gui.image.impl;
 
+import dev.isxander.yacl3.debug.DebugProperties;
 import dev.isxander.yacl3.gui.image.ImageRenderer;
 import dev.isxander.yacl3.gui.image.ImageRendererFactory;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
@@ -31,9 +32,15 @@ public class ResourceTextureImage implements ImageRenderer {
         graphics.pose().translate(x, y, 0);
         graphics.pose().scale(ratio, ratio, 1);
 
-        GuiUtils.doTextureFiltering();
-
-        GuiUtils.blitGuiTex(graphics, location, 0, 0, this.u, this.v, this.width, this.height, this.textureWidth, this.textureHeight);
+        GuiUtils.blitGuiTex(
+                graphics,
+                location,
+                0, 0,
+                this.u, this.v,
+                this.width, this.height,
+                this.textureWidth, this.textureHeight,
+                DebugProperties.IMAGE_FILTERING
+        );
 
         graphics.pose().popPose();
 

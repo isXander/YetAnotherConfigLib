@@ -2,26 +2,40 @@ package dev.isxander.yacl3.gui.utils;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import dev.isxander.yacl3.debug.DebugProperties;
+import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.TriState;
+
 import java.util.function.Consumer;
+import java.util.function.Function;
 
-//? if >=1.21.5 {
-/*import com.mojang.blaze3d.opengl.GlConst;
-import com.mojang.blaze3d.opengl.GlStateManager;
-*///?} else {
-import com.mojang.blaze3d.platform.GlConst;
+//? if <1.21.2 {
+/*import com.mojang.blaze3d.platform.GlConst;
 import com.mojang.blaze3d.platform.GlStateManager;
-//?}
-
+*///?}
 
 public class GuiUtils {
+    //? if >=1.21.2 {
+    public static Function<ResourceLocation, RenderType> GUI_TEXTURED_FILTERED = Util.memoize(
+            location -> RenderType.create(
+                    "yacl:gui_textured_filtered",
+                    786432,
+                    RenderPipelines.GUI_TEXTURED,
+                    RenderType.CompositeState.builder()
+                            .setTextureState(new RenderType.TextureStateShard(location, TriState.TRUE, false))
+                            .createCompositeState(false)
+            )
+    );
+    //?}
+
     public static void drawSpecial(GuiGraphics graphics, Consumer<MultiBufferSource> consumer) {
         //? if >=1.21.2 {
         graphics.drawSpecial(consumer);
@@ -33,9 +47,16 @@ public class GuiUtils {
     }
 
     public static void blitGuiTex(GuiGraphics graphics, ResourceLocation texture, int x, int y, float u, float v, int textureWidth, int textureHeight, int width, int height) {
+        blitGuiTex(graphics, texture, x, y, u, v, textureWidth, textureHeight, width, height, false);
+    }
+
+    public static void blitGuiTex(GuiGraphics graphics, ResourceLocation texture, int x, int y, float u, float v, int textureWidth, int textureHeight, int width, int height, boolean linearFiltering) {
+        //? if <1.21.2
+        /*doTextureFiltering();*/
+
         graphics.blit(
                 //? if >=1.21.2
-                RenderType::guiTextured,
+                linearFiltering ? GUI_TEXTURED_FILTERED : RenderType::guiTextured,
                 texture,
                 x, y,
                 u, v,
@@ -120,10 +141,13 @@ public class GuiUtils {
         *///?}
     }
 
-    public static void doTextureFiltering() {
+    // On new versions this should be done via the render pipeline. Setting global state will not work.
+    //? if <1.21.2 {
+    /*public static void doTextureFiltering() {
         if (DebugProperties.IMAGE_FILTERING) {
             GlStateManager._texParameter(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MAG_FILTER, GlConst.GL_LINEAR);
             GlStateManager._texParameter(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MIN_FILTER, GlConst.GL_LINEAR);
         }
     }
+    *///?}
 }

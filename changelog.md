@@ -1,4 +1,4 @@
-# YetAnotherConfigLib 3.6.4
+# YetAnotherConfigLib 3.6.5
 
 This version of YACL has many different version targets.
 Ensure you download the correct version of YACL for your MC version.
@@ -19,5 +19,5 @@ Ensure you download the correct version of YACL for your MC version.
 
 ## Changes
 
-- Fix NeoForge 21.4.84+ compatibility
-- Allow SerialEntry to be annotated on classes.
+- Fix crash on 1.20.1-forge target.
+- Fix image filtering

@@ -2,6 +2,7 @@ package dev.isxander.yacl3.gui.image.impl;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
+import dev.isxander.yacl3.debug.DebugProperties;
 import dev.isxander.yacl3.gui.image.ImageRenderer;
 import dev.isxander.yacl3.gui.image.ImageRendererFactory;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
@@ -45,9 +46,15 @@ public class DynamicTextureImage implements ImageRenderer {
         graphics.pose().translate(x, y, 0);
         graphics.pose().scale(ratio, ratio, 1);
 
-        GuiUtils.doTextureFiltering();
-
-        GuiUtils.blitGuiTex(graphics, uniqueLocation, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
+        GuiUtils.blitGuiTex(
+                graphics,
+                uniqueLocation,
+                0, 0,
+                0, 0,
+                this.width, this.height,
+                this.width, this.height,
+                DebugProperties.IMAGE_FILTERING
+        );
 
         graphics.pose().popPose();
 
