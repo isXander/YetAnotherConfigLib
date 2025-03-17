@@ -14,21 +14,37 @@ public class ConfigFieldImpl<T> implements ConfigField<T> {
     private final Optional<SerialField> serial;
     private final Optional<AutoGenField> autoGen;
 
-    public ConfigFieldImpl(ReflectionFieldAccess<T> field, ReflectionFieldAccess<T> defaultField, ConfigClassHandler<?> parent, @Nullable SerialEntry config, @Nullable AutoGen autoGen) {
+    public ConfigFieldImpl(
+            ReflectionFieldAccess<T> field,
+            ReflectionFieldAccess<T> defaultField,
+            ConfigClassHandler<?> parent,
+            @Nullable SerialEntry config,
+            @Nullable SerialEntry inheritedConfig,
+            @Nullable AutoGen autoGen
+    ) {
         this.field = field;
         this.defaultField = defaultField;
         this.parent = parent;
 
-        this.serial = config != null
-                ? Optional.of(
-                new SerialFieldImpl(
-                        "".equals(config.value()) ? field.name() : config.value(),
-                        "".equals(config.comment()) ? Optional.empty() : Optional.of(config.comment()),
-                        config.required(),
-                        config.nullable()
-                )
-        )
-                : Optional.empty();
+        if (config != null) {
+            this.serial = Optional.of(new SerialFieldImpl(
+                    "".equals(config.value()) ? field.name() : config.value(),
+                    "".equals(config.comment()) ? Optional.empty() : Optional.of(config.comment()),
+                    config.required(),
+                    config.nullable()
+            ));
+        } else if (inheritedConfig != null) {
+            this.serial = Optional.of(new SerialFieldImpl(
+                    field.name(),
+                    Optional.empty(),
+                    inheritedConfig.required(),
+                    inheritedConfig.nullable()
+
+            ));
+        } else {
+            this.serial = Optional.empty();
+        }
+
         this.autoGen = autoGen != null
                 ? Optional.of(
                 new AutoGenFieldImpl<>(

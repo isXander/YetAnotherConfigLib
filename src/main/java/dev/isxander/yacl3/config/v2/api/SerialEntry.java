@@ -9,9 +9,13 @@ import java.lang.annotation.Target;
  * Marks a field as serializable, so it can be used in a {@link ConfigSerializer}.
  * Any field without this annotation will not be saved or loaded, but can still be turned
  * into an auto-generated option.
+ * <p>
+ * You can also annotate a class with this to mark all fields as serializable.
+ * You can override the default behaviour by annotating a field with {@link SerialEntry}.
+ * Only the `required` and `nullable` parameters are permitted on classes.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.TYPE})
 public @interface SerialEntry {
     /**
      * The serial name of the field.

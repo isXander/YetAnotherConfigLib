@@ -54,14 +54,24 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
     }
 
     private ConfigFieldImpl<?>[] discoverFields() {
+        SerialEntry classSerialEntry = configClass.getAnnotation(SerialEntry.class);
+        boolean classHasSerialEntry = classSerialEntry != null;
+        if (classHasSerialEntry) {
+            if (!"".equals(classSerialEntry.value()))
+                throw new IllegalArgumentException("SerialEntry on class '%s' must not have a value. Only `required` and `nullable` are permitted parameters on classes.".formatted(configClass.getName()));
+            if (!"".equals(classSerialEntry.comment()))
+                throw new IllegalArgumentException("SerialEntry on class '%s' must not have a comment. Only `required` and `nullable` are permitted parameters on classes.".formatted(configClass.getName()));
+        }
+
         return Arrays.stream(configClass.getDeclaredFields())
                 .peek(field -> field.setAccessible(true))
-                .filter(field -> field.isAnnotationPresent(SerialEntry.class) || field.isAnnotationPresent(AutoGen.class))
+                .filter(field -> classHasSerialEntry || field.isAnnotationPresent(SerialEntry.class) || field.isAnnotationPresent(AutoGen.class))
                 .map(field -> new ConfigFieldImpl<>(
                         new ReflectionFieldAccess<>(field, instance),
                         new ReflectionFieldAccess<>(field, defaults),
                         this,
                         field.getAnnotation(SerialEntry.class),
+                        classSerialEntry,
                         field.getAnnotation(AutoGen.class)
                 ))
                 .toArray(ConfigFieldImpl[]::new);
