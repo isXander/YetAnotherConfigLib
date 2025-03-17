@@ -1,11 +1,8 @@
 package dev.isxander.yacl3.gui.image.impl;
 
 import com.mojang.blaze3d.Blaze3D;
-import com.mojang.blaze3d.platform.GlConst;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
-import dev.isxander.yacl3.debug.DebugProperties;
 import dev.isxander.yacl3.gui.image.ImageRendererFactory;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.CrashReport;
@@ -65,10 +62,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         graphics.pose().translate(x, y, 0);
         graphics.pose().scale(ratio, ratio, 1);
 
-        if (DebugProperties.IMAGE_FILTERING) {
-            GlStateManager._texParameter(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MAG_FILTER, GlConst.GL_LINEAR);
-            GlStateManager._texParameter(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MIN_FILTER, GlConst.GL_LINEAR);
-        }
+        GuiUtils.doTextureFiltering();
 
         GuiUtils.blitGuiTex(
                 graphics,

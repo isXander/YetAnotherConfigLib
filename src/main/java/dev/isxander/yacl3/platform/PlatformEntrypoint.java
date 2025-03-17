@@ -44,6 +44,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public class PlatformEntrypoint {
     public PlatformEntrypoint() {
         YACLConfig.HANDLER.load();
+        // noinspection removal we will never support lexforge past 1.20.1
         FMLJavaModLoadingContext.get().getModEventBus().<RegisterClientReloadListenersEvent>addListener(event -> {
             event.registerReloadListener(new YACLImageReloadListener());
         });

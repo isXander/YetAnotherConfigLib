@@ -1,10 +1,7 @@
 package dev.isxander.yacl3.gui.image.impl;
 
-import com.mojang.blaze3d.platform.GlConst;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
-import dev.isxander.yacl3.debug.DebugProperties;
 import dev.isxander.yacl3.gui.image.ImageRenderer;
 import dev.isxander.yacl3.gui.image.ImageRendererFactory;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
@@ -16,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.io.FileInputStream;
 import java.nio.file.Path;
+import java.util.function.Supplier;
 
 public class DynamicTextureImage implements ImageRenderer {
     protected static final TextureManager textureManager = Minecraft.getInstance().getTextureManager();
@@ -29,7 +27,7 @@ public class DynamicTextureImage implements ImageRenderer {
         RenderSystem.assertOnRenderThread();
 
         this.image = image;
-        this.texture = new DynamicTexture(image);
+        this.texture = new DynamicTexture(/*? if >=1.21.5 >>*/ /*location::toString,*/ image);
         this.uniqueLocation = location;
         textureManager.register(this.uniqueLocation, this.texture);
         this.width = image.getWidth();
@@ -47,10 +45,7 @@ public class DynamicTextureImage implements ImageRenderer {
         graphics.pose().translate(x, y, 0);
         graphics.pose().scale(ratio, ratio, 1);
 
-        if (DebugProperties.IMAGE_FILTERING) {
-            GlStateManager._texParameter(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MAG_FILTER, GlConst.GL_LINEAR);
-            GlStateManager._texParameter(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MIN_FILTER, GlConst.GL_LINEAR);
-        }
+        GuiUtils.doTextureFiltering();
 
         GuiUtils.blitGuiTex(graphics, uniqueLocation, 0, 0, 0, 0, this.width, this.height, this.width, this.height);
 

@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui.utils;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import dev.isxander.yacl3.debug.DebugProperties;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -9,8 +10,16 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-
 import java.util.function.Consumer;
+
+//? if >=1.21.5 {
+/*import com.mojang.blaze3d.opengl.GlConst;
+import com.mojang.blaze3d.opengl.GlStateManager;
+*///?} else {
+import com.mojang.blaze3d.platform.GlConst;
+import com.mojang.blaze3d.platform.GlStateManager;
+//?}
+
 
 public class GuiUtils {
     public static void drawSpecial(GuiGraphics graphics, Consumer<MultiBufferSource> consumer) {
@@ -109,5 +118,12 @@ public class GuiUtils {
         int abgr = (a << 24) | (b << 16) | (g << 8) | r;
         nativeImage.setPixelRGBA(x, y, abgr); // method name is misleading. It's actually ABGR.
         *///?}
+    }
+
+    public static void doTextureFiltering() {
+        if (DebugProperties.IMAGE_FILTERING) {
+            GlStateManager._texParameter(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MAG_FILTER, GlConst.GL_LINEAR);
+            GlStateManager._texParameter(GlConst.GL_TEXTURE_2D, GlConst.GL_TEXTURE_MIN_FILTER, GlConst.GL_LINEAR);
+        }
     }
 }

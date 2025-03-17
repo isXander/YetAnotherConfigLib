@@ -390,7 +390,8 @@ public class YACLScreen extends Screen {
         /*? if >1.20.4 {*/
         @Override
         public void renderBackground(GuiGraphics graphics) {
-            RenderSystem.enableBlend();
+            //? if <1.20.5
+            /*RenderSystem.enableBlend();*/
             // right pane darker db
             GuiUtils.blitGuiTex(graphics, DARKER_BG, rightPaneDim.left(), rightPaneDim.top(), rightPaneDim.right() + 2, rightPaneDim.bottom() + 2, rightPaneDim.width() + 2, rightPaneDim.height() + 2, 32, 32);
             
@@ -407,7 +408,8 @@ public class YACLScreen extends Screen {
             GuiUtils.blitGuiTex(graphics, CreateWorldScreen.FOOTER_SEPARATOR, 0, 0, 0f, 0f, rightPaneDim.height() + 1, 2, 32, 2);
             graphics.pose().popPose();
 
-            RenderSystem.disableBlend();
+            //? if <1.20.5
+            /*RenderSystem.disableBlend();*/
         }
         /*?}*/
 

@@ -4,9 +4,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("dev.isxander.modstitch.base")
     id("dev.isxander.modstitch.shadow")
-    id("dev.isxander.modstitch.publishing")
 
     kotlin("jvm")
+
+    id("me.modmuss50.mod-publish-plugin")
+    `maven-publish`
 
     id("org.ajoberstar.grgit")
 }
@@ -34,6 +36,11 @@ val loader = when {
 val snapshotVer = "${grgit.branch.current().name.replace('/', '.')}-SNAPSHOT"
 if (System.getenv().containsKey("GITHUB_ACTIONS")) {
     version = "$version+$snapshotVer"
+}
+
+val testmod by sourceSets.registering {
+    compileClasspath += sourceSets.main.get().compileClasspath
+    runtimeClasspath += sourceSets.main.get().runtimeClasspath
 }
 
 modstitch {
@@ -78,7 +85,16 @@ modstitch {
 
         configureLoom {
             runConfigs.all {
-                ideConfigGenerated(name != "server")
+                ideConfigGenerated(false)
+            }
+            runs {
+                register("testmodClient") {
+                    client()
+                    name = "Testmod Client"
+                    source(testmod.name)
+                    ideConfigGenerated(true)
+                    runDir("../../run")
+                }
             }
 
             accessWidenerPath = rootProject.file("src/main/resources/yacl.accesswidener")
@@ -91,15 +107,25 @@ modstitch {
             prop("deps.forge") { forgeVersion = it }
         }
 
-        defaultRuns()
         configureNeoforge {
-            runs.all {
-                if (type.get() == "server") {
-                    disableIdeRun()
+            runs {
+                register("testmodClient") {
+                    client()
+                    sourceSet = testmod
+                    gameDirectory = layout.projectDirectory.dir("../../run")
                 }
             }
 
             validateAccessTransformers = false
+
+            mods {
+                register("testmod") {
+                    sourceSet(testmod.get())
+                }
+                register("main") {
+                    sourceSet(sourceSets.main.get())
+                }
+            }
         }
     }
 
@@ -109,13 +135,9 @@ modstitch {
         configs.register("yacl")
         if (isFabric) configs.register("yacl-fabric")
     }
-}
 
-val testmod by sourceSets.registering {
-    compileClasspath += sourceSets.main.get().compileClasspath
-    runtimeClasspath += sourceSets.main.get().runtimeClasspath
+    createProxyConfigurations(testmod.get())
 }
-modstitch.createProxyConfigurations(testmod.get())
 
 stonecutter {
     consts(
@@ -217,7 +239,7 @@ val releaseModVersion by tasks.registering {
     dependsOn("publishMods")
 
     if (!project.publishMods.dryRun.get()) {
-        dependsOn("publishModButItWorksPublicationToXanderReleasesRepository")
+        dependsOn("publishModPublicationToXanderReleasesRepository")
     }
 }
 createActiveTask(releaseModVersion)
@@ -237,90 +259,91 @@ val buildAndCollect by tasks.registering(Copy::class) {
 }
 createActiveTask(buildAndCollect)
 
-msPublishing {
-    mpp {
-        dryRun.set(false)
+publishMods {
+    dryRun.set(false)
 
-        displayName.set("$versionWithoutMC for $loader $mcVersion")
+    displayName.set("$versionWithoutMC for $loader $mcVersion")
 
-        fun versionList(prop: String) = findProperty(prop)?.toString()
-            ?.split(',')
-            ?.map { it.trim() }
-            ?: emptyList()
+    fun versionList(prop: String) = findProperty(prop)?.toString()
+        ?.split(',')
+        ?.map { it.trim() }
+        ?: emptyList()
 
-        // modrinth and curseforge use different formats for snapshots. this can be expressed globally
-        val stableMCVersions = versionList("pub.stableMC")
+    // modrinth and curseforge use different formats for snapshots. this can be expressed globally
+    val stableMCVersions = versionList("pub.stableMC")
 
-        changelog = rootProject.file("changelog.md").readText()
-        type = when {
-            isAlpha -> ALPHA
-            isBeta -> BETA
-            else -> STABLE
-        }
+    changelog = rootProject.file("changelog.md").readText()
+    type = when {
+        isAlpha -> ALPHA
+        isBeta -> BETA
+        else -> STABLE
+    }
 
-        val modrinthId: String by project
-        if (modrinthId.isNotBlank() && hasProperty("modrinth.token")) {
-            modrinth {
-                projectId.set(modrinthId)
-                accessToken.set(findProperty("modrinth.token")?.toString())
-                minecraftVersions.addAll(stableMCVersions)
-                minecraftVersions.addAll(versionList("pub.modrinthMC"))
+    val modrinthId: String by project
+    if (modrinthId.isNotBlank() && hasProperty("modrinth.token")) {
+        modrinth {
+            projectId.set(modrinthId)
+            accessToken.set(findProperty("modrinth.token")?.toString())
+            minecraftVersions.addAll(stableMCVersions)
+            minecraftVersions.addAll(versionList("pub.modrinthMC"))
 
-                announcementTitle = "Download $mcVersion for ${loader.replaceFirstChar { it.uppercase() }} from Modrinth"
+            announcementTitle = "Download $mcVersion for ${loader.replaceFirstChar { it.uppercase() }} from Modrinth"
 
-                if (isFabric) {
-                    requires { slug.set("fabric-api") }
-                }
-            }
-        }
-
-        val curseforgeId: String by project
-        if (curseforgeId.isNotBlank() && hasProperty("curseforge.token")) {
-            curseforge {
-                projectId = curseforgeId
-                projectSlug = findProperty("curseforgeSlug")?.toString() ?: error("curseforgeSlug property not found")
-                accessToken = findProperty("curseforge.token")?.toString()
-                minecraftVersions.addAll(stableMCVersions)
-                minecraftVersions.addAll(versionList("pub.curseMC"))
-
-                announcementTitle = "Download $mcVersion for ${loader.replaceFirstChar { it.uppercase() }} from CurseForge"
-
-                if (isFabric) {
-                    requires { slug.set("fabric-api") }
-                }
+            if (isFabric) {
+                requires { slug.set("fabric-api") }
             }
         }
     }
 
-    maven {
-        publications {
-            register<MavenPublication>("modButItWorks") {
-                artifact(modstitch.finalJarTask)
+    val curseforgeId: String by project
+    if (curseforgeId.isNotBlank() && hasProperty("curseforge.token")) {
+        curseforge {
+            projectId = curseforgeId
+            projectSlug = findProperty("curseforgeSlug")?.toString() ?: error("curseforgeSlug property not found")
+            accessToken = findProperty("curseforge.token")?.toString()
+            minecraftVersions.addAll(stableMCVersions)
+            minecraftVersions.addAll(versionList("pub.curseMC"))
+
+            announcementTitle = "Download $mcVersion for ${loader.replaceFirstChar { it.uppercase() }} from CurseForge"
+
+            if (isFabric) {
+                requires { slug.set("fabric-api") }
             }
         }
+    }
+}
+publishing {
+    publications {
+        register<MavenPublication>("mod") {
+            groupId = "dev.isxander"
+            artifactId = "yet-another-config-lib"
+            version = modstitch.metadata.modVersion.get()
 
-        repositories {
-            val username = prop("XANDER_MAVEN_USER") { it }
-            val password = prop("XANDER_MAVEN_PASS") { it }
-            if (username != null && password != null) {
-                maven(url = "https://maven.isxander.dev/releases") {
-                    name = "XanderReleases"
-                    credentials {
-                        this.username = username
-                        this.password = password
-                    }
-                }
+            artifact(modstitch.finalJarTask)
+        }
+    }
 
-                maven(url = "https://maven.isxander.dev/snapshots") {
-                    name = "XanderSnapshots"
-                    credentials {
-                        this.username = username
-                        this.password = password
-                    }
+    repositories {
+        val username = prop("XANDER_MAVEN_USER") { it }
+        val password = prop("XANDER_MAVEN_PASS") { it }
+        if (username != null && password != null) {
+            maven(url = "https://maven.isxander.dev/releases") {
+                name = "XanderReleases"
+                credentials {
+                    this.username = username
+                    this.password = password
                 }
-            } else {
-                println("Xander Maven credentials not satisfied.")
             }
+
+            maven(url = "https://maven.isxander.dev/snapshots") {
+                name = "XanderSnapshots"
+                credentials {
+                    this.username = username
+                    this.password = password
+                }
+            }
+        } else {
+            println("Xander Maven credentials not satisfied.")
         }
     }
 }

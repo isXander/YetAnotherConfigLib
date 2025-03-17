@@ -85,11 +85,10 @@ public class GuiTest {
                                                     .name(Component.literal("Boolean Toggle"))
                                                     .description(OptionDescription.createBuilder()
                                                             .text(Component.empty()
-                                                                    .append(Component.literal("a").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("a")))))
-                                                                    .append(Component.literal("b").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("b")))))
-                                                                    .append(Component.literal("c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("c")))))
-                                                                    .append(Component.literal("e").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("e")))))
-                                                                    .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://isxander.dev")))
+                                                                    .append(Component.literal("a").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("a")))))
+                                                                    .append(Component.literal("b").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("b")))))
+                                                                    .append(Component.literal("c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("c")))))
+                                                                    .append(Component.literal("e").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("e")))))
                                                             )
                                                             .webpImage(imageSample("sample1.webp"))
                                                             .build())
@@ -301,11 +300,10 @@ public class GuiTest {
                                                 .build())
                                         .option(LabelOption.create(
                                                 Component.empty()
-                                                        .append(Component.literal("a").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("a")))))
-                                                        .append(Component.literal("b").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("b")))))
-                                                        .append(Component.literal("c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("c")))))
-                                                        .append(Component.literal("e").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal("e")))))
-                                                        .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://isxander.dev"))))
+                                                        .append(Component.literal("a").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("a")))))
+                                                        .append(Component.literal("b").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("b")))))
+                                                        .append(Component.literal("c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("c")))))
+                                                        .append(Component.literal("e").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("e"))))))
                                         )
                                         .build())
                                 .group(OptionGroup.createBuilder()
@@ -503,6 +501,14 @@ public class GuiTest {
                         })
                 )
                 .generateScreen(parent);
+    }
+
+    private static HoverEvent createTextHoverEvent(Component text) {
+        //? if >=1.21.5 {
+        /*return new HoverEvent.ShowText(text);
+        *///?} else {
+        return new HoverEvent(HoverEvent.Action.SHOW_TEXT, text);
+        //?}
     }
 
     private static ConfigCategory sharedStateCategory() {

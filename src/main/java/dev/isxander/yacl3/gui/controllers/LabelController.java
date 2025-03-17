@@ -91,27 +91,48 @@ public class LabelController implements Controller<Component> {
                 Style style = getStyle(mouseX, mouseY);
                 if (style != null && style.getHoverEvent() != null) {
                     HoverEvent hoverEvent = style.getHoverEvent();
-                    HoverEvent.ItemStackInfo itemStackContent = hoverEvent.getValue(HoverEvent.Action.SHOW_ITEM);
+
+                    //? if >=1.21.5 {
+                    /*if (hoverEvent instanceof HoverEvent.ShowItem showItem) {
+                        ItemStack stack = showItem.item();
+                        renderItemStackTooltip(graphics, mouseX, mouseY, stack);
+                    } else if (hoverEvent instanceof HoverEvent.ShowEntity showEntity) {
+                        HoverEvent.EntityTooltipInfo entity = showEntity.entity();
+                        renderEntityTooltip(graphics, mouseX, mouseY, entity);
+                    } else if (hoverEvent instanceof HoverEvent.ShowText showText) {
+                        Component text = showText.value();
+                        renderTextTooltip(graphics, mouseX, mouseY, text);
+                    }
+                    *///?} else {
+                    @Nullable HoverEvent.ItemStackInfo itemStackContent = hoverEvent.getValue(HoverEvent.Action.SHOW_ITEM);
+                    @Nullable HoverEvent.EntityTooltipInfo entityContent = hoverEvent.getValue(HoverEvent.Action.SHOW_ENTITY);
+                    @Nullable Component text = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
+
                     if (itemStackContent != null) {
                         ItemStack stack = itemStackContent.getItemStack();
-                        graphics.renderTooltip(textRenderer, Screen.getTooltipFromItem(client, stack), stack.getTooltipImage(), mouseX, mouseY);
-                    } else {
-                        HoverEvent.EntityTooltipInfo entityContent = hoverEvent.getValue(HoverEvent.Action.SHOW_ENTITY);
-                        if (entityContent != null) {
-                            if (this.client.options.advancedItemTooltips) {
-                                graphics.renderComponentTooltip(textRenderer, entityContent.getTooltipLines(), mouseX, mouseY);
-                            }
-                        } else {
-                            Component text = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
-                            if (text != null) {
-                                MultiLineLabel multilineText = MultiLineLabel.create(textRenderer, text, getDimension().width());
-                                YACLScreen.renderMultilineTooltip(graphics, textRenderer, multilineText, getDimension().centerX(), getDimension().y(), getDimension().yLimit(), screen.width, screen.height);
-                            }
-                        }
+                        renderItemStackTooltip(graphics, mouseX, mouseY, stack);
+                    } else if (entityContent != null) {
+                        renderEntityTooltip(graphics, mouseX, mouseY, entityContent);
+                    } else if (text != null) {
+                        renderTextTooltip(graphics, mouseX, mouseY, text);
                     }
+                    //?}
                 }
             }
             graphics.pose().popPose();
+        }
+
+        private void renderItemStackTooltip(GuiGraphics graphics, int mouseX, int mouseY, ItemStack itemStack) {
+            graphics.renderTooltip(textRenderer, Screen.getTooltipFromItem(client, itemStack), itemStack.getTooltipImage(), mouseX, mouseY);
+        }
+        private void renderEntityTooltip(GuiGraphics graphics, int mouseX, int mouseY, HoverEvent.EntityTooltipInfo entity) {
+            if (this.client.options.advancedItemTooltips) {
+                graphics.renderComponentTooltip(textRenderer, entity.getTooltipLines(), mouseX, mouseY);
+            }
+        }
+        private void renderTextTooltip(GuiGraphics graphics, int mouseX, int mouseY, Component text) {
+            MultiLineLabel multilineText = MultiLineLabel.create(textRenderer, text, getDimension().width());
+            YACLScreen.renderMultilineTooltip(graphics, textRenderer, multilineText, getDimension().centerX(), getDimension().y(), getDimension().yLimit(), screen.width, screen.height);
         }
 
         @Override
