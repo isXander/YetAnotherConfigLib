@@ -264,6 +264,8 @@ publishMods {
 
     displayName.set("$versionWithoutMC for $loader $mcVersion")
 
+    file = modstitch.finalJarTask.flatMap { it.archiveFile }
+
     fun versionList(prop: String) = findProperty(prop)?.toString()
         ?.split(',')
         ?.map { it.trim() }
