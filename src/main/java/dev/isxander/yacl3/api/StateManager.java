@@ -9,22 +9,42 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public interface StateManager<T> {
+    /**
+     * A state manager that is backed by a binding. It has no irregular behaviours.
+     */
     static <T> StateManager<T> createSimple(Binding<T> binding) {
         return new SimpleStateManager<>(binding);
     }
 
+    /**
+     * A state manager that is backed by a binding. It has no irregular behaviours.
+     * This is a shorthand to create a generic binding.
+     */
     static <T> StateManager<T> createSimple(@NotNull T def, @NotNull Supplier<@NotNull T> getter, @NotNull Consumer<@NotNull T> setter) {
         return new SimpleStateManager<>(Binding.generic(def, getter, setter));
     }
 
+    /**
+     * A state manager that instantly commits changes to the backing binding.
+     * {@link StateManager#apply()} is called whenever {@link StateManager#set(Object)} is called.
+     */
     static <T> StateManager<T> createInstant(Binding<T> binding) {
         return new InstantStateManager<>(binding);
     }
 
+    /**
+     * A state manager that instantly commits changes to the backing binding.
+     * {@link StateManager#apply()} is called whenever {@link StateManager#set(Object)} is called.
+     * This is a shorthand to create a generic binding.
+     */
     static <T> StateManager<T> createInstant(@NotNull T def, @NotNull Supplier<@NotNull T> getter, @NotNull Consumer<@NotNull T> setter) {
         return new InstantStateManager<>(Binding.generic(def, getter, setter));
     }
 
+    /**
+     * A state manager where its value cannot be changed.
+     * Calling such methods will not throw an exception, but simply be ignored.
+     */
     static <T> StateManager<T> createImmutable(@NotNull T value) {
         return new ImmutableStateManager<>(value);
     }
