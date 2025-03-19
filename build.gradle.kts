@@ -219,7 +219,7 @@ dependencies {
         "common:common-image" to "common.image"
     ).forEach { (id, pkg) ->
         modstitchApi("com.twelvemonkeys.$id:${findProperty("deps.imageio")}")
-            .shadow("com.twelvemonkeys.$pkg", "twelvemonkeys.$pkg")
+            .shadow("com.twelvemonkeys", "twelvemonkeys.$pkg")
     }
 
     listOf(
