@@ -13,7 +13,7 @@ pluginManagement {
 }
 
 plugins {
-    id("dev.kikugie.stonecutter") version "0.6-alpha.8"
+    id("dev.kikugie.stonecutter") version "0.6-alpha.13"
 }
 
 stonecutter {

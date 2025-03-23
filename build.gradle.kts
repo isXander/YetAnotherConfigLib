@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("dev.isxander.modstitch.base")
-    id("dev.isxander.modstitch.shadow")
 
     kotlin("jvm")
 
@@ -152,15 +151,8 @@ stonecutter {
     )
 }
 
-msShadow {
-    relocatePackage = "dev.isxander.yacl3.libs"
-}
-
 dependencies {
     fun Dependency?.jij() = this?.also(::modstitchJiJ)
-    fun Dependency?.shadow(`package`: String, relocation: String) = this?.also {
-        msShadow.dependency(this, `package` to relocation)
-    }
 
     prop("deps.mixinExtras") {
         when {
@@ -211,15 +203,15 @@ dependencies {
     }
 
     listOf(
-        "imageio:imageio-core" to "imageio.core",
-        "imageio:imageio-webp" to "imageio.webp",
-        "imageio:imageio-metadata" to "imageio.metadata",
-        "common:common-lang" to "common.lang",
-        "common:common-io" to "common.io",
-        "common:common-image" to "common.image"
-    ).forEach { (id, pkg) ->
-        modstitchApi("com.twelvemonkeys.$id:${findProperty("deps.imageio")}")
-            .shadow("com.twelvemonkeys", "twelvemonkeys.$pkg")
+        "imageio:imageio-core",
+        "imageio:imageio-webp",
+        "imageio:imageio-metadata",
+        "common:common-lang",
+        "common:common-io",
+        "common:common-image",
+    ).forEach {
+        modstitchApi("com.twelvemonkeys.$it:${findProperty("deps.imageio")}")
+            .jij()
     }
 
     listOf(
@@ -227,7 +219,7 @@ dependencies {
         "gson"
     ).forEach {
         modstitchApi("org.quiltmc.parsers:$it:${findProperty("deps.quiltParsers")}")
-            .shadow("org.quiltmc.parsers.$it", "quilt.parsers.$it")
+            .jij()
     }
 
     "testmodImplementation"(sourceSets.main.get().output)

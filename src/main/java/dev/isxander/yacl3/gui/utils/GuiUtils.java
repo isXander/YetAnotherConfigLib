@@ -14,7 +14,6 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.TriState;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -38,7 +37,7 @@ public class GuiUtils {
                     /*net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,
                     *///?}
                     RenderType.CompositeState.builder()
-                            .setTextureState(new RenderType.TextureStateShard(location, TriState.TRUE, false))
+                            .setTextureState(new RenderType.TextureStateShard(location, net.minecraft.util.TriState.TRUE, false))
                             //? if <1.21.5 {
                             .setShaderState(RenderStateShard.POSITION_TEXTURE_COLOR_SHADER)
                             .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
