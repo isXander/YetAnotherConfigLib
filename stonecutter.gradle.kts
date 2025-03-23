@@ -20,6 +20,7 @@ val chiseledBuildAndCollect = registerChiseled("buildAndCollect")
 val chiseledBuild = registerChiseled("build")
 val chiseledReleaseModVersion = registerChiseled("releaseModVersion")
 val chiseledPublishSnapshots = registerChiseled("publishAllPublicationsToXanderSnapshotsRepository", name = "chiseledPublishSnapshots")
+val chiseledPublishToMaven = registerChiseled("publish", name = "chiseledPublishToMaven")
 val chiseledRunTestmodClient = registerChiseled("runTestmodClient")
 
 allprojects {

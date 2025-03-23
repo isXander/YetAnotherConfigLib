@@ -315,7 +315,7 @@ publishing {
             artifactId = "yet-another-config-lib"
             version = modstitch.metadata.modVersion.get()
 
-            artifact(modstitch.finalJarTask)
+            from(components["java"])
         }
     }
 
