@@ -1,4 +1,4 @@
-# YetAnotherConfigLib 3.6.5
+# YetAnotherConfigLib 3.6.6
 
 This version of YACL has many different version targets.
 Ensure you download the correct version of YACL for your MC version.
@@ -19,5 +19,4 @@ Ensure you download the correct version of YACL for your MC version.
 
 ## Changes
 
-- Fix crash on 1.20.1-forge target.
-- Fix image filtering
+- Fix crash on 1.20.1-forge target. (again)
