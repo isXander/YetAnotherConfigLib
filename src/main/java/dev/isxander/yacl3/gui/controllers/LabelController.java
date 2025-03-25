@@ -93,7 +93,7 @@ public class LabelController implements Controller<Component> {
                     HoverEvent hoverEvent = style.getHoverEvent();
 
                     //? if >=1.21.5 {
-                    /*if (hoverEvent instanceof HoverEvent.ShowItem showItem) {
+                    if (hoverEvent instanceof HoverEvent.ShowItem showItem) {
                         ItemStack stack = showItem.item();
                         renderItemStackTooltip(graphics, mouseX, mouseY, stack);
                     } else if (hoverEvent instanceof HoverEvent.ShowEntity showEntity) {
@@ -103,8 +103,8 @@ public class LabelController implements Controller<Component> {
                         Component text = showText.value();
                         renderTextTooltip(graphics, mouseX, mouseY, text);
                     }
-                    *///?} else {
-                    @Nullable HoverEvent.ItemStackInfo itemStackContent = hoverEvent.getValue(HoverEvent.Action.SHOW_ITEM);
+                    //?} else {
+                    /*@Nullable HoverEvent.ItemStackInfo itemStackContent = hoverEvent.getValue(HoverEvent.Action.SHOW_ITEM);
                     @Nullable HoverEvent.EntityTooltipInfo entityContent = hoverEvent.getValue(HoverEvent.Action.SHOW_ENTITY);
                     @Nullable Component text = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
 
@@ -116,7 +116,7 @@ public class LabelController implements Controller<Component> {
                     } else if (text != null) {
                         renderTextTooltip(graphics, mouseX, mouseY, text);
                     }
-                    //?}
+                    *///?}
                 }
             }
             graphics.pose().popPose();

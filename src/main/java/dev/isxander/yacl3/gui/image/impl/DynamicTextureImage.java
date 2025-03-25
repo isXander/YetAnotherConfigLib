@@ -28,7 +28,7 @@ public class DynamicTextureImage implements ImageRenderer {
         RenderSystem.assertOnRenderThread();
 
         this.image = image;
-        this.texture = new DynamicTexture(/*? if >=1.21.5 >>*/ /*location::toString,*/ image);
+        this.texture = new DynamicTexture(/*? if >=1.21.5 >>*/ location::toString, image);
         this.uniqueLocation = location;
         textureManager.register(this.uniqueLocation, this.texture);
         this.width = image.getWidth();

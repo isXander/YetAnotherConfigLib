@@ -29,20 +29,20 @@ public class GuiUtils {
             location -> RenderType.create(
                     "yacl:gui_textured_filtered",
                     //? if <1.21.5 {
-                    DefaultVertexFormat.POSITION_TEX_COLOR,
+                    /*DefaultVertexFormat.POSITION_TEX_COLOR,
                     VertexFormat.Mode.QUADS,
-                    //?}
+                    *///?}
                     786432,
                     //? if >=1.21.5 {
-                    /*net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,
-                    *///?}
+                    net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,
+                    //?}
                     RenderType.CompositeState.builder()
                             .setTextureState(new RenderType.TextureStateShard(location, net.minecraft.util.TriState.TRUE, false))
                             //? if <1.21.5 {
-                            .setShaderState(RenderStateShard.POSITION_TEXTURE_COLOR_SHADER)
+                            /*.setShaderState(RenderStateShard.POSITION_TEXTURE_COLOR_SHADER)
                             .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
                             .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
-                            //?}
+                            *///?}
                             .createCompositeState(false)
             )
     );

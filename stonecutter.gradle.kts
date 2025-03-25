@@ -34,10 +34,6 @@ allprojects {
             filter { includeGroup("thedarkcolour") }
         }
         maven("https://oss.sonatype.org/content/repositories/snapshots/")
-        maven("https://prmaven.neoforged.net/NeoForge/pr2039") {
-            name = "NeoForge 1.21.5 PR"
-            content { includeModule("net.neoforged", "neoforge") }
-        }
     }
 }
 

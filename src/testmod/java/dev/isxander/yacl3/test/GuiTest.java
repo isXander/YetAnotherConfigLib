@@ -505,10 +505,10 @@ public class GuiTest {
 
     private static HoverEvent createTextHoverEvent(Component text) {
         //? if >=1.21.5 {
-        /*return new HoverEvent.ShowText(text);
-        *///?} else {
-        return new HoverEvent(HoverEvent.Action.SHOW_TEXT, text);
-        //?}
+        return new HoverEvent.ShowText(text);
+        //?} else {
+        /*return new HoverEvent(HoverEvent.Action.SHOW_TEXT, text);
+        *///?}
     }
 
     private static ConfigCategory sharedStateCategory() {
