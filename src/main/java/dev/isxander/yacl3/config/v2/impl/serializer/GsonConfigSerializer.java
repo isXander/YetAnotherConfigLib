@@ -175,7 +175,6 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
         config.load();
     }
 
-    /*? if >=1.20.4 {*/
     public static class StyleTypeAdapter implements JsonSerializer<Style>, JsonDeserializer<Style> {
         @Override
         public Style deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -187,7 +186,6 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
             return Style.Serializer.CODEC.encodeStart(JsonOps.INSTANCE, src).result().orElse(JsonNull.INSTANCE);
         }
     }
-    /*?}*/
 
     public static class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeserializer<Color> {
         @Override
@@ -221,14 +219,8 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
         private UnaryOperator<GsonBuilder> gsonBuilder = builder -> builder
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .serializeNulls()
-                /*? if >1.20.4 {*/
                 .registerTypeHierarchyAdapter(Component.class, new Component.SerializerAdapter(RegistryAccess.EMPTY))
-                /*?} elif =1.20.4 {*/
-                /*.registerTypeHierarchyAdapter(Component.class, new Component.SerializerAdapter())
-                *//*?} else {*/
-                /*.registerTypeHierarchyAdapter(Component.class, new Component.Serializer())
-                *//*?}*/
-                .registerTypeHierarchyAdapter(Style.class, /*? if >=1.20.4 {*/new StyleTypeAdapter()/*?} else {*//*new Style.Serializer()*//*?}*/)
+                .registerTypeHierarchyAdapter(Style.class, new StyleTypeAdapter())
                 .registerTypeHierarchyAdapter(Color.class, new ColorTypeAdapter())
                 .registerTypeHierarchyAdapter(Item.class, new ItemTypeAdapter())
                 .setPrettyPrinting();

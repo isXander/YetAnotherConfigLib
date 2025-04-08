@@ -100,7 +100,6 @@ public class GuiUtils {
         /*graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);*/
     }
 
-    //? if >1.20.1 {
     public static void blitSprite(GuiGraphics graphics, ResourceLocation sprite, int x, int y, int width, int height) {
         graphics.blitSprite(
                 //? if >=1.21.2
@@ -110,7 +109,6 @@ public class GuiUtils {
                 width, height
         );
     }
-    //?}
 
     public static MutableComponent translatableFallback(String key, Component fallback) {
         if (Language.getInstance().has(key))

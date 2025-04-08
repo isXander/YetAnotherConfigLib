@@ -34,11 +34,7 @@ public class ChildConfigEntryImpl<T extends CodecConfig<T>> extends AbstractRead
     public <R> boolean decode(R encoded, DynamicOps<R> ops) {
         DataResult<T> result = mapCodec.decoder().parse(ops, encoded);
 
-        //? if >1.20.4 {
         Optional<DataResult.Error<T>> error = result.error();
-         //?} else {
-        /*Optional<DataResult.PartialResult<T>> error = result.error();
-        *///?}
         if (error.isPresent()) {
             YACLConstants.LOGGER.error("Failed to decode entry {}: {}", this.fieldName(), error.get().message());
             return false;

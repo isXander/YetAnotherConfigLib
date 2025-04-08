@@ -27,12 +27,8 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
         //? if >=1.21.4 {
         super(client, width, x, y, height, 0);
         ((AbstractSelectionListAccessor) this).setRenderHeader(false);
-        //?} elif >=1.20.3 {
+        //?} else {
         /*super(client, width, x, y, height);
-        *///?} else {
-        /*super(client, width, height, y, y + height, 22);
-        this.x0 = x;
-        this.x1 = x + width;
         *///?}
         this.doSmoothScrolling = smoothScrolling;
 
@@ -41,11 +37,8 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, /*? if >1.20.2 {*/ double horizontal, /*?}*/ double vertical) {
-        double scroll = vertical;
-        /*? if >1.20.2 {*/
-        scroll += horizontal;
-        /*?}*/
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+        double scroll = vertical + horizontal;
 
         // default implementation bases scroll step from total height of entries, this is constant
         this.setScrollAmount(this.scrollAmount() - scroll * 20);
@@ -78,12 +71,7 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     *///?}
 
     @Override
-    /*? if >1.20.2 {*/
-    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta)
-    /*?} else {*/
-    /*public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta)
-    *//*?}*/
-    {
+    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         if (usingScrollbar) {
             resetSmoothScrolling();
         }
@@ -101,18 +89,14 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
 
         graphics.enableScissor(this.getX(), this.getY(), this.getX() + this.getWidth(), this.getY() + this.getHeight());
 
-        /*? if >1.20.2 {*/
         super.renderWidget(graphics, mouseX, mouseY, delta);
-        /*?} else {*/
-        /*super.render(graphics, mouseX, mouseY, delta);
-        *//*?}*/
 
         graphics.disableScissor();
 
         returnSmoothAmount = false;
     }
 
-    /*? if >1.20.1 && <1.21.4 {*/
+    /*? if <1.21.4 {*/
     /*@Override
     *//*?}*/
     protected boolean isValidMouseClick(int button) {
@@ -248,12 +232,7 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     }
 
     @Override
-    /*? if >1.20.4 {*/
-    protected void renderListItems(GuiGraphics graphics, int mouseX, int mouseY, float delta)
-    /*?} else {*/
-    /*protected void renderList(GuiGraphics graphics, int mouseX, int mouseY, float delta)
-    *//*?}*/
-    {
+    protected void renderListItems(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         int left = this.getRowLeft();
         int right = this.getRowWidth();
         int count = this.getItemCount();
@@ -304,50 +283,4 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
             return 22;
         }
     }
-
-    /*? if <1.20.3 {*/
-    /*@Override
-    public int getX() {
-        return x0;
-    }
-
-    @Override
-    public int getY() {
-        return y0;
-    }
-
-    @Override
-    public void setX(int x) {
-        int width = this.getWidth();
-        x0 = x;
-        x1 = x + width;
-    }
-
-    @Override
-    public void setY(int y) {
-        int height = this.getHeight();
-        y0 = y;
-        y1 = y + height;
-    }
-
-    public void setWidth(int width) {
-        x1 = x0 + width;
-        this.width = width;
-    }
-
-    public void setHeight(int height) {
-        y1 = y0 + height;
-        this.height = height;
-    }
-
-    @Override
-    public int getWidth() {
-        return width;
-    }
-
-    @Override
-    public int getHeight() {
-        return height;
-    }
-    *//*?}*/
 }

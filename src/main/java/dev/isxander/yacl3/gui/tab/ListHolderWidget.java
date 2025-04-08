@@ -67,8 +67,8 @@ public class ListHolderWidget<T extends ElementListWidgetExt<?>> extends Abstrac
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, /*? if >1.20.2 {*/ double horizontal, /*?}*/ double vertical) {
-        return this.list.mouseScrolled(mouseX, mouseY, /*? if >1.20.2 {*/ horizontal, /*?}*/ vertical);
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+        return this.list.mouseScrolled(mouseX, mouseY, horizontal, vertical);
     }
 
     @Override

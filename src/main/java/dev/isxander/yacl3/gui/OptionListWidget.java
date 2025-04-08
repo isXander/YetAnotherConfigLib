@@ -157,11 +157,11 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, /*? if >1.20.2 {*/ double horizontal, /*?}*/ double vertical) {
-        super.mouseScrolled(mouseX, mouseY, /*? if >1.20.2 {*/ horizontal, /*?}*/ vertical);
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+        super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
 
         for (Entry child : children()) {
-            if (child.mouseScrolled(mouseX, mouseY, /*? if >1.20.2 {*/ horizontal, /*?}*/ vertical))
+            if (child.mouseScrolled(mouseX, mouseY, horizontal, vertical))
                 break;
         }
 
@@ -254,11 +254,9 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
     }
 
-    /*? if >1.20.4 {*/
     @Override
     protected void renderListBackground(GuiGraphics guiGraphics) {
     }
-    /*?}*/
 
     public abstract class Entry extends ElementListWidgetExt.Entry<Entry> {
         public boolean isViewable() {
@@ -321,8 +319,8 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
         }
 
         @Override
-        public boolean mouseScrolled(double mouseX, double mouseY, /*? if >1.20.2 {*/ double horizontal, /*?}*/ double vertical) {
-            return widget.mouseScrolled(mouseX, mouseY, /*? if >1.20.2 {*/ horizontal, /*?}*/ vertical);
+        public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+            return widget.mouseScrolled(mouseX, mouseY, horizontal, vertical);
         }
 
         @Override

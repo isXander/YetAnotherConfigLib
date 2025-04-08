@@ -35,23 +35,21 @@ public class PopupControllerScreen extends Screen {
 
     @Override
     public void renderBackground(
-            GuiGraphics guiGraphics
-            /*? if >1.20.1 {*/,
+            GuiGraphics guiGraphics,
             int mouseX,
             int mouseY,
             float partialTick
-            /*?}*/
     ) {
 
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, /*? if >1.20.1 {*/ double scrollX, /*?}*/ double scrollY) {
-        if (controllerPopup.mouseScrolled(mouseX, mouseY, /*? if >1.20.1 {*/ scrollX, /*?}*/ scrollY)) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+        if (controllerPopup.mouseScrolled(mouseX, mouseY, horizontal, vertical)) {
             return true;
         }
-        backgroundYaclScreen.mouseScrolled(mouseX, mouseY, /*? if >1.20.1 {*/ scrollX, /*?}*/ scrollY); //mouseX & mouseY are needed here
-        return super.mouseScrolled(mouseX, mouseY, /*? if >1.20.1 {*/ scrollX, /*?}*/ scrollY);
+        backgroundYaclScreen.mouseScrolled(mouseX, mouseY, horizontal, vertical); //mouseX & mouseY are needed here
+        return super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
     }
 
     @Override

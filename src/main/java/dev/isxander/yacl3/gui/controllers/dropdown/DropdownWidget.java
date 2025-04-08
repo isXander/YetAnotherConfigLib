@@ -63,11 +63,7 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
 		//graphics.setColor(0.25f, 0.25f, 0.25f, 1.0f);
 		GuiUtils.blitGuiTexColor(
                 graphics,
-				/*? if >1.20.4 {*/
 				Screen.MENU_BACKGROUND,
-				/*?} else {*/
-				/*Screen.BACKGROUND_LOCATION,
-				*//*?}*/
 				dropdownDim.x(), dropdownDim.y(),
 				0.0f, 0.0f,
 				dropdownDim.width(), dropdownDim.height(),
@@ -114,16 +110,16 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, /*? if >1.20.1 {*/ double scrollX, /*?}*/ double scrollY) {
+	public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
 		if (isMouseOver(mouseX, mouseY)) {
-			if (scrollY < 0) {
+			if (vertical < 0) {
 				scrollDown();
 			} else {
 				scrollUp();
 			}
 			return true;
 		}
-		return super.mouseScrolled(mouseX, mouseY, /*? if >1.20.1 {*/ scrollX, /*?}*/ scrollY);
+		return super.mouseScrolled(mouseX, mouseY, horizontal, vertical);
 	}
 
     @Override

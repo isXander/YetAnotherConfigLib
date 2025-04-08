@@ -95,17 +95,10 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
         //Has a custom "z" value in case needed for later
         Matrix4f matrix4f = graphics.pose().last().pose();
 
-        /*? if >1.20.6 {*/
         consumer.addVertex(matrix4f, x1, y1, 0).setColor(startColor);
         consumer.addVertex(matrix4f, x1, y2, 0).setColor(startColor);
         consumer.addVertex(matrix4f, x2, y2, 0).setColor(endColor);
         consumer.addVertex(matrix4f, x2, y1, 0).setColor(endColor);
-        /*?} else {*/
-        /*consumer.vertex(matrix4f, x1, y1, 0).color(startColor).endVertex();
-        consumer.vertex(matrix4f, x1, y2, 0).color(startColor).endVertex();
-        consumer.vertex(matrix4f, x2, y2, 0).color(endColor).endVertex();
-        consumer.vertex(matrix4f, x2, y1, 0).color(endColor).endVertex();
-        *//*?}*/
     }
 
 

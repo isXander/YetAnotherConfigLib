@@ -1,7 +1,6 @@
 package dev.isxander.yacl3.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.utils.Dimension;
@@ -120,17 +119,9 @@ public class YACLScreen extends Screen {
         currentPopupController = null;
     }
 
-    /*? if <=1.20.4 {*/
-    /*@Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        renderDirtBackground(graphics);
-        super.render(graphics, mouseX, mouseY, delta);
-    }
-    *//*?}*/
-
     @Override
-    public void renderBackground(GuiGraphics guiGraphics/*? if >1.20.1 {*/, int mouseX, int mouseY, float partialTick/*?}*/) {
-        super.renderBackground(guiGraphics/*? if >1.20.1 {*/, mouseX, mouseY, partialTick/*?}*/);
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
         if (tabManager.getCurrentTab() instanceof TabExt tab) {
             tab.renderBackground(guiGraphics);
@@ -282,8 +273,9 @@ public class YACLScreen extends Screen {
                     drawY,
                     maxWidth,
                     height,
-                    400/*? if >=1.21.2 {*/,
-                    null/*?}*/
+                    400
+                    //? if >=1.21.2
+                    ,null
             );
             graphics.pose().translate(0.0, 0.0, 400.0);
 
@@ -294,9 +286,7 @@ public class YACLScreen extends Screen {
     }
 
     public static class CategoryTab implements TabExt {
-        /*? if >1.20.4 {*/
         private static final ResourceLocation DARKER_BG = YACLPlatform.mcRl("textures/gui/menu_list_background.png");
-        /*?}*/
 
         private final YACLScreen screen;
         private final ConfigCategory category;
@@ -387,11 +377,8 @@ public class YACLScreen extends Screen {
             consumer.accept(descriptionWidget);
         }
 
-        /*? if >1.20.4 {*/
         @Override
         public void renderBackground(GuiGraphics graphics) {
-            //? if <1.20.5
-            /*RenderSystem.enableBlend();*/
             // right pane darker db
             GuiUtils.blitGuiTex(graphics, DARKER_BG, rightPaneDim.left(), rightPaneDim.top(), rightPaneDim.right() + 2, rightPaneDim.bottom() + 2, rightPaneDim.width() + 2, rightPaneDim.height() + 2, 32, 32);
             
@@ -407,11 +394,7 @@ public class YACLScreen extends Screen {
             graphics.pose().rotateAround(Axis.ZP.rotationDegrees(90), 0, 0, 1);
             GuiUtils.blitGuiTex(graphics, CreateWorldScreen.FOOTER_SEPARATOR, 0, 0, 0f, 0f, rightPaneDim.height() + 1, 2, 32, 2);
             graphics.pose().popPose();
-
-            //? if <1.20.5
-            /*RenderSystem.disableBlend();*/
         }
-        /*?}*/
 
         @Override
         public void doLayout(ScreenRectangle screenRectangle) {
@@ -434,9 +417,9 @@ public class YACLScreen extends Screen {
 
             undoButton.active = pendingChanges;
             saveFinishedButton.setMessage(pendingChanges ? Component.translatable("yacl.gui.save") : GuiUtils.translatableFallback("yacl.gui.done", CommonComponents.GUI_DONE));
-            saveFinishedButton.setTooltip(new YACLTooltip(pendingChanges ? Component.translatable("yacl.gui.save.tooltip") : Component.translatable("yacl.gui.finished.tooltip"), saveFinishedButton));
+            saveFinishedButton.setTooltip(Tooltip.create(pendingChanges ? Component.translatable("yacl.gui.save.tooltip") : Component.translatable("yacl.gui.finished.tooltip")));
             cancelResetButton.setMessage(pendingChanges ? GuiUtils.translatableFallback("yacl.gui.cancel", CommonComponents.GUI_CANCEL) : Component.translatable("controls.reset"));
-            cancelResetButton.setTooltip(new YACLTooltip(pendingChanges ? Component.translatable("yacl.gui.cancel.tooltip") : Component.translatable("yacl.gui.reset.tooltip"), cancelResetButton));
+            cancelResetButton.setTooltip(Tooltip.create(pendingChanges ? Component.translatable("yacl.gui.cancel.tooltip") : Component.translatable("yacl.gui.reset.tooltip")));
         }
     }
 

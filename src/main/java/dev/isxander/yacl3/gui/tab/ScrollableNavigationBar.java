@@ -84,7 +84,7 @@ public class ScrollableNavigationBar extends TabNavigationBar {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, /*? if >1.20.2 {*/ double horizontal, /*?}*/ double vertical) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
         this.setScrollOffset(this.scrollOffset - (int)(vertical*15));
         return true;
     }
