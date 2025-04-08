@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    id("dev.kikugie.stonecutter")
     id("dev.isxander.modstitch.base")
 
     kotlin("jvm")
@@ -349,6 +350,17 @@ tasks {
         compilerOptions {
             jvmTarget = modstitch.javaTarget.map { JvmTarget.fromTarget(it.toString()) }
         }
+
+        dependsOn("stonecutterGenerate")
+    }
+}
+
+tasks.named("generateModMetadata") {
+    dependsOn("stonecutterGenerate")
+}
+modstitch.moddevgradle {
+    tasks.named("createMinecraftArtifacts") {
+        dependsOn("stonecutterGenerate")
     }
 }
 

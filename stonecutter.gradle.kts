@@ -1,13 +1,10 @@
-import dev.kikugie.stonecutter.controller.ChiseledTask
-import dev.kikugie.stonecutter.ide.RunConfigType
-
 plugins {
     base
     kotlin("jvm") version "2.0.21" apply false
 
     id("dev.kikugie.stonecutter")
 
-    val modstitchVersion = "0.5.14-unstable"
+    val modstitchVersion = "0.5.15-unstable"
     id("dev.isxander.modstitch.base") version modstitchVersion apply false
     id("dev.isxander.modstitch.shadow") version modstitchVersion apply false
 
@@ -15,13 +12,6 @@ plugins {
     id("org.ajoberstar.grgit") version "5.0.+" apply false
 }
 stonecutter active file("versions/current")
-
-val chiseledBuildAndCollect = registerChiseled("buildAndCollect")
-val chiseledBuild = registerChiseled("build")
-val chiseledReleaseModVersion = registerChiseled("releaseModVersion")
-val chiseledPublishSnapshots = registerChiseled("publishAllPublicationsToXanderSnapshotsRepository", name = "chiseledPublishSnapshots")
-val chiseledPublishToMaven = registerChiseled("publish", name = "chiseledPublishToMaven")
-val chiseledRunTestmodClient = registerChiseled("runTestmodClient")
 
 allprojects {
     repositories {
@@ -38,8 +28,6 @@ allprojects {
 }
 
 stonecutter {
-    generateRunConfigs = listOf(RunConfigType.SWITCH)
-
     parameters {
         fun String.propDefined() = project(node!!.metadata.project).findProperty(this)?.toString()?.isNotBlank() ?: false
         consts(listOf(
@@ -55,14 +43,3 @@ tasks.clean {
     delete(layout.buildDirectory.dir("finalJars"))
 }
 
-fun registerChiseled(task: String, name: String? = null, action: ChiseledTask.() -> Unit = {}): TaskProvider<ChiseledTask> {
-    return tasks.register(
-        name ?: ("chiseled" + task.replaceFirstChar { it.uppercase() }),
-        stonecutter.chiseled.kotlin
-    ) {
-        group = "yacl"
-        ofTask(task)
-        action(this)
-
-    }.also { stonecutter registerChiseled it }
-}
