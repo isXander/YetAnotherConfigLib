@@ -3,16 +3,19 @@ package dev.isxander.yacl3.gui.image;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.isxander.yacl3.gui.image.impl.AnimatedDynamicTextureImage;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
+import dev.isxander.yacl3.platform.YACLConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class ImageRendererManager {
     private static final ExecutorService SINGLE_THREAD_EXECUTOR = Executors.newSingleThreadExecutor(task -> new Thread(task, "YACL Image Prep"));
@@ -20,16 +23,16 @@ public class ImageRendererManager {
     private static final Map<ResourceLocation, CompletableFuture<ImageRenderer>> IMAGE_CACHE = new ConcurrentHashMap<>();
     static final Map<ResourceLocation, ImageRenderer> PRELOADED_IMAGE_CACHE = new ConcurrentHashMap<>();
 
-    static final List<PreloadedImageFactory> PRELOADED_IMAGE_FACTORIES = List.of(
-            new PreloadedImageFactory(
+    static final List<PreloadedImageFactory> PRELOADED_IMAGE_FACTORIES = Stream.of(
+            YACLConfig.HANDLER.instance().preloadComplexImageFormats ? new PreloadedImageFactory(
                     location -> location.getPath().endsWith(".webp"),
                     AnimatedDynamicTextureImage::createWEBPFromTexture
-            ),
-            new PreloadedImageFactory(
+            ) : null,
+            YACLConfig.HANDLER.instance().preloadComplexImageFormats ? new PreloadedImageFactory(
                     location -> location.getPath().endsWith(".gif"),
                     AnimatedDynamicTextureImage::createGIFFromTexture
-            )
-    );
+            ) : null
+    ).filter(Objects::nonNull).toList();
 
     public static <T extends ImageRenderer> Optional<T> getImage(ResourceLocation id) {
         if (PRELOADED_IMAGE_CACHE.containsKey(id)) {
