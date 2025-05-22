@@ -22,7 +22,8 @@ public class PopupControllerScreen extends Screen {
 
     @Override
     public void resize(Minecraft minecraft, int width, int height) {
-        minecraft.setScreen(backgroundYaclScreen);
+        this.backgroundYaclScreen.resize(minecraft, width, height);
+        this.onClose();
     }
 
     @Override
@@ -40,7 +41,18 @@ public class PopupControllerScreen extends Screen {
             int mouseY,
             float partialTick
     ) {
+        // in 1.21.6+ renderBackground isn't called in render, it's called earlier before the blur pass
+        //? if >=1.21.6
+        /*this.backgroundYaclScreen.renderBackground(guiGraphics, mouseX, mouseY, partialTick);*/
+    }
 
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (!super.mouseClicked(mouseX, mouseY, button)) {
+            this.onClose();
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -69,8 +81,15 @@ public class PopupControllerScreen extends Screen {
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        this.backgroundYaclScreen.tick();
+    }
+
+    @Override
     public void onClose() {
         this.minecraft.screen = backgroundYaclScreen;
+        this.controllerPopup.close();
     }
 
 }

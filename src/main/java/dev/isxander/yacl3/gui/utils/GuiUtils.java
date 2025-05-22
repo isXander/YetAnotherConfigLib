@@ -3,6 +3,7 @@ package dev.isxander.yacl3.gui.utils;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Axis;
 import dev.isxander.yacl3.debug.DebugProperties;
 import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
@@ -14,17 +15,43 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+//? if >=1.21.2
+import net.minecraft.util.ARGB;
+import net.minecraft.util.Mth;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-//? if <1.21.2 {
+//? if >=1.21.6 {
+/*import com.mojang.blaze3d.pipeline.RenderPipeline;
+import net.minecraft.client.renderer.RenderPipelines;
+*///?} elif >=1.21.2 {
+import net.minecraft.client.renderer.RenderStateShard;
+//?} else {
 /*import com.mojang.blaze3d.platform.GlConst;
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.minecraft.client.renderer.GameRenderer;
 *///?}
 
 public class GuiUtils {
-    //? if >=1.21.2 {
+    //? if <1.21.2 {
+    /*private static Function<ResourceLocation, RenderType> GUI_TEXTURED = Util.memoize(
+            location -> RenderType.create(
+                    "yacl:gui_textured",
+                    DefaultVertexFormat.POSITION_TEX_COLOR,
+                    VertexFormat.Mode.QUADS,
+                    786432,
+                    RenderType.CompositeState.builder()
+                            .setTextureState(new RenderStateShard.TextureStateShard(location, false, false))
+                            .setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getPositionTexColorShader))
+                            .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
+                            .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
+                            .createCompositeState(false)
+            )
+    );
+    *///?}
+
+    //? if >=1.21.2 && <1.21.6 {
     public static Function<ResourceLocation, RenderType> GUI_TEXTURED_FILTERED = Util.memoize(
             location -> RenderType.create(
                     "yacl:gui_textured_filtered",
@@ -48,14 +75,50 @@ public class GuiUtils {
     );
     //?}
 
-    public static void drawSpecial(GuiGraphics graphics, Consumer<MultiBufferSource> consumer) {
-        //? if >=1.21.2 {
-        graphics.drawSpecial(consumer);
-        //?} else {
-        /*MultiBufferSource.BufferSource bufferSource = graphics.bufferSource();
-        consumer.accept(bufferSource);
-        bufferSource.endBatch();
-        *///?}
+    public static void pushPose(GuiGraphics graphics) {
+        //? if >=1.21.6 {
+        /*graphics.pose().pushMatrix();
+        *///?} else {
+        graphics.pose().pushPose();
+        //?}
+    }
+
+    public static void popPose(GuiGraphics graphics) {
+        //? if >=1.21.6 {
+        /*graphics.pose().popMatrix();
+        *///?} else {
+        graphics.pose().popPose();
+        //?}
+    }
+
+    public static void translate2D(GuiGraphics graphics, float x, float y) {
+        //? if >=1.21.6 {
+        /*graphics.pose().translate(x, y);
+        *///?} else {
+        graphics.pose().translate(x, y, 0);
+        //?}
+    }
+
+    public static void translateZ(GuiGraphics graphics, float z) {
+        //? if <1.21.6 {
+        graphics.pose().translate(0, 0, z);
+        //?}
+    }
+
+    public static void scale2D(GuiGraphics graphics, float x, float y) {
+        //? if >=1.21.6 {
+        /*graphics.pose().scale(x, y);
+        *///?} else {
+        graphics.pose().scale(x, y, 1);
+        //?}
+    }
+
+    public static void rotate2D(GuiGraphics graphics, float angle) {
+        //? if >=1.21.6 {
+        /*graphics.pose().rotate(angle * Mth.DEG_TO_RAD);
+        *///?} else {
+        graphics.pose().rotateAround(Axis.ZP.rotationDegrees(angle), 0, 0, 1);
+        //?}
     }
 
     public static void blitGuiTex(GuiGraphics graphics, ResourceLocation texture, int x, int y, float u, float v, int textureWidth, int textureHeight, int width, int height) {
@@ -68,7 +131,7 @@ public class GuiUtils {
 
         graphics.blit(
                 //? if >=1.21.2
-                linearFiltering ? GUI_TEXTURED_FILTERED : RenderType::guiTextured,
+                guiTextured(linearFiltering),
                 texture,
                 x, y,
                 u, v,
@@ -87,7 +150,7 @@ public class GuiUtils {
         *///?}
         graphics.blit(
                 //? if >=1.21.2
-                RenderType::guiTextured,
+                guiTextured(false),
                 texture,
                 x, y,
                 u, v,
@@ -103,12 +166,27 @@ public class GuiUtils {
     public static void blitSprite(GuiGraphics graphics, ResourceLocation sprite, int x, int y, int width, int height) {
         graphics.blitSprite(
                 //? if >=1.21.2
-                RenderType::guiTextured,
+                guiTextured(false),
                 sprite,
                 x, y,
                 width, height
         );
     }
+
+    //? if >=1.21.6 {
+    /*public static RenderPipeline guiTextured(boolean textureFiltering) {
+        // in 1.21.6, texture filtering is done on the texture level on resource reload, ignored
+        return RenderPipelines.GUI_TEXTURED;
+    }
+    *///?} elif >=1.21.2 {
+    public static Function<ResourceLocation, RenderType> guiTextured(boolean textureFiltering) {
+        return textureFiltering ? GUI_TEXTURED_FILTERED : RenderType::guiTextured;
+    }
+    //?} else {
+    /*public static Function<ResourceLocation, RenderType> guiTextured(boolean textureFiltering) {
+        return GUI_TEXTURED;
+    }
+    *///?}
 
     public static MutableComponent translatableFallback(String key, Component fallback) {
         if (Language.getInstance().has(key))
@@ -160,4 +238,20 @@ public class GuiUtils {
         }
     }
     *///?}
+
+    public static int extractAlpha(int argb) {
+        //? if >=1.21.2 {
+        return ARGB.alpha(argb);
+        //?} else {
+        /*return (argb >> 24) & 0xFF;
+        *///?}
+    }
+
+    public static int putAlpha(int rgb, int alpha) {
+        //? if >=1.21.2 {
+        return ARGB.color(alpha, rgb);
+        //?} else {
+        /*return (rgb & 0x00FFFFFF) | (alpha << 24);
+        *///?}
+    }
 }

@@ -65,7 +65,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
         if (nameWidth > getWidth()) {
             renderScrollingString(graphics, font, description.name(), getX(), y, getX() + getWidth(), y + font.lineHeight, -1);
         } else {
-            graphics.drawString(font, description.name(), getX(), y, 0xFFFFFF);
+            graphics.drawString(font, description.name(), getX(), y, 0xFFFFFFFF);
         }
 
         y += 5 + font.lineHeight;
@@ -86,7 +86,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
 
         descriptionY = y;
         for (var line : wrappedText) {
-            graphics.drawString(font, line, getX(), y, 0xFFFFFF);
+            graphics.drawString(font, line, getX(), y, 0xFFFFFFFF);
             y += font.lineHeight;
         }
 

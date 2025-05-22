@@ -266,22 +266,23 @@ public class YACLScreen extends Screen {
             int drawX = x + 12;
             int drawY = y - 12;
 
-            graphics.pose().pushPose();
+            GuiUtils.pushPose(graphics);
             TooltipRenderUtil.renderTooltipBackground(
                     graphics,
                     drawX,
                     drawY,
                     maxWidth,
-                    height,
-                    400
+                    height
+                    //? if <1.21.6
+                    ,400
                     //? if >=1.21.2
                     ,null
             );
-            graphics.pose().translate(0.0, 0.0, 400.0);
+            GuiUtils.translateZ(graphics, 400);
 
             text.renderLeftAligned(graphics, drawX, drawY, lineHeight, -1);
 
-            graphics.pose().popPose();
+            GuiUtils.popPose(graphics);
         }
     }
 
@@ -383,17 +384,17 @@ public class YACLScreen extends Screen {
             GuiUtils.blitGuiTex(graphics, DARKER_BG, rightPaneDim.left(), rightPaneDim.top(), rightPaneDim.right() + 2, rightPaneDim.bottom() + 2, rightPaneDim.width() + 2, rightPaneDim.height() + 2, 32, 32);
             
             // top separator for right pane
-            graphics.pose().pushPose();
-            graphics.pose().translate(0, 0, 10);
+            GuiUtils.pushPose(graphics);
+            GuiUtils.translateZ(graphics, 10);
             GuiUtils.blitGuiTex(graphics, CreateWorldScreen.HEADER_SEPARATOR, rightPaneDim.left() - 1, rightPaneDim.top() - 2, 0.0F, 0.0F, rightPaneDim.width() + 1, 2, 32, 2);
-            graphics.pose().popPose();
+            GuiUtils.popPose(graphics);
 
             // left separator for right pane
-            graphics.pose().pushPose();
-            graphics.pose().translate(rightPaneDim.left(), rightPaneDim.top() - 1, 0);
-            graphics.pose().rotateAround(Axis.ZP.rotationDegrees(90), 0, 0, 1);
+            GuiUtils.pushPose(graphics);
+            GuiUtils.translate2D(graphics, rightPaneDim.left(), rightPaneDim.top() - 1);
+            GuiUtils.rotate2D(graphics, 90);
             GuiUtils.blitGuiTex(graphics, CreateWorldScreen.FOOTER_SEPARATOR, 0, 0, 0f, 0f, rightPaneDim.height() + 1, 2, 32, 2);
-            graphics.pose().popPose();
+            GuiUtils.popPose(graphics);
         }
 
         @Override

@@ -97,8 +97,13 @@ modstitch {
                 }
             }
 
+            mixin.useLegacyMixinAp = false
+
             accessWidenerPath = rootProject.file("src/main/resources/yacl.accesswidener")
         }
+
+        // do not validate
+        tasks.getByName("validateAccessWidener").enabled = false
     }
 
     moddevgradle {
@@ -140,16 +145,16 @@ modstitch {
 }
 
 stonecutter {
-    consts(
-        "fabric" to modstitch.isLoom,
-        "neoforge" to modstitch.isModDevGradleRegular,
-        "forge" to modstitch.isModDevGradleLegacy,
-        "forgelike" to modstitch.isModDevGradle,
-    )
+    constants {
+        put("fabric", modstitch.isLoom)
+        put("neoforge", modstitch.isModDevGradleRegular)
+        put("forge", modstitch.isModDevGradleLegacy)
+        put("forgelike", modstitch.isModDevGradle)
+    }
 
-    dependencies(
-        "fapi" to (findProperty("deps.fabricApi")?.toString() ?: "0.0.0"),
-    )
+    dependencies {
+        put("fapi", (findProperty("deps.fabricApi")?.toString() ?: "0.0.0"))
+    }
 }
 
 dependencies {
@@ -157,10 +162,10 @@ dependencies {
 
     prop("deps.mixinExtras") {
         when {
-            isFabric -> modstitchImplementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:$it")!!).jij()
+            isFabric -> modstitchImplementation("io.github.llamalad7:mixinextras-fabric:$it").jij()
             isNeoforge -> implementation("io.github.llamalad7:mixinextras-neoforge:$it").jij()
             isForge -> {
-                compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:$it")!!)
+                compileOnly("io.github.llamalad7:mixinextras-common:$it")
                 implementation("io.github.llamalad7:mixinextras-forge:$it").jij()
             }
             else -> error("Unknown loader")

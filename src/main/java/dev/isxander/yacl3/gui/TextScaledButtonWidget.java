@@ -1,6 +1,6 @@
 package dev.isxander.yacl3.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,12 +23,11 @@ public class TextScaledButtonWidget extends TooltipButtonWidget {
     @Override
     public void renderString(GuiGraphics graphics, Font textRenderer, int color) {
         Font font = Minecraft.getInstance().font;
-        PoseStack pose = graphics.pose();
 
-        pose.pushPose();
-        pose.translate(((this.getX() + this.width / 2f) - font.width(getMessage()) * textScale / 2), (float)this.getY() + (this.height - 8 * textScale) / 2f / textScale, 0);
-        pose.scale(textScale, textScale, 1);
+        GuiUtils.pushPose(graphics);
+        GuiUtils.translate2D(graphics, ((this.getX() + this.width / 2f) - font.width(getMessage()) * textScale / 2), (float)this.getY() + (this.height - 8 * textScale) / 2f / textScale);
+        GuiUtils.scale2D(graphics, textScale, textScale);
         graphics.drawString(font, getMessage(), 0, 0, color | Mth.ceil(this.alpha * 255.0F) << 24, true);
-        pose.popPose();
+        GuiUtils.popPose(graphics);
     }
 }

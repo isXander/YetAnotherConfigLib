@@ -55,9 +55,8 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
 		if (dropdownLength() == 0) return;
 
-		PoseStack matrices = graphics.pose();
-		matrices.pushPose();
-		matrices.translate(0, 0, 200);
+		GuiUtils.pushPose(graphics);
+        GuiUtils.translateZ(graphics, 200);
 
 		// Background
 		//graphics.setColor(0.25f, 0.25f, 0.25f, 1.0f);
@@ -92,7 +91,7 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
 			entryDimension.move(0, entryHeight());
 		}
 
-		matrices.popPose();
+        GuiUtils.popPose(graphics);
 	}
 
 	@Override

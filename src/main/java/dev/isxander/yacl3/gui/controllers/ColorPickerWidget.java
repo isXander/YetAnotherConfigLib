@@ -3,11 +3,10 @@ package dev.isxander.yacl3.gui.controllers;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
 import dev.isxander.yacl3.gui.YACLScreen;
+import dev.isxander.yacl3.gui.render.ColorGradientRenderState;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
-import dev.isxander.yacl3.gui.utils.YACLRenderHelper;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -15,8 +14,8 @@ import net.minecraft.util.Mth;
 import java.awt.*;
 
 public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
-    private static final ResourceLocation COLOR_PICKER_LOCATION = YACLPlatform.rl("controller/colorpicker");
-    private static final ResourceLocation TRANSPARENT_TEXTURE_LOCATION = YACLPlatform.rl("controller/transparent");
+    public static final ResourceLocation COLOR_PICKER_SPRITE = YACLPlatform.rl("controller/colorpicker");
+    public static final ResourceLocation TRANSPARENT_SPRITE = YACLPlatform.rl("controller/transparent");
 
     private final ColorController controller;
     private final ColorController.ColorControllerElement entryWidget;
@@ -81,18 +80,18 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         int thumbWidth = 4;
         int thumbHeight = 4;
 
-        graphics.pose().pushPose();
-        graphics.pose().translate(0, 0, 10); // render over text
+        GuiUtils.pushPose(graphics);
+        GuiUtils.translateZ(graphics, 10); // render over text
 
         //Background
-        GuiUtils.blitSprite(graphics, COLOR_PICKER_LOCATION, colorPickerDim.x() - 5, colorPickerDim.y() - 5, colorPickerDim.width() + 10, colorPickerDim.height() + 10);
+        GuiUtils.blitSprite(graphics, COLOR_PICKER_SPRITE, colorPickerDim.x() - 5, colorPickerDim.y() - 5, colorPickerDim.width() + 10, colorPickerDim.height() + 10);
 
         //Main color preview
         //outline
         graphics.fill(previewColorDim.x() - outline, previewColorDim.y() - outline, previewColorDim.xLimit() + outline, previewColorDim.yLimit() + outline, Color.black.getRGB());
         //transparent texture - must be rendered BEFORE the main color preview
         if(controller.allowAlpha()) {
-            GuiUtils.blitSprite(graphics, TRANSPARENT_TEXTURE_LOCATION, previewColorDim.x(), previewColorDim.y(), previewColorDim.width(), previewColorDim.height());
+            GuiUtils.blitSprite(graphics, TRANSPARENT_SPRITE, previewColorDim.x(), previewColorDim.y(), previewColorDim.width(), previewColorDim.height());
         }
         //main color preview
         graphics.fill(previewColorDim.x(), previewColorDim.y(), previewColorDim.xLimit(), previewColorDim.yLimit(), controller.option().pendingValue().getRGB());
@@ -101,9 +100,12 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         //outline
         graphics.fill(saturationLightDim.x() - outline, saturationLightDim.y() - outline, saturationLightDim.xLimit() + outline, saturationLightDim.yLimit() + outline, Color.black.getRGB());
         //White to pending color's RGB from hue, left to right
-        GuiUtils.drawSpecial(graphics, bufferSource -> {
-            fillSidewaysGradient(graphics, saturationLightDim.x(), saturationLightDim.y(), saturationLightDim.xLimit(), saturationLightDim.yLimit(), 0xFFFFFFFF, (int) getRgbFromHueX(), bufferSource.getBuffer(RenderType.gui()));
-        });
+        ColorGradientRenderState.createHorizontal(
+                graphics,
+                saturationLightDim.x(), saturationLightDim.y(),
+                saturationLightDim.xLimit(), saturationLightDim.yLimit(),
+                GuiUtils.putAlpha(0xFF, 0xFFFFFF), GuiUtils.putAlpha(0xFF, (int) getRgbFromHueX())
+        ).submit(graphics);
         //Transparent to black, top to bottom
         graphics.fillGradient(saturationLightDim.x(), saturationLightDim.y(), saturationLightDim.xLimit(), saturationLightDim.yLimit(), 0x00000000, 0xFF000000);
         //Sat/light thumb shadow
@@ -125,12 +127,15 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
             //outline
             graphics.fill(alphaGradientDim.x() - outline, alphaGradientDim.y() - outline, alphaGradientDim.xLimit() + outline, alphaGradientDim.yLimit() + outline, Color.black.getRGB());
             //Transparent texture
-            GuiUtils.blitSprite(graphics, TRANSPARENT_TEXTURE_LOCATION, alphaGradientDim.x(), alphaGradientDim.y(), alphaGradientDim.width(), sliderHeight);
+            GuiUtils.blitSprite(graphics, TRANSPARENT_SPRITE, alphaGradientDim.x(), alphaGradientDim.y(), alphaGradientDim.width(), sliderHeight);
 
             //Pending color to transparent
-            GuiUtils.drawSpecial(graphics, bufferSource -> {
-                fillSidewaysGradient(graphics, alphaGradientDim.x(), alphaGradientDim.y(), alphaGradientDim.xLimit(), alphaGradientDim.yLimit(), getRgbWithoutAlpha(), 0x00000000, bufferSource.getBuffer(RenderType.gui()));
-            });
+            ColorGradientRenderState.createHorizontal(
+                    graphics,
+                    alphaGradientDim.x(), alphaGradientDim.y(),
+                    alphaGradientDim.xLimit(), alphaGradientDim.yLimit(),
+                    getRgbWithoutAlpha(), 0x00000000
+            ).submit(graphics);
             //Alpha slider thumb shadow
             graphics.fill(alphaThumbX - thumbWidth / 2 - 1, alphaGradientDim.y() - outline - 1, alphaThumbX + thumbWidth / 2 + 1, alphaGradientDim.yLimit() + outline + 1, 0xFF404040);
             //Alpha slider thumb
@@ -139,7 +144,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
 
         //graphics.blitRepeating(COLOR_PICKER_ATLAS, colorPickerDim.x(), colorPickerDim.y(), colorPickerDim.width(), colorPickerDim.height(), 237, 0, 4, 4);
 
-        graphics.pose().popPose();
+        GuiUtils.popPose(graphics);
     }
 
     public boolean clickedHueSlider(double mouseX, double mouseY) {

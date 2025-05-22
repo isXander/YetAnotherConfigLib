@@ -70,6 +70,14 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     }
     *///?}
 
+    //? if >=1.21.6 {
+
+    /*@Override
+    public int maxScrollAmount() {
+        return super.maxScrollAmount() + 5;
+    }
+    *///?}
+
     @Override
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         if (usingScrollbar) {

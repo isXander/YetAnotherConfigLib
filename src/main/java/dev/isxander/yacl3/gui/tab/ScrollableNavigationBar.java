@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui.tab;
 
 import com.google.common.collect.ImmutableList;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.mixin.TabNavigationBarAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -74,13 +75,13 @@ public class ScrollableNavigationBar extends TabNavigationBar {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        graphics.pose().pushPose();
+        GuiUtils.pushPose(graphics);
         // render option list BELOW the navbar without need to scissor
-        graphics.pose().translate(0, 0, 10);
+        GuiUtils.translateZ(graphics, 10);
 
         super.render(graphics, mouseX, mouseY, delta);
 
-        graphics.pose().popPose();
+        GuiUtils.popPose(graphics);
     }
 
     @Override

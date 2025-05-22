@@ -2,6 +2,7 @@ package dev.isxander.yacl3.config.v2.impl.serializer;
 
 import com.google.gson.*;
 import com.mojang.serialization.JsonOps;
+import dev.isxander.yacl3.config.util.CodecSerializerAdapter;
 import dev.isxander.yacl3.config.v2.api.*;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.gui.utils.ItemRegistryHelper;
@@ -10,6 +11,7 @@ import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.ApiStatus;
@@ -219,7 +221,7 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
         private UnaryOperator<GsonBuilder> gsonBuilder = builder -> builder
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .serializeNulls()
-                .registerTypeHierarchyAdapter(Component.class, new Component.SerializerAdapter(RegistryAccess.EMPTY))
+                .registerTypeHierarchyAdapter(Component.class, new CodecSerializerAdapter<>(ComponentSerialization.CODEC))
                 .registerTypeHierarchyAdapter(Style.class, new StyleTypeAdapter())
                 .registerTypeHierarchyAdapter(Color.class, new ColorTypeAdapter())
                 .registerTypeHierarchyAdapter(Item.class, new ItemTypeAdapter())

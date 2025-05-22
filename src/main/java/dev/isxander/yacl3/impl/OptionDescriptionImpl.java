@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.impl;
 
 import dev.isxander.yacl3.api.OptionDescription;
+import dev.isxander.yacl3.debug.DebugProperties;
 import dev.isxander.yacl3.gui.image.ImageRenderer;
 import dev.isxander.yacl3.gui.image.ImageRendererManager;
 import dev.isxander.yacl3.gui.image.impl.AnimatedDynamicTextureImage;
@@ -59,7 +60,7 @@ public record OptionDescriptionImpl(Component text, CompletableFuture<Optional<I
         public Builder image(Path path, ResourceLocation uniqueLocation) {
             Validate.isTrue(imageUnset, "Image already set!");
 
-            this.image = ImageRendererManager.registerOrGetImage(uniqueLocation, () -> DynamicTextureImage.fromPath(path, uniqueLocation)).thenApply(Optional::of);
+            this.image = ImageRendererManager.registerOrGetImage(uniqueLocation, () -> DynamicTextureImage.fromPath(path, uniqueLocation, DebugProperties.IMAGE_FILTERING)).thenApply(Optional::of);
             imageUnset = false;
             return this;
         }

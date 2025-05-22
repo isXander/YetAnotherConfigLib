@@ -28,9 +28,9 @@ public class ResourceTextureImage implements ImageRenderer {
         float ratio = renderWidth / (float)this.width;
         int targetHeight = (int) (this.height * ratio);
 
-        graphics.pose().pushPose();
-        graphics.pose().translate(x, y, 0);
-        graphics.pose().scale(ratio, ratio, 1);
+        GuiUtils.pushPose(graphics);
+        GuiUtils.translate2D(graphics, x, y);
+        GuiUtils.scale2D(graphics, ratio, ratio);
 
         GuiUtils.blitGuiTex(
                 graphics,
@@ -42,7 +42,7 @@ public class ResourceTextureImage implements ImageRenderer {
                 DebugProperties.IMAGE_FILTERING
         );
 
-        graphics.pose().popPose();
+        GuiUtils.popPose(graphics);
 
         return targetHeight;
     }

@@ -1,12 +1,14 @@
 package dev.isxander.yacl3.config;
 
 import com.google.gson.*;
+import dev.isxander.yacl3.config.util.CodecSerializerAdapter;
 import dev.isxander.yacl3.config.v2.impl.serializer.GsonConfigSerializer;
 import dev.isxander.yacl3.gui.utils.ItemRegistryHelper;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.Item;
 
@@ -68,7 +70,7 @@ public class GsonConfigInstance<T> extends ConfigInstance<T> {
         this.path = path;
         this.gson = builder
                 .setExclusionStrategies(new ConfigExclusionStrategy())
-                .registerTypeHierarchyAdapter(Component.class, new Component.SerializerAdapter(RegistryAccess.EMPTY))
+                .registerTypeHierarchyAdapter(Component.class, new CodecSerializerAdapter<>(ComponentSerialization.CODEC))
                 .registerTypeHierarchyAdapter(Style.class, new GsonConfigSerializer.StyleTypeAdapter())
                 .registerTypeHierarchyAdapter(Color.class, new ColorTypeAdapter())
                 .registerTypeHierarchyAdapter(Item.class, new ItemTypeAdapter())
@@ -163,7 +165,7 @@ public class GsonConfigInstance<T> extends ConfigInstance<T> {
         private UnaryOperator<GsonBuilder> gsonBuilder = builder -> builder
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .serializeNulls()
-                .registerTypeHierarchyAdapter(Component.class, new Component.SerializerAdapter(RegistryAccess.EMPTY))
+                .registerTypeHierarchyAdapter(Component.class, new CodecSerializerAdapter<>(ComponentSerialization.CODEC))
                 .registerTypeHierarchyAdapter(Style.class, new GsonConfigSerializer.StyleTypeAdapter())
                 .registerTypeHierarchyAdapter(Color.class, new ColorTypeAdapter())
                 .registerTypeHierarchyAdapter(Item.class, new ItemTypeAdapter());

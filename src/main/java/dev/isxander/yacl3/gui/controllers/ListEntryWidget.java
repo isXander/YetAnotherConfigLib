@@ -29,7 +29,7 @@ public class ListEntryWidget extends AbstractWidget implements ContainerEventHan
     private boolean dragging;
 
     public ListEntryWidget(YACLScreen screen, ListOptionEntry<?> listOptionEntry, AbstractWidget entryWidget) {
-        super(entryWidget.getDimension().withHeight(Math.max(entryWidget.getDimension().height(), 20) - ((listOptionEntry.parentGroup().indexOf(listOptionEntry) == listOptionEntry.parentGroup().options().size() - 1) ? 0 : 2))); // -2 to remove the padding
+        super(entryWidget.getDimension().withHeight(Math.min(entryWidget.getDimension().height(), 20) - ((listOptionEntry.parentGroup().indexOf(listOptionEntry) == listOptionEntry.parentGroup().options().size() - 1) ? 0 : 2))); // -2 to remove the padding
         this.listOptionEntry = listOptionEntry;
         this.listOption = listOptionEntry.parentGroup();
         this.optionNameString = listOptionEntry.name().getString().toLowerCase();

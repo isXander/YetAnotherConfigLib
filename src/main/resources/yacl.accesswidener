@@ -11,3 +11,8 @@ accessible method net/minecraft/client/gui/components/Tooltip <init> (Lnet/minec
 accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder setTextureState (Lnet/minecraft/client/renderer/RenderStateShard$EmptyTextureStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
 accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder createCompositeState (Z)Lnet/minecraft/client/renderer/RenderType$CompositeState;
 #?}
+
+#? if >=1.21.6 {
+accessible class net/minecraft/client/gui/GuiGraphics$ScissorStack
+accessible method net/minecraft/client/gui/GuiGraphics$ScissorStack peek ()Lnet/minecraft/client/gui/navigation/ScreenRectangle;
+#? }

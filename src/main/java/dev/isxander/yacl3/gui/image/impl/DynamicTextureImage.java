@@ -23,12 +23,15 @@ public class DynamicTextureImage implements ImageRenderer {
     protected DynamicTexture texture;
     protected final ResourceLocation uniqueLocation;
     protected final int width, height;
+    protected final boolean textureFiltering;
 
-    public DynamicTextureImage(NativeImage image, ResourceLocation location) {
+    public DynamicTextureImage(NativeImage image, ResourceLocation location, boolean textureFiltering) {
         RenderSystem.assertOnRenderThread();
 
         this.image = image;
         this.texture = new DynamicTexture(/*? if >=1.21.5 >>*/ location::toString, image);
+        this.texture.setFilter(textureFiltering, false);
+        this.textureFiltering = textureFiltering;
         this.uniqueLocation = location;
         textureManager.register(this.uniqueLocation, this.texture);
         this.width = image.getWidth();
@@ -42,9 +45,9 @@ public class DynamicTextureImage implements ImageRenderer {
         float ratio = renderWidth / (float)this.width;
         int targetHeight = (int) (this.height * ratio);
 
-        graphics.pose().pushPose();
-        graphics.pose().translate(x, y, 0);
-        graphics.pose().scale(ratio, ratio, 1);
+        GuiUtils.pushPose(graphics);
+        GuiUtils.translate2D(graphics, x, y);
+        GuiUtils.scale2D(graphics, ratio, ratio);
 
         GuiUtils.blitGuiTex(
                 graphics,
@@ -53,10 +56,10 @@ public class DynamicTextureImage implements ImageRenderer {
                 0, 0,
                 this.width, this.height,
                 this.width, this.height,
-                DebugProperties.IMAGE_FILTERING
+                textureFiltering
         );
 
-        graphics.pose().popPose();
+        GuiUtils.popPose(graphics);
 
         return targetHeight;
     }
@@ -69,7 +72,7 @@ public class DynamicTextureImage implements ImageRenderer {
         textureManager.release(uniqueLocation);
     }
 
-    public static ImageRendererFactory fromPath(Path imagePath, ResourceLocation location) {
-        return (ImageRendererFactory.OnThread) () -> () -> new DynamicTextureImage(NativeImage.read(new FileInputStream(imagePath.toFile())), location);
+    public static ImageRendererFactory fromPath(Path imagePath, ResourceLocation location, boolean textureFiltering) {
+        return (ImageRendererFactory.OnThread) () -> () -> new DynamicTextureImage(NativeImage.read(new FileInputStream(imagePath.toFile())), location, textureFiltering);
     }
 }

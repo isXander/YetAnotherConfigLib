@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.ControllerWidget;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
@@ -47,11 +48,11 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
 
     @Override
     protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        graphics.pose().pushPose();
+        GuiUtils.pushPose(graphics);
         if (isHovered())
-            graphics.pose().translate(-(sliderBounds.width() + 6 + getThumbWidth() / 2f), 0, 0);
+            GuiUtils.translate2D(graphics, -(sliderBounds.width() + 6 + getThumbWidth() / 2f), 0);
         super.drawValueText(graphics, mouseX, mouseY, delta);
-        graphics.pose().popPose();
+        GuiUtils.popPose(graphics);
     }
 
     @Override

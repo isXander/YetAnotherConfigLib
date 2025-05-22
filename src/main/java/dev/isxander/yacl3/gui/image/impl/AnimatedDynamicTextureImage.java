@@ -40,7 +40,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
     private final int frameWidth, frameHeight;
 
     public AnimatedDynamicTextureImage(NativeImage image, int frameWidth, int frameHeight, int frameCount, double[] frameDelayMS, int packCols, int packRows, ResourceLocation uniqueLocation) {
-        super(image, uniqueLocation);
+        super(image, uniqueLocation, false); // TODO
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
         this.frameCount = frameCount;
@@ -59,9 +59,9 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         int currentCol = currentFrame % packCols;
         int currentRow = (int) Math.floor(currentFrame / (double)packCols);
 
-        graphics.pose().pushPose();
-        graphics.pose().translate(x, y, 0);
-        graphics.pose().scale(ratio, ratio, 1);
+        GuiUtils.pushPose(graphics);
+        GuiUtils.translate2D(graphics, x, y);
+        GuiUtils.scale2D(graphics, ratio, ratio);
 
         GuiUtils.blitGuiTex(
                 graphics,
@@ -72,7 +72,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
                 this.width, this.height,
                 DebugProperties.IMAGE_FILTERING
         );
-        graphics.pose().popPose();
+        GuiUtils.popPose(graphics);
 
         if (frameCount > 1) {
             double timeMS = Blaze3D.getTime() * 1000;

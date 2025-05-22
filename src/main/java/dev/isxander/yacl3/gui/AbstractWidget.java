@@ -2,6 +2,7 @@ package dev.isxander.yacl3.gui;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.isxander.yacl3.api.utils.Dimension;
+import dev.isxander.yacl3.gui.render.ColorGradientRenderState;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.gui.utils.YACLRenderHelper;
 import net.minecraft.client.Minecraft;
@@ -89,43 +90,24 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
         graphics.fill(x1, y1, x1 + width, y2, color);
     }
 
-    protected void fillSidewaysGradient(GuiGraphics graphics, int x1, int y1, int x2, int y2, int startColor, int endColor, VertexConsumer consumer) {
-        //Fills a gradient, left to right
-        //Uses practically the same method as the GuiGraphics class, but with the x/y moved
-        //Has a custom "z" value in case needed for later
-        Matrix4f matrix4f = graphics.pose().last().pose();
-
-        consumer.addVertex(matrix4f, x1, y1, 0).setColor(startColor);
-        consumer.addVertex(matrix4f, x1, y2, 0).setColor(startColor);
-        consumer.addVertex(matrix4f, x2, y2, 0).setColor(endColor);
-        consumer.addVertex(matrix4f, x2, y1, 0).setColor(endColor);
-    }
-
-
     protected void drawRainbowGradient(GuiGraphics graphics, int x1, int y1, int x2, int y2) {
         //Draws a rainbow gradient, left to right
-        int[] colors = new int[] {Color.red.getRGB(), Color.yellow.getRGB(), Color.green.getRGB(),
-        Color.cyan.getRGB(), Color.blue.getRGB(), Color.magenta.getRGB(), Color.red.getRGB()}; //all the colors in the gradient
+        int[] colors = new int[] {0xFFFF0000, 0xFFFFFF00, 0xFF00FF00, 0xFF00FFFF, 0xFF0000FF, 0xFFFF00FF, 0xFFFF0000}; //all the colors in the gradient
         int width = x2 - x1;
         int maxColors = colors.length - 1;
 
-        GuiUtils.drawSpecial(graphics, bufferSource -> {
-            VertexConsumer consumer = bufferSource.getBuffer(RenderType.gui());
-
-            for (int color = 0; color < maxColors; color++) {
-                //First checks if the final color is being rendered, if true -> uses x2 int instead of x1
-                //if false -> it adds the width divided by the max colors multiplied by the current color plus one to the x1 int
-                //the x2 int for the fillSidewaysGradient is the same formula, excluding the additional plus one.
-                //The gradient colors is determined by the color int and the color int plus one, which is why red is in the colors array twice
-                fillSidewaysGradient(
-                        graphics,
-                        x1 + (width / maxColors * color), y1,
-                        color == maxColors - 1 ? x2 : x1 + (width / maxColors * (color + 1)), y2,
-                        colors[color], colors[color + 1],
-                        consumer
-                );
-            }
-        });
+        for (int color = 0; color < maxColors; color++) {
+            //First checks if the final color is being rendered, if true -> uses x2 int instead of x1
+            //if false -> it adds the width divided by the max colors multiplied by the current color plus one to the x1 int
+            //the x2 int for the fillSidewaysGradient is the same formula, excluding the additional plus one.
+            //The gradient colors is determined by the color int and the color int plus one, which is why red is in the colors array twice
+            ColorGradientRenderState.createHorizontal(
+                    graphics,
+                    x1 + (width / maxColors * color), y1,
+                    color == maxColors - 1 ? x2 : x1 + (width / maxColors * (color + 1)), y2,
+                    colors[color], colors[color + 1]
+            ).submit(graphics);
+        }
 
     }
 

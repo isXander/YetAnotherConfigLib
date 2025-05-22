@@ -149,6 +149,9 @@ public class GuiTest {
                                                 .build())
                                         .option(Option.<Double>createBuilder()
                                                 .name(Component.literal("Double Slider"))
+                                                .description(OptionDescription.createBuilder()
+                                                        .webpImage(imageSample("vanilla_mobs.webp"))
+                                                        .build())
                                                 .binding(
                                                         defaults.doubleSlider,
                                                         () -> config.doubleSlider,

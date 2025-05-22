@@ -5,6 +5,7 @@ import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.AbstractWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultiLineLabel;
@@ -85,14 +86,16 @@ public class LabelController implements Controller<Component> {
                 graphics.fill(getDimension().xLimit(), getDimension().y() - 1, getDimension().xLimit() + 1, getDimension().yLimit() + 1, -1);
             }
 
-            graphics.pose().pushPose();
-            graphics.pose().translate(0, 0, 100);
+            GuiUtils.pushPose(graphics);
+            GuiUtils.translateZ(graphics, 100);
             if (isMouseOver(mouseX, mouseY)) {
                 Style style = getStyle(mouseX, mouseY);
                 if (style != null && style.getHoverEvent() != null) {
                     HoverEvent hoverEvent = style.getHoverEvent();
 
-                    //? if >=1.21.5 {
+                    //? if >=1.21.6 {
+                    /*graphics.renderComponentHoverEffect(textRenderer, style, mouseX, mouseY);
+                    *///?} elif >=1.21.5 {
                     if (hoverEvent instanceof HoverEvent.ShowItem showItem) {
                         ItemStack stack = showItem.item();
                         renderItemStackTooltip(graphics, mouseX, mouseY, stack);
@@ -119,9 +122,10 @@ public class LabelController implements Controller<Component> {
                     *///?}
                 }
             }
-            graphics.pose().popPose();
+            GuiUtils.popPose(graphics);
         }
 
+        //? if <=1.21.5 {
         private void renderItemStackTooltip(GuiGraphics graphics, int mouseX, int mouseY, ItemStack itemStack) {
             graphics.renderTooltip(textRenderer, Screen.getTooltipFromItem(client, itemStack), itemStack.getTooltipImage(), mouseX, mouseY);
         }
@@ -134,6 +138,7 @@ public class LabelController implements Controller<Component> {
             MultiLineLabel multilineText = MultiLineLabel.create(textRenderer, text, getDimension().width());
             YACLScreen.renderMultilineTooltip(graphics, textRenderer, multilineText, getDimension().centerX(), getDimension().y(), getDimension().yLimit(), screen.width, screen.height);
         }
+        //?}
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {

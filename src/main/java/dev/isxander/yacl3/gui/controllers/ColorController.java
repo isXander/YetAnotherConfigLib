@@ -8,6 +8,7 @@ import dev.isxander.yacl3.gui.AbstractWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.string.IStringController;
 import dev.isxander.yacl3.gui.controllers.string.StringControllerElement;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.platform.YACLConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -127,7 +128,11 @@ public class ColorController implements IStringController<Color> {
                 super.drawValueText(graphics, mouseX, mouseY, delta);
             }
 
-            graphics.fill(colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), colorController.option().pendingValue().getRGB());
+            int previewColor = colorController.option().pendingValue().getRGB();
+            if (GuiUtils.extractAlpha(previewColor) < 255) {
+                GuiUtils.blitSprite(graphics, ColorPickerWidget.TRANSPARENT_SPRITE, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.width(), colorPreviewDim.height());
+            }
+            graphics.fill(colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), previewColor);
             Color outlineColor = getPreviewOutlineColor(hoveredOverColorPreview || isMouseOverColorPreview(mouseX, mouseY));
             drawOutline(graphics, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), 1, outlineColor.getRGB());
         }
