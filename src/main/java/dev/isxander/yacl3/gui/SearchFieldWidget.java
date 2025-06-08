@@ -41,13 +41,13 @@ public class SearchFieldWidget extends EditBox {
     }
 
     private void update(String query) {
-        if (doNotUpdate) return;
         boolean wasEmpty = isEmpty;
         isEmpty = query.isEmpty();
 
         if (isEmpty && wasEmpty)
             return;
 
+        if (doNotUpdate) return;
         updateConsumer.accept(query);
     }
 
