@@ -317,18 +317,21 @@ public class YACLScreen extends Screen {
 
     public void updateGlobalSearch(String search) {
         int nextTabWithSearch = -1;
+        Tab currentTab = tabNavigationBar.getTabManager().getCurrentTab();
+        int cursorPos = currentTab instanceof CategoryTab categoryTab ? categoryTab.searchField.getCursorPosition() : -1;
+
         for (int i = 0; i < tabNavigationBar.getTabs().size(); i++) {
             Tab tab = tabNavigationBar.getTabs().get(i);
             if (tab instanceof CategoryTab categoryTab) {
                 categoryTab.optionList.getList().updateSearchQuery(search);
                 categoryTab.searchField.setValueDoNotUpdate(search);
+                if (cursorPos != -1) categoryTab.searchField.setCursorPosition(cursorPos);
                 if (nextTabWithSearch == -1 && categoryTab.hasSearch()) {
                     nextTabWithSearch = i;
                 }
             }
         }
-        Tab tab = tabNavigationBar.getTabManager().getCurrentTab();
-        if (nextTabWithSearch != -1 && tab instanceof CategoryTab categoryTab && !categoryTab.hasSearch()) {
+        if (nextTabWithSearch != -1 && currentTab instanceof CategoryTab categoryTab && !categoryTab.hasSearch()) {
             tabNavigationBar.selectTab(nextTabWithSearch, false);
             if (tabNavigationBar.getTabManager().getCurrentTab() instanceof CategoryTab newTab) {
                 setFocused(newTab.searchField);
