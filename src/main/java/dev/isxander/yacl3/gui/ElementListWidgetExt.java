@@ -11,7 +11,6 @@ import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Consumer;
 
@@ -70,13 +69,12 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     }
     *///?}
 
-    //? if >=1.21.6 {
-
-    /*@Override
+    //? if >=1.21.5 {
+    @Override
     public int maxScrollAmount() {
         return super.maxScrollAmount() + 5;
     }
-    *///?}
+    //?}
 
     @Override
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
@@ -203,7 +201,7 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     @Override
     protected int contentHeight() {
     //?}
-        return children().stream().map(E::getItemHeight).reduce(0, Integer::sum) + headerHeight;
+        return children().stream().mapToInt(E::getItemHeight).sum() + headerHeight;
     }
 
     @Override
