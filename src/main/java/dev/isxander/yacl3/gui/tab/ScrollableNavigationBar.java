@@ -155,6 +155,12 @@ public class ScrollableNavigationBar extends TabNavigationBar {
         }
     }
 
+    public void updateTabNames() {
+        for (TabButton tabButton : accessor.yacl$getTabButtons()) {
+            tabButton.setMessage(tabButton.tab().getTabTitle());
+        }
+    }
+
     public ImmutableList<Tab> getTabs() {
         return accessor.yacl$getTabs();
     }

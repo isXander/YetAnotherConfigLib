@@ -21,6 +21,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
@@ -28,6 +29,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
@@ -313,6 +315,28 @@ public class YACLScreen extends Screen {
         }
     }
 
+    public void updateGlobalSearch(String search) {
+        int nextTabWithSearch = -1;
+        for (int i = 0; i < tabNavigationBar.getTabs().size(); i++) {
+            Tab tab = tabNavigationBar.getTabs().get(i);
+            if (tab instanceof CategoryTab categoryTab) {
+                categoryTab.optionList.getList().updateSearchQuery(search);
+                categoryTab.searchField.setValueDoNotUpdate(search);
+                if (nextTabWithSearch == -1 && categoryTab.hasSearch()) {
+                    nextTabWithSearch = i;
+                }
+            }
+        }
+        Tab tab = tabNavigationBar.getTabManager().getCurrentTab();
+        if (nextTabWithSearch != -1 && tab instanceof CategoryTab categoryTab && !categoryTab.hasSearch()) {
+            tabNavigationBar.selectTab(nextTabWithSearch, false);
+            if (tabNavigationBar.getTabManager().getCurrentTab() instanceof CategoryTab newTab) {
+                setFocused(newTab.searchField);
+            }
+        }
+        tabNavigationBar.updateTabNames();
+    }
+
     public static class CategoryTab implements TabExt {
         private static final ResourceLocation DARKER_BG = YACLPlatform.mcRl("textures/gui/menu_list_background.png");
 
@@ -367,7 +391,7 @@ public class YACLScreen extends Screen {
                     paddedWidth - 2, 18,
                     Component.translatable("gui.recipebook.search_hint"),
                     Component.translatable("gui.recipebook.search_hint"),
-                    searchQuery -> optionList.getType().updateSearchQuery(searchQuery)
+                    screen::updateGlobalSearch
             );
 
             this.optionList = YACLSelectionList.asWidget(
@@ -389,9 +413,17 @@ public class YACLScreen extends Screen {
             updateButtons();
         }
 
+        public boolean hasSearch() {
+            return !optionList.getList().children().isEmpty();
+        }
+
         @Override
         public Component getTabTitle() {
-            return category.name();
+            MutableComponent copy = category.name().copy();
+            if (!hasSearch()) {
+                copy.withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.STRIKETHROUGH);
+            }
+            return copy;
         }
 
         @Override

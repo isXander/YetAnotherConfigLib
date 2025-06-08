@@ -14,6 +14,7 @@ public class SearchFieldWidget extends EditBox {
     private final Consumer<String> updateConsumer;
 
     private boolean isEmpty = true;
+    private boolean doNotUpdate = false;
 
     public SearchFieldWidget(YACLScreen yaclScreen, Font font, int x, int y, int width, int height, Component text, Component emptyText, Consumer<String> updateConsumer) {
         super(font, x, y, width, height, text);
@@ -33,7 +34,14 @@ public class SearchFieldWidget extends EditBox {
         }
     }
 
+    public void setValueDoNotUpdate(String value) {
+        doNotUpdate = true;
+        setValue(value);
+        doNotUpdate = false;
+    }
+
     private void update(String query) {
+        if (doNotUpdate) return;
         boolean wasEmpty = isEmpty;
         isEmpty = query.isEmpty();
 
