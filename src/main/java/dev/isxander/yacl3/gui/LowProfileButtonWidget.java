@@ -19,7 +19,7 @@ public class LowProfileButtonWidget extends Button {
     @Override
     public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float deltaTicks) {
         if (!isHoveredOrFocused() || !active) {
-            int j = this.active ? 0xFFFFFF : 0xA0A0A0;
+            int j = this.active ? 0xFFFFFFFF : 0xFFA0A0A0;
             this.renderString(graphics, Minecraft.getInstance().font, j);
         } else {
             super.renderWidget(graphics, mouseX, mouseY, deltaTicks);
