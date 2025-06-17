@@ -23,11 +23,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 //? if >=1.21.6 {
-/*import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.renderer.RenderPipelines;
-*///?} elif >=1.21.2 {
-import net.minecraft.client.renderer.RenderStateShard;
-//?} else {
+//?} elif >=1.21.2 {
+/*import net.minecraft.client.renderer.RenderStateShard;
+*///?} else {
 /*import com.mojang.blaze3d.platform.GlConst;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.GameRenderer;
@@ -52,13 +52,13 @@ public class GuiUtils {
     *///?}
 
     //? if >=1.21.2 && <1.21.6 {
-    public static Function<ResourceLocation, RenderType> GUI_TEXTURED_FILTERED = Util.memoize(
+    /*public static Function<ResourceLocation, RenderType> GUI_TEXTURED_FILTERED = Util.memoize(
             location -> RenderType.create(
                     "yacl:gui_textured_filtered",
                     //? if <1.21.5 {
-                    /*DefaultVertexFormat.POSITION_TEX_COLOR,
+                    /^DefaultVertexFormat.POSITION_TEX_COLOR,
                     VertexFormat.Mode.QUADS,
-                    *///?}
+                    ^///?}
                     786432,
                     //? if >=1.21.5 {
                     net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,
@@ -66,59 +66,59 @@ public class GuiUtils {
                     RenderType.CompositeState.builder()
                             .setTextureState(new RenderType.TextureStateShard(location, net.minecraft.util.TriState.TRUE, false))
                             //? if <1.21.5 {
-                            /*.setShaderState(RenderStateShard.POSITION_TEXTURE_COLOR_SHADER)
+                            /^.setShaderState(RenderStateShard.POSITION_TEXTURE_COLOR_SHADER)
                             .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
                             .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
-                            *///?}
+                            ^///?}
                             .createCompositeState(false)
             )
     );
-    //?}
+    *///?}
 
     public static void pushPose(GuiGraphics graphics) {
         //? if >=1.21.6 {
-        /*graphics.pose().pushMatrix();
-        *///?} else {
-        graphics.pose().pushPose();
-        //?}
+        graphics.pose().pushMatrix();
+        //?} else {
+        /*graphics.pose().pushPose();
+        *///?}
     }
 
     public static void popPose(GuiGraphics graphics) {
         //? if >=1.21.6 {
-        /*graphics.pose().popMatrix();
-        *///?} else {
-        graphics.pose().popPose();
-        //?}
+        graphics.pose().popMatrix();
+        //?} else {
+        /*graphics.pose().popPose();
+        *///?}
     }
 
     public static void translate2D(GuiGraphics graphics, float x, float y) {
         //? if >=1.21.6 {
-        /*graphics.pose().translate(x, y);
-        *///?} else {
-        graphics.pose().translate(x, y, 0);
-        //?}
+        graphics.pose().translate(x, y);
+        //?} else {
+        /*graphics.pose().translate(x, y, 0);
+        *///?}
     }
 
     public static void translateZ(GuiGraphics graphics, float z) {
         //? if <1.21.6 {
-        graphics.pose().translate(0, 0, z);
-        //?}
+        /*graphics.pose().translate(0, 0, z);
+        *///?}
     }
 
     public static void scale2D(GuiGraphics graphics, float x, float y) {
         //? if >=1.21.6 {
-        /*graphics.pose().scale(x, y);
-        *///?} else {
-        graphics.pose().scale(x, y, 1);
-        //?}
+        graphics.pose().scale(x, y);
+        //?} else {
+        /*graphics.pose().scale(x, y, 1);
+        *///?}
     }
 
     public static void rotate2D(GuiGraphics graphics, float angle) {
         //? if >=1.21.6 {
-        /*graphics.pose().rotate(angle * Mth.DEG_TO_RAD);
-        *///?} else {
-        graphics.pose().rotateAround(Axis.ZP.rotationDegrees(angle), 0, 0, 1);
-        //?}
+        graphics.pose().rotate(angle * Mth.DEG_TO_RAD);
+        //?} else {
+        /*graphics.pose().rotateAround(Axis.ZP.rotationDegrees(angle), 0, 0, 1);
+        *///?}
     }
 
     public static void blitGuiTex(GuiGraphics graphics, ResourceLocation texture, int x, int y, float u, float v, int textureWidth, int textureHeight, int width, int height) {
@@ -174,15 +174,15 @@ public class GuiUtils {
     }
 
     //? if >=1.21.6 {
-    /*public static RenderPipeline guiTextured(boolean textureFiltering) {
+    public static RenderPipeline guiTextured(boolean textureFiltering) {
         // in 1.21.6, texture filtering is done on the texture level on resource reload, ignored
         return RenderPipelines.GUI_TEXTURED;
     }
-    *///?} elif >=1.21.2 {
-    public static Function<ResourceLocation, RenderType> guiTextured(boolean textureFiltering) {
+    //?} elif >=1.21.2 {
+    /*public static Function<ResourceLocation, RenderType> guiTextured(boolean textureFiltering) {
         return textureFiltering ? GUI_TEXTURED_FILTERED : RenderType::guiTextured;
     }
-    //?} else {
+    *///?} else {
     /*public static Function<ResourceLocation, RenderType> guiTextured(boolean textureFiltering) {
         return GUI_TEXTURED;
     }

@@ -94,9 +94,9 @@ public class LabelController implements Controller<Component> {
                     HoverEvent hoverEvent = style.getHoverEvent();
 
                     //? if >=1.21.6 {
-                    /*graphics.renderComponentHoverEffect(textRenderer, style, mouseX, mouseY);
-                    *///?} elif >=1.21.5 {
-                    if (hoverEvent instanceof HoverEvent.ShowItem showItem) {
+                    graphics.renderComponentHoverEffect(textRenderer, style, mouseX, mouseY);
+                    //?} elif >=1.21.5 {
+                    /*if (hoverEvent instanceof HoverEvent.ShowItem showItem) {
                         ItemStack stack = showItem.item();
                         renderItemStackTooltip(graphics, mouseX, mouseY, stack);
                     } else if (hoverEvent instanceof HoverEvent.ShowEntity showEntity) {
@@ -106,7 +106,7 @@ public class LabelController implements Controller<Component> {
                         Component text = showText.value();
                         renderTextTooltip(graphics, mouseX, mouseY, text);
                     }
-                    //?} else {
+                    *///?} else {
                     /*@Nullable HoverEvent.ItemStackInfo itemStackContent = hoverEvent.getValue(HoverEvent.Action.SHOW_ITEM);
                     @Nullable HoverEvent.EntityTooltipInfo entityContent = hoverEvent.getValue(HoverEvent.Action.SHOW_ENTITY);
                     @Nullable Component text = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
@@ -126,7 +126,7 @@ public class LabelController implements Controller<Component> {
         }
 
         //? if <=1.21.5 {
-        private void renderItemStackTooltip(GuiGraphics graphics, int mouseX, int mouseY, ItemStack itemStack) {
+        /*private void renderItemStackTooltip(GuiGraphics graphics, int mouseX, int mouseY, ItemStack itemStack) {
             graphics.renderTooltip(textRenderer, Screen.getTooltipFromItem(client, itemStack), itemStack.getTooltipImage(), mouseX, mouseY);
         }
         private void renderEntityTooltip(GuiGraphics graphics, int mouseX, int mouseY, HoverEvent.EntityTooltipInfo entity) {
@@ -138,7 +138,7 @@ public class LabelController implements Controller<Component> {
             MultiLineLabel multilineText = MultiLineLabel.create(textRenderer, text, getDimension().width());
             YACLScreen.renderMultilineTooltip(graphics, textRenderer, multilineText, getDimension().centerX(), getDimension().y(), getDimension().yLimit(), screen.width, screen.height);
         }
-        //?}
+        *///?}
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {

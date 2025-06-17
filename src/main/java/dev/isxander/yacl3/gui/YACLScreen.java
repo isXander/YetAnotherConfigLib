@@ -275,7 +275,7 @@ public class YACLScreen extends Screen {
                     maxWidth,
                     height
                     //? if <1.21.6
-                    ,400
+                    /*,400*/
                     //? if >=1.21.2
                     ,null
             );
@@ -333,7 +333,7 @@ public class YACLScreen extends Screen {
                     .tooltip(Tooltip.create(Component.translatable("yacl.gui.undo.tooltip")))
                     .build();
 
-            searchField = new SearchFieldWidget(
+            this.searchField = new SearchFieldWidget(
                     screen,
                     screen.font,
                     screen.width / 3 * 2 + screen.width / 6 - paddedWidth / 2 + 1,

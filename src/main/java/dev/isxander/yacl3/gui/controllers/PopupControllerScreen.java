@@ -43,7 +43,7 @@ public class PopupControllerScreen extends Screen {
     ) {
         // in 1.21.6+ renderBackground isn't called in render, it's called earlier before the blur pass
         //? if >=1.21.6
-        /*this.backgroundYaclScreen.renderBackground(guiGraphics, mouseX, mouseY, partialTick);*/
+        this.backgroundYaclScreen.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
     }
 
     @Override
