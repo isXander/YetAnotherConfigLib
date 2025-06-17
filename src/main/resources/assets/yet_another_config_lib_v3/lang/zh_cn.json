@@ -3,18 +3,23 @@
   "yacl.control.boolean.false": "否",
 
   "yacl.control.action.execute": "执行",
+  
+  "yacl.control.color.color_picker_title": "颜色选择器",
+  "yacl.control.dropdown.dropdown_widget_title": "下拉式选单",
 
+  "yacl.control.text.blank": "<空白>",
+  
   "yacl.gui.save": "保存更改",
   "yacl.gui.save.tooltip": "永久保存所做更改。",
-  "yacl.gui.finished.tooltip": "关闭 GUI。",
-  "yacl.gui.cancel.tooltip": "忽略犹豫不决的更改然后关闭 GUI。",
-  "yacl.gui.reset.tooltip": "将所有选项重置为默认值。（这是可逆的！）",
+  "yacl.gui.finished.tooltip": "关闭界面。",
+  "yacl.gui.cancel.tooltip": "放弃更改并关闭界面。",
+  "yacl.gui.reset.tooltip": "将所有选项重置为默认值。（这是可撤销的！）",
   "yacl.gui.undo": "撤销",
   "yacl.gui.undo.tooltip": "将所有选项恢复到编辑前的状态。",
   "yacl.gui.fail_apply": "应用失败",
   "yacl.gui.fail_apply.tooltip": "有一个错误以至于更改不能被应用。",
   "yacl.gui.save_before_exit": "退出前保存！",
-  "yacl.gui.save_before_exit.tooltip": "保存或取消以退出 GUI。",
+  "yacl.gui.save_before_exit.tooltip": "保存或取消以退出界面。",
 
   "yacl.list.move_up": "上移",
   "yacl.list.move_down": "下移",
@@ -23,7 +28,7 @@
   "yacl.list.empty": "列表为空",
 
   "yacl.restart.title": "配置需要重新启动！",
-  "yacl.restart.message": "一个或多个选项需要你重新启动游戏来应用这些更改。",
-  "yacl.restart.yes": "关闭 Minecraft",
+  "yacl.restart.message": "一个或多个选项需要重新启动游戏以应用更改。",
+  "yacl.restart.yes": "关闭Minecraft",
   "yacl.restart.no": "忽略"
 }
