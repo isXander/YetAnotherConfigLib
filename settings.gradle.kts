@@ -13,7 +13,7 @@ pluginManagement {
 }
 
 plugins {
-    id("dev.kikugie.stonecutter") version "0.7-alpha.16"
+    id("dev.kikugie.stonecutter") version "0.7-alpha.22"
 }
 
 stonecutter {
@@ -27,11 +27,11 @@ stonecutter {
             }
         }
 
+        mc("1.21.6", loaders = listOf("fabric", "neoforge"))
         mc("1.21.5", loaders = listOf("fabric", "neoforge"))
         mc("1.21.4", loaders = listOf("fabric", "neoforge"))
         mc("1.21.3", loaders = listOf("fabric", "neoforge"))
         mc("1.21.1", loaders = listOf("fabric", "neoforge"))
-        mc("1.21.6", loaders = listOf("fabric", "neoforge"))
     }
 }
 rootProject.name = "YetAnotherConfigLib"
