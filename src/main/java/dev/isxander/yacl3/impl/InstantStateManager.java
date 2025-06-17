@@ -3,6 +3,8 @@ package dev.isxander.yacl3.impl;
 import dev.isxander.yacl3.api.Binding;
 import dev.isxander.yacl3.api.StateManager;
 
+import java.util.Objects;
+
 public class InstantStateManager<T> implements StateManager<T>, ProvidesBindingForDeprecation<T> {
     private final Binding<T> binding;
     private StateListener<T> stateListener;
@@ -14,7 +16,7 @@ public class InstantStateManager<T> implements StateManager<T>, ProvidesBindingF
 
     @Override
     public void set(T value) {
-        boolean changed = !this.get().equals(value);
+        boolean changed = !Objects.equals(this.get(), value);
 
         this.binding.setValue(value);
 
