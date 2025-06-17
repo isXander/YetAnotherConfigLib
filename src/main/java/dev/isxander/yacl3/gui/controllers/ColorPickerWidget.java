@@ -104,7 +104,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
                 graphics,
                 saturationLightDim.x(), saturationLightDim.y(),
                 saturationLightDim.xLimit(), saturationLightDim.yLimit(),
-                GuiUtils.putAlpha(0xFF, 0xFFFFFF), GuiUtils.putAlpha(0xFF, (int) getRgbFromHueX())
+                0xFFFFFFFF, GuiUtils.putAlpha((int) getRgbFromHueX(), 0xFF)
         ).submit(graphics);
         //Transparent to black, top to bottom
         graphics.fillGradient(saturationLightDim.x(), saturationLightDim.y(), saturationLightDim.xLimit(), saturationLightDim.yLimit(), 0x00000000, 0xFF000000);
@@ -134,7 +134,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
                     graphics,
                     alphaGradientDim.x(), alphaGradientDim.y(),
                     alphaGradientDim.xLimit(), alphaGradientDim.yLimit(),
-                    getRgbWithoutAlpha(), 0x00000000
+                    GuiUtils.putAlpha(getRgbWithoutAlpha(), 0xFF), 0x00000000
             ).submit(graphics);
             //Alpha slider thumb shadow
             graphics.fill(alphaThumbX - thumbWidth / 2 - 1, alphaGradientDim.y() - outline - 1, alphaThumbX + thumbWidth / 2 + 1, alphaGradientDim.yLimit() + outline + 1, 0xFF404040);
