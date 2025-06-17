@@ -125,6 +125,9 @@ interface GroupDsl : Buildable<OptionGroup> {
     fun descriptionBuilder(block: OptionDescription.Builder.() -> Unit)
     fun OptionDescription.Builder.addDefaultText(lines: Int? = null) =
         addDefaultText("$groupKey.description", lines)
+
+    fun collapsed(collapsed: Boolean)
+    var collapsed: Boolean
 }
 
 interface OptionDsl<T> : Option.Builder<T>, Buildable<Option<T>> {

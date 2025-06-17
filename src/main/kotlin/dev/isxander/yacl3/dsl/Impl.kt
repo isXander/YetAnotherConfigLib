@@ -168,8 +168,15 @@ class GroupDslImpl(
     private val optionFutures = mutableMapOf<String, CompletableFuture<Option<*>>>()
     private fun createOptionFuture(id: String) = optionFutures.computeIfAbsent(id) { CompletableFuture() }
 
+    override var collapsed: Boolean = false
+        set(value) {
+            field = value
+            builder.collapsed(value)
+        }
+
     init {
         builder.name(Component.translatable(groupKey))
+        collapsed = false
     }
 
     override val options: OptionRegistrar = OptionRegistrarImpl(
@@ -194,6 +201,10 @@ class GroupDslImpl(
 
     override fun OptionDescription.Builder.addDefaultText(lines: Int?) {
         addDefaultText("$groupKey.description", lines)
+    }
+
+    override fun collapsed(collapsed: Boolean) {
+        this.collapsed = collapsed
     }
 
     override fun build(): OptionGroup =
