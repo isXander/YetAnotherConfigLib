@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.utils.Dimension;
@@ -350,7 +351,7 @@ public class YACLScreen extends Screen {
                     })
             );
 
-            descriptionWidget = new OptionDescriptionWidget(
+            this.descriptionWidget = new OptionDescriptionWidget(
                     () -> new ScreenRectangle(
                             screen.width / 3 * 2 + padding,
                             tabArea.top() + padding,
@@ -380,9 +381,14 @@ public class YACLScreen extends Screen {
 
         @Override
         public void renderBackground(GuiGraphics graphics) {
-            // right pane darker db
+            // right pane darker bg
+            // 1.21.1 did not use RenderType/RenderPipeline in blit so we need to enable blending manually
+            //? if <1.21.2
+            /*RenderSystem.enableBlend();*/
             GuiUtils.blitGuiTex(graphics, DARKER_BG, rightPaneDim.left(), rightPaneDim.top(), rightPaneDim.right() + 2, rightPaneDim.bottom() + 2, rightPaneDim.width() + 2, rightPaneDim.height() + 2, 32, 32);
-            
+            //? if <1.21.2
+            /*RenderSystem.disableBlend();*/
+
             // top separator for right pane
             GuiUtils.pushPose(graphics);
             GuiUtils.translateZ(graphics, 10);
