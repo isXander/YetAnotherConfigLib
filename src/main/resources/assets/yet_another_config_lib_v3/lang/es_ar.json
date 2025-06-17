@@ -1,0 +1,35 @@
+{
+  "yacl.control.boolean.true": "Verdadero",
+  "yacl.control.boolean.false": "Falso",
+
+  "yacl.control.action.execute": "EJECUTAR",
+
+  "yacl.control.color.color_picker_title": "Selector de color",
+  "yacl.control.dropdown.dropdown_widget_title": "Selector desplegable",
+
+  "yacl.control.text.blank": "<vacío>",
+
+  "yacl.gui.save": "Guardar cambios",
+  "yacl.gui.save.tooltip": "Hace permanentes los cambios realizados.",
+  "yacl.gui.finished.tooltip": "Cierra la interfaz.",
+  "yacl.gui.cancel.tooltip": "Descarta los cambios pendientes y cierra la interfaz.",
+  "yacl.gui.reset.tooltip": "Restaura todas las opciones a sus valores predeterminados. (¡Esto se puede deshacer!)",
+  "yacl.gui.undo": "Deshacer",
+  "yacl.gui.undo.tooltip": "Revierte todas las opciones a como estaban antes de editar.",
+  "yacl.gui.fail_apply": "Error al aplicar",
+  "yacl.gui.fail_apply.tooltip": "Hubo un error y no se pudieron aplicar los cambios.",
+  "yacl.gui.save_before_exit": "¡Guardá antes de salir!",
+  "yacl.gui.save_before_exit.tooltip": "Guardá o cancelá para salir de la interfaz.",
+
+  "yacl.list.move_up": "Subir",
+  "yacl.list.move_down": "Bajar",
+  "yacl.list.remove": "Eliminar",
+  "yacl.list.add_top": "Nueva entrada",
+  "yacl.list.empty": "La lista está vacía",
+
+  "yacl.restart.title": "¡La configuración requiere reiniciar!",
+  "yacl.restart.message": "Una o más opciones requieren reiniciar el juego para aplicar los cambios.",
+  "yacl.restart.yes": "Cerrar Minecraft",
+  "yacl.restart.no": "Ignorar"
+  
+}
