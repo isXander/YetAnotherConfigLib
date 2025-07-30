@@ -230,8 +230,8 @@ public class ColorController implements IStringController<Color> {
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (super.mouseClicked(mouseX, mouseY, button)) {
+        public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
+            if (super.mouseClicked(mouseX, mouseY, button /*? if >=1.21.9 {*/ ,doubleClick /*?}*/)) {
                 //Detects if the user has clicked the color preview
                 if(isMouseOverColorPreview(mouseX, mouseY)) {
                         playDownSound();

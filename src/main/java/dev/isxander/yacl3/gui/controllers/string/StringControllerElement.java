@@ -96,7 +96,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
         if (isAvailable() && getDimension().isPointInside((int) mouseX, (int) mouseY)) {
             inputFieldFocused = true;
 

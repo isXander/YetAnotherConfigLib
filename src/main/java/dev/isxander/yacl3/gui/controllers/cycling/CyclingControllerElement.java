@@ -23,7 +23,7 @@ public class CyclingControllerElement extends ControllerWidget<ICyclingControlle
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
         if (!isMouseOver(mouseX, mouseY) || (button != 0 && button != 1) || !isAvailable())
             return false;
 

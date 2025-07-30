@@ -3,17 +3,13 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
         maven("https://maven.fabricmc.net/")
-        maven("https://maven.architectury.dev")
         maven("https://maven.neoforged.net/releases/")
-        maven("https://maven.minecraftforge.net/")
         maven("https://maven.kikugie.dev/releases")
-        maven("https://maven.kikugie.dev/snapshots")
-        maven("https://maven.isxander.dev/releases")
     }
 }
 
 plugins {
-    id("dev.kikugie.stonecutter") version "0.7-alpha.22"
+    id("dev.kikugie.stonecutter") version "0.7.6"
 }
 
 stonecutter {
@@ -27,6 +23,7 @@ stonecutter {
             }
         }
 
+        mc("1.21.9", loaders = listOf("fabric"))
         mc("1.21.6", loaders = listOf("fabric", "neoforge"))
         mc("1.21.5", loaders = listOf("fabric", "neoforge"))
         mc("1.21.4", loaders = listOf("fabric", "neoforge"))

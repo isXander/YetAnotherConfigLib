@@ -19,9 +19,8 @@
     "fabricloader": ">=0.15.0",
     "minecraft": "${mc}",
     "java": ">=17",
-    "fabric-api": ">=${fapi}"
+    "fabric-resource-loader-v0": "*"
   },
-  "accessWidener": "yacl.accesswidener",
   "entrypoints": {
     "client": [
       "dev.isxander.yacl3.platform.PlatformEntrypoint"

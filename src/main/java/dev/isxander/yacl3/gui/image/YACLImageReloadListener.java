@@ -25,16 +25,37 @@ public class YACLImageReloadListener
         net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener
         /*?}*/
 {
+    //? if >=1.21.9 {
     @Override
+    public @NotNull CompletableFuture<Void> reload(
+            SharedState sharedState,
+            Executor backgroundExecutor,
+            PreparationBarrier preparationBarrier,
+            Executor gameExecutor
+    ) {
+        return this.reload0(sharedState.resourceManager(), backgroundExecutor, preparationBarrier, gameExecutor);
+    }
+    //?} else {
+    /*@Override
     public @NotNull CompletableFuture<Void> reload(
             PreparationBarrier preparationBarrier,
             @NotNull ResourceManager resourceManager,
             //? if <1.21.2 {
-            /*@NotNull ProfilerFiller preparationsProfiler,
+            /^@NotNull ProfilerFiller preparationsProfiler,
             @NotNull ProfilerFiller reloadProfiler,
-            *///?}
+            ^///?}
             @NotNull Executor backgroundExecutor,
             @NotNull Executor gameExecutor
+    ) {
+        return reload0(resourceManager, backgroundExecutor, preparationBarrier, gameExecutor);
+    }
+    *///?}
+
+    private @NotNull CompletableFuture<Void> reload0(
+            ResourceManager resourceManager,
+            Executor backgroundExecutor,
+            PreparationBarrier preparationBarrier,
+            Executor gameExecutor
     ) {
         return prepare(resourceManager, backgroundExecutor)
                 .thenCompose(preparationBarrier::wait)
