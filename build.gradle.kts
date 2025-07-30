@@ -1,4 +1,3 @@
-import net.fabricmc.loom.api.fabricapi.FabricApiExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -201,7 +200,7 @@ dependencies {
     if (isFabric) {
         // Fabric API has not been released for 25w31a yet.
         //modDependency("fabricApi", { "net.fabricmc.fabric-api:fabric-api:$it" }, requiredByDependants = true)
-        modstitchModImplementation("net.fabricmc.fabric-api:fabric-resource-loader-v0:3.1.11+local")
+        modstitchModImplementation("net.fabricmc.fabric-api:fabric-resource-loader-v0:3.1.11+local").jij()
 
         modDependency("fabricLangKotlin", { "net.fabricmc:fabric-language-kotlin:${it}" })
     }
