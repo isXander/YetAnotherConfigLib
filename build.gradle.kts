@@ -93,12 +93,7 @@ modstitch {
             }
 
             mixin.useLegacyMixinAp = false
-
-            accessWidenerPath = rootProject.file("src/main/resources/yacl.accesswidener")
         }
-
-        // do not validate
-        tasks.getByName("validateAccessWidener").enabled = false
     }
 
     moddevgradle {
@@ -113,8 +108,6 @@ modstitch {
                     gameDirectory = layout.projectDirectory.dir("../../run")
                 }
             }
-
-            validateAccessTransformers = false
 
             mods {
                 register("testmod") {
