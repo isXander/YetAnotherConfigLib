@@ -244,6 +244,10 @@ val buildAndCollect by tasks.registering(Copy::class) {
 }
 createActiveTask(buildAndCollect)
 
+java {
+    withSourcesJar()
+}
+
 publishMods {
     dryRun.set(false)
 
