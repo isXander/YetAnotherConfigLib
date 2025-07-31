@@ -143,15 +143,6 @@ stonecutter {
     }
 }
 
-repositories {
-    exclusiveContent {
-        forRepository { mavenLocal() }
-        filter {
-            includeGroup("net.fabricmc.fabric-api")
-        }
-    }
-}
-
 dependencies {
     fun Dependency?.jij() = this?.also(::modstitchJiJ)
 
@@ -191,10 +182,7 @@ dependencies {
     }
 
     if (isFabric) {
-        // Fabric API has not been released for 25w31a yet.
-        //modDependency("fabricApi", { "net.fabricmc.fabric-api:fabric-api:$it" }, requiredByDependants = true)
-        modstitchModImplementation("net.fabricmc.fabric-api:fabric-api-base:0.4.64+local").jij()
-        modstitchModImplementation("net.fabricmc.fabric-api:fabric-resource-loader-v0:3.1.11+local").jij()
+        modDependency("fabricApi", { "net.fabricmc.fabric-api:fabric-api:$it" }, requiredByDependants = true)
 
         modDependency("fabricLangKotlin", { "net.fabricmc:fabric-language-kotlin:${it}" })
     }

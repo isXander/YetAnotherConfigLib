@@ -16,10 +16,10 @@
   "license": "${mod_license}",
   "environment": "*",
   "depends": {
-    "fabricloader": ">=0.15.0",
+    "fabricloader": ">=0.17.0",
     "minecraft": "${mc}",
     "java": ">=17",
-    "fabric-resource-loader-v0": "*"
+    "fabric-api": ">=${fapi}"
   },
   "entrypoints": {
     "client": [
