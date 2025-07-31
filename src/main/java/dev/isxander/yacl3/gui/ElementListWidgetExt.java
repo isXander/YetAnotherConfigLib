@@ -110,12 +110,12 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
         if (button == 0 && mouseX >= scrollBarX() && mouseX < scrollBarX() + SCROLLBAR_WIDTH) {
             usingScrollbar = true;
         }
 
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(mouseX, mouseY, button /*? if >=1.21.9 {*/ ,doubleClick /*?}*/);
     }
 
     @Override
@@ -262,9 +262,9 @@ public class ElementListWidgetExt<E extends ElementListWidgetExt.Entry<E>> exten
 
     public abstract static class Entry<E extends Entry<E>> extends ContainerObjectSelectionList.Entry<E> {
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
             for (GuiEventListener child : this.children()) {
-                if (child.mouseClicked(mouseX, mouseY, button)) {
+                if (child.mouseClicked(mouseX, mouseY, button /*? if >=1.21.9 {*/ ,doubleClick /*?}*/)) {
                     if (button == InputConstants.MOUSE_BUTTON_LEFT || button == InputConstants.MOUSE_BUTTON_RIGHT)
                         this.setDragging(true);
                     return true;

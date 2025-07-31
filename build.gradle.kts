@@ -45,12 +45,7 @@ val testmod by sourceSets.registering {
 
 modstitch {
     minecraftVersion = mcVersion
-
-    // ideally, we use 17 for everything to tell IDE about the language features that are available
-    // on the lowest common denominator: 17. However, Forge versions that use a java 21 MC version
-    // won't compile on Java 17, so we need to use 21 for those.
-    val mcIsJava21 = stonecutter.eval(mcSemverVersion, ">1.20.4")
-    javaTarget = if (mcIsJava21 && isForgeLike) 21 else 17
+    javaVersion = 21
 
     parchment {
         prop("parchment.version") { mappingsVersion = it }
@@ -98,21 +93,14 @@ modstitch {
             }
 
             mixin.useLegacyMixinAp = false
-
-            accessWidenerPath = rootProject.file("src/main/resources/yacl.accesswidener")
         }
-
-        // do not validate
-        tasks.getByName("validateAccessWidener").enabled = false
     }
 
     moddevgradle {
-        enable {
-            prop("deps.neoforge") { neoForgeVersion = it }
-            prop("deps.forge") { forgeVersion = it }
-        }
+        prop("deps.neoforge") { neoForgeVersion = it }
+        prop("deps.forge") { forgeVersion = it }
 
-        configureNeoforge {
+        configureNeoForge {
             runs {
                 register("testmodClient") {
                     client()
@@ -120,8 +108,6 @@ modstitch {
                     gameDirectory = layout.projectDirectory.dir("../../run")
                 }
             }
-
-            validateAccessTransformers = false
 
             mods {
                 register("testmod") {
@@ -197,6 +183,7 @@ dependencies {
 
     if (isFabric) {
         modDependency("fabricApi", { "net.fabricmc.fabric-api:fabric-api:$it" }, requiredByDependants = true)
+
         modDependency("fabricLangKotlin", { "net.fabricmc:fabric-language-kotlin:${it}" })
     }
     if (isNeoforge) {
@@ -353,7 +340,7 @@ publishing {
 tasks {
     withType<KotlinCompile> {
         compilerOptions {
-            jvmTarget = modstitch.javaTarget.map { JvmTarget.fromTarget(it.toString()) }
+            jvmTarget = modstitch.javaVersion.map { JvmTarget.fromTarget(it.toString()) }
         }
 
         dependsOn("stonecutterGenerate")
@@ -364,8 +351,10 @@ tasks.named("generateModMetadata") {
     dependsOn("stonecutterGenerate")
 }
 modstitch.moddevgradle {
-    tasks.named("createMinecraftArtifacts") {
-        dependsOn("stonecutterGenerate")
+    modstitch.onEnable {
+        tasks.named("createMinecraftArtifacts") {
+            dependsOn("stonecutterGenerate")
+        }
     }
 }
 

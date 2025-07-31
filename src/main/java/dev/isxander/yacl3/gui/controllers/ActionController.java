@@ -80,7 +80,7 @@ public class ActionController implements Controller<BiConsumer<YACLScreen, Butto
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
             if (isMouseOver(mouseX, mouseY) && isAvailable()) {
                 executeAction();
                 return true;

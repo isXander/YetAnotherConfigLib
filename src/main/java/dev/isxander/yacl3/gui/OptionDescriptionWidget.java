@@ -108,7 +108,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
         Style clickedStyle = getDescStyle((int) mouseX, (int) mouseY);
         if (clickedStyle != null && clickedStyle.getClickEvent() != null) {
             if (minecraft.screen.handleComponentClicked(clickedStyle)) {

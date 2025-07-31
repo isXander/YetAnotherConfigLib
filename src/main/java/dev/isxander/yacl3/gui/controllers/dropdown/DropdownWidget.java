@@ -95,13 +95,13 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
 	}
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+	public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
 		if (isMouseOver(mouseX, mouseY)) {
 			// Closes and cleans up the dropdown
 			dropdownElement.unfocus();
 			return true;
 		} else if (dropdownElement.isMouseOver(mouseX, mouseY)) {
-			return dropdownElement.mouseClicked(mouseX, mouseY, button);
+			return dropdownElement.mouseClicked(mouseX, mouseY, button /*? if >=1.21.9 {*/ ,doubleClick /*?}*/);
 		} else {
 			close();
 			return false;

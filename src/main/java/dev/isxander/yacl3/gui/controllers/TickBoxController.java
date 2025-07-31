@@ -79,7 +79,7 @@ public class TickBoxController implements Controller<Boolean> {
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
             if (!isMouseOver(mouseX, mouseY) || !isAvailable())
                 return false;
 

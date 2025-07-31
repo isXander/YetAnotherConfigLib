@@ -17,6 +17,16 @@ public interface YACLGuiElementRenderState /*? if >=1.21.6 {*/extends GuiElement
 
     BaseRenderState baseState();
 
+    //? if >=1.21.9 {
+    @Override
+    default void buildVertices(VertexConsumer vertexConsumer) {
+        this.buildVertices(vertexConsumer, 0);
+    }
+
+    // purely to ease development, we backport this method from <1.21.9 and have a placeholder Z
+    void buildVertices(VertexConsumer vertexConsumer, float z);
+    //?}
+
     //? if >=1.21.6 {
     @Override
     default @NotNull RenderPipeline pipeline() {
@@ -46,7 +56,7 @@ public interface YACLGuiElementRenderState /*? if >=1.21.6 {*/extends GuiElement
             float x, float y, float z
     ) {
         //? if >=1.21.6 {
-        return vertexConsumer.addVertexWith2DPose(this.baseState().pose(), x, y, z);
+        return vertexConsumer.addVertexWith2DPose(this.baseState().pose(), x, y /*? if <1.21.9 >>*/ /*,z*/ );
         //?} else {
         /*return vertexConsumer.addVertex(this.baseState().pose(), x, y, z);
         *///?}

@@ -4,9 +4,8 @@ plugins {
 
     id("dev.kikugie.stonecutter")
 
-    val modstitchVersion = "0.5.15-unstable"
+    val modstitchVersion = "0.6.3-unstable"
     id("dev.isxander.modstitch.base") version modstitchVersion apply false
-    id("dev.isxander.modstitch.shadow") version modstitchVersion apply false
 
     id("me.modmuss50.mod-publish-plugin") version "0.8.4" apply false
     id("org.ajoberstar.grgit") version "5.0.+" apply false

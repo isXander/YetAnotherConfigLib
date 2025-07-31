@@ -206,7 +206,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
         if (isMouseOver(mouseX, mouseY)) {
             mouseDown = true;
             hueSliderDown = false;
@@ -215,7 +215,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
             setColorFromMouseClick(mouseX, mouseY);
             return true;
         } else if (entryWidget.isMouseOver(mouseX, mouseY)) {
-            return entryWidget.mouseClicked(mouseX, mouseY, button);
+            return entryWidget.mouseClicked(mouseX, mouseY, button /*? if >=1.21.9 {*/ ,doubleClick /*?}*/);
         } else {
             close(); //removes color picker
             return false;
