@@ -103,7 +103,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
         }
 
         if (isFocused()) {
-            graphics.renderOutline(getX(), getY(), getWidth(), getHeight(), -1);
+            graphics./*? if >=1.21.9 {*/submitOutline/*?} else {*//*renderOutline*//*?}*/(getX(), getY(), getWidth(), getHeight(), -1);
         }
     }
 

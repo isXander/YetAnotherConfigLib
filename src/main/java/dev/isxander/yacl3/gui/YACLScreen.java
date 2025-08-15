@@ -281,7 +281,11 @@ public class YACLScreen extends Screen {
             );
             GuiUtils.translateZ(graphics, 400);
 
-            text.renderLeftAligned(graphics, drawX, drawY, lineHeight, -1);
+            //? if >=1.21.9 {
+            text.render(graphics, MultiLineLabel.Align.LEFT, drawX, drawY, lineHeight, false, -1);
+            //?} else {
+            /*text.renderLeftAligned(graphics, drawX, drawY, lineHeight, -1);
+            *///?}
 
             GuiUtils.popPose(graphics);
         }

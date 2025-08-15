@@ -406,7 +406,11 @@ public class OptionListWidget extends ElementListWidgetExt<OptionListWidget.Entr
             expandMinimizeButton.setX(x);
             expandMinimizeButton.render(graphics, mouseX, mouseY, tickDelta);
 
-            wrappedName.renderCentered(graphics, x + entryWidth / 2, y + getYPadding());
+            //? if >=1.21.9 {
+            wrappedName.render(graphics, MultiLineLabel.Align.CENTER, x + entryWidth / 2, y + getYPadding(), font.lineHeight, false, -1);
+            //?} else {
+            /*wrappedName.renderCentered(graphics, x + entryWidth / 2, y + getYPadding());
+            *///?}
 
             if (isHovered()) {
                 setHoverDescription(DescriptionWithName.of(group.name(), group.description()));
