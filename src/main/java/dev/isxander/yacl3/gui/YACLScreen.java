@@ -58,6 +58,11 @@ public class YACLScreen extends Screen {
     public ControllerPopupWidget<?> currentPopupController = null;
     public boolean popupControllerVisible = false;
 
+    /**
+     * The tab where the user started searching
+     */
+    private @Nullable CategoryTab preferredTab = null;
+
     public YACLScreen(YetAnotherConfigLib config, Screen parent) {
         super(config.title());
         this.config = config;
@@ -209,6 +214,7 @@ public class YACLScreen extends Screen {
     //?} else {
     /*@Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        preferredTab = null;
         if (super.mouseClicked(mouseX, mouseY, button)) {
             this.setDragging(true);
             return true;
@@ -316,24 +322,31 @@ public class YACLScreen extends Screen {
     }
 
     public void updateGlobalSearch(String search) {
-        int nextTabWithSearch = -1;
+        Tab nextTabWithSearch = null;
+        if (preferredTab != null) {
+            System.out.println(preferredTab.getTabTitle().getString());
+            preferredTab.optionList.getList().updateSearchQuery(search);
+            if (preferredTab.hasSearch()) nextTabWithSearch = preferredTab;
+        } else System.out.println("no preferred tab :(");
         Tab currentTab = tabNavigationBar.getTabManager().getCurrentTab();
         int cursorPos = currentTab instanceof CategoryTab categoryTab ? categoryTab.searchField.getCursorPosition() : -1;
 
         for (int i = 0; i < tabNavigationBar.getTabs().size(); i++) {
             Tab tab = tabNavigationBar.getTabs().get(i);
+            if (tab == preferredTab) continue;
             if (tab instanceof CategoryTab categoryTab) {
                 categoryTab.optionList.getList().updateSearchQuery(search);
                 categoryTab.searchField.setValueDoNotUpdate(search);
                 if (cursorPos != -1) categoryTab.searchField.setCursorPosition(cursorPos);
-                if (nextTabWithSearch == -1 && categoryTab.hasSearch()) {
-                    nextTabWithSearch = i;
+                if (nextTabWithSearch == null && categoryTab.hasSearch()) {
+                    nextTabWithSearch = categoryTab;
                 }
             }
         }
-        if (nextTabWithSearch != -1 && currentTab instanceof CategoryTab categoryTab && !categoryTab.hasSearch()) {
-            tabNavigationBar.selectTab(nextTabWithSearch, false);
-            if (tabNavigationBar.getTabManager().getCurrentTab() instanceof CategoryTab newTab) {
+        // switch if the next tab is the preferred one or switch if the current tab does not have the search
+        if (nextTabWithSearch != null && nextTabWithSearch != currentTab && (nextTabWithSearch == preferredTab || !(currentTab instanceof CategoryTab categoryTab && categoryTab.hasSearch()))) {
+            tabManager.setCurrentTab(nextTabWithSearch, false);
+            if (nextTabWithSearch instanceof CategoryTab newTab) {
                 setFocused(newTab.searchField);
             }
         }
@@ -394,7 +407,11 @@ public class YACLScreen extends Screen {
                     paddedWidth - 2, 18,
                     Component.translatable("gui.recipebook.search_hint"),
                     Component.translatable("gui.recipebook.search_hint"),
-                    screen::updateGlobalSearch
+                    s -> {
+                        if (screen.preferredTab == null) screen.preferredTab = this;
+                        screen.updateGlobalSearch(s);
+
+                    }
             );
 
             this.optionList = YACLSelectionList.asWidget(
