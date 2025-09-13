@@ -324,10 +324,9 @@ public class YACLScreen extends Screen {
     public void updateGlobalSearch(String search) {
         Tab nextTabWithSearch = null;
         if (preferredTab != null) {
-            System.out.println(preferredTab.getTabTitle().getString());
             preferredTab.optionList.getList().updateSearchQuery(search);
             if (preferredTab.hasSearch()) nextTabWithSearch = preferredTab;
-        } else System.out.println("no preferred tab :(");
+        }
         Tab currentTab = tabNavigationBar.getTabManager().getCurrentTab();
         int cursorPos = currentTab instanceof CategoryTab categoryTab ? categoryTab.searchField.getCursorPosition() : -1;
 
