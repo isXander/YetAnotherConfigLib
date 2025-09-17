@@ -46,6 +46,19 @@ public interface OptionAddable {
     /**
      * Adds multiple options to an abstract builder.
      * To construct an option, use {@link Option#createBuilder()}
+     * @param options the options to add
+     * @return this
      */
     OptionAddable options(@NotNull Collection<? extends Option<?>> options);
+
+    /**
+     * Adds multiple options to an abstract builder if a condition is met.
+     * To construct an option, use {@link Option#createBuilder()}
+     * @param condition whether to add the options
+     * @param options the options to add
+     * @return this
+     */
+    default OptionAddable optionsIf(boolean condition, @NotNull Collection<? extends Option<?>> options) {
+        return condition ? options(options) : this;
+    }
 }
