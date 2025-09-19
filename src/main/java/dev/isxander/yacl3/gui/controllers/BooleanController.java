@@ -120,7 +120,7 @@ public class BooleanController implements Controller<Boolean> {
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
+        public boolean onMouseClicked(double mouseX, double mouseY, int button) {
             if (!isMouseOver(mouseX, mouseY) || !isAvailable())
                 return false;
 
@@ -148,7 +148,7 @@ public class BooleanController implements Controller<Boolean> {
         }
 
         @Override
-        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        public boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
             if (!isFocused()) {
                 return false;
             }

@@ -5,6 +5,7 @@ import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.ControllerWidget;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
+import dev.isxander.yacl3.gui.utils.KeyUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
@@ -56,7 +57,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         if (!isAvailable() || button != 0 || !sliderBounds.isPointInside((int) mouseX, (int) mouseY))
             return false;
 
@@ -67,7 +68,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+    public boolean onMouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (!isAvailable() || button != 0 || !mouseDown)
             return false;
 
@@ -82,7 +83,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
-        if (!isAvailable() || (!isMouseOver(mouseX, mouseY)) || (!Screen.hasShiftDown() && !Screen.hasControlDown()))
+        if (!isAvailable() || (!isMouseOver(mouseX, mouseY)) || (!KeyUtils.hasShiftDown() && !KeyUtils.hasControlDown()))
             return false;
 
         incrementValue(vertical);
@@ -90,16 +91,16 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean onMouseReleased(double mouseX, double mouseY, int button) {
         if (isAvailable() && mouseDown)
             playDownSound();
         mouseDown = false;
 
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.onMouseReleased(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
         if (!focused)
             return false;
 

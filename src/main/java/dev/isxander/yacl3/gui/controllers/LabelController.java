@@ -141,7 +141,7 @@ public class LabelController implements Controller<Component> {
         *///?}
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
+        public boolean onMouseClicked(double mouseX, double mouseY, int button) {
             if (!isMouseOver(mouseX, mouseY))
                 return false;
 

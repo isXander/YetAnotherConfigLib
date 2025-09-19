@@ -21,8 +21,8 @@ public abstract class ControllerPopupWidget<T extends Controller<?>> extends Con
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return entryWidget.keyPressed(keyCode, scanCode, modifiers);
+    public boolean onKeyPressed(int keycode, int scancode, int modifiers) {
+        return entryWidget.onKeyPressed(keycode, scancode, modifiers);
     }
 
     public void close() {}

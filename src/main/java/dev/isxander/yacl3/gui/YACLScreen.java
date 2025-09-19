@@ -1,15 +1,12 @@
 package dev.isxander.yacl3.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.math.Axis;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
 import dev.isxander.yacl3.api.utils.OptionUtils;
 import dev.isxander.yacl3.gui.controllers.PopupControllerScreen;
 import dev.isxander.yacl3.gui.controllers.ControllerPopupWidget;
-import dev.isxander.yacl3.gui.tab.ListHolderWidget;
 import dev.isxander.yacl3.gui.tab.ScrollableNavigationBar;
 import dev.isxander.yacl3.gui.tab.TabExt;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
@@ -36,6 +33,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
+
+//? if >=1.21.9
+import net.minecraft.client.input.MouseButtonEvent;
 
 public class YACLScreen extends Screen {
     public final YetAnotherConfigLib config;
@@ -105,7 +105,7 @@ public class YACLScreen extends Screen {
 
         OptionListWidget optionListWidget = null;
         if(this.tabNavigationBar.getTabManager().getCurrentTab() instanceof CategoryTab categoryTab) {
-            optionListWidget = categoryTab.optionList.getList();
+            optionListWidget = categoryTab.optionList.getType();
         }
         if(optionListWidget != null) {
             this.minecraft.setScreen(new PopupControllerScreen(this, controllerPopupWidget));
@@ -194,22 +194,43 @@ public class YACLScreen extends Screen {
         }
     }
 
+    //? if >=1.21.9 {
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
-        if (super.mouseClicked(mouseX, mouseY, button /*? if >=1.21.9 {*/ ,doubleClick /*?}*/)) {
+    public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
+        if (super.mouseClicked(mouseButtonEvent, bl)) {
             this.setDragging(true);
             return true;
         }
         return false;
     }
+    //?} else {
+    /*@Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (super.mouseClicked(mouseX, mouseY, button)) {
+            this.setDragging(true);
+            return true;
+        }
+        return false;
+    }
+    *///?}
 
+    //? if >=1.21.9 {
     @Override
+    public boolean mouseDragged(MouseButtonEvent mouseButtonEvent, double d, double e) {
+        return this.getFocused() != null
+                && this.isDragging()
+                && (mouseButtonEvent.button() == InputConstants.MOUSE_BUTTON_LEFT || mouseButtonEvent.button() == InputConstants.MOUSE_BUTTON_RIGHT)
+                && this.getFocused().mouseDragged(mouseButtonEvent, d, e);
+    }
+    //?} else {
+    /*@Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         return this.getFocused() != null
                 && this.isDragging()
                 && (button == InputConstants.MOUSE_BUTTON_LEFT || button == InputConstants.MOUSE_BUTTON_RIGHT)
                 && this.getFocused().mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
+    *///?}
 
     public void setSaveButtonMessage(Component message, Component tooltip) {
         saveButtonMessage = message;
@@ -298,7 +319,7 @@ public class YACLScreen extends Screen {
         private final ConfigCategory category;
         private final Tooltip tooltip;
 
-        private ListHolderWidget<OptionListWidget> optionList;
+        private WidgetAndType<OptionListWidget> optionList;
         public final Button saveFinishedButton;
         public final Button cancelResetButton;
         public final Button undoButton;
@@ -345,11 +366,10 @@ public class YACLScreen extends Screen {
                     paddedWidth - 2, 18,
                     Component.translatable("gui.recipebook.search_hint"),
                     Component.translatable("gui.recipebook.search_hint"),
-                    searchQuery -> optionList.getList().updateSearchQuery(searchQuery)
+                    searchQuery -> optionList.getType().updateSearchQuery(searchQuery)
             );
 
-            this.optionList = new ListHolderWidget<>(
-                    () -> new ScreenRectangle(tabArea.position(), tabArea.width() / 3 * 2, tabArea.height()),
+            this.optionList = YACLSelectionList.asWidget(
                     new OptionListWidget(screen, category, screen.minecraft, 0, 0, screen.width / 3 * 2 + 1, screen.height, desc -> {
                         descriptionWidget.setOptionDescription(desc);
                     })
@@ -375,7 +395,7 @@ public class YACLScreen extends Screen {
 
         @Override
         public void visitChildren(Consumer<AbstractWidget> consumer) {
-            consumer.accept(optionList);
+            consumer.accept(optionList.getWidget());
             consumer.accept(saveFinishedButton);
             consumer.accept(cancelResetButton);
             consumer.accept(undoButton);
@@ -408,8 +428,12 @@ public class YACLScreen extends Screen {
         }
 
         @Override
-        public void doLayout(ScreenRectangle screenRectangle) {
-
+        public void doLayout(ScreenRectangle tabArea) {
+            var rect = new ScreenRectangle(tabArea.position(), tabArea.width() / 3 * 2, tabArea.height());
+            optionList.getType().setX(rect.left());
+            optionList.getType().setY(rect.top());
+            optionList.getType().setWidth(rect.width());
+            optionList.getType().setHeight(rect.height());
         }
 
         @Override

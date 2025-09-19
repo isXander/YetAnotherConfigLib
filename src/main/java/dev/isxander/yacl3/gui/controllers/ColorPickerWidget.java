@@ -5,6 +5,7 @@ import dev.isxander.yacl3.api.utils.MutableDimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.render.ColorGradientRenderState;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
+import dev.isxander.yacl3.gui.utils.WidgetUtils;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -12,6 +13,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 import java.awt.*;
+
+//? if >=1.21.9
+import net.minecraft.client.input.MouseButtonEvent;
 
 public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
     public static final ResourceLocation COLOR_PICKER_SPRITE = YACLPlatform.rl("controller/colorpicker");
@@ -206,7 +210,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         if (isMouseOver(mouseX, mouseY)) {
             mouseDown = true;
             hueSliderDown = false;
@@ -215,17 +219,19 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
             setColorFromMouseClick(mouseX, mouseY);
             return true;
         } else if (entryWidget.isMouseOver(mouseX, mouseY)) {
-            return entryWidget.mouseClicked(mouseX, mouseY, button /*? if >=1.21.9 {*/ ,doubleClick /*?}*/);
+            return WidgetUtils.mouseClicked(entryWidget, mouseX, mouseY, button);
         } else {
             close(); //removes color picker
             return false;
         }
     }
+
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean onMouseReleased(double mouseX, double mouseY, int button) {
         mouseDown = false;
         return false;
     }
+
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
         //Checks if the mouse is either over the color picker or the color controller
@@ -238,19 +244,19 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+    public boolean onMouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (mouseDown || isMouseOver(mouseX, mouseY)) {
             setColorFromMouseClick(mouseX, mouseY);
             return true;
         }
-        return entryWidget.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        return entryWidget.onMouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 
     @Override
-    public boolean charTyped(char chr, int modifiers) {
+    public boolean onCharTyped(char chr, String cpStr, int modifiers) {
         //Done to allow for typing whilst the color picker is visible
         charTyped = true;
-        return entryWidget.charTyped(chr, modifiers);
+        return entryWidget.onCharTyped(chr, cpStr, modifiers);
     }
 
     @Override

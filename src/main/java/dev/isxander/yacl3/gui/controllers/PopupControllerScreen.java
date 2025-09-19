@@ -5,6 +5,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 
+//? if >=1.21.9 {
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+//?}
+
 public class PopupControllerScreen extends Screen {
     private final YACLScreen backgroundYaclScreen;
     private final ControllerPopupWidget<?> controllerPopup;
@@ -46,14 +52,26 @@ public class PopupControllerScreen extends Screen {
         this.backgroundYaclScreen.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
     }
 
+
+    //? if >=1.21.9 {
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
-        if (!super.mouseClicked(mouseX, mouseY, button /*? if >=1.21.9 {*/ ,doubleClick /*?}*/)) {
+    public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
+        if (!super.mouseClicked(mouseButtonEvent, bl)) {
             this.onClose();
             return false;
         }
         return true;
     }
+    //?} else {
+    /*@Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (!super.mouseClicked(mouseX, mouseY, button)) {
+            this.onClose();
+            return false;
+        }
+        return true;
+    }
+    *///?}
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
@@ -69,16 +87,30 @@ public class PopupControllerScreen extends Screen {
         controllerPopup.mouseMoved(mouseX, mouseY);
     }
 
+    //? if >=1.21.9 {
     @Override
+    public boolean charTyped(CharacterEvent characterEvent) {
+        return controllerPopup.charTyped(characterEvent);
+    }
+    //?} else {
+    /*@Override
     public boolean charTyped(char codePoint, int modifiers) {
         return controllerPopup.charTyped(codePoint, modifiers);
     }
+    *///?}
 
 
+    //? if >=1.21.9 {
     @Override
+    public boolean keyPressed(KeyEvent keyEvent) {
+        return controllerPopup.keyPressed(keyEvent);
+    }
+    //?} else {
+    /*@Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         return controllerPopup.keyPressed(keyCode, scanCode, modifiers);
     }
+    *///?}
 
     @Override
     public void tick() {

@@ -19,6 +19,12 @@ import org.joml.Matrix4f;
 
 import java.awt.Color;
 
+//? if >=1.21.9 {
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+//?}
+
 public abstract class AbstractWidget implements GuiEventListener, Renderable, NarratableEntry {
     protected final Minecraft client = Minecraft.getInstance();
     protected final Font textRenderer = client.font;
@@ -123,4 +129,95 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
     public void playDownSound() {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
+
+    //? if >=1.21.9 {
+    @Override
+    public final boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean doubleClick) {
+        return this.onMouseClicked(mouseButtonEvent.x(), mouseButtonEvent.y(), mouseButtonEvent.button());
+    }
+    //?} else {
+    /*@Override
+    public final boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return this.onMouseClicked(mouseX, mouseY, button);
+    }
+    *///?}
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
+        return false;
+    }
+
+    //? if >=1.21.9 {
+    @Override
+    public final boolean mouseReleased(MouseButtonEvent mouseButtonEvent) {
+        return this.onMouseReleased(mouseButtonEvent.x(), mouseButtonEvent.y(), mouseButtonEvent.button());
+    }
+    //?} else {
+    /*@Override
+    public final boolean mouseReleased(double mouseX, double mouseY, int button) {
+        return this.onMouseReleased(mouseX, mouseY, button);
+    }
+    *///?}
+    public boolean onMouseReleased(double mouseX, double mouseY, int button) {
+        return false;
+    }
+
+    //? if >=1.21.9 {
+    @Override
+    public final boolean mouseDragged(MouseButtonEvent mouseButtonEvent, double dx, double dy) {
+        return this.onMouseDragged(mouseButtonEvent.x(), mouseButtonEvent.y(), mouseButtonEvent.button(), dx, dy);
+    }
+    //?} else {
+    /*@Override
+    public final boolean mouseDragged(double mouseX, double mouseY, int button, double dx, double dy) {
+        return this.onMouseDragged(mouseX, mouseY, button, dx, dy);
+    }
+    *///?}
+    public boolean onMouseDragged(double mouseX, double mouseY, int button, double dx, double dy) {
+        return false;
+    }
+
+    //? if >=1.21.9 {
+    @Override
+    public final boolean keyPressed(KeyEvent keyEvent) {
+        return this.onKeyPressed(keyEvent.key(), keyEvent.scancode(), keyEvent.modifiers());
+    }
+    //?} else {
+    /*@Override
+    public final boolean keyPressed(int keycode, int scancode, int modifiers) {
+        return this.onKeyPressed(keycode, scancode, modifiers);
+    }
+    *///?}
+    public boolean onKeyPressed(int key, int scancode, int modifiers) {
+        return false;
+    }
+
+    //? if >=1.21.9 {
+    @Override
+    public final boolean keyReleased(KeyEvent keyEvent) {
+        return this.onKeyReleased(keyEvent.key(), keyEvent.scancode(), keyEvent.modifiers());
+    }
+    //?} else {
+    /*@Override
+    public final boolean keyReleased(int keycode, int scancode, int modifiers) {
+        return this.onKeyReleased(keycode, scancode, modifiers);
+    }
+    *///?}
+    public boolean onKeyReleased(int key, int scancode, int modifiers) {
+        return false;
+    }
+
+    //? if >=1.21.9 {
+    @Override
+    public final boolean charTyped(CharacterEvent characterEvent) {
+        return this.onCharTyped((char) characterEvent.codepoint(), characterEvent.codepointAsString(), characterEvent.modifiers());
+    }
+    //?} else {
+    /*@Override
+    public final boolean charTyped(char codePoint, int modifiers) {
+        return this.onCharTyped(codePoint, Character.toString(codePoint), modifiers);
+    }
+    *///?}
+    public boolean onCharTyped(char ch, String cpStr, int modifiers) {
+        return false;
+    }
+
 }

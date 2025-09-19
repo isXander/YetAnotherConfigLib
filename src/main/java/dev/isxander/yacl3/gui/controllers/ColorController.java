@@ -208,7 +208,7 @@ public class ColorController implements IStringController<Color> {
             int previewSize = (dim.height() - getYPadding() * 2) / 2;
             colorPreviewDim = Dimension.ofInt(dim.xLimit() - getXPadding() - previewSize, dim.centerY() - previewSize / 2, previewSize, previewSize);
 
-            if(colorPickerWidget != null) {
+            if (colorPickerWidget != null) {
                 colorPickerWidget.setDimension(colorPickerWidget.getDimension().withY(this.getDimension().y()));
                 //checks if the color controller is being partially rendered offscreen
                 if(this.getDimension().y() < screen.tabArea.top() || this.getDimension().yLimit() > screen.tabArea.bottom()) {
@@ -218,35 +218,33 @@ public class ColorController implements IStringController<Color> {
         }
 
         @Override
-        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        public boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
             int prevSelectionLength = selectionLength;
             selectionLength = 0;
-            if (super.keyPressed(keyCode, scanCode, modifiers)) {
+            if (super.onKeyPressed(keyCode, scanCode, modifiers)) {
                 caretPos = Math.max(1, caretPos);
                 setSelectionLength();
                 return true;
-            } else selectionLength = prevSelectionLength;
+            } else {
+                selectionLength = prevSelectionLength;
+            }
             return false;
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
-            if (super.mouseClicked(mouseX, mouseY, button /*? if >=1.21.9 {*/ ,doubleClick /*?}*/)) {
-                //Detects if the user has clicked the color preview
-                if(isMouseOverColorPreview(mouseX, mouseY)) {
-                        playDownSound();
-                        createOrRemoveColorPicker();
-                        if(YACLConfig.HANDLER.instance().showColorPickerIndicator) {
-                            YACLConfig.HANDLER.instance().showColorPickerIndicator = false;
-                            YACLConfig.HANDLER.save();
-                        }
+        public boolean onMouseClicked(double mouseX, double mouseY, int button) {
+            // Detects if the user has clicked the color preview
+            if (isMouseOverColorPreview(mouseX, mouseY)) {
+                playDownSound();
+                createOrRemoveColorPicker();
+                if(YACLConfig.HANDLER.instance().showColorPickerIndicator) {
+                    YACLConfig.HANDLER.instance().showColorPickerIndicator = false;
+                    YACLConfig.HANDLER.save();
                 }
-                caretPos = Math.max(1, caretPos);
-                setSelectionLength();
-                return true;
             }
-
-            return false;
+            caretPos = Math.max(1, caretPos);
+            setSelectionLength();
+            return true;
         }
 
         public boolean isMouseOverColorPreview(double mouseX, double mouseY) {

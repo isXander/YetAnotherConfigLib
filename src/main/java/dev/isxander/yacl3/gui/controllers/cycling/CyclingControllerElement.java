@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.ControllerWidget;
+import dev.isxander.yacl3.gui.utils.KeyUtils;
 import net.minecraft.client.gui.screens.Screen;
 
 public class CyclingControllerElement extends ControllerWidget<ICyclingController<?>> {
@@ -23,18 +24,18 @@ public class CyclingControllerElement extends ControllerWidget<ICyclingControlle
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         if (!isMouseOver(mouseX, mouseY) || (button != 0 && button != 1) || !isAvailable())
             return false;
 
         playDownSound();
-        cycleValue(button == 1 || Screen.hasShiftDown() || Screen.hasControlDown() ? -1 : 1);
+        cycleValue(button == 1 || KeyUtils.hasShiftDown() || KeyUtils.hasControlDown() ? -1 : 1);
 
         return true;
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
         if (!focused)
             return false;
 
@@ -44,7 +45,7 @@ public class CyclingControllerElement extends ControllerWidget<ICyclingControlle
             case InputConstants.KEY_RIGHT ->
                     cycleValue(1);
             case InputConstants.KEY_RETURN, InputConstants.KEY_SPACE, InputConstants.KEY_NUMPADENTER ->
-                    cycleValue(Screen.hasControlDown() || Screen.hasShiftDown() ? -1 : 1);
+                    cycleValue(KeyUtils.hasControlDown(modifiers) || KeyUtils.hasShiftDown(modifiers) ? -1 : 1);
             default -> {
                 return false;
             }

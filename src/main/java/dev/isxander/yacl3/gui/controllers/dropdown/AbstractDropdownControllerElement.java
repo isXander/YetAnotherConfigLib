@@ -5,6 +5,7 @@ import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.string.StringControllerElement;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
+import dev.isxander.yacl3.gui.utils.KeyUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -43,8 +44,8 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 	}
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
-		if (super.mouseClicked(mouseX, mouseY, button /*? if >=1.21.9 {*/ ,doubleClick /*?}*/)) {
+	public boolean onMouseClicked(double mouseX, double mouseY, int button) {
+		if (super.onMouseClicked(mouseX, mouseY, button)) {
 			if (!dropdownVisible) {
 				createDropdownWidget();
 				doSelectAll();
@@ -71,7 +72,7 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 	}
 
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+	public boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
 		if (!inputFieldFocused)
 			return false;
 		if (dropdownVisible) {
@@ -85,7 +86,7 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 					return true;
 				}
 				case InputConstants.KEY_TAB -> {
-					if (Screen.hasShiftDown()) {
+					if (KeyUtils.hasShiftDown(modifiers)) {
 						dropdownWidget.selectPreviousEntry();
 					} else {
 						dropdownWidget.selectNextEntry();
@@ -99,18 +100,18 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 				return true;
 			}
 		}
-		return super.keyPressed(keyCode, scanCode, modifiers);
+		return super.onKeyPressed(keyCode, scanCode, modifiers);
 	}
 
 	@Override
-	public boolean charTyped(char chr, int modifiers) {
+	public boolean onCharTyped(char chr, String cpStr, int modifiers) {
 		if (!inputFieldFocused) {
 			return false;
 		}
 		if (!dropdownVisible) {
 			createDropdownWidget();
 		}
-		return super.charTyped(chr, modifiers);
+		return super.onCharTyped(chr, cpStr, modifiers);
 	}
 
 	@Override

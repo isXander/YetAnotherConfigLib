@@ -95,13 +95,13 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
 	}
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
+	public boolean onMouseClicked(double mouseX, double mouseY, int button) {
 		if (isMouseOver(mouseX, mouseY)) {
 			// Closes and cleans up the dropdown
 			dropdownElement.unfocus();
 			return true;
 		} else if (dropdownElement.isMouseOver(mouseX, mouseY)) {
-			return dropdownElement.mouseClicked(mouseX, mouseY, button /*? if >=1.21.9 {*/ ,doubleClick /*?}*/);
+			return dropdownElement.onMouseClicked(mouseX, mouseY, button);
 		} else {
 			close();
 			return false;
@@ -135,9 +135,9 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
 	}
 
 	@Override
-	public boolean charTyped(char chr, int modifiers) {
+	public boolean onCharTyped(char chr, String cpStr, int modifiers) {
 		// Done to allow for typing whilst the color picker is visible
-		return dropdownElement.charTyped(chr, modifiers);
+		return dropdownElement.onCharTyped(chr, cpStr, modifiers);
 	}
 
 	public int dropdownLength() {

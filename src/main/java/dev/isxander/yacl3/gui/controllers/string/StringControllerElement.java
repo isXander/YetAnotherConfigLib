@@ -6,10 +6,10 @@ import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.ControllerWidget;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
+import dev.isxander.yacl3.gui.utils.KeyUtils;
 import dev.isxander.yacl3.gui.utils.UndoRedoHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 import java.util.function.Consumer;
@@ -96,7 +96,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
+    public boolean onMouseClicked(double mouseX, double mouseY, int button) {
         if (isAvailable() && getDimension().isPointInside((int) mouseX, (int) mouseY)) {
             inputFieldFocused = true;
 
@@ -139,7 +139,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
         if (!inputFieldFocused)
             return false;
 
@@ -149,8 +149,8 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                 return true;
             }
             case InputConstants.KEY_LEFT -> {
-                if (Screen.hasShiftDown()) {
-                    if (Screen.hasControlDown()) {
+                if (KeyUtils.hasShiftDown(modifiers)) {
+                    if (KeyUtils.hasControlDown(modifiers)) {
                         int spaceChar = findSpaceIndex(true);
                         selectionLength += caretPos - spaceChar;
                         caretPos = spaceChar;
@@ -161,7 +161,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                     checkRenderOffset();
                 } else {
                     if (caretPos > 0) {
-                        if (Screen.hasControlDown()) {
+                        if (KeyUtils.hasControlDown(modifiers)) {
                             caretPos = findSpaceIndex(true);
                         } else {
                             if (selectionLength != 0) {
@@ -176,8 +176,8 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                 return true;
             }
             case InputConstants.KEY_RIGHT -> {
-                if (Screen.hasShiftDown()) {
-                    if (Screen.hasControlDown()) {
+                if (KeyUtils.hasShiftDown(modifiers)) {
+                    if (KeyUtils.hasControlDown(modifiers)) {
                         int spaceChar = findSpaceIndex(false);
                         selectionLength -= spaceChar - caretPos;
                         caretPos = spaceChar;
@@ -188,7 +188,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                     checkRenderOffset();
                 } else {
                     if (caretPos < inputField.length()) {
-                        if (Screen.hasControlDown()) {
+                        if (KeyUtils.hasControlDown(modifiers)) {
                             caretPos = findSpaceIndex(false);
                         } else {
                             if (selectionLength != 0) {
@@ -211,7 +211,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                 return true;
             }
             case InputConstants.KEY_END -> {
-                if (Screen.hasShiftDown()) {
+                if (KeyUtils.hasShiftDown(modifiers)) {
                     selectionLength -= inputField.length() - caretPos;
                 } else selectionLength = 0;
                 caretPos = inputField.length();
@@ -219,7 +219,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                 return true;
             }
             case InputConstants.KEY_HOME -> {
-                if (Screen.hasShiftDown()) {
+                if (KeyUtils.hasShiftDown(modifiers)) {
                     selectionLength += caretPos;
                     caretPos = 0;
                 } else {
@@ -245,13 +245,13 @@ public class StringControllerElement extends ControllerWidget<IStringController<
 //            }
         }
 
-        if (Screen.isPaste(keyCode)) {
+        if (KeyUtils.isPaste(keyCode, modifiers)) {
             return doPaste();
-        } else if (Screen.isCopy(keyCode)) {
+        } else if (KeyUtils.isCopy(keyCode, modifiers)) {
             return doCopy();
-        } else if (Screen.isCut(keyCode)) {
+        } else if (KeyUtils.isCut(keyCode, modifiers)) {
             return doCut();
-        } else if (Screen.isSelectAll(keyCode)) {
+        } else if (KeyUtils.isSelectAll(keyCode, modifiers)) {
             return doSelectAll();
         }
 
@@ -309,12 +309,12 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     }
 
     @Override
-    public boolean charTyped(char chr, int modifiers) {
+    public boolean onCharTyped(char ch, String cpStr, int modifiers) {
         if (!inputFieldFocused)
             return false;
 
-        if (!Screen.hasControlDown()) {
-            write(Character.toString(chr));
+        if (!KeyUtils.hasControlDown(modifiers)) {
+            write(cpStr);
             updateUndoHistory();
             return true;
         }

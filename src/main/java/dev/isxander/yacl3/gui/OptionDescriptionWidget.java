@@ -22,6 +22,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+//? if >=1.21.9 {
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+//?}
+
 public class OptionDescriptionWidget extends AbstractWidget {
     private static final int AUTO_SCROLL_TIMER = 1500;
     private static final float AUTO_SCROLL_SPEED = 1; // lines per second
@@ -107,8 +112,19 @@ public class OptionDescriptionWidget extends AbstractWidget {
         }
     }
 
+    //? if >=1.21.9 {
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button /*? if >=1.21.9 {*/ ,boolean doubleClick /*?}*/) {
+    public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
+        return this.onMouseClicked(mouseButtonEvent.x(), mouseButtonEvent.y());
+    }
+    //?} else {
+    /*@Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return this.onMouseClicked(mouseX, mouseY);
+    }
+    *///?}
+
+    protected boolean onMouseClicked(double mouseX, double mouseY) {
         Style clickedStyle = getDescStyle((int) mouseX, (int) mouseY);
         if (clickedStyle != null && clickedStyle.getClickEvent() != null) {
             if (minecraft.screen.handleComponentClicked(clickedStyle)) {
@@ -131,14 +147,24 @@ public class OptionDescriptionWidget extends AbstractWidget {
         return false;
     }
 
+    //? if >=1.21.9 {
     @Override
+    public boolean keyPressed(KeyEvent keyEvent) {
+        return this.onKeyPressed(keyEvent.key());
+    }
+    //?} else {
+    /*@Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        return this.onKeyPressed(keyCode);
+    }
+    *///?}
+    protected boolean onKeyPressed(int keyCode) {
         if (isFocused()) {
             switch (keyCode) {
                 case InputConstants.KEY_UP ->
-                    targetScrollAmount = Mth.clamp(targetScrollAmount - 10, 0, maxScrollAmount);
+                        targetScrollAmount = Mth.clamp(targetScrollAmount - 10, 0, maxScrollAmount);
                 case InputConstants.KEY_DOWN ->
-                    targetScrollAmount = Mth.clamp(targetScrollAmount + 10, 0, maxScrollAmount);
+                        targetScrollAmount = Mth.clamp(targetScrollAmount + 10, 0, maxScrollAmount);
                 default -> {
                     return false;
                 }
