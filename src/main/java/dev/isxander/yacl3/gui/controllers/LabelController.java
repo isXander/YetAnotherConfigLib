@@ -146,9 +146,14 @@ public class LabelController implements Controller<Component> {
                 return false;
 
             Style style = getStyle((int) mouseX, (int) mouseY);
+
+            if(style == null)
+                return false;
+
             return screen.handleComponentClicked(style);
         }
 
+        @Nullable
         protected Style getStyle(int mouseX, int mouseY) {
             if (!getDimension().isPointInside(mouseX, mouseY))
                 return null;
