@@ -434,7 +434,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
             /*wrappedName.renderCentered(graphics, this.getX() + this.getWidth() / 2, this.getY() + getYPadding());
              *///?}
 
-            if (isHovered()) {
+            if (isMouseOver(mouseX, mouseY)) {
                 setHoverDescription(DescriptionWithName.of(group.name(), group.description()));
             }
         }
