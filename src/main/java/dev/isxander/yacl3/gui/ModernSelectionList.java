@@ -10,7 +10,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
 
 public abstract class ModernSelectionList<E extends ModernSelectionList.Entry<E>> extends ContainerObjectSelectionList<E> {
-    private Double prevScrollAmount = null;
+    private boolean doneRefresh;
 
     public ModernSelectionList(Minecraft minecraft, int width, int height, int y, int defaultEntryHeight) {
         super(minecraft, width, height, y, defaultEntryHeight);
@@ -18,9 +18,10 @@ public abstract class ModernSelectionList<E extends ModernSelectionList.Entry<E>
 
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        if (this.prevScrollAmount == null || this.prevScrollAmount != this.scrollAmount()) {
-            this.prevScrollAmount = this.scrollAmount();
-            System.out.println(this.scrollAmount());
+        // idk why but the scroll is broken initially and this fixes it.
+        if (!doneRefresh) {
+            this.repositionEntries();
+            this.doneRefresh = true;
         }
 
         super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
