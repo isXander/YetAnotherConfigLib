@@ -328,7 +328,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
                 resetButton.render(graphics, mouseX, mouseY, deltaTicks);
             }
 
-            if (isHovered()) {
+            if (isMouseOver(mouseX, mouseY)) {
                 setHoverDescription(DescriptionWithName.of(option.name(), option.description()));
             }
         }
