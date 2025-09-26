@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.systems.RenderSystem;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;

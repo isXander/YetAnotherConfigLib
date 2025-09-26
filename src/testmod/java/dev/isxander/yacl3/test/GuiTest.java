@@ -85,7 +85,7 @@ public class GuiTest {
                                                     .name(Component.literal("Boolean Toggle"))
                                                     .description(OptionDescription.createBuilder()
                                                             .text(Component.empty()
-                                                                    .append(Component.literal("a").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("a"))).withClickEvent(new ClickEvent.CopyToClipboard("a"))))
+                                                                    .append(Component.literal("a").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("a")))))
                                                                     .append(Component.literal("b").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("b")))))
                                                                     .append(Component.literal("c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("c")))))
                                                                     .append(Component.literal("e").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("e")))))

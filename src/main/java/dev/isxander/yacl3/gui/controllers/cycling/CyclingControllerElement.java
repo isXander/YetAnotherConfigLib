@@ -19,6 +19,7 @@ public class CyclingControllerElement extends ControllerWidget<ICyclingControlle
         super.drawValueText(graphics, mouseX, mouseY, delta);
 
         if (this.hovered) {
+            //? if >=1.21.9
             graphics.requestCursor(isAvailable() ? com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND : com.mojang.blaze3d.platform.cursor.CursorTypes.NOT_ALLOWED);
         }
     }
