@@ -2,6 +2,7 @@
 package dev.isxander.yacl3.gui;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -9,9 +10,25 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
 
 public abstract class ModernSelectionList<E extends ModernSelectionList.Entry<E>> extends ContainerObjectSelectionList<E> {
+    private Double prevScrollAmount = null;
 
     public ModernSelectionList(Minecraft minecraft, int width, int height, int y, int defaultEntryHeight) {
         super(minecraft, width, height, y, defaultEntryHeight);
+    }
+
+    @Override
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        if (this.prevScrollAmount == null || this.prevScrollAmount != this.scrollAmount()) {
+            this.prevScrollAmount = this.scrollAmount();
+            System.out.println(this.scrollAmount());
+        }
+
+        super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+    }
+
+    protected void repositionEntries() {
+        // triggers super.repositionEntries() without the need for a mixin accessor
+        this.setScrollAmount(this.scrollAmount());
     }
 
     protected boolean mouseClicked(double mouseX, double mouseY, int button) {

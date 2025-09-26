@@ -120,6 +120,16 @@ public class BooleanController implements Controller<Boolean> {
         }
 
         @Override
+        protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+            super.drawValueText(graphics, mouseX, mouseY, delta);
+
+            if (hovered) {
+                //? if >=1.21.9
+                graphics.requestCursor(isAvailable() ? com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND : com.mojang.blaze3d.platform.cursor.CursorTypes.NOT_ALLOWED);
+            }
+        }
+
+        @Override
         public boolean onMouseClicked(double mouseX, double mouseY, int button) {
             if (!isMouseOver(mouseX, mouseY) || !isAvailable())
                 return false;

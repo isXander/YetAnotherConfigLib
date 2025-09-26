@@ -43,7 +43,7 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         Component name = control.option().changed() ? modifiedOptionName : control.option().name();
         Component shortenedName = Component.literal(GuiUtils.shortenString(name.getString(), textRenderer, getDimension().width() - getControlWidth() - getXPadding() - 7, "...")).setStyle(name.getStyle());
 
-        drawButtonRect(graphics, getDimension().x(), getDimension().y(), getDimension().xLimit(), getDimension().yLimit(), hovered || focused, isAvailable());
+        drawButtonRect(graphics, getDimension().x(), getDimension().y(), getDimension().xLimit(), getDimension().yLimit(), (hovered && isAvailable()) || focused, isAvailable());
         graphics.drawString(textRenderer, shortenedName, getDimension().x() + getXPadding(), getTextY(), getValueColor(), true);
 
 

@@ -127,7 +127,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         //Hue slider thumb
         graphics.fill(hueThumbX - thumbWidth / 2, hueGradientDim.y() - outline, hueThumbX + thumbWidth / 2, hueGradientDim.yLimit() + outline, -1);
 
-        if(controller.allowAlpha()) {
+        if (controller.allowAlpha()) {
             //outline
             graphics.fill(alphaGradientDim.x() - outline, alphaGradientDim.y() - outline, alphaGradientDim.xLimit() + outline, alphaGradientDim.yLimit() + outline, Color.black.getRGB());
             //Transparent texture
@@ -146,18 +146,29 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
             graphics.fill(alphaThumbX - thumbWidth / 2, alphaGradientDim.y() - outline, alphaThumbX + thumbWidth / 2, alphaGradientDim.yLimit() + outline, -1);
         }
 
-        //graphics.blitRepeating(COLOR_PICKER_ATLAS, colorPickerDim.x(), colorPickerDim.y(), colorPickerDim.width(), colorPickerDim.height(), 237, 0, 4, 4);
-
         GuiUtils.popPose(graphics);
+
+        //? if >=1.21.9 {
+        if (isHoveringHueSlider(mouseX, mouseY)) {
+            graphics.requestCursor(com.mojang.blaze3d.platform.cursor.CursorTypes.RESIZE_EW);
+        } else if (isHoveringAlphaSlider(mouseX, mouseY)) {
+            graphics.requestCursor(com.mojang.blaze3d.platform.cursor.CursorTypes.RESIZE_EW);
+        } else if (isHoveringSatLightGradient(mouseX, mouseY)) {
+            graphics.requestCursor(com.mojang.blaze3d.platform.cursor.CursorTypes.CROSSHAIR);
+        }
+        //?}
+    }
+
+    private boolean isHoveringHueSlider(double mouseX, double mouseY) {
+        return mouseY >= hueGradientDim.y() && mouseY <= hueGradientDim.yLimit()
+                && mouseX >= hueGradientDim.x() && mouseX <= hueGradientDim.xLimit();
     }
 
     public boolean clickedHueSlider(double mouseX, double mouseY) {
         if (satLightGradientDown || alphaSliderDown) return false;
 
-        if (mouseY >= hueGradientDim.y() && mouseY <= hueGradientDim.yLimit()) {
-            if (mouseX >= hueGradientDim.x() && mouseX <= hueGradientDim.xLimit()) {
-                hueSliderDown = true;
-            }
+        if (this.isHoveringHueSlider(mouseX, mouseY)) {
+            hueSliderDown = true;
         }
 
         if (hueSliderDown) {
@@ -167,29 +178,35 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         return hueSliderDown;
     }
 
+    private boolean isHoveringSatLightGradient(double mouseX, double mouseY) {
+        return mouseY >= saturationLightDim.y() && mouseY <= saturationLightDim.yLimit()
+                && mouseX >= saturationLightDim.x() && mouseX <= saturationLightDim.xLimit();
+    }
+
     public boolean clickedSatLightGradient(double mouseX, double mouseY) {
         if (hueSliderDown || alphaSliderDown) return false;
 
-        if (mouseX >= saturationLightDim.x() && mouseX <= saturationLightDim.xLimit()) {
-            if (mouseY >= saturationLightDim.y() && mouseY <= saturationLightDim.yLimit()) {
-                satLightGradientDown = true;
-            }
+        if (isHoveringSatLightGradient(mouseX, mouseY)) {
+            satLightGradientDown = true;
         }
 
-        if(satLightGradientDown) {
+        if (satLightGradientDown) {
             satLightThumbX = (int) Mth.clamp(mouseX, saturationLightDim.x(), saturationLightDim.xLimit());
         }
 
         return satLightGradientDown;
     }
 
+    private boolean isHoveringAlphaSlider(double mouseX, double mouseY) {
+        return mouseY >= alphaGradientDim.y() && mouseY <= alphaGradientDim.yLimit()
+                && mouseX >= alphaGradientDim.x() && mouseX <= alphaGradientDim.xLimit();
+    }
+
     public boolean clickedAlphaSlider(double mouseX, double mouseY) {
         if (satLightGradientDown || hueSliderDown) return false;
 
-        if (mouseX >= alphaGradientDim.x() && mouseX <= alphaGradientDim.xLimit()) {
-            if (mouseY >= alphaGradientDim.y() && mouseY <= alphaGradientDim.yLimit()) {
-                alphaSliderDown = true;
-            }
+        if (isHoveringAlphaSlider(mouseX, mouseY)) {
+            alphaSliderDown = true;
         }
 
         if (alphaSliderDown) {

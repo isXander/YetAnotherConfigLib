@@ -54,7 +54,7 @@ public class TickBoxController implements Controller<Boolean> {
         }
 
         @Override
-        protected void drawHoveredControl(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
             int outlineSize = 10;
             int outlineX1 = getDimension().xLimit() - getXPadding() - outlineSize;
             int outlineY1 = getDimension().centerY() - outlineSize / 2;
@@ -70,12 +70,11 @@ public class TickBoxController implements Controller<Boolean> {
                 graphics.fill(outlineX1 + 3, outlineY1 + 3, outlineX2 - 1, outlineY2 - 1, shadowColor);
                 graphics.fill(outlineX1 + 2, outlineY1 + 2, outlineX2 - 2, outlineY2 - 2, color);
             }
-        }
 
-        @Override
-        protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-            if (!isHovered())
-                drawHoveredControl(graphics, mouseX, mouseY, delta);
+            if (hovered) {
+                //? if >=1.21.9
+                graphics.requestCursor(isAvailable() ? com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND : com.mojang.blaze3d.platform.cursor.CursorTypes.NOT_ALLOWED);
+            }
         }
 
         @Override

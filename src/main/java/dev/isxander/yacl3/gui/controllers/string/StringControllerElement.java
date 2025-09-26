@@ -93,6 +93,18 @@ public class StringControllerElement extends ControllerWidget<IStringController<
             }
         }
         graphics.disableScissor();
+
+        //? if >=1.21.9 {
+        if (this.isHoveredInputField(mouseX, mouseY)) {
+            graphics.requestCursor(isAvailable() ? com.mojang.blaze3d.platform.cursor.CursorTypes.IBEAM : com.mojang.blaze3d.platform.cursor.CursorTypes.NOT_ALLOWED);
+        } else if (this.hovered) {
+            graphics.requestCursor(isAvailable() ? com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND : com.mojang.blaze3d.platform.cursor.CursorTypes.NOT_ALLOWED);
+        }
+        //?}
+    }
+
+    private boolean isHoveredInputField(double mouseX, double mouseY) {
+        return inputFieldBounds.isPointInside((int) mouseX, (int) mouseY);
     }
 
     @Override
@@ -100,7 +112,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         if (isAvailable() && getDimension().isPointInside((int) mouseX, (int) mouseY)) {
             inputFieldFocused = true;
 
-            if (!inputFieldBounds.isPointInside((int) mouseX, (int) mouseY)) {
+            if (!isHoveredInputField(mouseX, mouseY)) {
                 caretPos = getDefaultCaretPos();
             } else {
                 // gets the appropriate caret position for where you click

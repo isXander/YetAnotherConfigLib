@@ -36,6 +36,9 @@ public abstract class LegacySelectionList<E extends LegacySelectionList.Entry<E>
         /^setRenderHeader(false, 0);^/
     }
 
+    // for parity with modern, no need in legacy as everything is positioned on render
+    protected void repositionEntries() {}
+
     /^
     The default implementation of scrollbarX does not respect left/right positioning of the list.
     ^/

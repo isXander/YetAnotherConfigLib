@@ -5,12 +5,22 @@ import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.ControllerWidget;
 import dev.isxander.yacl3.gui.utils.KeyUtils;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 
 public class CyclingControllerElement extends ControllerWidget<ICyclingController<?>> {
 
     public CyclingControllerElement(ICyclingController<?> control, YACLScreen screen, Dimension<Integer> dim) {
         super(control, screen, dim);
+    }
+
+    @Override
+    protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        super.drawValueText(graphics, mouseX, mouseY, delta);
+
+        if (this.hovered) {
+            graphics.requestCursor(isAvailable() ? com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND : com.mojang.blaze3d.platform.cursor.CursorTypes.NOT_ALLOWED);
+        }
     }
 
     public void cycleValue(int increment) {

@@ -6,6 +6,7 @@ import dev.isxander.yacl3.api.Controller;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.AbstractWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
 import java.util.function.BiConsumer;
@@ -77,6 +78,16 @@ public class ActionController implements Controller<BiConsumer<YACLScreen, Butto
         public void executeAction() {
             playDownSound();
             control.option().action().accept(screen, control.option());
+        }
+
+        @Override
+        protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+            super.drawValueText(graphics, mouseX, mouseY, delta);
+
+            if (hovered) {
+                //? if >=1.21.9
+                graphics.requestCursor(isAvailable() ? com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND : com.mojang.blaze3d.platform.cursor.CursorTypes.NOT_ALLOWED);
+            }
         }
 
         @Override

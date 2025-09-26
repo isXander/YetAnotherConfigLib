@@ -132,12 +132,12 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
 
     //? if >=1.21.9 {
     @Override
-    public final boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean doubleClick) {
+    public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean doubleClick) {
         return this.onMouseClicked(mouseButtonEvent.x(), mouseButtonEvent.y(), mouseButtonEvent.button());
     }
     //?} else {
     /*@Override
-    public final boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         return this.onMouseClicked(mouseX, mouseY, button);
     }
     *///?}
@@ -147,12 +147,12 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
 
     //? if >=1.21.9 {
     @Override
-    public final boolean mouseReleased(MouseButtonEvent mouseButtonEvent) {
+    public boolean mouseReleased(MouseButtonEvent mouseButtonEvent) {
         return this.onMouseReleased(mouseButtonEvent.x(), mouseButtonEvent.y(), mouseButtonEvent.button());
     }
     //?} else {
     /*@Override
-    public final boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
         return this.onMouseReleased(mouseX, mouseY, button);
     }
     *///?}
@@ -162,12 +162,12 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
 
     //? if >=1.21.9 {
     @Override
-    public final boolean mouseDragged(MouseButtonEvent mouseButtonEvent, double dx, double dy) {
+    public boolean mouseDragged(MouseButtonEvent mouseButtonEvent, double dx, double dy) {
         return this.onMouseDragged(mouseButtonEvent.x(), mouseButtonEvent.y(), mouseButtonEvent.button(), dx, dy);
     }
     //?} else {
     /*@Override
-    public final boolean mouseDragged(double mouseX, double mouseY, int button, double dx, double dy) {
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dx, double dy) {
         return this.onMouseDragged(mouseX, mouseY, button, dx, dy);
     }
     *///?}
@@ -177,12 +177,12 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
 
     //? if >=1.21.9 {
     @Override
-    public final boolean keyPressed(KeyEvent keyEvent) {
+    public boolean keyPressed(KeyEvent keyEvent) {
         return this.onKeyPressed(keyEvent.key(), keyEvent.scancode(), keyEvent.modifiers());
     }
     //?} else {
     /*@Override
-    public final boolean keyPressed(int keycode, int scancode, int modifiers) {
+    public boolean keyPressed(int keycode, int scancode, int modifiers) {
         return this.onKeyPressed(keycode, scancode, modifiers);
     }
     *///?}
@@ -192,12 +192,12 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
 
     //? if >=1.21.9 {
     @Override
-    public final boolean keyReleased(KeyEvent keyEvent) {
+    public boolean keyReleased(KeyEvent keyEvent) {
         return this.onKeyReleased(keyEvent.key(), keyEvent.scancode(), keyEvent.modifiers());
     }
     //?} else {
     /*@Override
-    public final boolean keyReleased(int keycode, int scancode, int modifiers) {
+    public boolean keyReleased(int keycode, int scancode, int modifiers) {
         return this.onKeyReleased(keycode, scancode, modifiers);
     }
     *///?}
@@ -207,12 +207,12 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
 
     //? if >=1.21.9 {
     @Override
-    public final boolean charTyped(CharacterEvent characterEvent) {
+    public boolean charTyped(CharacterEvent characterEvent) {
         return this.onCharTyped((char) characterEvent.codepoint(), characterEvent.codepointAsString(), characterEvent.modifiers());
     }
     //?} else {
     /*@Override
-    public final boolean charTyped(char codePoint, int modifiers) {
+    public boolean charTyped(char codePoint, int modifiers) {
         return this.onCharTyped(codePoint, Character.toString(codePoint), modifiers);
     }
     *///?}

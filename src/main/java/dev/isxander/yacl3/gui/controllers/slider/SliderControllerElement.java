@@ -45,6 +45,12 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
         graphics.fill(getThumbX() - getThumbWidth() / 2 + 1, sliderBounds.y() + 1, getThumbX() + getThumbWidth() / 2 + 1, sliderBounds.yLimit() + 1, 0xFF404040);
         // thumb
         graphics.fill(getThumbX() - getThumbWidth() / 2, sliderBounds.y(), getThumbX() + getThumbWidth() / 2, sliderBounds.yLimit(), -1);
+
+        //? if >=1.21.9 {
+        if (isHoveredSliderBounds(mouseX, mouseY)) {
+            graphics.requestCursor(isAvailable() ? com.mojang.blaze3d.platform.cursor.CursorTypes.RESIZE_EW : com.mojang.blaze3d.platform.cursor.CursorTypes.NOT_ALLOWED);
+        }
+        //?}
     }
 
     @Override
@@ -58,13 +64,17 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
 
     @Override
     public boolean onMouseClicked(double mouseX, double mouseY, int button) {
-        if (!isAvailable() || button != 0 || !sliderBounds.isPointInside((int) mouseX, (int) mouseY))
+        if (!isAvailable() || button != 0 || !isHoveredSliderBounds(mouseX, mouseY))
             return false;
 
         mouseDown = true;
 
         setValueFromMouse(mouseX);
         return true;
+    }
+
+    private boolean isHoveredSliderBounds(double mouseX, double mouseY) {
+        return sliderBounds.isPointInside((int) mouseX, (int) mouseY);
     }
 
     @Override

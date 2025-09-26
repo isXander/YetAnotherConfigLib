@@ -28,7 +28,6 @@ import java.util.function.Consumer;
 public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> {
     private final YACLScreen yaclScreen;
     private final ConfigCategory category;
-    private ImmutableList<Entry> viewableChildren;
     private String searchQuery = "";
     private final Consumer<DescriptionWithName> hoverEvent;
     private DescriptionWithName lastHoveredOption;
@@ -84,14 +83,20 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
             }
         }
 
-        recacheViewableChildren();
         setScrollAmount(0);
-        //resetSmoothScrolling();
     }
+
+    //? if >=1.21.9 {
+    @Override
+    protected int addEntry(Entry entry) {
+        // instead of using super.defaultEntryHeight, use the height the entry wants to be - our entries set their height in the constructor
+        return this.addEntry(entry, entry.getHeight());
+    }
+    //?}
 
     private void refreshListEntries(ListOption<?> listOption, ConfigCategory category) {
         // find group separator for group
-        ListGroupSeparatorEntry groupSeparator = super.children().stream().filter(e -> e instanceof ListGroupSeparatorEntry gs && gs.group == listOption).map(ListGroupSeparatorEntry.class::cast).findAny().orElse(null);
+        ListGroupSeparatorEntry groupSeparator = this.children().stream().filter(e -> e instanceof ListGroupSeparatorEntry gs && gs.group == listOption).map(ListGroupSeparatorEntry.class::cast).findAny().orElse(null);
 
         if (groupSeparator == null) {
             YACLConstants.LOGGER.warn("Can't find group seperator to refresh list option entries for list option " + listOption.name());
@@ -99,7 +104,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         for (Entry entry : groupSeparator.childEntries)
-            super.removeEntry(entry);
+            this.removeEntry(entry);
         groupSeparator.childEntries.clear();
 
         // if no entries, below loop won't run where addEntryBelow() recaches viewable children
@@ -143,8 +148,11 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
 
     public void updateSearchQuery(String query) {
         this.searchQuery = query;
+        for (Entry entry : this.children()) {
+            entry.updateSearchQuery(query);
+        }
         expandAllGroups();
-        recacheViewableChildren();
+        repositionEntries();
     }
 
     @Override
@@ -197,31 +205,18 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         return super.charTyped(chr, modifiers);
     }
 
-    public void recacheViewableChildren() {
-        this.viewableChildren = ImmutableList.copyOf(super.children().stream().filter(Entry::isViewable).toList());
-
-        // update y positions before they need to be rendered are rendered
-        int i = 0;
-        for (Entry entry : viewableChildren) {
-            if (entry instanceof OptionEntry optionEntry)
-                optionEntry.widget.setDimension(optionEntry.widget.getDimension().withY(getRowTop(i)));
-            i++;
-        }
-    }
-
-    @Override @NotNull
-    public List<Entry> children() {
-        return viewableChildren;
-    }
-
     private List<Entry> superModifiableChildren() {
+        //? if >=1.21.9 {
         // noinspection unchecked
         return (List<Entry>) ((AbstractSelectionListAccessor) this).getChildren();
+        //?} else {
+        /*return this.children();
+        *///?}
     }
 
     public void addEntryAtIndex(int index, Entry entry) {
         superModifiableChildren().add(index, entry);
-        recacheViewableChildren();
+        this.repositionEntries();
     }
 
     public void addEntryBelow(Entry below, Entry entry) {
@@ -238,21 +233,6 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         addEntryBelow(below, entry);
         setScrollAmount(this.contentHeight() - d);
     }
-
-    //? if >=1.21.9 {
-    @Override
-    protected void removeEntry(Entry entry) {
-        super.removeEntry(entry);
-        recacheViewableChildren();
-    }
-    //?} else {
-    /*@Override
-    public boolean removeEntry(Entry entry) {
-        boolean ret = super.removeEntry(entry);
-        recacheViewableChildren();
-        return ret;
-    }
-    *///?}
 
     private void setHoverDescription(DescriptionWithName description) {
         if (description != lastHoveredOption) {
@@ -273,12 +253,26 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
     }
 
     public abstract class Entry extends YACLSelectionList.Entry<Entry> {
+        protected boolean searchQueryMatches = true;
+
         public Entry() {
             super(OptionListWidget.this);
         }
 
+        public boolean updateSearchQuery(String searchQuery) {
+            return this.searchQueryMatches;
+        }
+
         public boolean isViewable() {
-            return true;
+            return this.searchQueryMatches;
+        }
+
+        @Override
+        public int getHeight() {
+            if (!isViewable()) {
+                return 0;
+            }
+            return super.getHeight();
         }
     }
 
@@ -314,11 +308,16 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
             } else {
                 this.resetButton = null;
             }
+            this.updateHeight();
         }
 
         @Override
         public void renderContent(GuiGraphics graphics, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
-            this.setHeight(Math.max(widget.getDimension().height(), resetButton != null ? resetButton.getHeight() : 0) + 2);
+            if (!this.isViewable()) {
+                return;
+            }
+
+            this.updateHeight();
 
             widget.setDimension(widget.getDimension().withY(this.getY()));
 
@@ -350,11 +349,20 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         @Override
-        public boolean isViewable() {
-            return (groupSeparatorEntry == null || groupSeparatorEntry.isExpanded())
-                    && (searchQuery.isEmpty()
+        public boolean updateSearchQuery(String searchQuery) {
+            return this.searchQueryMatches = searchQuery.isEmpty()
                     || groupName.contains(searchQuery)
-                    || widget.matchesSearch(searchQuery));
+                    || widget.matchesSearch(searchQuery);
+        }
+
+        @Override
+        public boolean isViewable() {
+            return super.isViewable()
+                    && (groupSeparatorEntry == null || groupSeparatorEntry.isExpanded());
+        }
+
+        private void updateHeight() {
+            this.setHeight(Math.max(widget.getDimension().height(), resetButton != null ? resetButton.getHeight() : 0) + 2);
         }
 
         @Override
@@ -403,11 +411,16 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
             this.groupExpanded = !group.collapsed();
             this.expandMinimizeButton = new LowProfileButtonWidget(0, 0, 20, 20, Component.empty(), btn -> onExpandButtonPress());
             updateExpandMinimizeText();
+            updateHeight();
         }
 
         @Override
         public void renderContent(GuiGraphics graphics, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
-            this.setHeight(Math.max(wrappedName.getLineCount(), 1) * font.lineHeight + getYPadding() * 2);
+            if (!this.isViewable()) {
+                return;
+            }
+
+            this.updateHeight();
 
             int buttonY = this.getY() + this.getHeight() / 2 - expandMinimizeButton.getHeight() / 2 + 1;
 
@@ -436,7 +449,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
 
             this.groupExpanded = expanded;
             updateExpandMinimizeText();
-            recacheViewableChildren();
+            repositionEntries();
         }
 
         protected void onExpandButtonPress() {
@@ -453,8 +466,8 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         @Override
-        public boolean isViewable() {
-            return searchQuery.isEmpty() || childEntries.stream().anyMatch(Entry::isViewable);
+        public boolean updateSearchQuery(String searchQuery) {
+            return this.searchQueryMatches = searchQuery.isEmpty() || childEntries.stream().anyMatch(e -> e.updateSearchQuery(searchQuery));
         }
 
         private int getYPadding() {
@@ -466,6 +479,10 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
             super.setFocused(focused);
             if (focused)
                 setHoverDescription(DescriptionWithName.of(group.name(), group.description()));
+        }
+
+        private void updateHeight() {
+            this.setHeight(Math.max(wrappedName.getLineCount(), 1) * font.lineHeight + getYPadding() * 2);
         }
 
         @Override
@@ -517,6 +534,10 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
 
         @Override
         public void renderContent(GuiGraphics graphics, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+            if (!this.isViewable()) {
+                return;
+            }
+
             updateExpandMinimizeText(); // update every render because option could become available/unavailable at any time
 
             super.renderContent(graphics, mouseX, mouseY, hovered, deltaTicks);
@@ -573,8 +594,13 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         @Override
+        public boolean updateSearchQuery(String searchQuery) {
+            return this.searchQueryMatches = searchQuery.isEmpty() || groupName.contains(searchQuery);
+        }
+
+        @Override
         public boolean isViewable() {
-            return parent.isExpanded() && (searchQuery.isEmpty() || groupName.contains(searchQuery));
+            return parent.isExpanded() && super.isViewable();
         }
 
         @Override

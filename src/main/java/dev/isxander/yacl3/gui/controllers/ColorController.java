@@ -133,8 +133,14 @@ public class ColorController implements IStringController<Color> {
                 GuiUtils.blitSprite(graphics, ColorPickerWidget.TRANSPARENT_SPRITE, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.width(), colorPreviewDim.height());
             }
             graphics.fill(colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), previewColor);
-            Color outlineColor = getPreviewOutlineColor(hoveredOverColorPreview || isMouseOverColorPreview(mouseX, mouseY));
+            boolean isMouseOverColorPreview = isMouseOverColorPreview(mouseX, mouseY);
+            Color outlineColor = getPreviewOutlineColor(hoveredOverColorPreview || isMouseOverColorPreview);
             drawOutline(graphics, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), 1, outlineColor.getRGB());
+
+            if (isMouseOverColorPreview) {
+                //? if >=1.21.9
+                graphics.requestCursor(isAvailable() ? com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND : com.mojang.blaze3d.platform.cursor.CursorTypes.NOT_ALLOWED);
+            }
         }
 
         @Override

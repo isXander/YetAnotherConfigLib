@@ -125,4 +125,76 @@ public class ListEntryWidget extends AbstractWidget implements ContainerEventHan
     public void setFocused(@Nullable GuiEventListener focused) {
         this.focused = focused;
     }
+
+    //? if >=1.21.9 {
+    @Override
+    public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent mouseButtonEvent, boolean doubleClick) {
+        return ContainerEventHandler.super.mouseClicked(mouseButtonEvent, doubleClick);
+    }
+    //?} else {
+    /*@Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return ContainerEventHandler.super.mouseClicked(mouseX, mouseY, button);
+    }
+    *///?}
+
+    //? if >=1.21.9 {
+    @Override
+    public boolean mouseReleased(net.minecraft.client.input.MouseButtonEvent mouseButtonEvent) {
+        return ContainerEventHandler.super.mouseReleased(mouseButtonEvent);
+    }
+    //?} else {
+    /*@Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        return ContainerEventHandler.super.mouseReleased(mouseX, mouseY, button);
+    }
+    *///?}
+
+    //? if >=1.21.9 {
+    @Override
+    public boolean mouseDragged(net.minecraft.client.input.MouseButtonEvent mouseButtonEvent, double dx, double dy) {
+        return ContainerEventHandler.super.mouseDragged(mouseButtonEvent, dx, dy);
+    }
+    //?} else {
+    /*@Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dx, double dy) {
+        return ContainerEventHandler.super.mouseDragged(mouseX, mouseY, button, dx, dy);
+    }
+    *///?}
+
+    //? if >=1.21.9 {
+    @Override
+    public boolean keyPressed(net.minecraft.client.input.KeyEvent keyEvent) {
+        return ContainerEventHandler.super.keyPressed(keyEvent);
+    }
+    //?} else {
+    /*@Override
+    public boolean keyPressed(int keycode, int scancode, int modifiers) {
+        return ContainerEventHandler.super.keyPressed(keycode, scancode, modifiers);
+    }
+    *///?}
+
+    //? if >=1.21.9 {
+    @Override
+    public boolean keyReleased(net.minecraft.client.input.KeyEvent keyEvent) {
+        return ContainerEventHandler.super.keyReleased(keyEvent);
+    }
+    //?} else {
+    /*@Override
+    public boolean keyReleased(int keycode, int scancode, int modifiers) {
+        return ContainerEventHandler.super.keyReleased(keycode, scancode, modifiers);
+    }
+    *///?}
+
+    //? if >=1.21.9 {
+    @Override
+    public boolean charTyped(net.minecraft.client.input.CharacterEvent characterEvent) {
+        return ContainerEventHandler.super.charTyped(characterEvent);
+    }
+    //?} else {
+    /*@Override
+    public boolean charTyped(char codePoint, int modifiers) {
+        return ContainerEventHandler.super.charTyped(codePoint, modifiers);
+    }
+    *///?}
 }

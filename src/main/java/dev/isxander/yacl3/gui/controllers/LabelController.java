@@ -121,6 +121,12 @@ public class LabelController implements Controller<Component> {
                     }
                     *///?}
                 }
+
+                //? if >=1.21.9 {
+                if (style != null && style.getClickEvent() != null) {
+                    graphics.requestCursor(com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND);
+                }
+                //?}
             }
             GuiUtils.popPose(graphics);
         }
@@ -158,7 +164,7 @@ public class LabelController implements Controller<Component> {
             if (!getDimension().isPointInside(mouseX, mouseY))
                 return null;
 
-            int x = mouseX - getDimension().x();
+            int x = mouseX - getDimension().x() - getXPadding();
             int y = mouseY - getDimension().y() - getYPadding();
             int line = y / textRenderer.lineHeight;
 
