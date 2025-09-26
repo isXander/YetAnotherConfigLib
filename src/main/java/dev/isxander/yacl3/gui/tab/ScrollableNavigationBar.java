@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui.tab;
 
 import com.google.common.collect.ImmutableList;
+import dev.isxander.yacl3.gui.render.ColorGradientRenderState;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.mixin.TabNavigationBarAccessor;
 import net.minecraft.client.Minecraft;
@@ -13,6 +14,7 @@ import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.layouts.Layout;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,6 +82,36 @@ public class ScrollableNavigationBar extends TabNavigationBar {
         GuiUtils.translateZ(graphics, 10);
 
         super.render(graphics, mouseX, mouseY, delta);
+
+        LinearLayout layout = accessor.yacl$getLayout();
+        // draw right fade
+        if (this.scrollOffset < this.maxScrollOffset - NAVBAR_MARGIN) {
+            int right = accessor.yacl$getWidth();
+            ColorGradientRenderState.createHorizontal(
+                    graphics,
+                    right - 40,
+                    layout.getY(),
+                    right,
+                    layout.getY() + layout.getHeight(),
+                    0x00000000, 0xFF000000
+            ).submit(graphics);
+
+            graphics.drawString(font, "→", right - 10, layout.getY() + (layout.getHeight() - font.lineHeight) / 2, 0xFFFFFFFF, false);
+        }
+
+        // draw left fade
+        if (this.scrollOffset > NAVBAR_MARGIN) {
+            ColorGradientRenderState.createHorizontal(
+                    graphics,
+                    0,
+                    layout.getY(),
+                    40,
+                    layout.getY() + layout.getHeight(),
+                    0xFF000000, 0x00000000
+            ).submit(graphics);
+
+            graphics.drawString(font, "←", 5, layout.getY() + (layout.getHeight() - font.lineHeight) / 2, 0xFFFFFFFF, false);
+        }
 
         GuiUtils.popPose(graphics);
     }
