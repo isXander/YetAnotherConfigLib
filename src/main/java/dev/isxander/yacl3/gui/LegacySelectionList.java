@@ -29,7 +29,7 @@ public abstract class LegacySelectionList<E extends LegacySelectionList.Entry<E>
         super(client, width, height, y, 0);
         ((AbstractSelectionListAccessor) this).setRenderHeader(false);
         //?} else {
-        /^super(client, width, x, y, height);
+        /^super(client, width, height, y, 20);
          ^///?}
 
         //? if <1.21.4
@@ -139,6 +139,19 @@ public abstract class LegacySelectionList<E extends LegacySelectionList.Entry<E>
                 this.renderItem(graphics, mouseX, mouseY, delta, i, left, top, right, entryHeight);
             }
         }
+    }
+
+    //? if <1.21.4 {
+    /^public double scrollAmount() {
+        return this.getScrollAmount();
+    }
+    ^///?}
+
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        this.setScrollAmount(this.scrollAmount() - scrollY * 20);
+        return true;
     }
 
     public abstract static class Entry<E extends LegacySelectionList.Entry<E>> extends ContainerObjectSelectionList.Entry<E> implements LayoutElement {
@@ -303,6 +316,7 @@ public abstract class LegacySelectionList<E extends LegacySelectionList.Entry<E>
 
         @Override
         public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
+            System.out.println("Legacy list scrolled: " + horizontal + ", " + vertical);
             return this.list.mouseScrolled(mouseX, mouseY, horizontal, vertical);
         }
 
