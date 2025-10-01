@@ -187,12 +187,7 @@ dependencies {
         modDependency("fabricLangKotlin", { "net.fabricmc:fabric-language-kotlin:${it}" })
     }
     if (isNeoforge) {
-        modstitchModRuntimeOnly("thedarkcolour:kotlinforforge-neoforge:${findProperty("deps.kotlinForForge")}")
-    }
-    if (isForge) {
-        modstitchModRuntimeOnly("thedarkcolour:kotlinforforge:${findProperty("deps.kotlinForForge")}")
-
-        compileOnly("org.jetbrains:annotations:20.1.0")
+        //modstitchModRuntimeOnly("thedarkcolour:kotlinforforge-neoforge:${findProperty("deps.kotlinForForge")}")
     }
 
     listOf(

@@ -37,7 +37,12 @@ public final class YACLPlatform {
             case SERVER -> Env.SERVER;
         };
         /*?} elif forgelike {*/
-        /*return switch (FMLEnvironment.dist) {
+        /*//? if >=1.21.9 {
+        var dist = FMLEnvironment.getDist();
+        //?} else {
+        /^var dist = FMLEnvironment.dist;
+        ^///?}
+        return switch (dist) {
             case CLIENT -> Env.CLIENT;
             case DEDICATED_SERVER -> Env.SERVER;
         };
@@ -53,10 +58,14 @@ public final class YACLPlatform {
     }
 
     public static boolean isDevelopmentEnv() {
-        /*? if fabric {*/
+        //? if fabric {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
-        /*?} elif forgelike {*/
-        /*return !FMLEnvironment.production;
-        *//*?}*/
+        //?} elif forgelike {
+        /*//? if >=1.21.9 {
+        return !FMLEnvironment.isProduction();
+        //?} else {
+        /^return !FMLEnvironment.production;
+        ^///?}
+        *///?}
     }
 }
