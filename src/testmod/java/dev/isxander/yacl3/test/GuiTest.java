@@ -466,6 +466,7 @@ public class GuiTest {
                                         .build())
                                 .build())
                         .category(sharedStateCategory())
+				        .category(instantStateManager(defaults, config))
                         .category(ConfigCategory.createBuilder()
                                 .name(Component.literal("Category Test"))
                                 .option(LabelOption.create(Component.literal("This is a test category!")))
@@ -570,6 +571,19 @@ public class GuiTest {
 
         return builder.build();
     }
+
+	private static ConfigCategory instantStateManager(ConfigTest defaults, ConfigTest config) {
+		ConfigCategory.Builder builder = ConfigCategory.createBuilder()
+				.name(Component.literal("InstantStateManager Test"));
+
+		builder.option(Option.<Boolean>createBuilder()
+				.name(Component.literal("Instant Boolean"))
+				.stateManager(StateManager.createInstant(Binding.generic(defaults.instantBoolean, () -> config.instantBoolean, (bl) -> config.instantBoolean = bl)))
+				.controller(BooleanControllerBuilder::create)
+				.build());
+
+		return builder.build();
+	}
 
     private static ResourceLocation imageSample(String name) {
         return YACLPlatform.rl("yacl_test", "textures/images/" + name);
