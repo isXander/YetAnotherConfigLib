@@ -21,6 +21,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
@@ -214,7 +215,6 @@ public class YACLScreen extends Screen {
     //?} else {
     /*@Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        preferredTab = null;
         if (super.mouseClicked(mouseX, mouseY, button)) {
             this.setDragging(true);
             return true;
@@ -324,7 +324,7 @@ public class YACLScreen extends Screen {
     public void updateGlobalSearch(String search) {
         Tab nextTabWithSearch = null;
         if (preferredTab != null) {
-            preferredTab.optionList.getList().updateSearchQuery(search);
+            preferredTab.optionList.getType().updateSearchQuery(search);
             if (preferredTab.hasSearch()) nextTabWithSearch = preferredTab;
         }
         Tab currentTab = tabNavigationBar.getTabManager().getCurrentTab();
@@ -334,7 +334,7 @@ public class YACLScreen extends Screen {
             Tab tab = tabNavigationBar.getTabs().get(i);
             if (tab == preferredTab) continue;
             if (tab instanceof CategoryTab categoryTab) {
-                categoryTab.optionList.getList().updateSearchQuery(search);
+                categoryTab.optionList.getType().updateSearchQuery(search);
                 categoryTab.searchField.setValueDoNotUpdate(search);
                 if (cursorPos != -1) categoryTab.searchField.setCursorPosition(cursorPos);
                 if (nextTabWithSearch == null && categoryTab.hasSearch()) {
@@ -350,6 +350,12 @@ public class YACLScreen extends Screen {
             }
         }
         tabNavigationBar.updateTabNames();
+    }
+
+    @Override
+    public void setFocused(@Nullable GuiEventListener focused) {
+        super.setFocused(focused);
+        if (focused != null && !(focused instanceof SearchFieldWidget)) preferredTab = null;
     }
 
     public static class CategoryTab implements TabExt {
@@ -433,7 +439,7 @@ public class YACLScreen extends Screen {
         }
 
         public boolean hasSearch() {
-            return !optionList.getList().children().isEmpty();
+            return optionList.getType().children().stream().anyMatch(o -> o.searchQueryMatches);
         }
 
         @Override
