@@ -62,7 +62,9 @@ public class YACLScreen extends Screen {
         this.parent = parent;
 
         OptionUtils.forEachOptions(config, option -> {
-            option.addListener((opt, val) -> onOptionChanged(opt));
+            option.addEventListener((opt, event) -> {
+                if (event != OptionEventListener.Event.INITIAL) onOptionChanged(opt);
+            });
         });
     }
 

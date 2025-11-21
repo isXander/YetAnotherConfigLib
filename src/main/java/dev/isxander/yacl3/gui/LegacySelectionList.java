@@ -417,6 +417,18 @@ public abstract class LegacySelectionList<E extends LegacySelectionList.Entry<E>
         public AbstractWidget getWidget() {
             return this;
         }
+
+        @Override
+        public boolean isMouseOver(double mouseX, double mouseY) {
+            // AbstractWidget impl uses the fields width and height, we override getWidth and getHeight
+            // this allows Screen#getChildAt to work, which means scrolling will work.
+            return this.isActive()
+                   && this.visible
+                   && mouseX >= this.getX()
+                   && mouseY >= this.getY()
+                   && mouseX < this.getX() + this.getWidth()
+                   && mouseY < this.getY() + this.getHeight()   ;
+        }
     }
 }
 *///?}
