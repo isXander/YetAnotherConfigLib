@@ -82,6 +82,9 @@ public class ConfigTest {
     @SerialEntry
     public int scrollingSlider = 0;
 
+	@SerialEntry
+	public boolean instantBoolean;
+
     public enum Alphabet {
         A, B, C
     }
