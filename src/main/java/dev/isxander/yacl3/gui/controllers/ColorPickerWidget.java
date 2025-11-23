@@ -198,6 +198,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
     }
 
     private boolean isHoveringAlphaSlider(double mouseX, double mouseY) {
+        if (alphaGradientDim == null) return false;
         return mouseY >= alphaGradientDim.y() && mouseY <= alphaGradientDim.yLimit()
                 && mouseX >= alphaGradientDim.x() && mouseX <= alphaGradientDim.xLimit();
     }
