@@ -17,19 +17,19 @@ import dev.isxander.yacl3.gui.controllers.string.number.LongFieldController;
 import dev.isxander.yacl3.impl.SelfContainedBinding;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
-import net.minecraft.client.GraphicsStatus;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.Color;
+import java.net.URI;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -89,6 +89,7 @@ public class GuiTest {
                                                                     .append(Component.literal("b").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("b")))))
                                                                     .append(Component.literal("c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("c")))))
                                                                     .append(Component.literal("e").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("e")))))
+                                                                    .append(Component.literal("click me").withStyle(style -> style.withClickEvent(new ClickEvent.OpenUrl(URI.create("https://isxander.dev")))))
                                                             )
                                                             .webpImage(imageSample("sample1.webp"))
                                                             .build())
@@ -317,11 +318,6 @@ public class GuiTest {
                                                 .description(OptionDescription.of(Component.literal("You can even bind minecraft options!")))
                                                 .binding(Binding.minecraft(Minecraft.getInstance().options.autoJump()))
                                                 .customController(TickBoxController::new)
-                                                .build())
-                                        .option(Option.<GraphicsStatus>createBuilder()
-                                                .name(Component.literal("Minecraft Graphics Mode"))
-                                                .binding(Binding.minecraft(Minecraft.getInstance().options.graphicsMode()))
-                                                .customController(opt -> new EnumController<>(opt, GraphicsStatus.class))
                                                 .build())
                                         .build())
                                 .build())
@@ -585,7 +581,7 @@ public class GuiTest {
 		return builder.build();
 	}
 
-    private static ResourceLocation imageSample(String name) {
+    private static Identifier imageSample(String name) {
         return YACLPlatform.rl("yacl_test", "textures/images/" + name);
     }
 

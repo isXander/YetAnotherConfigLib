@@ -6,6 +6,7 @@ plugins {
 
     val modstitchVersion = "0.7.1-unstable"
     id("dev.isxander.modstitch.base") version modstitchVersion apply false
+    id("fabric-loom") version "1.13-SNAPSHOT" apply false
 
     id("me.modmuss50.mod-publish-plugin") version "0.8.4" apply false
     id("org.ajoberstar.grgit") version "5.0.+" apply false
@@ -28,11 +29,11 @@ allprojects {
 
 stonecutter {
     parameters {
-        fun String.propDefined() = project(node!!.metadata.project).findProperty(this)?.toString()?.isNotBlank() ?: false
-        consts(listOf(
+        fun String.propDefined() = project(node.metadata.project).findProperty(this)?.toString()?.isNotBlank() ?: false
+        constants += listOf(
             "controlify" to "deps.controlify".propDefined(),
             "mod-menu" to "deps.modMenu".propDefined(),
-        ))
+        )
     }
 }
 

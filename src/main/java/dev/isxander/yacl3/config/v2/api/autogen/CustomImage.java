@@ -22,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 @Target(ElementType.FIELD)
 public @interface CustomImage {
     /**
-     * The resource path to the image, a {@link net.minecraft.resources.ResourceLocation}
+     * The resource path to the image, a {@link net.minecraft.resources.Identifier}
      * is constructed with the namespace being the modid of the config, and the path being
      * this value.
      * <p>

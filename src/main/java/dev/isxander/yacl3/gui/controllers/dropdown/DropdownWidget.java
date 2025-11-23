@@ -70,14 +70,14 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
                 0xFF3F3F3F
 		);
 		//graphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-		graphics./*? if >=1.21.9 {*/submitOutline/*?} else {*//*renderOutline*//*?}*/(dropdownDim.x(), dropdownDim.y(), dropdownDim.width(), dropdownDim.height(), -1);
+		graphics./*? if >=1.21.9 && <1.21.11 {*//*submitOutline*//*?} else {*/renderOutline/*?}*/(dropdownDim.x(), dropdownDim.y(), dropdownDim.width(), dropdownDim.height(), -1);
 
 		// Highlight the currently selected element
 		//graphics.setColor(0.0f, 0.0f, 0.0f, 0.5f);
 		int y = dropdownDim.y() + 2 + entryHeight() * selectedVisibleIndex();
 		graphics.fill(dropdownDim.x(), y, dropdownDim.xLimit(), y + entryHeight(), 0x7F000000);
 		//graphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-		graphics./*? if >=1.21.9 {*/submitOutline/*?} else {*//*renderOutline*//*?}*/(dropdownDim.x(), y, dropdownDim.width(), entryHeight(), -1);
+		graphics./*? if >=1.21.9 && <1.21.11 {*//*submitOutline*//*?} else {*/renderOutline/*?}*/(dropdownDim.x(), y, dropdownDim.width(), entryHeight(), -1);
 
 		// Render all visible elements
 		MutableDimension<Integer> entryDimension = Dimension.ofInt(

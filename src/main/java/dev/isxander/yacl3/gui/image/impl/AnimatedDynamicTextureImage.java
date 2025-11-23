@@ -11,7 +11,7 @@ import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 
@@ -39,7 +39,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
     private final int packCols, packRows;
     private final int frameWidth, frameHeight;
 
-    public AnimatedDynamicTextureImage(NativeImage image, int frameWidth, int frameHeight, int frameCount, double[] frameDelayMS, int packCols, int packRows, ResourceLocation uniqueLocation) {
+    public AnimatedDynamicTextureImage(NativeImage image, int frameWidth, int frameHeight, int frameCount, double[] frameDelayMS, int packCols, int packRows, Identifier uniqueLocation) {
         super(image, uniqueLocation, false); // TODO
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
@@ -88,7 +88,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         return targetHeight;
     }
 
-    public static ImageRendererFactory createGIFFromTexture(ResourceLocation textureLocation) {
+    public static ImageRendererFactory createGIFFromTexture(Identifier textureLocation) {
         return () -> {
             ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
             Resource resource = resourceManager.getResource(textureLocation).orElseThrow();
@@ -97,11 +97,11 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         };
     }
 
-    public static ImageRendererFactory createGIFFromPath(Path path, ResourceLocation uniqueLocation) {
+    public static ImageRendererFactory createGIFFromPath(Path path, Identifier uniqueLocation) {
         return () -> createGIFSupplier(new FileInputStream(path.toFile()), uniqueLocation);
     }
 
-    public static ImageRendererFactory createWEBPFromTexture(ResourceLocation textureLocation) {
+    public static ImageRendererFactory createWEBPFromTexture(Identifier textureLocation) {
         return () -> {
             ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
             Resource resource = resourceManager.getResource(textureLocation).orElseThrow();
@@ -110,11 +110,11 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         };
     }
 
-    public static ImageRendererFactory createWEBPFromPath(Path path, ResourceLocation uniqueLocation) {
+    public static ImageRendererFactory createWEBPFromPath(Path path, Identifier uniqueLocation) {
         return () -> createWEBPSupplier(new FileInputStream(path.toFile()), uniqueLocation);
     }
 
-    private static ImageRendererFactory.ImageSupplier createGIFSupplier(InputStream is, ResourceLocation uniqueLocation) {
+    private static ImageRendererFactory.ImageSupplier createGIFSupplier(InputStream is, Identifier uniqueLocation) {
         try (is) {
             ImageReader reader = ImageIO.getImageReadersBySuffix("gif").next();
             reader.setInput(ImageIO.createImageInputStream(is));
@@ -138,7 +138,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         }
     }
 
-    private static ImageRendererFactory.ImageSupplier createWEBPSupplier(InputStream is, ResourceLocation uniqueLocation) {
+    private static ImageRendererFactory.ImageSupplier createWEBPSupplier(InputStream is, Identifier uniqueLocation) {
         try (is) {
             ImageReader reader = new WebPImageReaderSpi().createReaderInstance();
             reader.setInput(ImageIO.createImageInputStream(is));
@@ -174,7 +174,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         }
     }
 
-    private static ImageRendererFactory.ImageSupplier createFromImageReader(ImageReader reader, AnimFrameProvider animationProvider, ResourceLocation uniqueLocation) throws Exception {
+    private static ImageRendererFactory.ImageSupplier createFromImageReader(ImageReader reader, AnimFrameProvider animationProvider, Identifier uniqueLocation) throws Exception {
         if (reader.isSeekForwardOnly()) {
             throw new RuntimeException("Image reader is not seekable");
         }

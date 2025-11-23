@@ -7,7 +7,7 @@ import dev.isxander.yacl3.gui.utils.MiscUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class ItemControllerElement extends AbstractDropdownControllerElement<Item, ResourceLocation> {
+public class ItemControllerElement extends AbstractDropdownControllerElement<Item, Identifier> {
 	private final ItemController itemController;
 	protected Item currentItem = null;
-	protected Map<ResourceLocation, Item> matchingItems = new HashMap<>();
+	protected Map<Identifier, Item> matchingItems = new HashMap<>();
 
 
 	public ItemControllerElement(ItemController control, YACLScreen screen, Dimension<Integer> dim) {
@@ -40,17 +40,17 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 	}
 
 	@Override
-	public List<ResourceLocation> computeMatchingValues() {
-		List<ResourceLocation> identifiers = ItemRegistryHelper.getMatchingItemIdentifiers(inputField).toList();
+	public List<Identifier> computeMatchingValues() {
+		List<Identifier> identifiers = ItemRegistryHelper.getMatchingItemIdentifiers(inputField).toList();
 		currentItem = ItemRegistryHelper.getItemFromName(inputField, null);
-		for (ResourceLocation identifier : identifiers) {
+		for (Identifier identifier : identifiers) {
 			matchingItems.put(identifier, MiscUtil.getFromRegistry(BuiltInRegistries.ITEM, identifier));
 		}
 		return identifiers;
 	}
 
 	@Override
-	protected void renderDropdownEntry(GuiGraphics graphics, Dimension<Integer> entryDimension, ResourceLocation identifier) {
+	protected void renderDropdownEntry(GuiGraphics graphics, Dimension<Integer> entryDimension, Identifier identifier) {
 		super.renderDropdownEntry(graphics, entryDimension, identifier);
 		graphics.renderFakeItem(
 				new ItemStack(matchingItems.get(identifier)),
@@ -60,7 +60,7 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 	}
 
 	@Override
-	public String getString(ResourceLocation identifier) {
+	public String getString(Identifier identifier) {
 		return identifier.toString();
 	}
 

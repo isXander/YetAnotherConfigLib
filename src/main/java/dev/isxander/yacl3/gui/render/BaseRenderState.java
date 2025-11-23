@@ -3,7 +3,8 @@ package dev.isxander.yacl3.gui.render;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.client.gui.GuiGraphics;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 //? if >=1.21.6 {
@@ -30,7 +31,7 @@ public record BaseRenderState(
         Matrix4f pose
         *///?}
 ) {
-    public static BaseRenderState create(GuiGraphics graphics, @Nullable ResourceLocation texture, int x0, int y0, int x1, int y1) {
+    public static BaseRenderState create(GuiGraphics graphics, @Nullable Identifier texture, int x0, int y0, int x1, int y1) {
         //? if >=1.21.6 {
         @Nullable ScreenRectangle scissorArea = GuiRenderStateSink.peekScissorStack(graphics);
         ScreenRectangle bounds = boundsFromMaxPoints(x0, y0, x1, y1, graphics.pose(), scissorArea);
@@ -46,7 +47,7 @@ public record BaseRenderState(
         *///?}
     }
 
-    public static BaseRenderState create(GuiGraphics graphics, @Nullable ResourceLocation texture) {
+    public static BaseRenderState create(GuiGraphics graphics, @Nullable Identifier texture) {
         //? if >=1.21.6 {
         return new BaseRenderState(
                 texture != null ? RenderPipelines.GUI_TEXTURED : RenderPipelines.GUI,
@@ -63,10 +64,12 @@ public record BaseRenderState(
     }
 
     //? if >=1.21.6 {
-    private static TextureSetup textureSetup(@Nullable ResourceLocation texture) {
-        return texture == null
-                ? TextureSetup.noTexture()
-                : TextureSetup.singleTexture(Minecraft.getInstance().getTextureManager().getTexture(texture).getTextureView());
+    private static TextureSetup textureSetup(@Nullable Identifier textureId) {
+        if (textureId != null) {
+            AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(textureId);
+            return TextureSetup.singleTexture(texture.getTextureView() /*? if >=1.21.11 >>*/,texture.getSampler() );
+        }
+        return TextureSetup.noTexture();
     }
 
     private static ScreenRectangle boundsFromMaxPoints(int x0, int y0, int x1, int y1, Matrix3x2f pose, @Nullable ScreenRectangle scissorArea) {

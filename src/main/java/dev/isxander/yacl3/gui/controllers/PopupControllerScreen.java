@@ -27,8 +27,8 @@ public class PopupControllerScreen extends Screen {
     }
 
     @Override
-    public void resize(Minecraft minecraft, int width, int height) {
-        this.backgroundYaclScreen.resize(minecraft, width, height);
+    protected void repositionElements() {
+        super.repositionElements();
         this.onClose();
     }
 

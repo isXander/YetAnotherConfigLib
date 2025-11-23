@@ -68,7 +68,12 @@ public class OptionDescriptionWidget extends AbstractWidget {
 
         int nameWidth = font.width(description.name());
         if (nameWidth > getWidth()) {
-            renderScrollingString(graphics, font, description.name(), getX(), y, getX() + getWidth(), y + font.lineHeight, -1);
+            //? if >=1.21.11 {
+            graphics.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.TOOLTIP_ONLY)
+                    .acceptScrollingWithDefaultCenter(description.name(), getX(), getX() + getWidth(), y, y + font.lineHeight);
+            //?} else {
+            /*renderScrollingString(graphics, font, description.name(), getX(), y, getX() + getWidth(), y + font.lineHeight, -1);
+            *///?}
         } else {
             graphics.drawString(font, description.name(), getX(), y, 0xFFFFFFFF);
         }
@@ -91,7 +96,12 @@ public class OptionDescriptionWidget extends AbstractWidget {
 
         descriptionY = y;
         for (var line : wrappedText) {
+            //? if >=1.21.11 {
+            graphics.textRenderer(GuiGraphics.HoveredTextEffects.TOOLTIP_AND_CURSOR)
+                    .accept(getX(), y, line);
+            //?} else {
             graphics.drawString(font, line, getX(), y, 0xFFFFFFFF);
+            //?}
             y += font.lineHeight;
         }
 
@@ -108,7 +118,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
         }
 
         if (isFocused()) {
-            graphics./*? if >=1.21.9 {*/submitOutline/*?} else {*//*renderOutline*//*?}*/(getX(), getY(), getWidth(), getHeight(), -1);
+            graphics./*? if >=1.21.9 && <1.21.11 {*//*submitOutline*//*?} else {*/renderOutline/*?}*/(getX(), getY(), getWidth(), getHeight(), -1);
         }
     }
 
@@ -127,10 +137,13 @@ public class OptionDescriptionWidget extends AbstractWidget {
     protected boolean onMouseClicked(double mouseX, double mouseY) {
         Style clickedStyle = getDescStyle((int) mouseX, (int) mouseY);
         if (clickedStyle != null && clickedStyle.getClickEvent() != null) {
-            if (minecraft.screen.handleComponentClicked(clickedStyle)) {
+            // TODO: reimplement
+            //? if <1.21.11 {
+            /*if (minecraft.screen.handleComponentClicked(clickedStyle)) {
                 playDownSound(minecraft.getSoundManager());
                 return true;
             }
+            *///?}
             return false;
         }
 
@@ -215,7 +228,12 @@ public class OptionDescriptionWidget extends AbstractWidget {
 
         if (line >= wrappedText.size()) return null;
 
-        return font.getSplitter().componentStyleAtWidth(wrappedText.get(line), x);
+        // TODO reimplement
+        //? if >=1.21.11 {
+        return null;
+        //?} else {
+        /*return font.getSplitter().componentStyleAtWidth(wrappedText.get(line), x);
+        *///?}
     }
 
     @Override

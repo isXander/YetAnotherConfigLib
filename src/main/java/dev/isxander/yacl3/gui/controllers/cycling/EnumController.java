@@ -4,7 +4,6 @@ import dev.isxander.yacl3.api.NameableEnum;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.controller.ValueFormatter;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.OptionEnum;
 
 import java.util.Arrays;
 import java.util.function.Function;
@@ -21,8 +20,10 @@ public class EnumController<T extends Enum<T>> extends CyclingListController<T> 
         return value -> {
             if (value instanceof NameableEnum nameableEnum)
                 return nameableEnum.getDisplayName();
-            if (value instanceof OptionEnum translatableOption)
+            //? if <1.21.11 {
+            /*if (value instanceof net.minecraft.util.OptionEnum translatableOption)
                 return translatableOption.getCaption();
+            *///?}
             return Component.literal(value.toString());
         };
     }

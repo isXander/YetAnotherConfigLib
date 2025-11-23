@@ -28,7 +28,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -305,9 +305,11 @@ public class YACLScreen extends Screen {
             );
             GuiUtils.translateZ(graphics, 400);
 
-            //? if >=1.21.9 {
-            text.render(graphics, MultiLineLabel.Align.LEFT, drawX, drawY, lineHeight, false, -1);
-            //?} else {
+            //? if >=1.21.11 {
+            text.visitLines(net.minecraft.client.gui.TextAlignment.LEFT, drawX, drawY, lineHeight, graphics.textRenderer());
+            //?} elif >=1.21.9 {
+            /*text.render(graphics, MultiLineLabel.Align.LEFT, drawX, drawY, lineHeight, false, -1);
+            *///?} else {
             /*text.renderLeftAligned(graphics, drawX, drawY, lineHeight, -1);
             *///?}
 
@@ -316,7 +318,7 @@ public class YACLScreen extends Screen {
     }
 
     public static class CategoryTab implements TabExt {
-        private static final ResourceLocation DARKER_BG = YACLPlatform.mcRl("textures/gui/menu_list_background.png");
+        private static final Identifier DARKER_BG = YACLPlatform.mcRl("textures/gui/menu_list_background.png");
 
         private final YACLScreen screen;
         private final ConfigCategory category;

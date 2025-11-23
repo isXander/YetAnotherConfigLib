@@ -9,7 +9,7 @@ import dev.isxander.yacl3.gui.utils.WidgetUtils;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 import java.awt.*;
@@ -18,8 +18,8 @@ import java.awt.*;
 import net.minecraft.client.input.MouseButtonEvent;
 
 public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
-    public static final ResourceLocation COLOR_PICKER_SPRITE = YACLPlatform.rl("controller/colorpicker");
-    public static final ResourceLocation TRANSPARENT_SPRITE = YACLPlatform.rl("controller/transparent");
+    public static final Identifier COLOR_PICKER_SPRITE = YACLPlatform.rl("controller/colorpicker");
+    public static final Identifier TRANSPARENT_SPRITE = YACLPlatform.rl("controller/transparent");
 
     private final ColorController controller;
     private final ColorController.ColorControllerElement entryWidget;

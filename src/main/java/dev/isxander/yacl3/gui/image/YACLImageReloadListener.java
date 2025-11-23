@@ -2,7 +2,7 @@ package dev.isxander.yacl3.gui.image;
 
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 import dev.isxander.yacl3.platform.YACLPlatform;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -66,7 +66,7 @@ public class YACLImageReloadListener
             ResourceManager manager,
             Executor executor
     ) {
-        Map<ResourceLocation, Resource> imageResources = manager.listResources(
+        Map<Identifier, Resource> imageResources = manager.listResources(
                 "textures",
                 location -> ImageRendererManager.PRELOADED_IMAGE_FACTORIES
                         .stream()
@@ -116,16 +116,16 @@ public class YACLImageReloadListener
                 .toArray(CompletableFuture<?>[]::new));
     }
 
-    private record SupplierPreparation(ResourceLocation location, ImageRendererFactory.ImageSupplier supplier) {
+    private record SupplierPreparation(Identifier location, ImageRendererFactory.ImageSupplier supplier) {
     }
 
-    public ResourceLocation getId() {
+    public Identifier getId() {
         return YACLPlatform.rl("image_reload_listener");
     }
 
     /*? if fabric {*/
     @Override
-    public ResourceLocation getFabricId() {
+    public Identifier getFabricId() {
         return this.getId();
     }
     /*?}*/

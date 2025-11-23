@@ -33,7 +33,7 @@ import java.util.function.UnaryOperator;
  * {@code
  * public class MyConfig {
  *     public static ConfigClassHandler<MyConfig> HANDLER = ConfigClassHandler.createBuilder(MyConfig.class)
- *             .id(new ResourceLocation("modid", "config"))
+ *             .id(new Identifier("modid", "config"))
  *             .serializer(config -> GsonConfigSerializerBuilder.create(config)
  *                     .setPath(FabricLoader.getInstance().getConfigDir().resolve("my_mod.json")
  *                     .build())

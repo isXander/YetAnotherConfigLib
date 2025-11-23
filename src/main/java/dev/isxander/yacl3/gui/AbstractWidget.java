@@ -1,9 +1,7 @@
 package dev.isxander.yacl3.gui;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.render.ColorGradientRenderState;
-import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.gui.utils.YACLRenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -12,10 +10,8 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
-import org.joml.Matrix4f;
 
 import java.awt.Color;
 

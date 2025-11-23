@@ -5,7 +5,7 @@ import dev.isxander.yacl3.gui.image.impl.AnimatedDynamicTextureImage;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 import dev.isxander.yacl3.platform.YACLConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
 import java.util.Map;
@@ -20,8 +20,8 @@ import java.util.stream.Stream;
 public class ImageRendererManager {
     private static final ExecutorService SINGLE_THREAD_EXECUTOR = Executors.newSingleThreadExecutor(task -> new Thread(task, "YACL Image Prep"));
 
-    private static final Map<ResourceLocation, CompletableFuture<ImageRenderer>> IMAGE_CACHE = new ConcurrentHashMap<>();
-    static final Map<ResourceLocation, ImageRenderer> PRELOADED_IMAGE_CACHE = new ConcurrentHashMap<>();
+    private static final Map<Identifier, CompletableFuture<ImageRenderer>> IMAGE_CACHE = new ConcurrentHashMap<>();
+    static final Map<Identifier, ImageRenderer> PRELOADED_IMAGE_CACHE = new ConcurrentHashMap<>();
 
     static final List<PreloadedImageFactory> PRELOADED_IMAGE_FACTORIES = Stream.of(
             YACLConfig.HANDLER.instance().preloadComplexImageFormats ? new PreloadedImageFactory(
@@ -34,7 +34,7 @@ public class ImageRendererManager {
             ) : null
     ).filter(Objects::nonNull).toList();
 
-    public static <T extends ImageRenderer> Optional<T> getImage(ResourceLocation id) {
+    public static <T extends ImageRenderer> Optional<T> getImage(Identifier id) {
         if (PRELOADED_IMAGE_CACHE.containsKey(id)) {
             return Optional.of((T) PRELOADED_IMAGE_CACHE.get(id));
         }
@@ -47,7 +47,7 @@ public class ImageRendererManager {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends ImageRenderer> CompletableFuture<T> registerOrGetImage(ResourceLocation id, Supplier<ImageRendererFactory> factorySupplier) {
+    public static <T extends ImageRenderer> CompletableFuture<T> registerOrGetImage(Identifier id, Supplier<ImageRendererFactory> factorySupplier) {
         if (PRELOADED_IMAGE_CACHE.containsKey(id)) {
             return CompletableFuture.completedFuture((T) PRELOADED_IMAGE_CACHE.get(id));
         }
@@ -73,11 +73,11 @@ public class ImageRendererManager {
     }
 
     @Deprecated
-    public static <T extends ImageRenderer> CompletableFuture<T> registerImage(ResourceLocation id, ImageRendererFactory factory) {
+    public static <T extends ImageRenderer> CompletableFuture<T> registerImage(Identifier id, ImageRendererFactory factory) {
         return registerOrGetImage(id, () -> factory);
     }
 
-    private static <T extends ImageRenderer> void completeImageFactory(ResourceLocation id, Supplier<Optional<ImageRendererFactory.ImageSupplier>> supplier, CompletableFuture<ImageRenderer> future) {
+    private static <T extends ImageRenderer> void completeImageFactory(Identifier id, Supplier<Optional<ImageRendererFactory.ImageSupplier>> supplier, CompletableFuture<ImageRenderer> future) {
         RenderSystem.assertOnRenderThread();
 
         ImageRendererFactory.ImageSupplier completableImage = supplier.get().orElse(null);
@@ -112,7 +112,7 @@ public class ImageRendererManager {
         });
     }
 
-    static Optional<ImageRendererFactory.ImageSupplier> safelyPrepareFactory(ResourceLocation id, ImageRendererFactory factory) {
+    static Optional<ImageRendererFactory.ImageSupplier> safelyPrepareFactory(Identifier id, ImageRendererFactory factory) {
         try {
             return Optional.of(factory.prepareImage());
         } catch (Exception e) {
@@ -122,7 +122,7 @@ public class ImageRendererManager {
         }
     }
 
-    public record PreloadedImageFactory(Predicate<ResourceLocation> predicate, Function<ResourceLocation, ImageRendererFactory> factory) {
+    public record PreloadedImageFactory(Predicate<Identifier> predicate, Function<Identifier, ImageRendererFactory> factory) {
     }
 
     private record CompletedSupplier<T>(T get) implements Supplier<T> {

@@ -1,20 +1,12 @@
 package dev.isxander.yacl3.gui.utils;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.math.Axis;
-import dev.isxander.yacl3.debug.DebugProperties;
-import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 //? if >=1.21.2
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
@@ -33,9 +25,20 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.GameRenderer;
 *///?}
 
+//? if <1.21.6 {
+/*import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.RenderType;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Axis;
+import dev.isxander.yacl3.debug.DebugProperties;
+import net.minecraft.util.Util;
+*///?}
+
 public class GuiUtils {
     //? if <1.21.2 {
-    /*private static Function<ResourceLocation, RenderType> GUI_TEXTURED = Util.memoize(
+    /*private static Function<Identifier, RenderType> GUI_TEXTURED = Util.memoize(
             location -> RenderType.create(
                     "yacl:gui_textured",
                     DefaultVertexFormat.POSITION_TEX_COLOR,
@@ -52,7 +55,7 @@ public class GuiUtils {
     *///?}
 
     //? if >=1.21.2 && <1.21.6 {
-    /*public static Function<ResourceLocation, RenderType> GUI_TEXTURED_FILTERED = Util.memoize(
+    /*public static Function<Identifier, RenderType> GUI_TEXTURED_FILTERED = Util.memoize(
             location -> RenderType.create(
                     "yacl:gui_textured_filtered",
                     //? if <1.21.5 {
@@ -121,11 +124,11 @@ public class GuiUtils {
         *///?}
     }
 
-    public static void blitGuiTex(GuiGraphics graphics, ResourceLocation texture, int x, int y, float u, float v, int textureWidth, int textureHeight, int width, int height) {
+    public static void blitGuiTex(GuiGraphics graphics, Identifier texture, int x, int y, float u, float v, int textureWidth, int textureHeight, int width, int height) {
         blitGuiTex(graphics, texture, x, y, u, v, textureWidth, textureHeight, width, height, false);
     }
 
-    public static void blitGuiTex(GuiGraphics graphics, ResourceLocation texture, int x, int y, float u, float v, int textureWidth, int textureHeight, int width, int height, boolean linearFiltering) {
+    public static void blitGuiTex(GuiGraphics graphics, Identifier texture, int x, int y, float u, float v, int textureWidth, int textureHeight, int width, int height, boolean linearFiltering) {
         //? if <1.21.2
         /*doTextureFiltering();*/
 
@@ -140,7 +143,7 @@ public class GuiUtils {
         );
     }
 
-    public static void blitGuiTexColor(GuiGraphics graphics, ResourceLocation texture, int x, int y, float u, float v, int textureWidth, int textureHeight, int width, int height, int color) {
+    public static void blitGuiTexColor(GuiGraphics graphics, Identifier texture, int x, int y, float u, float v, int textureWidth, int textureHeight, int width, int height, int color) {
         //? if <1.21.2 {
         /*float a = (color >> 24 & 255) / 255.0F;
         float r = (color >> 16 & 255) / 255.0F;
@@ -163,7 +166,7 @@ public class GuiUtils {
         /*graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);*/
     }
 
-    public static void blitSprite(GuiGraphics graphics, ResourceLocation sprite, int x, int y, int width, int height) {
+    public static void blitSprite(GuiGraphics graphics, Identifier sprite, int x, int y, int width, int height) {
         graphics.blitSprite(
                 //? if >=1.21.2
                 guiTextured(false),
@@ -179,11 +182,11 @@ public class GuiUtils {
         return RenderPipelines.GUI_TEXTURED;
     }
     //?} elif >=1.21.2 {
-    /*public static Function<ResourceLocation, RenderType> guiTextured(boolean textureFiltering) {
+    /*public static Function<Identifier, RenderType> guiTextured(boolean textureFiltering) {
         return textureFiltering ? GUI_TEXTURED_FILTERED : RenderType::guiTextured;
     }
     *///?} else {
-    /*public static Function<ResourceLocation, RenderType> guiTextured(boolean textureFiltering) {
+    /*public static Function<Identifier, RenderType> guiTextured(boolean textureFiltering) {
         return GUI_TEXTURED;
     }
     *///?}

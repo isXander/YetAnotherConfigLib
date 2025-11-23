@@ -156,7 +156,12 @@ public class LabelController implements Controller<Component> {
             if(style == null)
                 return false;
 
-            return screen.handleComponentClicked(style);
+            // TODO: reimplement
+            //? if >=1.21.11 {
+            return false;
+            //?} else {
+            /*return screen.handleComponentClicked(style);
+            *///?}
         }
 
         @Nullable
@@ -172,7 +177,12 @@ public class LabelController implements Controller<Component> {
             if (y < 0 || y > getDimension().yLimit()) return null;
             if (line < 0 || line >= wrappedText.size()) return null;
 
-            return textRenderer.getSplitter().componentStyleAtWidth(wrappedText.get(line), x);
+            // TODO reimplement
+            //? if >=1.21.11 {
+            return null;
+            //?} else {
+            /*return textRenderer.getSplitter().componentStyleAtWidth(wrappedText.get(line), x);
+            *///?}
         }
 
         private int getXPadding() {

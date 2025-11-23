@@ -9,7 +9,7 @@ import dev.isxander.yacl3.config.v3.JsonFileCodecConfig;
 import dev.isxander.yacl3.config.v3.ReadonlyConfigEntry;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class CodecConfig extends JsonFileCodecConfig<CodecConfig> {
     public static final CodecConfig INSTANCE = new CodecConfig();
@@ -20,8 +20,8 @@ public class CodecConfig extends JsonFileCodecConfig<CodecConfig> {
     public final ConfigEntry<String> myString =
             register("my_string", "default", Codec.STRING);
 
-    public final ConfigEntry<ResourceLocation> myIdentifier =
-            register("my_identifier", YACLPlatform.rl("test"), ResourceLocation.CODEC);
+    public final ConfigEntry<Identifier> myIdentifier =
+            register("my_identifier", YACLPlatform.rl("test"), Identifier.CODEC);
 
     //? if >=1.21.2 {
     public final ConfigEntry<Component> myText =

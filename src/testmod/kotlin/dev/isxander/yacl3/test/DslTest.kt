@@ -9,7 +9,7 @@ import dev.isxander.yacl3.platform.YACLPlatform
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentSerialization
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 
 object CodecConfigKt : JsonFileCodecConfig<CodecConfigKt>(YACLPlatform.getConfigDir().resolve("codec_config_kt.json")) {
     val myInt by register<Int>(0, Codec.INT)
@@ -18,7 +18,7 @@ object CodecConfigKt : JsonFileCodecConfig<CodecConfigKt>(YACLPlatform.getConfig
 
     val myBoolean by register<Boolean>(false, Codec.BOOL)
 
-    val myIdentifier by register<ResourceLocation>(YACLPlatform.rl("test"), ResourceLocation.CODEC)
+    val myIdentifier by register<Identifier>(YACLPlatform.rl("test"), Identifier.CODEC)
 
     val myText by register<Component>(Component.literal("Hello, World!"), ComponentSerialization.CODEC)
 

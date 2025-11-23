@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.FileInputStream;
 import java.nio.file.Path;
@@ -21,16 +21,18 @@ public class DynamicTextureImage implements ImageRenderer {
 
     protected NativeImage image;
     protected DynamicTexture texture;
-    protected final ResourceLocation uniqueLocation;
+    protected final Identifier uniqueLocation;
     protected final int width, height;
     protected final boolean textureFiltering;
 
-    public DynamicTextureImage(NativeImage image, ResourceLocation location, boolean textureFiltering) {
+    public DynamicTextureImage(NativeImage image, Identifier location, boolean textureFiltering) {
         RenderSystem.assertOnRenderThread();
 
         this.image = image;
         this.texture = new DynamicTexture(/*? if >=1.21.5 >>*/ location::toString, image);
-        this.texture.setFilter(textureFiltering, false);
+        // TODO 1.21.11
+        //? if <1.21.11
+        /*this.texture.setFilter(textureFiltering, false);*/
         this.textureFiltering = textureFiltering;
         this.uniqueLocation = location;
         textureManager.register(this.uniqueLocation, this.texture);
@@ -72,7 +74,7 @@ public class DynamicTextureImage implements ImageRenderer {
         textureManager.release(uniqueLocation);
     }
 
-    public static ImageRendererFactory fromPath(Path imagePath, ResourceLocation location, boolean textureFiltering) {
+    public static ImageRendererFactory fromPath(Path imagePath, Identifier location, boolean textureFiltering) {
         return (ImageRendererFactory.OnThread) () -> () -> new DynamicTextureImage(NativeImage.read(new FileInputStream(imagePath.toFile())), location, textureFiltering);
     }
 }

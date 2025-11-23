@@ -5,15 +5,15 @@ import dev.isxander.yacl3.gui.image.ImageRenderer;
 import dev.isxander.yacl3.gui.image.ImageRendererFactory;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class ResourceTextureImage implements ImageRenderer {
-    private final ResourceLocation location;
+    private final Identifier location;
     private final int width, height;
     private final int textureWidth, textureHeight;
     private final float u, v;
 
-    public ResourceTextureImage(ResourceLocation location, float u, float v, int width, int height, int textureWidth, int textureHeight) {
+    public ResourceTextureImage(Identifier location, float u, float v, int width, int height, int textureWidth, int textureHeight) {
         this.location = location;
         this.width = width;
         this.height = height;
@@ -52,7 +52,7 @@ public class ResourceTextureImage implements ImageRenderer {
 
     }
 
-    public static ImageRendererFactory createFactory(ResourceLocation location, float u, float v, int width, int height, int textureWidth, int textureHeight) {
+    public static ImageRendererFactory createFactory(Identifier location, float u, float v, int width, int height, int textureWidth, int textureHeight) {
         return (ImageRendererFactory.OnThread) () -> () -> new ResourceTextureImage(location, u, v, width, height, textureWidth, textureHeight);
     }
 }

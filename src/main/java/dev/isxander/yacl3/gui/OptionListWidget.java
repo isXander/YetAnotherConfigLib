@@ -428,9 +428,11 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
             expandMinimizeButton.setX(this.getX());
             expandMinimizeButton.render(graphics, mouseX, mouseY, deltaTicks);
 
-            //? if >=1.21.9 {
-            wrappedName.render(graphics, MultiLineLabel.Align.CENTER, this.getX() + this.getWidth() / 2, this.getY() + getYPadding(), font.lineHeight, false, -1);
-            //?} else {
+            //? if >=1.21.11 {
+            wrappedName.visitLines(net.minecraft.client.gui.TextAlignment.CENTER, this.getX() + this.getWidth() / 2, this.getY() + getYPadding(), font.lineHeight, graphics.textRenderer());
+            //?} elif >=1.21.9 {
+            /*wrappedName.render(graphics, MultiLineLabel.Align.CENTER, this.getX() + this.getWidth() / 2, this.getY() + getYPadding(), font.lineHeight, false, -1);
+            *///?} else {
             /*wrappedName.renderCentered(graphics, this.getX() + this.getWidth() / 2, this.getY() + getYPadding());
              *///?}
 
