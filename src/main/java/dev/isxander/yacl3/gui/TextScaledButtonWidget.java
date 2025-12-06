@@ -2,7 +2,9 @@ package dev.isxander.yacl3.gui;
 
 import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.client.Minecraft;
+//? if >=1.21.11 {
 import net.minecraft.client.gui.ActiveTextCollector;
+//?}
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
