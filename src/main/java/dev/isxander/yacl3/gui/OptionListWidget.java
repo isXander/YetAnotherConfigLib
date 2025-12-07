@@ -255,6 +255,12 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         return button == InputConstants.MOUSE_BUTTON_LEFT || button == InputConstants.MOUSE_BUTTON_RIGHT || button == InputConstants.MOUSE_BUTTON_MIDDLE;
     }
 
+    @Override
+    protected @org.jspecify.annotations.Nullable Entry nextEntry(@NotNull ScreenDirection direction, @NotNull Predicate<Entry> predicate, @org.jspecify.annotations.Nullable Entry selected) {
+        // ensure we don't focus unviewable entries
+        return super.nextEntry(direction, entry -> entry.isViewable() && predicate.test(entry), selected);
+    }
+
     public abstract class Entry extends YACLSelectionList.Entry<Entry> {
         protected boolean searchQueryMatches = true;
 
