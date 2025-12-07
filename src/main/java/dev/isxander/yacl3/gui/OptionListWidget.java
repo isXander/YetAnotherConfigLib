@@ -16,6 +16,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.navigation.ScreenDirection;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> {
     private final YACLScreen yaclScreen;
@@ -261,6 +263,11 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         public boolean updateSearchQuery(String searchQuery) {
+            boolean matches = searchQuery.isEmpty();
+            if (this.searchQueryMatches != matches) {
+                this.searchQueryMatches = matches;
+                refreshVisibilityState();
+            }
             return this.searchQueryMatches;
         }
 
@@ -274,6 +281,21 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
                 return 0;
             }
             return super.getHeight();
+        }
+
+        protected void refreshVisibilityState() {
+            if (isViewable()) {
+                onBecameViewable();
+            } else {
+                onBecameHidden();
+            }
+        }
+
+        protected void onBecameViewable() {
+        }
+
+        protected void onBecameHidden() {
+            this.setHeight(0);
         }
     }
 
@@ -351,15 +373,23 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
 
         @Override
         public boolean updateSearchQuery(String searchQuery) {
-            return this.searchQueryMatches = searchQuery.isEmpty()
+            this.searchQueryMatches = searchQuery.isEmpty()
                     || groupName.contains(searchQuery)
                     || widget.matchesSearch(searchQuery);
+            refreshVisibilityState();
+            return this.searchQueryMatches;
         }
 
         @Override
         public boolean isViewable() {
             return super.isViewable()
                     && (groupSeparatorEntry == null || groupSeparatorEntry.isExpanded());
+        }
+
+        @Override
+        protected void onBecameViewable() {
+            super.onBecameViewable();
+            updateHeight();
         }
 
         private void updateHeight() {
@@ -452,6 +482,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
 
             this.groupExpanded = expanded;
             updateExpandMinimizeText();
+            childEntries.forEach(Entry::refreshVisibilityState);
             repositionEntries();
         }
 
@@ -604,6 +635,12 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         @Override
         public boolean isViewable() {
             return parent.isExpanded() && super.isViewable();
+        }
+
+        @Override
+        protected void onBecameHidden() {
+            super.onBecameHidden();
+            setHeight(0);
         }
 
         @Override
