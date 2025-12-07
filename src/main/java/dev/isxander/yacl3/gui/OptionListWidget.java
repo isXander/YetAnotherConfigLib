@@ -256,7 +256,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
     }
 
     @Override
-    protected @org.jspecify.annotations.Nullable Entry nextEntry(@NotNull ScreenDirection direction, @NotNull Predicate<Entry> predicate, @org.jspecify.annotations.Nullable Entry selected) {
+    protected Entry nextEntry(@NotNull ScreenDirection direction, @NotNull Predicate<Entry> predicate, Entry selected) {
         // ensure we don't focus unviewable entries
         return super.nextEntry(direction, entry -> entry.isViewable() && predicate.test(entry), selected);
     }
