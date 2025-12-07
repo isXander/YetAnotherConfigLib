@@ -10,6 +10,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix3x2f;
+import org.joml.Matrix4f;
 
 public class TextScaledButtonWidget extends TooltipButtonWidget {
     public float textScale;
@@ -23,11 +26,10 @@ public class TextScaledButtonWidget extends TooltipButtonWidget {
         this(screen, x, y, width, height, textScale, message, null, onPress);
     }
 
-    // FIXME: currently the text just doesn't render.
+    // FIXME: i cannot figure out how to compensate a scale with a translation so for now the reset button is small fuck you
     //? if >=1.21.11 {
     @Override
-    protected void renderDefaultLabel(ActiveTextCollector activeTextCollector) {
-        activeTextCollector.defaultParameters(activeTextCollector.defaultParameters().withScale(textScale));
+    protected void renderDefaultLabel(@NotNull ActiveTextCollector activeTextCollector) {
         super.renderDefaultLabel(activeTextCollector);
     }
     //?} else {

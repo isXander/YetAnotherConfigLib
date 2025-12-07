@@ -84,6 +84,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         setScrollAmount(0);
+        repositionEntries();
     }
 
     //? if >=1.21.9 {
@@ -518,7 +519,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
             super(group, screen);
             this.listOption = group;
 
-            this.resetListButton = new TextScaledButtonWidget(screen, getRowRight() - 20, -50, 20, 20, 2f, Component.literal("\u21BB"), button -> {
+            this.resetListButton = new TextScaledButtonWidget(screen, getRowRight() - 20, -50, 20, 20, 1f, Component.literal("\u21BB"), button -> {
                 group.requestSetDefault();
             });
             group.addListener((opt, val) -> this.resetListButton.active = !opt.isPendingValueDefault() && opt.available());

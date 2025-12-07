@@ -79,6 +79,7 @@ public class GuiTest {
                                 .name(Component.literal("Control Examples"))
                                 .tooltip(Component.literal("Example Category Description"))
                                 .group(OptionGroup.createBuilder()
+                                        .collapsed(true)
                                         .name(Component.literal("Boolean Controllers"))
                                         .option(Util.make(() -> {
                                             var opt = Option.<Boolean>createBuilder()
