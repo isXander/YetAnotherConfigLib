@@ -8,6 +8,7 @@ plugins {
 
     id("me.modmuss50.mod-publish-plugin") version "0.8.4" apply false
     id("org.ajoberstar.grgit") version "5.0.+" apply false
+    id("com.gradleup.nmcp.aggregation") version "1.4.3"
 }
 stonecutter active file("versions/current")
 
@@ -52,5 +53,19 @@ version = property("modVersion") as String
 tasks.register("clean") {
     group = "build"
     delete(layout.buildDirectory.dir("finalJars"))
+}
+
+nmcpAggregation {
+    centralPortal {
+        username = providers.gradleProperty("centralUsername").orNull
+        password = providers.gradleProperty("centralPassword").orNull
+
+        publicationName = "yet-another-config-lib:$version"
+    }
+}
+dependencies {
+    allprojects {
+        nmcpAggregation(project(path))
+    }
 }
 

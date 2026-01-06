@@ -9,6 +9,8 @@ plugins {
 
     id("me.modmuss50.mod-publish-plugin")
     `maven-publish`
+    signing
+    id("com.gradleup.nmcp")
 
     id("org.ajoberstar.grgit")
 }
@@ -252,6 +254,7 @@ createActiveTask(buildAndCollect)
 
 java {
     withSourcesJar()
+    withJavadocJar()
 }
 
 publishMods {
@@ -314,11 +317,35 @@ publishMods {
 publishing {
     publications {
         register<MavenPublication>("mod") {
+            from(components["java"])
+
             groupId = "dev.isxander"
             artifactId = "yet-another-config-lib"
             version = modstitch.metadata.modVersion.get()
 
-            from(components["java"])
+            pom {
+                name = modstitch.metadata.modName
+                description = modstitch.metadata.modDescription
+                url = "https://www.isxander.dev/projects/yet-another-config-lib"
+                licenses {
+                    license {
+                        name = "LGPL-3.0-or-later"
+                        url = "https://www.gnu.org/licenses/lgpl-3.0.en.html"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "isXander"
+                        name = "Xander"
+                        email = "business@isxander.dev"
+                    }
+                }
+                scm {
+                    url = "https://github.com/isXander/YetAnotherConfigLib"
+                    connection = "scm:git:git//github.com/isXander/YetAnotherConfigLib.git"
+                    developerConnection = "scm:git:ssh://git@github.com/isXander/YetAnotherConfigLib.git"
+                }
+            }
         }
     }
 
@@ -345,6 +372,13 @@ publishing {
             println("Xander Maven credentials not satisfied.")
         }
     }
+}
+signing {
+    val signingKey = providers.gradleProperty("signingKey").orNull
+    val signingPassword = providers.gradleProperty("signingPassword").orNull
+
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign(publishing.publications["mod"])
 }
 
 tasks {
