@@ -100,8 +100,8 @@ public class OptionDescriptionWidget extends AbstractWidget {
             graphics.textRenderer(GuiGraphics.HoveredTextEffects.TOOLTIP_AND_CURSOR)
                     .accept(getX(), y, line);
             //?} else {
-            graphics.drawString(font, line, getX(), y, 0xFFFFFFFF);
-            //?}
+            /*graphics.drawString(font, line, getX(), y, 0xFFFFFFFF);
+            *///?}
             y += font.lineHeight;
         }
 

@@ -1,9 +1,9 @@
 plugins {
-    kotlin("jvm") version "2.2.21" apply false
+    kotlin("jvm") version "2.3.0" apply false
 
     id("dev.kikugie.stonecutter")
 
-    val modstitchVersion = "0.8.1"
+    val modstitchVersion = "0.8.4"
     id("dev.isxander.modstitch.base") version modstitchVersion apply false
 
     id("me.modmuss50.mod-publish-plugin") version "0.8.4" apply false

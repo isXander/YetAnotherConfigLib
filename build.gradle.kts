@@ -47,7 +47,6 @@ val testmod by sourceSets.registering {
 
 modstitch {
     minecraftVersion = mcVersion
-    javaVersion = 21
 
     parchment {
         prop("parchment.version") { mappingsVersion = it }
