@@ -9,6 +9,8 @@ plugins {
     id("me.modmuss50.mod-publish-plugin") version "0.8.4" apply false
     id("org.ajoberstar.grgit") version "5.0.+" apply false
     id("com.gradleup.nmcp.aggregation") version "1.4.3"
+
+    id("dev.isxander.secrets") version "0.1.0"
 }
 stonecutter active file("versions/current")
 
@@ -55,10 +57,11 @@ tasks.register("clean") {
     delete(layout.buildDirectory.dir("finalJars"))
 }
 
+
 nmcpAggregation {
     centralPortal {
-        username = providers.gradleProperty("centralUsername").orNull
-        password = providers.gradleProperty("centralPassword").orNull
+        username = secrets.gradleProperty("mcentral.username")
+        password = secrets.gradleProperty("mcentral.password")
 
         publicationName = "yet-another-config-lib:$version"
     }

@@ -11,6 +11,7 @@ plugins {
     `maven-publish`
     signing
     id("com.gradleup.nmcp")
+    id("dev.isxander.secrets")
 
     id("org.ajoberstar.grgit")
 }
@@ -253,7 +254,6 @@ createActiveTask(buildAndCollect)
 
 java {
     withSourcesJar()
-    withJavadocJar()
 }
 
 publishMods {
@@ -280,36 +280,32 @@ publishMods {
 
     modLoaders.add(loader)
 
-    val modrinthId: String by project
-    if (modrinthId.isNotBlank() && hasProperty("modrinth.token")) {
-        modrinth {
-            projectId.set(modrinthId)
-            accessToken.set(findProperty("modrinth.token")?.toString())
-            minecraftVersions.addAll(stableMCVersions)
-            minecraftVersions.addAll(versionList("pub.modrinthMC"))
+    modrinth {
+        projectId = providers.gradleProperty("pub.modrinthId")
+        accessToken = secrets.gradleProperty("modrinth.accessToken")
 
-            announcementTitle = "Download $mcVersion for ${loader.replaceFirstChar { it.uppercase() }} from Modrinth"
+        minecraftVersions.addAll(stableMCVersions)
+        minecraftVersions.addAll(versionList("pub.modrinthMC"))
 
-            if (isFabric) {
-                requires { slug.set("fabric-api") }
-            }
+        announcementTitle = "Download $mcVersion for ${loader.replaceFirstChar { it.uppercase() }} from Modrinth"
+
+        if (isFabric) {
+            requires { slug.set("fabric-api") }
         }
     }
 
-    val curseforgeId: String by project
-    if (curseforgeId.isNotBlank() && hasProperty("curseforge.token")) {
-        curseforge {
-            projectId = curseforgeId
-            projectSlug = findProperty("curseforgeSlug")?.toString() ?: error("curseforgeSlug property not found")
-            accessToken = findProperty("curseforge.token")?.toString()
-            minecraftVersions.addAll(stableMCVersions)
-            minecraftVersions.addAll(versionList("pub.curseMC"))
+    curseforge {
+        projectId = providers.gradleProperty("pub.curseforgeId")
+        projectSlug = providers.gradleProperty("pub.curseforgeSlug")
+        accessToken = secrets.gradleProperty("curseforge.accessToken")
 
-            announcementTitle = "Download $mcVersion for ${loader.replaceFirstChar { it.uppercase() }} from CurseForge"
+        minecraftVersions.addAll(stableMCVersions)
+        minecraftVersions.addAll(versionList("pub.curseMC"))
 
-            if (isFabric) {
-                requires { slug.set("fabric-api") }
-            }
+        announcementTitle = "Download $mcVersion for ${loader.replaceFirstChar { it.uppercase() }} from CurseForge"
+
+        if (isFabric) {
+            requires { slug.set("fabric-api") }
         }
     }
 }
@@ -347,37 +343,30 @@ publishing {
             }
         }
     }
-
     repositories {
-        val username = prop("XANDER_MAVEN_USER") { it }
-        val password = prop("XANDER_MAVEN_PASS") { it }
-        if (username != null && password != null) {
-            maven(url = "https://maven.isxander.dev/releases") {
-                name = "XanderReleases"
-                credentials {
-                    this.username = username
-                    this.password = password
-                }
-            }
-
-            maven(url = "https://maven.isxander.dev/snapshots") {
-                name = "XanderSnapshots"
-                credentials {
-                    this.username = username
-                    this.password = password
-                }
-            }
-        } else {
-            println("Xander Maven credentials not satisfied.")
-        }
+        mavenLocal()
     }
 }
-signing {
-    val signingKey = providers.gradleProperty("signingKey").orNull
-    val signingPassword = providers.gradleProperty("signingPassword").orNull
 
-    useInMemoryPgpKeys(signingKey, signingPassword)
+val signingKeyProvider = secrets.gradleProperty("signing.secretKey")
+val signingPasswordProvider = secrets.gradleProperty("signing.password")
+signing {
     sign(publishing.publications["mod"])
+}
+// not configuration cache friendly, but neither is the whole of signing plugin
+// this plugin does not support lazy configuration of signing keys
+gradle.taskGraph.whenReady {
+    val willSign = allTasks.any { it.name.startsWith("sign") }
+    if (willSign) {
+        signing {
+            isRequired = signingKeyProvider.isPresent
+            if (isRequired) {
+                useInMemoryPgpKeys(signingKeyProvider.get(), signingPasswordProvider.get())
+            } else {
+                logger.error("Signing keys not found; skipping signing!")
+            }
+        }
+    }
 }
 
 tasks {
