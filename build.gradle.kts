@@ -254,6 +254,11 @@ createActiveTask(buildAndCollect)
 
 java {
     withSourcesJar()
+    withJavadocJar()
+}
+
+tasks.javadoc {
+    isFailOnError = false
 }
 
 publishMods {
@@ -359,9 +364,12 @@ gradle.taskGraph.whenReady {
     val willSign = allTasks.any { it.name.startsWith("sign") }
     if (willSign) {
         signing {
-            isRequired = signingKeyProvider.isPresent
+            val signingKey = signingKeyProvider.orNull
+            val signingPassword = signingPasswordProvider.orNull
+
+            isRequired = signingKey != null && signingPassword != null
             if (isRequired) {
-                useInMemoryPgpKeys(signingKeyProvider.get(), signingPasswordProvider.get())
+                useInMemoryPgpKeys(signingKey, signingPassword)
             } else {
                 logger.error("Signing keys not found; skipping signing!")
             }

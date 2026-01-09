@@ -35,7 +35,7 @@ allprojects {
             forRepository { maven("https://thedarkcolour.github.io/KotlinForForge/") }
             filter { includeGroup("thedarkcolour") }
         }
-        maven("https://oss.sonatype.org/content/repositories/snapshots/")
+        mavenCentral()
     }
 }
 
