@@ -630,6 +630,10 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
 
         @Override
         public void renderContent(GuiGraphics graphics, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+            if (!this.isViewable()) {
+                return;
+            }
+
             graphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable("yacl.list.empty").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), this.getX() + this.getWidth() / 2, this.getY(), -1);
         }
 
@@ -641,6 +645,12 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         @Override
         public boolean isViewable() {
             return parent.isExpanded() && super.isViewable();
+        }
+
+        @Override
+        protected void onBecameViewable() {
+            super.onBecameViewable();
+            setHeight(11);
         }
 
         @Override
