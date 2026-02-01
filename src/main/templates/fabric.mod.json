@@ -16,7 +16,7 @@
   "license": "${mod_license}",
   "environment": "*",
   "depends": {
-    "fabricloader": ">=0.17.0",
+    "fabricloader": ">=0.18.0",
     "minecraft": "${mc}",
     "java": ">=17",
     "fabric-api": ">=${fapi}"
