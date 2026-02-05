@@ -1,18 +1,14 @@
 package dev.isxander.yacl3.gui;
 
-import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.client.Minecraft;
 //? if >=1.21.11 {
-import net.minecraft.client.gui.ActiveTextCollector;
+import org.jspecify.annotations.NonNull;
 //?}
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix3x2f;
-import org.joml.Matrix4f;
 
 public class TextScaledButtonWidget extends TooltipButtonWidget {
     public float textScale;
@@ -26,11 +22,29 @@ public class TextScaledButtonWidget extends TooltipButtonWidget {
         this(screen, x, y, width, height, textScale, message, null, onPress);
     }
 
-    // FIXME: i cannot figure out how to compensate a scale with a translation so for now the reset button is small fuck you
     //? if >=1.21.11 {
     @Override
-    protected void renderDefaultLabel(@NotNull ActiveTextCollector activeTextCollector) {
-        super.renderDefaultLabel(activeTextCollector);
+    protected void renderContents(@NonNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        this.renderDefaultSprite(guiGraphics);
+
+        if (Math.abs(textScale - 1.0f) < 0.01f) {
+            this.renderDefaultLabel(guiGraphics.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE));
+            return;
+        }
+
+        Font font = Minecraft.getInstance().font;
+        Component message = getMessage();
+
+        float scaledX = getX() + getWidth() / 2.0f - (font.width(message) * textScale) / 2.0f;
+        float scaledY = getY() + getHeight() / 2.0f - (font.lineHeight * textScale) / 2.0f;
+
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(scaledX, scaledY);
+        guiGraphics.pose().scale(textScale, textScale);
+
+        int color = this.active ? 0xFFFFFFFF : 0xFFA0A0A0;
+        guiGraphics.drawString(font, message, 0, 0, color | Mth.ceil(this.alpha * 255.0F) << 24, true);
+        guiGraphics.pose().popMatrix();
     }
     //?} else {
     /*@Override
