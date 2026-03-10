@@ -1,10 +1,9 @@
-# YetAnotherConfigLib 3.8.2
+# YetAnotherConfigLib 3.8.2 (LTS)
 
 ### 3.8.2 targets
 
 |                  | Fabric    | NeoForge  | Forge |
 |------------------|-----------|-----------|-------|
-| 26.1 (Snapshots) | ✅         | ❌         | ❌     |
 | 1.21.11          | ✅         | ✅         | ❌     |
 | 1.21.10          | ✅         | ✅         | ❌     |
 | 1.21.9           | ✅ 1.21.10 | ✅ 1.21.10 | ❌     |
@@ -20,7 +19,3 @@
 | 1.20.4           | ❌         | ❌         | ❌     |
 | 1.20.1           | ❌         | ❌         | ❌     |
 
-### Changes
-
-- Add targets for 26.1 snapshots.
-- Remove some excessive validation from search field.
