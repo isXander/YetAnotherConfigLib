@@ -1,4 +1,4 @@
-# YetAnotherConfigLib 3.8.2 (LTS)
+# YetAnotherConfigLib 3.8.2 (ELTS)
 
 ### 3.8.2 targets
 
