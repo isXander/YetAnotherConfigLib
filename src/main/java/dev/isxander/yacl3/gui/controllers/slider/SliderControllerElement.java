@@ -46,7 +46,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
         // thumb
         graphics.fill(getThumbX() - getThumbWidth() / 2, sliderBounds.y(), getThumbX() + getThumbWidth() / 2, sliderBounds.yLimit(), -1);
 
-        //? if >=1.21.9 {
+        //? if >=1.21.11 {
         if (isHoveredSliderBounds(mouseX, mouseY)) {
             graphics.requestCursor(isAvailable() ? com.mojang.blaze3d.platform.cursor.CursorTypes.RESIZE_EW : com.mojang.blaze3d.platform.cursor.CursorTypes.NOT_ALLOWED);
         }

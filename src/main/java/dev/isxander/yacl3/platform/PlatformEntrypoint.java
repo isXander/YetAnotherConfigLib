@@ -23,7 +23,7 @@ import net.neoforged.neoforge.client.event.*;
 public class PlatformEntrypoint {
     public PlatformEntrypoint(IEventBus modEventBus) {
         YACLConfig.HANDLER.load();
-        //? if >=1.21.4 {
+        //? if >=1.21.11 {
         modEventBus.addListener(AddClientReloadListenersEvent.class, event -> {
             var listener = new YACLImageReloadListener();
             event.addListener(listener.getId(), listener);
@@ -33,21 +33,6 @@ public class PlatformEntrypoint {
             event.registerReloadListener(new YACLImageReloadListener());
         });
         ^///?}
-    }
-}
-*//*?} elif forge {*/
-/*import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-
-@Mod("yet_another_config_lib_v3")
-public class PlatformEntrypoint {
-    public PlatformEntrypoint() {
-        YACLConfig.HANDLER.load();
-        // noinspection removal we will never support lexforge past 1.20.1
-        FMLJavaModLoadingContext.get().getModEventBus().<RegisterClientReloadListenersEvent>addListener(event -> {
-            event.registerReloadListener(new YACLImageReloadListener());
-        });
     }
 }
 *//*?}*/

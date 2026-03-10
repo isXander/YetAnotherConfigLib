@@ -14,7 +14,7 @@ public interface TabExt extends Tab {
 
     default void renderBackground(GuiGraphics graphics) {}
 
-    //? if >=1.21.6
+    //? if >=1.21.11
     @Override
     default @NotNull Component getTabExtraNarration() {
         return Component.empty();

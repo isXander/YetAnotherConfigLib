@@ -89,7 +89,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         repositionEntries();
     }
 
-    //? if >=1.21.9 {
+    //? if >=1.21.11 {
     @Override
     protected int addEntry(Entry entry) {
         // instead of using super.defaultEntryHeight, use the height the entry wants to be - our entries set their height in the constructor
@@ -209,7 +209,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
     }
 
     private List<Entry> superModifiableChildren() {
-        //? if >=1.21.9 {
+        //? if >=1.21.11 {
         // noinspection unchecked
         return (List<Entry>) ((AbstractSelectionListAccessor) this).getChildren();
         //?} else {
@@ -248,7 +248,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
     protected void renderListBackground(GuiGraphics guiGraphics) {
     }
 
-    /*? if <1.21.4 {*/
+    /*? if <1.21.11 {*/
     /*@Override
      *//*?}*/
     protected boolean isValidMouseClick(int button) {
@@ -467,9 +467,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
 
             //? if >=1.21.11 {
             wrappedName.visitLines(net.minecraft.client.gui.TextAlignment.CENTER, this.getX() + this.getWidth() / 2, this.getY() + getYPadding(), font.lineHeight, graphics.textRenderer());
-            //?} elif >=1.21.9 {
-            /*wrappedName.render(graphics, MultiLineLabel.Align.CENTER, this.getX() + this.getWidth() / 2, this.getY() + getYPadding(), font.lineHeight, false, -1);
-            *///?} else {
+            //?} else {
             /*wrappedName.renderCentered(graphics, this.getX() + this.getWidth() / 2, this.getY() + getYPadding());
              *///?}
 

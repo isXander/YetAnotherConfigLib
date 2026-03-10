@@ -35,7 +35,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
-//? if >=1.21.9
+//? if >=1.21.11
 import net.minecraft.client.input.MouseButtonEvent;
 
 public class YACLScreen extends Screen {
@@ -197,7 +197,7 @@ public class YACLScreen extends Screen {
         }
     }
 
-    //? if >=1.21.9 {
+    //? if >=1.21.11 {
     @Override
     public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
         if (super.mouseClicked(mouseButtonEvent, bl)) {
@@ -217,7 +217,7 @@ public class YACLScreen extends Screen {
     }
     *///?}
 
-    //? if >=1.21.9 {
+    //? if >=1.21.11 {
     @Override
     public boolean mouseDragged(MouseButtonEvent mouseButtonEvent, double d, double e) {
         return this.getFocused() != null
@@ -298,9 +298,9 @@ public class YACLScreen extends Screen {
                     drawY,
                     maxWidth,
                     height
-                    //? if <1.21.6
-                    /*,400*/
-                    //? if >=1.21.2
+                    //? if <1.21.11
+                    //,400
+                    //? if >=1.21.11
                     ,null
             );
             GuiUtils.translateZ(graphics, 400);
@@ -412,11 +412,11 @@ public class YACLScreen extends Screen {
         public void renderBackground(GuiGraphics graphics) {
             // right pane darker bg
             // 1.21.1 did not use RenderType/RenderPipeline in blit so we need to enable blending manually
-            //? if <1.21.2
-            /*RenderSystem.enableBlend();*/
+            //? if <1.21.11
+            //RenderSystem.enableBlend();
             GuiUtils.blitGuiTex(graphics, DARKER_BG, rightPaneDim.left(), rightPaneDim.top(), rightPaneDim.right() + 2, rightPaneDim.bottom() + 2, rightPaneDim.width() + 2, rightPaneDim.height() + 2, 32, 32);
-            //? if <1.21.2
-            /*RenderSystem.disableBlend();*/
+            //? if <1.21.11
+            //RenderSystem.disableBlend();
 
             // top separator for right pane
             GuiUtils.pushPose(graphics);

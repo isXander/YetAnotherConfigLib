@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 
-//? if >=1.21.9 {
+//? if >=1.21.11 {
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -48,12 +48,12 @@ public class PopupControllerScreen extends Screen {
             float partialTick
     ) {
         // in 1.21.6+ renderBackground isn't called in render, it's called earlier before the blur pass
-        //? if >=1.21.6
+        //? if >=1.21.11
         this.backgroundYaclScreen.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
     }
 
 
-    //? if >=1.21.9 {
+    //? if >=1.21.11 {
     @Override
     public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
         if (!super.mouseClicked(mouseButtonEvent, bl)) {
@@ -87,7 +87,7 @@ public class PopupControllerScreen extends Screen {
         controllerPopup.mouseMoved(mouseX, mouseY);
     }
 
-    //? if >=1.21.9 {
+    //? if >=1.21.11 {
     @Override
     public boolean charTyped(CharacterEvent characterEvent) {
         return controllerPopup.charTyped(characterEvent);
@@ -100,7 +100,7 @@ public class PopupControllerScreen extends Screen {
     *///?}
 
 
-    //? if >=1.21.9 {
+    //? if >=1.21.11 {
     @Override
     public boolean keyPressed(KeyEvent keyEvent) {
         return controllerPopup.keyPressed(keyEvent);

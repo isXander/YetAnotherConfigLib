@@ -94,7 +94,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         }
         graphics.disableScissor();
 
-        //? if >=1.21.9 {
+        //? if >=1.21.11 {
         if (this.isHoveredInputField(mouseX, mouseY)) {
             graphics.requestCursor(isAvailable() ? com.mojang.blaze3d.platform.cursor.CursorTypes.IBEAM : com.mojang.blaze3d.platform.cursor.CursorTypes.NOT_ALLOWED);
         } else if (this.hovered) {

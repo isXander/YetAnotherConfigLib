@@ -2,7 +2,7 @@ package dev.isxander.yacl3.gui;
 
 import net.minecraft.client.Minecraft;
 
-//? if >=1.21.9 {
+//? if >=1.21.11 {
 public abstract class YACLSelectionList<E extends YACLSelectionList.Entry<E>> extends ModernSelectionList<E> {
     public YACLSelectionList(Minecraft minecraft, int width, int height, int y) {
         super(minecraft, width, height, y, 20);

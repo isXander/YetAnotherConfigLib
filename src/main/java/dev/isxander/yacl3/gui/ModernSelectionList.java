@@ -1,4 +1,4 @@
-//? if >=1.21.9 {
+//? if >=1.21.11 {
 package dev.isxander.yacl3.gui;
 
 import net.minecraft.client.Minecraft;

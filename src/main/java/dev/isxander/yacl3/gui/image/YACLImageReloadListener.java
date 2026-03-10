@@ -25,7 +25,7 @@ public class YACLImageReloadListener
         net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener
         /*?}*/
 {
-    //? if >=1.21.9 {
+    //? if >=1.21.11 {
     @Override
     public @NotNull CompletableFuture<Void> reload(
             SharedState sharedState,
@@ -40,7 +40,7 @@ public class YACLImageReloadListener
     public @NotNull CompletableFuture<Void> reload(
             PreparationBarrier preparationBarrier,
             @NotNull ResourceManager resourceManager,
-            //? if <1.21.2 {
+            //? if <1.21.11 {
             /^@NotNull ProfilerFiller preparationsProfiler,
             @NotNull ProfilerFiller reloadProfiler,
             ^///?}

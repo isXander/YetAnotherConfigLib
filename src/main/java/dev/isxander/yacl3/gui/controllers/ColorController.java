@@ -138,7 +138,7 @@ public class ColorController implements IStringController<Color> {
             drawOutline(graphics, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), 1, outlineColor.getRGB());
 
             if (isMouseOverColorPreview) {
-                //? if >=1.21.9
+                //? if >=1.21.11
                 graphics.requestCursor(isAvailable() ? com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND : com.mojang.blaze3d.platform.cursor.CursorTypes.NOT_ALLOWED);
             }
         }

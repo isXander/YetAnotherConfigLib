@@ -1,4 +1,4 @@
-//? if <1.21.9 {
+//? if <1.21.11 {
 /*package dev.isxander.yacl3.gui;
 
 import com.google.common.collect.ImmutableList;
@@ -25,15 +25,8 @@ import java.util.function.Supplier;
 public abstract class LegacySelectionList<E extends LegacySelectionList.Entry<E>> extends ContainerObjectSelectionList<E> implements LayoutElement {
 
     public LegacySelectionList(Minecraft client, int y, int width, int height) {
-        //? if >=1.21.4 {
-        super(client, width, height, y, 0);
-        ((AbstractSelectionListAccessor) this).setRenderHeader(false);
-        //?} else {
-        /^super(client, width, height, y, 20);
-         ^///?}
-
-        //? if <1.21.4
-        /^setRenderHeader(false, 0);^/
+        super(client, width, height, y, 20);
+        setRenderHeader(false, 0);
     }
 
     // for parity with modern, no need in legacy as everything is positioned on render
@@ -42,14 +35,11 @@ public abstract class LegacySelectionList<E extends LegacySelectionList.Entry<E>
     /^
     The default implementation of scrollbarX does not respect left/right positioning of the list.
     ^/
-    //? if <1.21.4 {
-    /^@Override
+    @Override
     protected int getScrollbarPosition() {
         return this.scrollBarX();
     }
-    ^///?} else {
-    @Override
-    //?}
+
     protected int scrollBarX() {
         return this.getX() + this.getWidth() - SCROLLBAR_WIDTH;
     }
@@ -59,14 +49,11 @@ public abstract class LegacySelectionList<E extends LegacySelectionList.Entry<E>
     This implementation allows each element to define its own height.
     So we override the relevant methods to use this behaviour instead.
      ^/
-    //? <1.21.4 {
-    /^@Override
+    @Override
     protected int getMaxPosition() {
         return this.contentHeight();
     }
-    ^///?} else {
-    @Override
-    //?}
+
     protected int contentHeight() {
         return children().stream().mapToInt(E::getHeight).sum();
     }
@@ -80,8 +67,7 @@ public abstract class LegacySelectionList<E extends LegacySelectionList.Entry<E>
     }
 
     @Override
-    /^? if >=1.21.2 {^/ public /^?} else {^/ /^protected ^//^?}^/
-    int getRowTop(int index) {
+    protected int getRowTop(int index) {
         int integer = getY() + 4 - (int) this.scrollAmount() + headerHeight;
         for (int i = 0; i < children().size() && i < index; i++)
             integer += children().get(i).getHeight();
@@ -141,11 +127,9 @@ public abstract class LegacySelectionList<E extends LegacySelectionList.Entry<E>
         }
     }
 
-    //? if <1.21.4 {
-    /^public double scrollAmount() {
+    public double scrollAmount() {
         return this.getScrollAmount();
     }
-    ^///?}
 
 
     @Override
@@ -300,8 +284,8 @@ public abstract class LegacySelectionList<E extends LegacySelectionList.Entry<E>
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button /^? if >=1.21.9 {^/ ,boolean doubleClick /^?}^/) {
-            return this.list.mouseClicked(mouseX, mouseY, button /^? if >=1.21.9 {^/ ,doubleClick /^?}^/);
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            return this.list.mouseClicked(mouseX, mouseY, button);
         }
 
         @Override

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-//? if >=1.21.9 {
+//? if >=1.21.11 {
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 //?}
@@ -118,11 +118,11 @@ public class OptionDescriptionWidget extends AbstractWidget {
         }
 
         if (isFocused()) {
-            graphics./*? if >=1.21.9 && <1.21.11 {*//*submitOutline*//*?} else {*/renderOutline/*?}*/(getX(), getY(), getWidth(), getHeight(), -1);
+            graphics.renderOutline(getX(), getY(), getWidth(), getHeight(), -1);
         }
     }
 
-    //? if >=1.21.9 {
+    //? if >=1.21.11 {
     @Override
     public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
         return this.onMouseClicked(mouseButtonEvent.x(), mouseButtonEvent.y());
@@ -160,7 +160,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
         return false;
     }
 
-    //? if >=1.21.9 {
+    //? if >=1.21.11 {
     @Override
     public boolean keyPressed(KeyEvent keyEvent) {
         return this.onKeyPressed(keyEvent.key());
@@ -214,7 +214,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
     }
 
     private Style getDescStyle(int mouseX, int mouseY) {
-        boolean clicked = /*? if >=1.21.4 {*/ isMouseOver(mouseX, mouseY) /*?} else {*/ /*clicked(mouseX, mouseY) *//*?}*/;
+        boolean clicked = /*? if >=1.21.11 {*/ isMouseOver(mouseX, mouseY) /*?} else {*/ /*clicked(mouseX, mouseY) *//*?}*/;
         if (!clicked)
             return null;
 

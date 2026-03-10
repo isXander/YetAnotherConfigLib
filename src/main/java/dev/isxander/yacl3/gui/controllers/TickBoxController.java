@@ -72,7 +72,7 @@ public class TickBoxController implements Controller<Boolean> {
             }
 
             if (hovered) {
-                //? if >=1.21.9
+                //? if >=1.21.11
                 graphics.requestCursor(isAvailable() ? com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND : com.mojang.blaze3d.platform.cursor.CursorTypes.NOT_ALLOWED);
             }
         }

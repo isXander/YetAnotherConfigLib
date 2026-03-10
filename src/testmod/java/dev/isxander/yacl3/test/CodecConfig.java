@@ -23,7 +23,7 @@ public class CodecConfig extends JsonFileCodecConfig<CodecConfig> {
     public final ConfigEntry<Identifier> myIdentifier =
             register("my_identifier", YACLPlatform.rl("test"), Identifier.CODEC);
 
-    //? if >=1.21.2 {
+    //? if >=1.21.11 {
     public final ConfigEntry<Component> myText =
             register("my_text", Component.literal("Hello"),
                     net.minecraft.network.chat.ComponentSerialization.CODEC);

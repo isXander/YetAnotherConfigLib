@@ -14,7 +14,7 @@ import net.minecraft.util.Mth;
 
 import java.awt.*;
 
-//? if >=1.21.9
+//? if >=1.21.11
 import net.minecraft.client.input.MouseButtonEvent;
 
 public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
@@ -148,7 +148,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
 
         GuiUtils.popPose(graphics);
 
-        //? if >=1.21.9 {
+        //? if >=1.21.11 {
         if (isHoveringHueSlider(mouseX, mouseY)) {
             graphics.requestCursor(com.mojang.blaze3d.platform.cursor.CursorTypes.RESIZE_EW);
         } else if (isHoveringAlphaSlider(mouseX, mouseY)) {

@@ -2,7 +2,7 @@ package dev.isxander.yacl3.gui.render;
 
 import net.minecraft.client.gui.GuiGraphics;
 
-//? if >=1.21.6 {
+//? if >=1.21.11 {
 import net.minecraft.client.gui.render.state.GuiElementRenderState;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 //?} else {
@@ -10,7 +10,7 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 *///?}
 
 public interface GuiRenderStateSink {
-    //? if >=1.21.6 {
+    //? if >=1.21.11 {
     void yacl$submit(GuiElementRenderState renderState);
 
     static void submit(GuiGraphics graphics, GuiElementRenderState renderState) {

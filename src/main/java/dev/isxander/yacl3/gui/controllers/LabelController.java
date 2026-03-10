@@ -93,20 +93,9 @@ public class LabelController implements Controller<Component> {
                 if (style != null && style.getHoverEvent() != null) {
                     HoverEvent hoverEvent = style.getHoverEvent();
 
-                    //? if >=1.21.6 {
+                    //? if >=1.21.11 {
                     graphics.renderComponentHoverEffect(textRenderer, style, mouseX, mouseY);
-                    //?} elif >=1.21.5 {
-                    /*if (hoverEvent instanceof HoverEvent.ShowItem showItem) {
-                        ItemStack stack = showItem.item();
-                        renderItemStackTooltip(graphics, mouseX, mouseY, stack);
-                    } else if (hoverEvent instanceof HoverEvent.ShowEntity showEntity) {
-                        HoverEvent.EntityTooltipInfo entity = showEntity.entity();
-                        renderEntityTooltip(graphics, mouseX, mouseY, entity);
-                    } else if (hoverEvent instanceof HoverEvent.ShowText showText) {
-                        Component text = showText.value();
-                        renderTextTooltip(graphics, mouseX, mouseY, text);
-                    }
-                    *///?} else {
+                    //?} else {
                     /*@Nullable HoverEvent.ItemStackInfo itemStackContent = hoverEvent.getValue(HoverEvent.Action.SHOW_ITEM);
                     @Nullable HoverEvent.EntityTooltipInfo entityContent = hoverEvent.getValue(HoverEvent.Action.SHOW_ENTITY);
                     @Nullable Component text = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
@@ -122,7 +111,7 @@ public class LabelController implements Controller<Component> {
                     *///?}
                 }
 
-                //? if >=1.21.9 {
+                //? if >=1.21.11 {
                 if (style != null && style.getClickEvent() != null) {
                     graphics.requestCursor(com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND);
                 }
@@ -131,7 +120,7 @@ public class LabelController implements Controller<Component> {
             GuiUtils.popPose(graphics);
         }
 
-        //? if <=1.21.5 {
+        //? if <1.21.11 {
         /*private void renderItemStackTooltip(GuiGraphics graphics, int mouseX, int mouseY, ItemStack itemStack) {
             graphics.renderTooltip(textRenderer, Screen.getTooltipFromItem(client, itemStack), itemStack.getTooltipImage(), mouseX, mouseY);
         }

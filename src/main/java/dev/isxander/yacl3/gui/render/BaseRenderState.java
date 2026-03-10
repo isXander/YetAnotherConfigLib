@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
-//? if >=1.21.6 {
+//? if >=1.21.11 {
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.TextureSetup;
@@ -20,7 +20,7 @@ import org.joml.Matrix4f;
 *///?}
 
 public record BaseRenderState(
-        //? if >=1.21.6 {
+        //? if >=1.21.11 {
         RenderPipeline pipeline,
         TextureSetup textureSetup,
         Matrix3x2f pose,
@@ -32,7 +32,7 @@ public record BaseRenderState(
         *///?}
 ) {
     public static BaseRenderState create(GuiGraphics graphics, @Nullable Identifier texture, int x0, int y0, int x1, int y1) {
-        //? if >=1.21.6 {
+        //? if >=1.21.11 {
         @Nullable ScreenRectangle scissorArea = GuiRenderStateSink.peekScissorStack(graphics);
         ScreenRectangle bounds = boundsFromMaxPoints(x0, y0, x1, y1, graphics.pose(), scissorArea);
 
@@ -48,7 +48,7 @@ public record BaseRenderState(
     }
 
     public static BaseRenderState create(GuiGraphics graphics, @Nullable Identifier texture) {
-        //? if >=1.21.6 {
+        //? if >=1.21.11 {
         return new BaseRenderState(
                 texture != null ? RenderPipelines.GUI_TEXTURED : RenderPipelines.GUI,
                 textureSetup(texture),
@@ -63,7 +63,7 @@ public record BaseRenderState(
         *///?}
     }
 
-    //? if >=1.21.6 {
+    //? if >=1.21.11 {
     private static TextureSetup textureSetup(@Nullable Identifier textureId) {
         if (textureId != null) {
             AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(textureId);

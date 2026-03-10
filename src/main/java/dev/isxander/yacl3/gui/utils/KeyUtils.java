@@ -53,7 +53,7 @@ public final class KeyUtils {
     }
 
     public static boolean hasShiftDown() {
-        var window = /*? if >=1.21.9 {*/ Minecraft.getInstance().getWindow(); /*?} else {*/ /*Minecraft.getInstance().getWindow().getWindow(); *//*?}*/
+        var window = /*? if >=1.21.11 {*/ Minecraft.getInstance().getWindow(); /*?} else {*/ /*Minecraft.getInstance().getWindow().getWindow(); *//*?}*/
         return InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_SHIFT) ||
                InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_SHIFT);
     }
@@ -63,7 +63,7 @@ public final class KeyUtils {
     }
 
     public static boolean hasControlDown() {
-        var window = /*? if >=1.21.9 {*/ Minecraft.getInstance().getWindow(); /*?} else {*/ /*Minecraft.getInstance().getWindow().getWindow(); *//*?}*/
+        var window = /*? if >=1.21.11 {*/ Minecraft.getInstance().getWindow(); /*?} else {*/ /*Minecraft.getInstance().getWindow().getWindow(); *//*?}*/
         return InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_CONTROL) ||
                InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_CONTROL);
     }

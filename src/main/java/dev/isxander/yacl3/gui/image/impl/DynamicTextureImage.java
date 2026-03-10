@@ -29,10 +29,10 @@ public class DynamicTextureImage implements ImageRenderer {
         RenderSystem.assertOnRenderThread();
 
         this.image = image;
-        this.texture = new DynamicTexture(/*? if >=1.21.5 >>*/ location::toString, image);
+        this.texture = new DynamicTexture(/*? if >=1.21.11 >>*/ /*location::toString,*/ image);
         // TODO 1.21.11
         //? if <1.21.11
-        /*this.texture.setFilter(textureFiltering, false);*/
+        //this.texture.setFilter(textureFiltering, false);
         this.textureFiltering = textureFiltering;
         this.uniqueLocation = location;
         textureManager.register(this.uniqueLocation, this.texture);

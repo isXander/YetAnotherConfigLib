@@ -6,7 +6,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-//? if >=1.21.6 {
+//? if >=1.21.11 {
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.state.GuiElementRenderState;
 import net.minecraft.client.gui.render.state.GuiRenderState;
@@ -17,7 +17,7 @@ import net.minecraft.client.gui.render.state.GuiRenderState;
 @Mixin(GuiGraphics.class)
 public class GuiGraphicsMixin implements GuiRenderStateSink {
 
-    //? if >=1.21.6 {
+    //? if >=1.21.11 {
     @Shadow @Final private GuiRenderState guiRenderState;
 
     @Override

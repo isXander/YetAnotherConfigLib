@@ -81,7 +81,7 @@ public final class ItemRegistryHelper {
             filterPredicate = identifier ->
                     identifier.getPath().contains(value)
                             || MiscUtil.getFromRegistry(BuiltInRegistries.ITEM, identifier)
-                                    /*? if >=1.21.2 {*/ .getName() /*?} else {*/ /*.getDescription() *//*?}*/
+                                    /*? if >=1.21.11 {*/ .getName() /*?} else {*/ /*.getDescription() *//*?}*/
                                     .getString().toLowerCase().contains(value.toLowerCase());
         } else {
             String namespace = value.substring(0, sep);
