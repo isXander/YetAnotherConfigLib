@@ -28,8 +28,17 @@ public @interface IntSlider {
     int max();
 
     /**
+     * The step size of this slider.
+     * <p>
+     * For example, if this is set to 1, the slider will
+     * increment/decrement by 1 when dragging, no less, no more and
+     * will always be a multiple of 1.
+     */
+    int step();
+
+    /**
      * The format used to display the integer.
      * This is the syntax used in {@link String#format(String, Object...)}.
      */
-    int step();
+    String format() default "%d";
 }

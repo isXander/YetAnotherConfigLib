@@ -21,7 +21,7 @@ public class IntSliderImpl extends SimpleOptionFactory<IntSlider, Integer> {
                     key = getTranslationKey(field, "fmt");
                     if (Language.getInstance().has(key))
                         return Component.translatable(key, v);
-                    return Component.literal(Integer.toString(v));
+                    return Component.literal(String.format(annotation.format(), v));
                 })
                 .range(annotation.min(), annotation.max())
                 .step(annotation.step());

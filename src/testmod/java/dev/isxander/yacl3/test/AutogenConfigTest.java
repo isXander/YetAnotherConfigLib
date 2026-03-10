@@ -65,6 +65,10 @@ public class AutogenConfigTest {
     @SerialEntry public long testLong = 0;
 
     @AutoGen(category = "test", group = "master_test")
+    @LongSlider(min = 0, max = 1000, step = 10, format = "%dms")
+    @SerialEntry public long testLongFormatted = 500;
+
+    @AutoGen(category = "test", group = "master_test")
     @IntField(min = 0, max = 10)
     @SerialEntry public int testIntField = 0;
 
