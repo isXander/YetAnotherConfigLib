@@ -3,19 +3,16 @@ package dev.isxander.yacl3.gui.controllers.dropdown;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.utils.ItemRegistryHelper;
-import dev.isxander.yacl3.gui.utils.MiscUtil;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class ItemControllerElement extends AbstractDropdownControllerElement<Item, Identifier> {
 	private final ItemController itemController;
@@ -29,13 +26,13 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 	}
 
 	@Override
-	protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+	protected void drawValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
 		var oldDimension = getDimension();
 		setDimension(getDimension().withWidth(getDimension().width() - getDecorationPadding()));
 		super.drawValueText(graphics, mouseX, mouseY, delta);
 		setDimension(oldDimension);
 		if (currentItem != null) {
-			graphics.renderFakeItem(new ItemStack(currentItem), getDimension().xLimit() - getXPadding() - getDecorationPadding() + 2, getDimension().y() + 2);
+			graphics.fakeItem(new ItemStack(currentItem), getDimension().xLimit() - getXPadding() - getDecorationPadding() + 2, getDimension().y() + 2);
 		}
 	}
 
@@ -44,15 +41,15 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 		List<Identifier> identifiers = ItemRegistryHelper.getMatchingItemIdentifiers(inputField).toList();
 		currentItem = ItemRegistryHelper.getItemFromName(inputField, null);
 		for (Identifier identifier : identifiers) {
-			matchingItems.put(identifier, MiscUtil.getFromRegistry(BuiltInRegistries.ITEM, identifier));
+			matchingItems.put(identifier, ItemRegistryHelper.getFromRegistry(BuiltInRegistries.ITEM, identifier));
 		}
 		return identifiers;
 	}
 
 	@Override
-	protected void renderDropdownEntry(GuiGraphics graphics, Dimension<Integer> entryDimension, Identifier identifier) {
+	protected void renderDropdownEntry(GuiGraphicsExtractor graphics, Dimension<Integer> entryDimension, Identifier identifier) {
 		super.renderDropdownEntry(graphics, entryDimension, identifier);
-		graphics.renderFakeItem(
+		graphics.fakeItem(
 				new ItemStack(matchingItems.get(identifier)),
 				entryDimension.xLimit() - 2,
 				entryDimension.y() + 1
@@ -87,11 +84,7 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 		if (inputFieldFocused)
 			return Component.literal(inputField);
 
-		return itemController.option().pendingValue()
-                //? if >=1.21.2 {
-                .getName();
-                //?} else {
-                /*.getDescription();
-                *///?}
+        Item item = itemController.option().pendingValue();
+		return item.getName(item.getDefaultInstance());
 	}
 }

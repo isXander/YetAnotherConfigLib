@@ -6,7 +6,7 @@ import dev.isxander.yacl3.gui.image.ImageRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -22,10 +22,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-//? if >=1.21.9 {
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
-//?}
+import org.jspecify.annotations.NonNull;
 
 public class OptionDescriptionWidget extends AbstractWidget {
     private static final int AUTO_SCROLL_TIMER = 1500;
@@ -37,7 +36,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
     private static final Minecraft minecraft = Minecraft.getInstance();
     private static final Font font = minecraft.font;
 
-    private Supplier<ScreenRectangle> dimensions;
+    private final Supplier<ScreenRectangle> dimensions;
 
     private float targetScrollAmount, currentScrollAmount;
     private int maxScrollAmount;
@@ -53,10 +52,10 @@ public class OptionDescriptionWidget extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    public void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         if (description == null) return;
 
-        currentScrollAmount = Mth.lerp(delta * 0.5f, currentScrollAmount, targetScrollAmount);
+        currentScrollAmount = Mth.lerp(a * 0.5f, currentScrollAmount, targetScrollAmount);
 
         ScreenRectangle dimensions = this.dimensions.get();
         this.setX(dimensions.left());
@@ -68,14 +67,10 @@ public class OptionDescriptionWidget extends AbstractWidget {
 
         int nameWidth = font.width(description.name());
         if (nameWidth > getWidth()) {
-            //? if >=1.21.11 {
-            graphics.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.TOOLTIP_ONLY)
+            graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.TOOLTIP_ONLY)
                     .acceptScrollingWithDefaultCenter(description.name(), getX(), getX() + getWidth(), y, y + font.lineHeight);
-            //?} else {
-            /*renderScrollingString(graphics, font, description.name(), getX(), y, getX() + getWidth(), y + font.lineHeight, -1);
-            *///?}
         } else {
-            graphics.drawString(font, description.name(), getX(), y, 0xFFFFFFFF);
+            graphics.text(font, description.name(), getX(), y, 0xFFFFFFFF);
         }
 
         y += 5 + font.lineHeight;
@@ -87,7 +82,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
         if (description.description().image().isDone()) {
             var image = description.description().image().join();
             if (image.isPresent()) {
-                y += image.get().render(graphics, getX(), y, getWidth(), delta) + 5;
+                y += image.get().render(graphics, getX(), y, getWidth(), a) + 5;
             }
         }
 
@@ -96,12 +91,8 @@ public class OptionDescriptionWidget extends AbstractWidget {
 
         descriptionY = y;
         for (var line : wrappedText) {
-            //? if >=1.21.11 {
-            graphics.textRenderer(GuiGraphics.HoveredTextEffects.TOOLTIP_AND_CURSOR)
+            graphics.textRenderer(GuiGraphicsExtractor.HoveredTextEffects.TOOLTIP_AND_CURSOR)
                     .accept(getX(), y, line);
-            //?} else {
-            /*graphics.drawString(font, line, getX(), y, 0xFFFFFFFF);
-            *///?}
             y += font.lineHeight;
         }
 
@@ -112,38 +103,21 @@ public class OptionDescriptionWidget extends AbstractWidget {
         if (isHoveredOrFocused()) {
             lastInteractionTime = currentTimeMS();
         }
-        Style hoveredStyle = getDescStyle(mouseX, mouseY);
-        if (hoveredStyle != null && hoveredStyle.getHoverEvent() != null) {
-            graphics.renderComponentHoverEffect(font, hoveredStyle, mouseX, mouseY);
-        }
 
         if (isFocused()) {
-            graphics./*? if >=1.21.9 && <1.21.11 {*//*submitOutline*//*?} else {*/renderOutline/*?}*/(getX(), getY(), getWidth(), getHeight(), -1);
+            graphics.outline(getX(), getY(), getWidth(), getHeight(), -1);
         }
     }
 
-    //? if >=1.21.9 {
     @Override
     public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
         return this.onMouseClicked(mouseButtonEvent.x(), mouseButtonEvent.y());
     }
-    //?} else {
-    /*@Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return this.onMouseClicked(mouseX, mouseY);
-    }
-    *///?}
 
     protected boolean onMouseClicked(double mouseX, double mouseY) {
         Style clickedStyle = getDescStyle((int) mouseX, (int) mouseY);
         if (clickedStyle != null && clickedStyle.getClickEvent() != null) {
             // TODO: reimplement
-            //? if <1.21.11 {
-            /*if (minecraft.screen.handleComponentClicked(clickedStyle)) {
-                playDownSound(minecraft.getSoundManager());
-                return true;
-            }
-            *///?}
             return false;
         }
 
@@ -160,17 +134,10 @@ public class OptionDescriptionWidget extends AbstractWidget {
         return false;
     }
 
-    //? if >=1.21.9 {
     @Override
     public boolean keyPressed(KeyEvent keyEvent) {
         return this.onKeyPressed(keyEvent.key());
     }
-    //?} else {
-    /*@Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return this.onKeyPressed(keyCode);
-    }
-    *///?}
     protected boolean onKeyPressed(int keyCode) {
         if (isFocused()) {
             switch (keyCode) {
@@ -214,7 +181,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
     }
 
     private Style getDescStyle(int mouseX, int mouseY) {
-        boolean clicked = /*? if >=1.21.4 {*/ isMouseOver(mouseX, mouseY) /*?} else {*/ /*clicked(mouseX, mouseY) *//*?}*/;
+        boolean clicked = isMouseOver(mouseX, mouseY);
         if (!clicked)
             return null;
 
@@ -229,11 +196,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
         if (line >= wrappedText.size()) return null;
 
         // TODO reimplement
-        //? if >=1.21.11 {
         return null;
-        //?} else {
-        /*return font.getSplitter().componentStyleAtWidth(wrappedText.get(line), x);
-        *///?}
     }
 
     @Override

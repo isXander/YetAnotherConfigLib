@@ -5,7 +5,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-public class TooltipButtonWidget extends /*? if >=1.21.11 {*/Button.Plain/*?} else {*//*Button*//*?}*/ {
+public class TooltipButtonWidget extends Button.Plain {
 
     protected final Screen screen;
 

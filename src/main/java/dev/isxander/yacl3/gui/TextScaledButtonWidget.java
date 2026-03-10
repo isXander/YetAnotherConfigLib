@@ -1,18 +1,9 @@
 package dev.isxander.yacl3.gui;
 
-import dev.isxander.yacl3.gui.utils.GuiUtils;
-import net.minecraft.client.Minecraft;
-//? if >=1.21.11 {
 import net.minecraft.client.gui.ActiveTextCollector;
-//?}
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix3x2f;
-import org.joml.Matrix4f;
 
 public class TextScaledButtonWidget extends TooltipButtonWidget {
     public float textScale;
@@ -27,21 +18,8 @@ public class TextScaledButtonWidget extends TooltipButtonWidget {
     }
 
     // FIXME: i cannot figure out how to compensate a scale with a translation so for now the reset button is small fuck you
-    //? if >=1.21.11 {
     @Override
-    protected void renderDefaultLabel(@NotNull ActiveTextCollector activeTextCollector) {
-        super.renderDefaultLabel(activeTextCollector);
+    protected void extractDefaultLabel(ActiveTextCollector output) {
+        super.extractDefaultLabel(output);
     }
-    //?} else {
-    /*@Override
-    public void renderString(GuiGraphics graphics, Font textRenderer, int color) {
-        Font font = Minecraft.getInstance().font;
-
-        GuiUtils.pushPose(graphics);
-        GuiUtils.translate2D(graphics, ((this.getX() + this.width / 2f) - font.width(getMessage()) * textScale / 2), (float)this.getY() + (this.height - 8 * textScale) / 2f / textScale);
-        GuiUtils.scale2D(graphics, textScale, textScale);
-        graphics.drawString(font, getMessage(), 0, 0, color | Mth.ceil(this.alpha * 255.0F) << 24, true);
-        GuiUtils.popPose(graphics);
-    }
-    *///?}
 }

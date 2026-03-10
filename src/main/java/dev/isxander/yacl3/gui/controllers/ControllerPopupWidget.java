@@ -3,9 +3,11 @@ package dev.isxander.yacl3.gui.controllers;
 import dev.isxander.yacl3.api.Controller;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.YACLScreen;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 
 public abstract class ControllerPopupWidget<T extends Controller<?>> extends ControllerWidget<Controller<?>> implements GuiEventListener {
     public final ControllerWidget<?> entryWidget;
@@ -18,11 +20,11 @@ public abstract class ControllerPopupWidget<T extends Controller<?>> extends Con
         return entryWidget;
     }
 
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override
-    public boolean onKeyPressed(int keycode, int scancode, int modifiers) {
-        return entryWidget.onKeyPressed(keycode, scancode, modifiers);
+    public boolean keyPressed(@NonNull KeyEvent event) {
+        return entryWidget.keyPressed(event);
     }
 
     public void close() {}

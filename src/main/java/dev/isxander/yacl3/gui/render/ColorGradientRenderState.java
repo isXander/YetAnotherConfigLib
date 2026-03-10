@@ -1,7 +1,7 @@
 package dev.isxander.yacl3.gui.render;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public record ColorGradientRenderState(
         BaseRenderState baseState,
@@ -23,7 +23,7 @@ public record ColorGradientRenderState(
     }
 
     public static ColorGradientRenderState create(
-            GuiGraphics graphics,
+            GuiGraphicsExtractor graphics,
             int x0, int y0,
             int x1, int y1,
             int x0y0Color, int x1y0Color,
@@ -38,7 +38,7 @@ public record ColorGradientRenderState(
     }
 
     public static ColorGradientRenderState createHorizontal(
-            GuiGraphics graphics,
+            GuiGraphicsExtractor graphics,
             int x0, int y0,
             int x1, int y1,
             int leftColor, int rightColor
@@ -52,7 +52,7 @@ public record ColorGradientRenderState(
     }
 
     public static ColorGradientRenderState createVertical(
-            GuiGraphics graphics,
+            GuiGraphicsExtractor graphics,
             int x0, int y0,
             int x1, int y1,
             int topColor, int bottomColor

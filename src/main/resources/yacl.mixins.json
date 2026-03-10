@@ -12,6 +12,6 @@
     "MinecraftMixin",
     "OptionInstanceAccessor",
     "TabNavigationBarAccessor",
-    "GuiGraphicsMixin"
+    "GuiGraphicsExtractorMixin"
   ]
 }

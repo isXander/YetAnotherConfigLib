@@ -3,8 +3,6 @@ package dev.isxander.yacl3.mixin;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import org.spongepowered.asm.mixin.Mixin;
-
-/*? if !forge {*/
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.navigation.FocusNavigationEvent;
@@ -36,9 +34,3 @@ public interface ContainerEventHandlerMixin {
         return instance.children();
     }
 }
-/*?} else {*/
-/*@Mixin(ContainerEventHandler.class)
-public class ContainerEventHandlerMixin {
-
-}
-*//*?}*/

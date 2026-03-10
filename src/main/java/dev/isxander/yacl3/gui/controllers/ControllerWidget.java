@@ -7,7 +7,7 @@ import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.ComponentPath;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -37,14 +37,14 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         hovered = isMouseOver(mouseX, mouseY);
 
         Component name = control.option().changed() ? modifiedOptionName : control.option().name();
         Component shortenedName = Component.literal(GuiUtils.shortenString(name.getString(), textRenderer, getDimension().width() - getControlWidth() - getXPadding() - 7, "...")).setStyle(name.getStyle());
 
         drawButtonRect(graphics, getDimension().x(), getDimension().y(), getDimension().xLimit(), getDimension().yLimit(), (hovered && isAvailable()) || focused, isAvailable());
-        graphics.drawString(textRenderer, shortenedName, getDimension().x() + getXPadding(), getTextY(), getValueColor(), true);
+        graphics.text(textRenderer, shortenedName, getDimension().x() + getXPadding(), getTextY(), getValueColor(), true);
 
 
         drawValueText(graphics, mouseX, mouseY, delta);
@@ -53,13 +53,13 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         }
     }
 
-    protected void drawHoveredControl(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    protected void drawHoveredControl(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
 
     }
 
-    protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+    protected void drawValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         Component valueText = getValueText();
-        graphics.drawString(textRenderer, valueText, getDimension().xLimit() - textRenderer.width(valueText) - getXPadding(), getTextY(), getValueColor(), true);
+        graphics.text(textRenderer, valueText, getDimension().xLimit() - textRenderer.width(valueText) - getXPadding(), getTextY(), getValueColor(), true);
     }
 
     private void updateTooltip() {

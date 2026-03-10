@@ -1,7 +1,6 @@
 package dev.isxander.yacl3.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
@@ -16,7 +15,7 @@ import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
@@ -26,6 +25,7 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -35,7 +35,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
-//? if >=1.21.9
 import net.minecraft.client.input.MouseButtonEvent;
 
 public class YACLScreen extends Screen {
@@ -124,8 +123,8 @@ public class YACLScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTick);
 
         if (tabManager.getCurrentTab() instanceof TabExt tab) {
             tab.renderBackground(guiGraphics);
@@ -197,7 +196,6 @@ public class YACLScreen extends Screen {
         }
     }
 
-    //? if >=1.21.9 {
     @Override
     public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
         if (super.mouseClicked(mouseButtonEvent, bl)) {
@@ -206,18 +204,7 @@ public class YACLScreen extends Screen {
         }
         return false;
     }
-    //?} else {
-    /*@Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (super.mouseClicked(mouseX, mouseY, button)) {
-            this.setDragging(true);
-            return true;
-        }
-        return false;
-    }
-    *///?}
 
-    //? if >=1.21.9 {
     @Override
     public boolean mouseDragged(MouseButtonEvent mouseButtonEvent, double d, double e) {
         return this.getFocused() != null
@@ -225,15 +212,6 @@ public class YACLScreen extends Screen {
                 && (mouseButtonEvent.button() == InputConstants.MOUSE_BUTTON_LEFT || mouseButtonEvent.button() == InputConstants.MOUSE_BUTTON_RIGHT)
                 && this.getFocused().mouseDragged(mouseButtonEvent, d, e);
     }
-    //?} else {
-    /*@Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        return this.getFocused() != null
-                && this.isDragging()
-                && (button == InputConstants.MOUSE_BUTTON_LEFT || button == InputConstants.MOUSE_BUTTON_RIGHT)
-                && this.getFocused().mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
-    }
-    *///?}
 
     public void setSaveButtonMessage(Component message, Component tooltip) {
         saveButtonMessage = message;
@@ -272,7 +250,7 @@ public class YACLScreen extends Screen {
         minecraft.setScreen(parent);
     }
 
-    public static void renderMultilineTooltip(GuiGraphics graphics, Font font, MultiLineLabel text, int centerX, int yAbove, int yBelow, int screenWidth, int screenHeight) {
+    public static void renderMultilineTooltip(GuiGraphicsExtractor graphics, Font font, MultiLineLabel text, int centerX, int yAbove, int yBelow, int screenWidth, int screenHeight) {
         if (text.getLineCount() > 0) {
             int maxWidth = text.getWidth();
             int lineHeight = font.lineHeight + 1;
@@ -291,29 +269,19 @@ public class YACLScreen extends Screen {
             int drawX = x + 12;
             int drawY = y - 12;
 
-            GuiUtils.pushPose(graphics);
-            TooltipRenderUtil.renderTooltipBackground(
+            graphics.pose().pushMatrix();
+            TooltipRenderUtil.extractTooltipBackground(
                     graphics,
                     drawX,
                     drawY,
                     maxWidth,
                     height
-                    //? if <1.21.6
-                    /*,400*/
-                    //? if >=1.21.2
                     ,null
             );
-            GuiUtils.translateZ(graphics, 400);
 
-            //? if >=1.21.11 {
             text.visitLines(net.minecraft.client.gui.TextAlignment.LEFT, drawX, drawY, lineHeight, graphics.textRenderer());
-            //?} elif >=1.21.9 {
-            /*text.render(graphics, MultiLineLabel.Align.LEFT, drawX, drawY, lineHeight, false, -1);
-            *///?} else {
-            /*text.renderLeftAligned(graphics, drawX, drawY, lineHeight, -1);
-            *///?}
 
-            GuiUtils.popPose(graphics);
+            graphics.pose().popMatrix();
         }
     }
 
@@ -409,27 +377,42 @@ public class YACLScreen extends Screen {
         }
 
         @Override
-        public void renderBackground(GuiGraphics graphics) {
+        public void renderBackground(GuiGraphicsExtractor graphics) {
             // right pane darker bg
-            // 1.21.1 did not use RenderType/RenderPipeline in blit so we need to enable blending manually
-            //? if <1.21.2
-            /*RenderSystem.enableBlend();*/
-            GuiUtils.blitGuiTex(graphics, DARKER_BG, rightPaneDim.left(), rightPaneDim.top(), rightPaneDim.right() + 2, rightPaneDim.bottom() + 2, rightPaneDim.width() + 2, rightPaneDim.height() + 2, 32, 32);
-            //? if <1.21.2
-            /*RenderSystem.disableBlend();*/
+            graphics.blit(
+                    RenderPipelines.GUI_TEXTURED,
+                    DARKER_BG,
+                    rightPaneDim.left(), rightPaneDim.top(),
+                    (float) (rightPaneDim.right() + 2), (float) (rightPaneDim.bottom() + 2),
+                    rightPaneDim.width() + 2, rightPaneDim.height() + 2,
+                    32, 32
+            );
 
             // top separator for right pane
-            GuiUtils.pushPose(graphics);
-            GuiUtils.translateZ(graphics, 10);
-            GuiUtils.blitGuiTex(graphics, CreateWorldScreen.HEADER_SEPARATOR, rightPaneDim.left() - 1, rightPaneDim.top() - 2, 0.0F, 0.0F, rightPaneDim.width() + 1, 2, 32, 2);
-            GuiUtils.popPose(graphics);
+            graphics.pose().pushMatrix();
+            graphics.blit(
+                    RenderPipelines.GUI_TEXTURED,
+                    CreateWorldScreen.HEADER_SEPARATOR,
+                    rightPaneDim.left() - 1, rightPaneDim.top() - 2,
+                    0.0F, 0.0F,
+                    rightPaneDim.width() + 1, 2,
+                    32, 2
+            );
+            graphics.pose().popMatrix();
 
             // left separator for right pane
-            GuiUtils.pushPose(graphics);
-            GuiUtils.translate2D(graphics, rightPaneDim.left(), rightPaneDim.top() - 1);
-            GuiUtils.rotate2D(graphics, 90);
-            GuiUtils.blitGuiTex(graphics, CreateWorldScreen.FOOTER_SEPARATOR, 0, 0, 0f, 0f, rightPaneDim.height() + 1, 2, 32, 2);
-            GuiUtils.popPose(graphics);
+            graphics.pose().pushMatrix();
+            graphics.pose().translate(rightPaneDim.left(), rightPaneDim.top() - 1);
+            graphics.pose().rotate((float) Math.toRadians(90));
+            graphics.blit(
+                    RenderPipelines.GUI_TEXTURED,
+                    CreateWorldScreen.FOOTER_SEPARATOR,
+                    0, 0,
+                    0f, 0f,
+                    rightPaneDim.height() + 1, 2,
+                    32, 2
+            );
+            graphics.pose().popMatrix();
         }
 
         @Override

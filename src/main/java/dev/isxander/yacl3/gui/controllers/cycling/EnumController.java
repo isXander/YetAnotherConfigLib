@@ -20,10 +20,6 @@ public class EnumController<T extends Enum<T>> extends CyclingListController<T> 
         return value -> {
             if (value instanceof NameableEnum nameableEnum)
                 return nameableEnum.getDisplayName();
-            //? if <1.21.11 {
-            /*if (value instanceof net.minecraft.util.OptionEnum translatableOption)
-                return translatableOption.getCaption();
-            *///?}
             return Component.literal(value.toString());
         };
     }

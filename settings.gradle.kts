@@ -23,14 +23,7 @@ stonecutter {
             }
         }
 
-        mc("26.1.0", loaders = listOf("fabric"))
-        mc("1.21.11", loaders = listOf("fabric", "neoforge"))
-        mc("1.21.10", loaders = listOf("fabric", "neoforge"))
-        mc("1.21.6", loaders = listOf("fabric", "neoforge"))
-        mc("1.21.5", loaders = listOf("fabric", "neoforge"))
-        mc("1.21.4", loaders = listOf("fabric", "neoforge"))
-        mc("1.21.3", loaders = listOf("fabric", "neoforge"))
-        mc("1.21.1", loaders = listOf("fabric", "neoforge"))
+        mc("26.1", loaders = listOf("fabric"))
     }
 }
 rootProject.name = "YetAnotherConfigLib"

@@ -1,5 +1,6 @@
-/*? if fabric {*/
 package dev.isxander.yacl3.test;
+
+//? if fabric {
 import net.fabricmc.api.ClientModInitializer;
 
 public class Entrypoint implements ClientModInitializer {
@@ -8,11 +9,8 @@ public class Entrypoint implements ClientModInitializer {
 
 	}
 }
-
-/*?} elif neoforge {*/
-/*package dev.isxander.yacl3.test;
-
-import net.neoforged.fml.common.Mod;
+//?} elif neoforge {
+/*import net.neoforged.fml.common.Mod;
 
 @Mod("yacl_test")
 public class Entrypoint {
@@ -20,15 +18,4 @@ public class Entrypoint {
 
     }
 }
-*//*?} elif forge {*/
-/*package dev.isxander.yacl3.test;
-
-import net.minecraftforge.fml.common.Mod;
-
-@Mod("yacl_test")
-public class Entrypoint {
-    public Entrypoint() {
-
-    }
-}
-*//*?}*/
+*///?}

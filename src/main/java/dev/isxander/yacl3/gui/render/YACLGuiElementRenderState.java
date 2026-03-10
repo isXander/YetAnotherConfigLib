@@ -1,23 +1,18 @@
 package dev.isxander.yacl3.gui.render;
 
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.gui.render.TextureSetup;
+import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-//? if >=1.21.6 {
-import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.client.gui.render.state.GuiElementRenderState;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
-
-//?}
-
-public interface YACLGuiElementRenderState /*? if >=1.21.6 {*/extends GuiElementRenderState /*?}*/ {
+public interface YACLGuiElementRenderState extends GuiElementRenderState {
 
     BaseRenderState baseState();
 
-    //? if >=1.21.9 {
     @Override
     default void buildVertices(VertexConsumer vertexConsumer) {
         this.buildVertices(vertexConsumer, 0);
@@ -25,9 +20,7 @@ public interface YACLGuiElementRenderState /*? if >=1.21.6 {*/extends GuiElement
 
     // purely to ease development, we backport this method from <1.21.9 and have a placeholder Z
     void buildVertices(VertexConsumer vertexConsumer, float z);
-    //?}
 
-    //? if >=1.21.6 {
     @Override
     default @NotNull RenderPipeline pipeline() {
         return baseState().pipeline();
@@ -47,29 +40,16 @@ public interface YACLGuiElementRenderState /*? if >=1.21.6 {*/extends GuiElement
     default @Nullable ScreenRectangle bounds() {
         return baseState().bounds();
     }
-    //?} else {
-    /*void buildVertices(VertexConsumer vertexConsumer, float z);
-    *///?}
 
     default VertexConsumer add2DVertex(
             VertexConsumer vertexConsumer,
             float x, float y, float z
     ) {
-        //? if >=1.21.6 {
-        return vertexConsumer.addVertexWith2DPose(this.baseState().pose(), x, y /*? if <1.21.9 {*/ /*,z *//*?}*/ );
-        //?} else {
-        /*return vertexConsumer.addVertex(this.baseState().pose(), x, y, z);
-        *///?}
+        return vertexConsumer.addVertexWith2DPose(this.baseState().pose(), x, y);
     }
 
-    default void submit(GuiGraphics graphics) {
-        //? if >=1.21.6 {
+    default void submit(GuiGraphicsExtractor graphics) {
         GuiRenderStateSink.submit(graphics, this);
-        //?} else {
-        /*// TODO: don't drawSpecial as it finishes the batch
-        VertexConsumer vertexConsumer = GuiRenderStateSink.bufferSource(graphics).getBuffer(baseState().renderType());
-        buildVertices(vertexConsumer, 0);
-        *///?}
     }
 
 

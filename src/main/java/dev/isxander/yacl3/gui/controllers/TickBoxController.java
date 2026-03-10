@@ -1,27 +1,28 @@
 package dev.isxander.yacl3.gui.controllers;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import dev.isxander.yacl3.api.Controller;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.AbstractWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 
 /**
  * This controller renders a tickbox
  */
-public class TickBoxController implements Controller<Boolean> {
-    private final Option<Boolean> option;
-
+public record TickBoxController(Option<Boolean> option) implements Controller<Boolean> {
     /**
      * Constructs a tickbox controller
      *
      * @param option bound option
      */
-    public TickBoxController(Option<Boolean> option) {
-        this.option = option;
+    public TickBoxController {
     }
 
     /**
@@ -54,7 +55,7 @@ public class TickBoxController implements Controller<Boolean> {
         }
 
         @Override
-        protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+        protected void drawValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
             int outlineSize = 10;
             int outlineX1 = getDimension().xLimit() - getXPadding() - outlineSize;
             int outlineY1 = getDimension().centerY() - outlineSize / 2;
@@ -72,14 +73,13 @@ public class TickBoxController implements Controller<Boolean> {
             }
 
             if (hovered) {
-                //? if >=1.21.9
-                graphics.requestCursor(isAvailable() ? com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND : com.mojang.blaze3d.platform.cursor.CursorTypes.NOT_ALLOWED);
+                graphics.requestCursor(isAvailable() ? CursorTypes.POINTING_HAND : CursorTypes.NOT_ALLOWED);
             }
         }
 
         @Override
-        public boolean onMouseClicked(double mouseX, double mouseY, int button) {
-            if (!isMouseOver(mouseX, mouseY) || !isAvailable())
+        public boolean mouseClicked(@NonNull MouseButtonEvent event, boolean doubleClick) {
+            if (!isMouseOver(event.x(), event.y()) || !isAvailable())
                 return false;
 
             toggleSetting();
@@ -102,12 +102,12 @@ public class TickBoxController implements Controller<Boolean> {
         }
 
         @Override
-        public boolean onKeyPressed(int keyCode, int scanCode, int modifiers) {
+        public boolean keyPressed(@NonNull KeyEvent event) {
             if (!focused) {
                 return false;
             }
 
-            if (keyCode == InputConstants.KEY_RETURN || keyCode == InputConstants.KEY_SPACE || keyCode == InputConstants.KEY_NUMPADENTER) {
+            if (event.key() == InputConstants.KEY_RETURN || event.key() == InputConstants.KEY_SPACE || event.key() == InputConstants.KEY_NUMPADENTER) {
                 toggleSetting();
                 return true;
             }

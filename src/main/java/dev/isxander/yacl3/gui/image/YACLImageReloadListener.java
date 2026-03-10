@@ -6,7 +6,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -25,7 +24,6 @@ public class YACLImageReloadListener
         net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener
         /*?}*/
 {
-    //? if >=1.21.9 {
     @Override
     public @NotNull CompletableFuture<Void> reload(
             SharedState sharedState,
@@ -35,21 +33,6 @@ public class YACLImageReloadListener
     ) {
         return this.reload0(sharedState.resourceManager(), backgroundExecutor, preparationBarrier, gameExecutor);
     }
-    //?} else {
-    /*@Override
-    public @NotNull CompletableFuture<Void> reload(
-            PreparationBarrier preparationBarrier,
-            @NotNull ResourceManager resourceManager,
-            //? if <1.21.2 {
-            /^@NotNull ProfilerFiller preparationsProfiler,
-            @NotNull ProfilerFiller reloadProfiler,
-            ^///?}
-            @NotNull Executor backgroundExecutor,
-            @NotNull Executor gameExecutor
-    ) {
-        return reload0(resourceManager, backgroundExecutor, preparationBarrier, gameExecutor);
-    }
-    *///?}
 
     private @NotNull CompletableFuture<Void> reload0(
             ResourceManager resourceManager,

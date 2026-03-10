@@ -15,25 +15,9 @@ import java.util.Collection;
 import java.util.List;
 
 @ApiStatus.Internal
-public final class OptionGroupImpl implements OptionGroup {
-    private final @NotNull Component name;
-    private final @NotNull OptionDescription description;
-    private final ImmutableList<? extends Option<?>> options;
-    private final boolean collapsed;
-    private final boolean isRoot;
-
-    public OptionGroupImpl(@NotNull Component name, @NotNull OptionDescription description, ImmutableList<? extends Option<?>> options, boolean collapsed, boolean isRoot) {
-        this.name = name;
-        this.description = description;
-        this.options = options;
-        this.collapsed = collapsed;
-        this.isRoot = isRoot;
-    }
-
-    @Override
-    public @NotNull Component name() {
-        return name;
-    }
+public record OptionGroupImpl(@NotNull Component name, @NotNull OptionDescription description,
+                              ImmutableList<? extends Option<?>> options, boolean collapsed,
+                              boolean isRoot) implements OptionGroup {
 
     @Override
     public OptionDescription description() {
@@ -48,16 +32,6 @@ public final class OptionGroupImpl implements OptionGroup {
     @Override
     public @NotNull ImmutableList<? extends Option<?>> options() {
         return options;
-    }
-
-    @Override
-    public boolean collapsed() {
-        return collapsed;
-    }
-
-    @Override
-    public boolean isRoot() {
-        return isRoot;
     }
 
     @ApiStatus.Internal
