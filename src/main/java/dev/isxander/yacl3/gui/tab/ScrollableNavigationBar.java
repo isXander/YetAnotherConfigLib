@@ -75,11 +75,11 @@ public class ScrollableNavigationBar extends TabNavigationBar {
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         graphics.pose().pushMatrix();
         // render option list BELOW the navbar without need to scissor
 
-        super.extractRenderState(graphics, mouseX, mouseY, delta);
+        super.extractRenderState(graphics, mouseX, mouseY, a);
 
         LinearLayout layout = accessor.yacl$getLayout();
         // draw right fade

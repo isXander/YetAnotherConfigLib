@@ -55,7 +55,7 @@ public record TickBoxController(Option<Boolean> option) implements Controller<Bo
         }
 
         @Override
-        protected void drawValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        protected void extractValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
             int outlineSize = 10;
             int outlineX1 = getDimension().xLimit() - getXPadding() - outlineSize;
             int outlineY1 = getDimension().centerY() - outlineSize / 2;
@@ -65,8 +65,8 @@ public record TickBoxController(Option<Boolean> option) implements Controller<Bo
             int color = getValueColor();
             int shadowColor = multiplyColor(color, 0.25f);
 
-            drawOutline(graphics, outlineX1 + 1, outlineY1 + 1, outlineX2 + 1, outlineY2 + 1, 1, shadowColor);
-            drawOutline(graphics, outlineX1, outlineY1, outlineX2, outlineY2, 1, color);
+            graphics.outline(outlineX1 + 1, outlineY1 + 1, outlineX2 + 1 - (outlineX1 + 1), outlineY2 + 1 - (outlineY1 + 1), shadowColor);
+            graphics.outline(outlineX1, outlineY1, outlineX2 - outlineX1, outlineY2 - outlineY1, color);
             if (control.option().pendingValue()) {
                 graphics.fill(outlineX1 + 3, outlineY1 + 3, outlineX2 - 1, outlineY2 - 1, shadowColor);
                 graphics.fill(outlineX1 + 2, outlineY1 + 2, outlineX2 - 2, outlineY2 - 2, color);

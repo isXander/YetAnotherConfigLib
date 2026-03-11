@@ -119,13 +119,13 @@ public class BooleanController implements Controller<Boolean> {
         }
 
         @Override
-        protected void drawHoveredControl(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        protected void extractHoveredControl(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
 
         }
 
         @Override
-        protected void drawValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
-            super.drawValueText(graphics, mouseX, mouseY, delta);
+        protected void extractValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+            super.extractValueText(graphics, mouseX, mouseY, a);
 
             if (hovered) {
                 graphics.requestCursor(isAvailable() ? CursorTypes.POINTING_HAND : CursorTypes.NOT_ALLOWED);

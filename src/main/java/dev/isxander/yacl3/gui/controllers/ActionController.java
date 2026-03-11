@@ -85,8 +85,8 @@ public class ActionController implements Controller<BiConsumer<YACLScreen, Butto
         }
 
         @Override
-        protected void drawValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
-            super.drawValueText(graphics, mouseX, mouseY, delta);
+        protected void extractValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+            super.extractValueText(graphics, mouseX, mouseY, a);
 
             if (hovered) {
                 graphics.requestCursor(isAvailable() ? CursorTypes.POINTING_HAND : CursorTypes.NOT_ALLOWED);

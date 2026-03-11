@@ -619,7 +619,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         @Override
-        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
             if (!this.isViewable()) {
                 return;
             }

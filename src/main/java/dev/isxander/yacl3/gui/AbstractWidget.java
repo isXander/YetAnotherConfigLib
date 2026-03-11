@@ -10,9 +10,6 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.input.CharacterEvent;
-import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
@@ -86,13 +83,6 @@ public abstract class AbstractWidget implements GuiEventListener, Renderable, Na
                 x1, y1,
                 width, height
         );
-    }
-
-    protected void drawOutline(GuiGraphicsExtractor graphics, int x1, int y1, int x2, int y2, int width, int color) {
-        graphics.fill(x1, y1, x2, y1 + width, color);
-        graphics.fill(x2, y1, x2 - width, y2, color);
-        graphics.fill(x1, y2, x2, y2 - width, color);
-        graphics.fill(x1, y1, x1 + width, y2, color);
     }
 
     protected void drawRainbowGradient(GuiGraphicsExtractor graphics, int x1, int y1, int x2, int y2) {

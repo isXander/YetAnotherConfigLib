@@ -53,12 +53,12 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     }
 
     @Override
-    protected void drawHoveredControl(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+    protected void extractHoveredControl(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
 
     }
 
     @Override
-    protected void drawValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+    protected void extractValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         Component valueText = getValueText();
         if (!isHovered()) valueText = Component.literal(GuiUtils.shortenString(valueText.getString(), textRenderer, getMaxUnwrapLength(), "...")).setStyle(valueText.getStyle());
 
@@ -67,7 +67,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         graphics.text(textRenderer, valueText, textX, getTextY(), getValueColor(), true);
 
         if (isHovered()) {
-            ticks += delta;
+            ticks += a;
 
             String text = getValueText().getString();
 
@@ -92,7 +92,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
                     caretTicks = 0;
                 }
 
-                if ((caretTicks += delta) % 20 <= 10)
+                if ((caretTicks += a) % 20 <= 10)
                     graphics.fill(caretX, inputFieldBounds.y() - 2, caretX + 1, inputFieldBounds.yLimit() - 1, -1);
             }
         }
