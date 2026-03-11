@@ -114,14 +114,14 @@ public record ColorController(Option<Color> option, boolean allowAlpha) implemen
         }
 
         @Override
-        protected void drawValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        protected void extractValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
             hovered = isMouseOver(mouseX, mouseY);
 
             if (isHovered()) {
                 colorPreviewDim.move(-inputFieldBounds.width() - 8, -2);
                 colorPreviewDim.expand(4, 4);
                 previewOutlineFadeTicks++;
-                super.drawValueText(graphics, mouseX, mouseY, delta);
+                super.extractValueText(graphics, mouseX, mouseY, a);
             }
 
             int previewColor = colorController.option().pendingValue().getRGB();
@@ -138,8 +138,13 @@ public record ColorController(Option<Color> option, boolean allowAlpha) implemen
             }
             graphics.fill(colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), previewColor);
             boolean isMouseOverColorPreview = isMouseOverColorPreview(mouseX, mouseY);
-            Color outlineColor = getPreviewOutlineColor(hoveredOverColorPreview || isMouseOverColorPreview);
-            drawOutline(graphics, colorPreviewDim.x(), colorPreviewDim.y(), colorPreviewDim.xLimit(), colorPreviewDim.yLimit(), 1, outlineColor.getRGB());
+            graphics.outline(
+                    colorPreviewDim.x(),
+                    colorPreviewDim.y(),
+                    colorPreviewDim.width(),
+                    colorPreviewDim.height(),
+                    getPreviewOutlineColor(hoveredOverColorPreview || isMouseOverColorPreview).getRGB()
+            );
 
             if (isMouseOverColorPreview) {
                 graphics.requestCursor(isAvailable() ? CursorTypes.POINTING_HAND : CursorTypes.NOT_ALLOWED);

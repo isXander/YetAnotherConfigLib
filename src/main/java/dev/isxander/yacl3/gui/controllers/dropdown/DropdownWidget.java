@@ -54,7 +54,7 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
 	}
 
 	@Override
-	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
 		if (dropdownLength() == 0) return;
 
 		// Background
@@ -86,7 +86,7 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
 				entryHeight()
 		);
 		for (int i = firstVisibleIndex; i < lastVisibleIndex(); ++i) {
-			dropdownElement.renderDropdownEntry(graphics, entryDimension, i);
+			dropdownElement.extractDropdownEntry(graphics, entryDimension, i);
 			entryDimension.move(0, entryHeight());
 		}
 	}

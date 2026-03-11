@@ -5,10 +5,8 @@ import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.string.StringControllerElement;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
-import dev.isxander.yacl3.gui.utils.KeyUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -144,16 +142,16 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 	}
 
 	@Override
-	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
 		if (matchingValues == null) matchingValues = computeMatchingValues();
 
-		super.extractRenderState(graphics, mouseX, mouseY, delta);
+		super.extractRenderState(graphics, mouseX, mouseY, a);
 	}
 
-	void renderDropdownEntry(GuiGraphicsExtractor graphics, Dimension<Integer> entryDimension, int index) {
-		renderDropdownEntry(graphics, entryDimension, matchingValues.get(index));
+	void extractDropdownEntry(GuiGraphicsExtractor graphics, Dimension<Integer> entryDimension, int index) {
+		extractDropdownEntry(graphics, entryDimension, matchingValues.get(index));
 	}
-	protected void renderDropdownEntry(GuiGraphicsExtractor graphics, Dimension<Integer> entryDimension, U value) {
+	protected void extractDropdownEntry(GuiGraphicsExtractor graphics, Dimension<Integer> entryDimension, U value) {
 		String entry = getString(value);
 		Component text;
 		if (entry.isBlank()) {

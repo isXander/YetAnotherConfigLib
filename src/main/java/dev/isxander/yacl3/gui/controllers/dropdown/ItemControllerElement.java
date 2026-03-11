@@ -26,13 +26,13 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 	}
 
 	@Override
-	protected void drawValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+	protected void extractValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
 		var oldDimension = getDimension();
 		setDimension(getDimension().withWidth(getDimension().width() - getDecorationPadding()));
-		super.drawValueText(graphics, mouseX, mouseY, delta);
+		super.extractValueText(graphics, mouseX, mouseY, a);
 		setDimension(oldDimension);
 		if (currentItem != null) {
-            renderFakeItem(
+            extractFakeItem(
                     graphics,
                     currentItem,
                     getDimension().xLimit() - getXPadding() - getDecorationPadding() + 2,
@@ -52,9 +52,9 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 	}
 
 	@Override
-	protected void renderDropdownEntry(GuiGraphicsExtractor graphics, Dimension<Integer> entryDimension, Identifier identifier) {
-		super.renderDropdownEntry(graphics, entryDimension, identifier);
-        renderFakeItem(
+	protected void extractDropdownEntry(GuiGraphicsExtractor graphics, Dimension<Integer> entryDimension, Identifier identifier) {
+		super.extractDropdownEntry(graphics, entryDimension, identifier);
+        extractFakeItem(
                 graphics,
                 matchingItems.get(identifier),
                 entryDimension.xLimit() - 2,
@@ -62,7 +62,7 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
         );
 	}
 
-    private void renderFakeItem(GuiGraphicsExtractor graphics, Item item, int x, int y) {
+    private void extractFakeItem(GuiGraphicsExtractor graphics, Item item, int x, int y) {
         ItemStack stack = null;
         try {
             stack = new ItemStack(item);

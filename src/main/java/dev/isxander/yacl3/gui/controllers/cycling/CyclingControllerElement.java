@@ -5,7 +5,6 @@ import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.ControllerWidget;
-import dev.isxander.yacl3.gui.utils.KeyUtils;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -18,8 +17,8 @@ public class CyclingControllerElement extends ControllerWidget<ICyclingControlle
     }
 
     @Override
-    protected void drawValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
-        super.drawValueText(graphics, mouseX, mouseY, delta);
+    protected void extractValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractValueText(graphics, mouseX, mouseY, a);
 
         if (this.hovered) {
             graphics.requestCursor(isAvailable() ? CursorTypes.POINTING_HAND : CursorTypes.NOT_ALLOWED);

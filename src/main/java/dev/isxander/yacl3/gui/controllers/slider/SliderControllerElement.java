@@ -29,14 +29,14 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
-        super.extractRenderState(graphics, mouseX, mouseY, delta);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
 
         calculateInterpolation();
     }
 
     @Override
-    protected void drawHoveredControl(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+    protected void extractHoveredControl(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         // track
         graphics.fill(sliderBounds.x(), sliderBounds.centerY() - 1, sliderBounds.xLimit(), sliderBounds.centerY(), -1);
         // track shadow
@@ -53,11 +53,11 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     @Override
-    protected void drawValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+    protected void extractValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         graphics.pose().pushMatrix();
         if (isHovered())
             graphics.pose().translate(-(sliderBounds.width() + 6 + getThumbWidth() / 2f), 0);
-        super.drawValueText(graphics, mouseX, mouseY, delta);
+        super.extractValueText(graphics, mouseX, mouseY, a);
         graphics.pose().popMatrix();
     }
 
