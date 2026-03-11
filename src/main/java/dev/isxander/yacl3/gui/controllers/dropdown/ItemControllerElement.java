@@ -32,7 +32,12 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 		super.drawValueText(graphics, mouseX, mouseY, delta);
 		setDimension(oldDimension);
 		if (currentItem != null) {
-			graphics.fakeItem(new ItemStack(currentItem), getDimension().xLimit() - getXPadding() - getDecorationPadding() + 2, getDimension().y() + 2);
+            renderFakeItem(
+                    graphics,
+                    currentItem,
+                    getDimension().xLimit() - getXPadding() - getDecorationPadding() + 2,
+                    getDimension().y() + 2
+            );
 		}
 	}
 
@@ -49,12 +54,26 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 	@Override
 	protected void renderDropdownEntry(GuiGraphicsExtractor graphics, Dimension<Integer> entryDimension, Identifier identifier) {
 		super.renderDropdownEntry(graphics, entryDimension, identifier);
-		graphics.fakeItem(
-				new ItemStack(matchingItems.get(identifier)),
-				entryDimension.xLimit() - 2,
-				entryDimension.y() + 1
-		);
+        renderFakeItem(
+                graphics,
+                matchingItems.get(identifier),
+                entryDimension.xLimit() - 2,
+                entryDimension.y() + 1
+        );
 	}
+
+    private void renderFakeItem(GuiGraphicsExtractor graphics, Item item, int x, int y) {
+        ItemStack stack = null;
+        try {
+            stack = new ItemStack(item);
+        } catch (NullPointerException ignored) {
+            // ItemStacks no longer exist until dynamic registries have been loaded,
+            // which is either loading into a level or opening the create world screen.
+            // This means we cannot do anything that involves ItemStacks until then.
+        }
+        if (stack == null) return;
+        graphics.fakeItem(stack, x, y);
+    }
 
 	@Override
 	public String getString(Identifier identifier) {
@@ -85,6 +104,17 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 			return Component.literal(inputField);
 
         Item item = itemController.option().pendingValue();
-		return item.getName(item.getDefaultInstance());
+        ItemStack stack = null;
+        try {
+            stack = item.getDefaultInstance();
+        } catch (NullPointerException ignored) {
+            // fapi has a bug (i think) that doesn't bind item components early enough anymore,
+            // causing an NPE on <init> of ItemStack.
+        }
+        if (stack != null) {
+            return item.getName(stack);
+        } else {
+            return Component.literal(item.toString());
+        }
 	}
 }
