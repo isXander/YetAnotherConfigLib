@@ -1,6 +1,6 @@
-# YetAnotherConfigLib 3.9.1
+# YetAnotherConfigLib 3.9.2
 
-### 3.9.1 targets
+### 3.9.2 targets
 
 |      | Fabric | NeoForge | Forge |
 |------|--------|----------|-------|
@@ -8,4 +8,5 @@
 
 ### Changes
 
-- Update to 26.1 (release)
+- Fix class loading errors when other mods use access wideners.
+- Make the version constraint for Fabric match that of NeoForge (~26.1)
