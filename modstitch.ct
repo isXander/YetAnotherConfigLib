@@ -7,3 +7,4 @@ accessible method net/minecraft/client/gui/components/Tooltip <init> (Lnet/minec
 accessible class net/minecraft/client/gui/components/AbstractSelectionList$Entry
 accessible class net/minecraft/client/gui/GuiGraphicsExtractor$ScissorStack
 accessible method net/minecraft/client/gui/GuiGraphicsExtractor$ScissorStack peek ()Lnet/minecraft/client/gui/navigation/ScreenRectangle;
+accessible method net/minecraft/client/gui/components/AbstractSelectionList repositionEntries ()V

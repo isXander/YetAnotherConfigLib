@@ -23,11 +23,6 @@ public abstract class YACLSelectionList<E extends YACLSelectionList.Entry<E>> ex
         super.extractWidgetRenderState(graphics, mouseX, mouseY, a);
     }
 
-    protected void repositionEntries() {
-        // triggers super.repositionEntries() without the need for a mixin accessor
-        this.setScrollAmount(this.scrollAmount());
-    }
-
     public static <T extends YACLSelectionList<?>> WidgetAndType<T> asWidget(T list) {
         return WidgetAndType.ofWidget(list);
     }
