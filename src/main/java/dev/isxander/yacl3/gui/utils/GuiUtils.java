@@ -1,8 +1,10 @@
 package dev.isxander.yacl3.gui.utils;
 
 import dev.isxander.yacl3.platform.YACLPlatform;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -44,5 +46,33 @@ public class GuiUtils {
 
     public static FormattedCharSequence overrideStyle(FormattedCharSequence seq, Style style) {
         return output -> seq.accept((c, s, t) -> output.accept(c, style, t));
+    }
+
+    public static void setScreen(final Screen screen, final boolean ignoreVanilla) {
+        if (ignoreVanilla) {
+            //? >=26.2 {
+            ((dev.isxander.yacl3.mixin.GuiAccessor) Minecraft.getInstance().gui).yacl$setScreen(screen);
+             //? } else {
+            /*Minecraft.getInstance().screen = screen;
+            *///? }
+        } else {
+            //? >=26.2 {
+            Minecraft.getInstance().gui.setScreen(screen);
+             //? } else {
+            /*Minecraft.getInstance().setScreen(screen);
+            *///? }
+        }
+    }
+
+    public static void setScreen(final Screen screen) {
+        setScreen(screen, false);
+    }
+
+    public static Screen getCurrentScreen() {
+        //? >=26.2 {
+        return Minecraft.getInstance().gui.screen();
+        //? } else {
+        /*return Minecraft.getInstance().screen;
+        *///? }
     }
 }

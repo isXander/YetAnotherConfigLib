@@ -9,6 +9,7 @@
   "client": [
     "AbstractSelectionListAccessor",
     "AbstractSelectionListMixin",
+    "GuiAccessor",
     "MinecraftMixin",
     "OptionInstanceAccessor",
     "TabNavigationBarAccessor",
