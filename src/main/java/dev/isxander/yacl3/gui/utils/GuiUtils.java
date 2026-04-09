@@ -1,5 +1,6 @@
 package dev.isxander.yacl3.gui.utils;
 
+import dev.isxander.yacl3.mixin.GuiAccessor;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -48,31 +49,31 @@ public class GuiUtils {
         return output -> seq.accept((c, s, t) -> output.accept(c, style, t));
     }
 
-    public static void setScreen(final Screen screen, final boolean ignoreVanilla) {
+    public static void setScreen(Screen screen, boolean ignoreVanilla) {
         if (ignoreVanilla) {
             //? >=26.2 {
-            ((dev.isxander.yacl3.mixin.GuiAccessor) Minecraft.getInstance().gui).yacl$setScreen(screen);
-             //? } else {
-            /*Minecraft.getInstance().screen = screen;
-            *///? }
+            /*((GuiAccessor) Minecraft.getInstance().gui).yacl$setScreen(screen);
+             *///? } else {
+            Minecraft.getInstance().screen = screen;
+            //? }
         } else {
             //? >=26.2 {
-            Minecraft.getInstance().gui.setScreen(screen);
-             //? } else {
-            /*Minecraft.getInstance().setScreen(screen);
-            *///? }
+            /*Minecraft.getInstance().gui.setScreen(screen);
+             *///? } else {
+            Minecraft.getInstance().setScreen(screen);
+            //? }
         }
     }
 
-    public static void setScreen(final Screen screen) {
+    public static void setScreen(Screen screen) {
         setScreen(screen, false);
     }
 
     public static Screen getCurrentScreen() {
         //? >=26.2 {
-        return Minecraft.getInstance().gui.screen();
-        //? } else {
-        /*return Minecraft.getInstance().screen;
-        *///? }
+        /*return Minecraft.getInstance().gui.screen();
+        *///? } else {
+        return Minecraft.getInstance().screen;
+        //? }
     }
 }
