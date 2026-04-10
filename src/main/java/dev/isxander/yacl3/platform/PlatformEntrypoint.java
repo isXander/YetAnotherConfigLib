@@ -23,16 +23,10 @@ import net.neoforged.neoforge.client.event.*;
 public class PlatformEntrypoint {
     public PlatformEntrypoint(IEventBus modEventBus) {
         YACLConfig.HANDLER.load();
-        //? if >=1.21.4 {
         modEventBus.addListener(AddClientReloadListenersEvent.class, event -> {
             var listener = new YACLImageReloadListener();
             event.addListener(listener.getId(), listener);
         });
-        //?} else {
-        /^modEventBus.addListener(RegisterClientReloadListenersEvent.class, event -> {
-            event.registerReloadListener(new YACLImageReloadListener());
-        });
-        ^///?}
     }
 }
 *//*?} elif forge {*/

@@ -3,15 +3,14 @@ package dev.isxander.yacl3.gui.image.impl;
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
-import dev.isxander.yacl3.debug.DebugProperties;
 import dev.isxander.yacl3.gui.image.ImageRendererFactory;
-import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 
@@ -39,7 +38,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
     private final int packCols, packRows;
     private final int frameWidth, frameHeight;
 
-    public AnimatedDynamicTextureImage(NativeImage image, int frameWidth, int frameHeight, int frameCount, double[] frameDelayMS, int packCols, int packRows, ResourceLocation uniqueLocation) {
+    public AnimatedDynamicTextureImage(NativeImage image, int frameWidth, int frameHeight, int frameCount, double[] frameDelayMS, int packCols, int packRows, Identifier uniqueLocation) {
         super(image, uniqueLocation, false); // TODO
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
@@ -50,7 +49,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
     }
 
     @Override
-    public int render(GuiGraphics graphics, int x, int y, int renderWidth, float tickDelta) {
+    public int render(GuiGraphicsExtractor graphics, int x, int y, int renderWidth, float tickDelta) {
         if (image == null) return 0;
 
         float ratio = renderWidth / (float)frameWidth;
@@ -59,20 +58,19 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         int currentCol = currentFrame % packCols;
         int currentRow = (int) Math.floor(currentFrame / (double)packCols);
 
-        GuiUtils.pushPose(graphics);
-        GuiUtils.translate2D(graphics, x, y);
-        GuiUtils.scale2D(graphics, ratio, ratio);
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(x, y);
+        graphics.pose().scale(ratio, ratio);
 
-        GuiUtils.blitGuiTex(
-                graphics,
+        graphics.blit(
+                RenderPipelines.GUI_TEXTURED,
                 uniqueLocation,
                 0, 0,
-                frameWidth * currentCol, frameHeight * currentRow,
+                (float) (frameWidth * currentCol), (float) (frameHeight * currentRow),
                 frameWidth, frameHeight,
-                this.width, this.height,
-                DebugProperties.IMAGE_FILTERING
+                this.width, this.height
         );
-        GuiUtils.popPose(graphics);
+        graphics.pose().popMatrix();
 
         if (frameCount > 1) {
             double timeMS = Blaze3D.getTime() * 1000;
@@ -88,7 +86,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         return targetHeight;
     }
 
-    public static ImageRendererFactory createGIFFromTexture(ResourceLocation textureLocation) {
+    public static ImageRendererFactory createGIFFromTexture(Identifier textureLocation) {
         return () -> {
             ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
             Resource resource = resourceManager.getResource(textureLocation).orElseThrow();
@@ -97,11 +95,11 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         };
     }
 
-    public static ImageRendererFactory createGIFFromPath(Path path, ResourceLocation uniqueLocation) {
+    public static ImageRendererFactory createGIFFromPath(Path path, Identifier uniqueLocation) {
         return () -> createGIFSupplier(new FileInputStream(path.toFile()), uniqueLocation);
     }
 
-    public static ImageRendererFactory createWEBPFromTexture(ResourceLocation textureLocation) {
+    public static ImageRendererFactory createWEBPFromTexture(Identifier textureLocation) {
         return () -> {
             ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
             Resource resource = resourceManager.getResource(textureLocation).orElseThrow();
@@ -110,11 +108,11 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         };
     }
 
-    public static ImageRendererFactory createWEBPFromPath(Path path, ResourceLocation uniqueLocation) {
+    public static ImageRendererFactory createWEBPFromPath(Path path, Identifier uniqueLocation) {
         return () -> createWEBPSupplier(new FileInputStream(path.toFile()), uniqueLocation);
     }
 
-    private static ImageRendererFactory.ImageSupplier createGIFSupplier(InputStream is, ResourceLocation uniqueLocation) {
+    private static ImageRendererFactory.ImageSupplier createGIFSupplier(InputStream is, Identifier uniqueLocation) {
         try (is) {
             ImageReader reader = ImageIO.getImageReadersBySuffix("gif").next();
             reader.setInput(ImageIO.createImageInputStream(is));
@@ -138,7 +136,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         }
     }
 
-    private static ImageRendererFactory.ImageSupplier createWEBPSupplier(InputStream is, ResourceLocation uniqueLocation) {
+    private static ImageRendererFactory.ImageSupplier createWEBPSupplier(InputStream is, Identifier uniqueLocation) {
         try (is) {
             ImageReader reader = new WebPImageReaderSpi().createReaderInstance();
             reader.setInput(ImageIO.createImageInputStream(is));
@@ -174,7 +172,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         }
     }
 
-    private static ImageRendererFactory.ImageSupplier createFromImageReader(ImageReader reader, AnimFrameProvider animationProvider, ResourceLocation uniqueLocation) throws Exception {
+    private static ImageRendererFactory.ImageSupplier createFromImageReader(ImageReader reader, AnimFrameProvider animationProvider, Identifier uniqueLocation) throws Exception {
         if (reader.isSeekForwardOnly()) {
             throw new RuntimeException("Image reader is not seekable");
         }
@@ -250,8 +248,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
                     int col = i % cols;
                     int row = (int) Math.floor(i / (double)cols);
 
-                    GuiUtils.setPixelARGB(
-                            image,
+                    image.setPixel(
                             frameWidth * col + w + xOffset,
                             frameHeight * row + h + yOffset,
                             argb

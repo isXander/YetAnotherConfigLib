@@ -9,6 +9,9 @@ plugins {
 
     id("me.modmuss50.mod-publish-plugin")
     `maven-publish`
+    signing
+    id("com.gradleup.nmcp")
+    id("dev.isxander.secrets")
 
     id("org.ajoberstar.grgit")
 }
@@ -45,7 +48,6 @@ val testmod by sourceSets.registering {
 
 modstitch {
     minecraftVersion = mcVersion
-    javaVersion = 21
 
     parchment {
         prop("parchment.version") { mappingsVersion = it }
@@ -140,6 +142,17 @@ stonecutter {
 
     dependencies {
         put("fapi", (findProperty("deps.fabricApi")?.toString() ?: "0.0.0"))
+    }
+
+    replacements {
+        string {
+            direction = eval(current.version, ">=1.21.11")
+            replace("ResourceLocation", "Identifier")
+        }
+        string {
+            direction = eval(current.version, ">=1.21.11")
+            replace("import net.minecraft.Util;", "import net.minecraft.util.Util;")
+        }
     }
 }
 
@@ -241,6 +254,11 @@ createActiveTask(buildAndCollect)
 
 java {
     withSourcesJar()
+    withJavadocJar()
+}
+
+tasks.javadoc {
+    isFailOnError = false
 }
 
 publishMods {
@@ -267,71 +285,94 @@ publishMods {
 
     modLoaders.add(loader)
 
-    val modrinthId: String by project
-    if (modrinthId.isNotBlank() && hasProperty("modrinth.token")) {
-        modrinth {
-            projectId.set(modrinthId)
-            accessToken.set(findProperty("modrinth.token")?.toString())
-            minecraftVersions.addAll(stableMCVersions)
-            minecraftVersions.addAll(versionList("pub.modrinthMC"))
+    modrinth {
+        projectId = providers.gradleProperty("pub.modrinthId")
+        accessToken = secrets.gradleProperty("modrinth.accessToken")
 
-            announcementTitle = "Download $mcVersion for ${loader.replaceFirstChar { it.uppercase() }} from Modrinth"
+        minecraftVersions.addAll(stableMCVersions)
+        minecraftVersions.addAll(versionList("pub.modrinthMC"))
 
-            if (isFabric) {
-                requires { slug.set("fabric-api") }
-            }
+        announcementTitle = "Download $mcVersion for ${loader.replaceFirstChar { it.uppercase() }} from Modrinth"
+
+        if (isFabric) {
+            requires { slug.set("fabric-api") }
         }
     }
 
-    val curseforgeId: String by project
-    if (curseforgeId.isNotBlank() && hasProperty("curseforge.token")) {
-        curseforge {
-            projectId = curseforgeId
-            projectSlug = findProperty("curseforgeSlug")?.toString() ?: error("curseforgeSlug property not found")
-            accessToken = findProperty("curseforge.token")?.toString()
-            minecraftVersions.addAll(stableMCVersions)
-            minecraftVersions.addAll(versionList("pub.curseMC"))
+    curseforge {
+        projectId = providers.gradleProperty("pub.curseforgeId")
+        projectSlug = providers.gradleProperty("pub.curseforgeSlug")
+        accessToken = secrets.gradleProperty("curseforge.accessToken")
 
-            announcementTitle = "Download $mcVersion for ${loader.replaceFirstChar { it.uppercase() }} from CurseForge"
+        minecraftVersions.addAll(stableMCVersions)
+        minecraftVersions.addAll(versionList("pub.curseMC"))
 
-            if (isFabric) {
-                requires { slug.set("fabric-api") }
-            }
+        announcementTitle = "Download $mcVersion for ${loader.replaceFirstChar { it.uppercase() }} from CurseForge"
+
+        if (isFabric) {
+            requires { slug.set("fabric-api") }
         }
     }
 }
 publishing {
     publications {
         register<MavenPublication>("mod") {
+            from(components["java"])
+
             groupId = "dev.isxander"
             artifactId = "yet-another-config-lib"
             version = modstitch.metadata.modVersion.get()
 
-            from(components["java"])
+            pom {
+                name = modstitch.metadata.modName
+                description = modstitch.metadata.modDescription
+                url = "https://www.isxander.dev/projects/yet-another-config-lib"
+                licenses {
+                    license {
+                        name = "LGPL-3.0-or-later"
+                        url = "https://www.gnu.org/licenses/lgpl-3.0.en.html"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "isXander"
+                        name = "Xander"
+                        email = "business@isxander.dev"
+                    }
+                }
+                scm {
+                    url = "https://github.com/isXander/YetAnotherConfigLib"
+                    connection = "scm:git:git//github.com/isXander/YetAnotherConfigLib.git"
+                    developerConnection = "scm:git:ssh://git@github.com/isXander/YetAnotherConfigLib.git"
+                }
+            }
         }
     }
-
     repositories {
-        val username = prop("XANDER_MAVEN_USER") { it }
-        val password = prop("XANDER_MAVEN_PASS") { it }
-        if (username != null && password != null) {
-            maven(url = "https://maven.isxander.dev/releases") {
-                name = "XanderReleases"
-                credentials {
-                    this.username = username
-                    this.password = password
-                }
-            }
+        mavenLocal()
+    }
+}
 
-            maven(url = "https://maven.isxander.dev/snapshots") {
-                name = "XanderSnapshots"
-                credentials {
-                    this.username = username
-                    this.password = password
-                }
+val signingKeyProvider = secrets.gradleProperty("signing.secretKey")
+val signingPasswordProvider = secrets.gradleProperty("signing.password")
+signing {
+    sign(publishing.publications["mod"])
+}
+// not configuration cache friendly, but neither is the whole of signing plugin
+// this plugin does not support lazy configuration of signing keys
+gradle.taskGraph.whenReady {
+    val willSign = allTasks.any { it.name.startsWith("sign") }
+    if (willSign) {
+        signing {
+            val signingKey = signingKeyProvider.orNull
+            val signingPassword = signingPasswordProvider.orNull
+
+            isRequired = signingKey != null && signingPassword != null
+            if (isRequired) {
+                useInMemoryPgpKeys(signingKey, signingPassword)
+            } else {
+                logger.error("Signing keys not found; skipping signing!")
             }
-        } else {
-            println("Xander Maven credentials not satisfied.")
         }
     }
 }

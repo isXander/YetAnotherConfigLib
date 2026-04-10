@@ -2,11 +2,10 @@ package dev.isxander.yacl3.gui.tab;
 
 import com.google.common.collect.ImmutableList;
 import dev.isxander.yacl3.gui.render.ColorGradientRenderState;
-import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.mixin.TabNavigationBarAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.TabButton;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -76,12 +75,11 @@ public class ScrollableNavigationBar extends TabNavigationBar {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        GuiUtils.pushPose(graphics);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        graphics.pose().pushMatrix();
         // render option list BELOW the navbar without need to scissor
-        GuiUtils.translateZ(graphics, 10);
 
-        super.render(graphics, mouseX, mouseY, delta);
+        super.extractRenderState(graphics, mouseX, mouseY, a);
 
         LinearLayout layout = accessor.yacl$getLayout();
         // draw right fade
@@ -96,7 +94,7 @@ public class ScrollableNavigationBar extends TabNavigationBar {
                     0x00000000, 0xFF000000
             ).submit(graphics);
 
-            graphics.drawString(font, "→", right - 10, layout.getY() + (layout.getHeight() - font.lineHeight) / 2, 0xFFFFFFFF, false);
+            graphics.text(font, "→", right - 10, layout.getY() + (layout.getHeight() - font.lineHeight) / 2, 0xFFFFFFFF, false);
         }
 
         // draw left fade
@@ -110,10 +108,10 @@ public class ScrollableNavigationBar extends TabNavigationBar {
                     0xFF000000, 0x00000000
             ).submit(graphics);
 
-            graphics.drawString(font, "←", 5, layout.getY() + (layout.getHeight() - font.lineHeight) / 2, 0xFFFFFFFF, false);
+            graphics.text(font, "←", 5, layout.getY() + (layout.getHeight() - font.lineHeight) / 2, 0xFFFFFFFF, false);
         }
 
-        GuiUtils.popPose(graphics);
+        graphics.pose().popMatrix();
     }
 
     @Override

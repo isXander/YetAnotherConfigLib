@@ -22,7 +22,7 @@
   ],
   "entrypoints": {
     "client": [
-      "dev.isxander.yacl3.platform.PlatformEntrypoint"
+      "dev.isxander.yacl3.test.Entrypoint"
     ]
   },
   "custom": {

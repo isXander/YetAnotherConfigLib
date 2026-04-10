@@ -2,7 +2,7 @@ package dev.isxander.yacl3.config.v2.api;
 
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.config.v2.impl.ConfigClassHandlerImpl;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.Function;
 
@@ -40,7 +40,7 @@ public interface ConfigClassHandler<T> {
     /**
      * The unique identifier of this config handler.
      */
-    ResourceLocation id();
+    Identifier id();
 
     /**
      * Auto-generates a GUI for this config class.
@@ -93,7 +93,7 @@ public interface ConfigClassHandler<T> {
          *
          * @return this builder
          */
-        Builder<T> id(ResourceLocation id);
+        Builder<T> id(Identifier id);
 
         /**
          * The function to create the serializer for this config class.

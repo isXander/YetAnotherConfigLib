@@ -2,17 +2,13 @@ package dev.isxander.yacl3.gui.utils;
 
 
 import dev.isxander.yacl3.platform.YACLPlatform;
-import net.minecraft.ResourceLocationException;
+import net.minecraft.IdentifierException;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -27,9 +23,9 @@ public final class ItemRegistryHelper {
      */
     public static boolean isRegisteredItem(String identifier) {
         try {
-            ResourceLocation itemIdentifier = YACLPlatform.parseRl(identifier.toLowerCase());
+            Identifier itemIdentifier = YACLPlatform.parseRl(identifier.toLowerCase());
             return BuiltInRegistries.ITEM.containsKey(itemIdentifier);
-        } catch (ResourceLocationException e) {
+        } catch (IdentifierException e) {
             return false;
         }
     }
@@ -44,11 +40,11 @@ public final class ItemRegistryHelper {
      */
     public static Item getItemFromName(String identifier, Item defaultItem) {
         try {
-            ResourceLocation itemIdentifier = YACLPlatform.parseRl(identifier.toLowerCase());
+            Identifier itemIdentifier = YACLPlatform.parseRl(identifier.toLowerCase());
             if (BuiltInRegistries.ITEM.containsKey(itemIdentifier)) {
-                return MiscUtil.getFromRegistry(BuiltInRegistries.ITEM, itemIdentifier);
+                return getFromRegistry(BuiltInRegistries.ITEM, itemIdentifier);
             }
-        } catch (ResourceLocationException ignored) {
+        } catch (IdentifierException ignored) {
         }
         return defaultItem;
     }
@@ -74,15 +70,19 @@ public final class ItemRegistryHelper {
      * @param value (partial) identifier, either of the format "namespace:path" or "path".
      * @return list of matching item identifiers; empty if the given string does not correspond to any known identifiers
      */
-    public static Stream<ResourceLocation> getMatchingItemIdentifiers(String value) {
-        int sep = value.indexOf(ResourceLocation.NAMESPACE_SEPARATOR);
-        Predicate<ResourceLocation> filterPredicate;
+    public static Stream<Identifier> getMatchingItemIdentifiers(String value) {
+        int sep = value.indexOf(Identifier.NAMESPACE_SEPARATOR);
+        Predicate<Identifier> filterPredicate;
         if (sep == -1) {
-            filterPredicate = identifier ->
-                    identifier.getPath().contains(value)
-                            || MiscUtil.getFromRegistry(BuiltInRegistries.ITEM, identifier)
-                                    /*? if >=1.21.2 {*/ .getName() /*?} else {*/ /*.getDescription() *//*?}*/
-                                    .getString().toLowerCase().contains(value.toLowerCase());
+            filterPredicate = identifier -> {
+                if (identifier.getPath().contains(value)) {
+                    return true;
+                }
+                Item item = getFromRegistry(BuiltInRegistries.ITEM, identifier);
+                return item.getName(item.getDefaultInstance())
+                        .getString().toLowerCase().contains(value.toLowerCase());
+            };
+
         } else {
             String namespace = value.substring(0, sep);
             String path = value.substring(sep + 1);
@@ -114,5 +114,9 @@ public final class ItemRegistryHelper {
                     }
                     return id1.compareTo(id2);
                 });
+    }
+
+    public static <T> T getFromRegistry(Registry<T> registry, Identifier identifier) {
+        return registry.getValue(identifier);
     }
 }

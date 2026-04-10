@@ -11,7 +11,7 @@ import dev.isxander.yacl3.config.v2.impl.autogen.YACLAutoGenException;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.Validate;
 
 import java.lang.reflect.Constructor;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
     private final Class<T> configClass;
-    private final ResourceLocation id;
+    private final Identifier id;
     private final boolean supportsAutoGen;
     private final ConfigSerializer<T> serializer;
     private final ConfigFieldImpl<?>[] fields;
@@ -34,7 +34,7 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
     private final T defaults;
     private final Constructor<T> noArgsConstructor;
 
-    public ConfigClassHandlerImpl(Class<T> configClass, ResourceLocation id, Function<ConfigClassHandler<T>, ConfigSerializer<T>> serializerFactory) {
+    public ConfigClassHandlerImpl(Class<T> configClass, Identifier id, Function<ConfigClassHandler<T>, ConfigSerializer<T>> serializerFactory) {
         this.configClass = configClass;
         this.id = id;
         this.supportsAutoGen = id != null && YACLPlatform.getEnvironment().isClient();
@@ -98,7 +98,7 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
     }
 
     @Override
-    public ResourceLocation id() {
+    public Identifier id() {
         return this.id;
     }
 
@@ -244,7 +244,7 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
 
     public static class BuilderImpl<T> implements Builder<T> {
         private final Class<T> configClass;
-        private ResourceLocation id;
+        private Identifier id;
         private Function<ConfigClassHandler<T>, ConfigSerializer<T>> serializerFactory;
 
         public BuilderImpl(Class<T> configClass) {
@@ -252,7 +252,7 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
         }
 
         @Override
-        public Builder<T> id(ResourceLocation id) {
+        public Builder<T> id(Identifier id) {
             this.id = id;
             return this;
         }

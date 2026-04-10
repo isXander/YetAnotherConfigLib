@@ -2,35 +2,32 @@ package dev.isxander.yacl3.gui.image.impl;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
-import dev.isxander.yacl3.debug.DebugProperties;
 import dev.isxander.yacl3.gui.image.ImageRenderer;
 import dev.isxander.yacl3.gui.image.ImageRendererFactory;
-import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.io.FileInputStream;
 import java.nio.file.Path;
-import java.util.function.Supplier;
 
 public class DynamicTextureImage implements ImageRenderer {
     protected static final TextureManager textureManager = Minecraft.getInstance().getTextureManager();
 
     protected NativeImage image;
     protected DynamicTexture texture;
-    protected final ResourceLocation uniqueLocation;
+    protected final Identifier uniqueLocation;
     protected final int width, height;
     protected final boolean textureFiltering;
 
-    public DynamicTextureImage(NativeImage image, ResourceLocation location, boolean textureFiltering) {
+    public DynamicTextureImage(NativeImage image, Identifier location, boolean textureFiltering) {
         RenderSystem.assertOnRenderThread();
 
         this.image = image;
-        this.texture = new DynamicTexture(/*? if >=1.21.5 >>*/ location::toString, image);
-        this.texture.setFilter(textureFiltering, false);
+        this.texture = new DynamicTexture(location::toString, image);
         this.textureFiltering = textureFiltering;
         this.uniqueLocation = location;
         textureManager.register(this.uniqueLocation, this.texture);
@@ -39,27 +36,26 @@ public class DynamicTextureImage implements ImageRenderer {
     }
 
     @Override
-    public int render(GuiGraphics graphics, int x, int y, int renderWidth, float tickDelta) {
+    public int render(GuiGraphicsExtractor graphics, int x, int y, int renderWidth, float tickDelta) {
         if (image == null) return 0;
 
         float ratio = renderWidth / (float)this.width;
         int targetHeight = (int) (this.height * ratio);
 
-        GuiUtils.pushPose(graphics);
-        GuiUtils.translate2D(graphics, x, y);
-        GuiUtils.scale2D(graphics, ratio, ratio);
+        graphics.pose().pushMatrix();
+        graphics.pose().translate(x, y);
+        graphics.pose().scale(ratio, ratio);
 
-        GuiUtils.blitGuiTex(
-                graphics,
+        graphics.blit(
+                RenderPipelines.GUI_TEXTURED,
                 uniqueLocation,
                 0, 0,
-                0, 0,
+                (float) 0, (float) 0,
                 this.width, this.height,
-                this.width, this.height,
-                textureFiltering
+                this.width, this.height
         );
 
-        GuiUtils.popPose(graphics);
+        graphics.pose().popMatrix();
 
         return targetHeight;
     }
@@ -72,7 +68,7 @@ public class DynamicTextureImage implements ImageRenderer {
         textureManager.release(uniqueLocation);
     }
 
-    public static ImageRendererFactory fromPath(Path imagePath, ResourceLocation location, boolean textureFiltering) {
+    public static ImageRendererFactory fromPath(Path imagePath, Identifier location, boolean textureFiltering) {
         return (ImageRendererFactory.OnThread) () -> () -> new DynamicTextureImage(NativeImage.read(new FileInputStream(imagePath.toFile())), location, textureFiltering);
     }
 }

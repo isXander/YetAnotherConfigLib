@@ -1,6 +1,6 @@
 package dev.isxander.yacl3.gui.tab;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.network.chat.Component;
@@ -12,9 +12,8 @@ public interface TabExt extends Tab {
 
     default void tick() {}
 
-    default void renderBackground(GuiGraphics graphics) {}
+    default void renderBackground(GuiGraphicsExtractor graphics) {}
 
-    //? if >=1.21.6
     @Override
     default @NotNull Component getTabExtraNarration() {
         return Component.empty();

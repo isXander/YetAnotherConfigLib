@@ -3,24 +3,21 @@ package dev.isxander.yacl3.gui.controllers.dropdown;
 import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.utils.ItemRegistryHelper;
-import dev.isxander.yacl3.gui.utils.MiscUtil;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
-public class ItemControllerElement extends AbstractDropdownControllerElement<Item, ResourceLocation> {
+public class ItemControllerElement extends AbstractDropdownControllerElement<Item, Identifier> {
 	private final ItemController itemController;
 	protected Item currentItem = null;
-	protected Map<ResourceLocation, Item> matchingItems = new HashMap<>();
+	protected Map<Identifier, Item> matchingItems = new HashMap<>();
 
 
 	public ItemControllerElement(ItemController control, YACLScreen screen, Dimension<Integer> dim) {
@@ -29,38 +26,57 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 	}
 
 	@Override
-	protected void drawValueText(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+	protected void extractValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
 		var oldDimension = getDimension();
 		setDimension(getDimension().withWidth(getDimension().width() - getDecorationPadding()));
-		super.drawValueText(graphics, mouseX, mouseY, delta);
+		super.extractValueText(graphics, mouseX, mouseY, a);
 		setDimension(oldDimension);
 		if (currentItem != null) {
-			graphics.renderFakeItem(new ItemStack(currentItem), getDimension().xLimit() - getXPadding() - getDecorationPadding() + 2, getDimension().y() + 2);
+            extractFakeItem(
+                    graphics,
+                    currentItem,
+                    getDimension().xLimit() - getXPadding() - getDecorationPadding() + 2,
+                    getDimension().y() + 2
+            );
 		}
 	}
 
 	@Override
-	public List<ResourceLocation> computeMatchingValues() {
-		List<ResourceLocation> identifiers = ItemRegistryHelper.getMatchingItemIdentifiers(inputField).toList();
+	public List<Identifier> computeMatchingValues() {
+		List<Identifier> identifiers = ItemRegistryHelper.getMatchingItemIdentifiers(inputField).toList();
 		currentItem = ItemRegistryHelper.getItemFromName(inputField, null);
-		for (ResourceLocation identifier : identifiers) {
-			matchingItems.put(identifier, MiscUtil.getFromRegistry(BuiltInRegistries.ITEM, identifier));
+		for (Identifier identifier : identifiers) {
+			matchingItems.put(identifier, ItemRegistryHelper.getFromRegistry(BuiltInRegistries.ITEM, identifier));
 		}
 		return identifiers;
 	}
 
 	@Override
-	protected void renderDropdownEntry(GuiGraphics graphics, Dimension<Integer> entryDimension, ResourceLocation identifier) {
-		super.renderDropdownEntry(graphics, entryDimension, identifier);
-		graphics.renderFakeItem(
-				new ItemStack(matchingItems.get(identifier)),
-				entryDimension.xLimit() - 2,
-				entryDimension.y() + 1
-		);
+	protected void extractDropdownEntry(GuiGraphicsExtractor graphics, Dimension<Integer> entryDimension, Identifier identifier) {
+		super.extractDropdownEntry(graphics, entryDimension, identifier);
+        extractFakeItem(
+                graphics,
+                matchingItems.get(identifier),
+                entryDimension.xLimit() - 2,
+                entryDimension.y() + 1
+        );
 	}
 
+    private void extractFakeItem(GuiGraphicsExtractor graphics, Item item, int x, int y) {
+        ItemStack stack = null;
+        try {
+            stack = new ItemStack(item);
+        } catch (NullPointerException ignored) {
+            // ItemStacks no longer exist until dynamic registries have been loaded,
+            // which is either loading into a level or opening the create world screen.
+            // This means we cannot do anything that involves ItemStacks until then.
+        }
+        if (stack == null) return;
+        graphics.fakeItem(stack, x, y);
+    }
+
 	@Override
-	public String getString(ResourceLocation identifier) {
+	public String getString(Identifier identifier) {
 		return identifier.toString();
 	}
 
@@ -87,11 +103,18 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 		if (inputFieldFocused)
 			return Component.literal(inputField);
 
-		return itemController.option().pendingValue()
-                //? if >=1.21.2 {
-                .getName();
-                //?} else {
-                /*.getDescription();
-                *///?}
+        Item item = itemController.option().pendingValue();
+        ItemStack stack = null;
+        try {
+            stack = item.getDefaultInstance();
+        } catch (NullPointerException ignored) {
+            // fapi has a bug (i think) that doesn't bind item components early enough anymore,
+            // causing an NPE on <init> of ItemStack.
+        }
+        if (stack != null) {
+            return item.getName(stack);
+        } else {
+            return Component.literal(item.toString());
+        }
 	}
 }

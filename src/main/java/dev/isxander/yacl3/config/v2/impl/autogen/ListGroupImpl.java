@@ -12,7 +12,7 @@ import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.client.Minecraft;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
@@ -57,7 +57,7 @@ public class ListGroupImpl<T> implements OptionFactory<ListGroup, List<T>> {
 
         String imagePath = "textures/yacl3/" + field.parent().id().getPath() + "/" + field.access().name() + ".webp";
         imagePath = imagePath.toLowerCase().replaceAll("[^a-z0-9/._:-]", "_");
-        ResourceLocation imageLocation = YACLPlatform.rl(field.parent().id().getNamespace(), imagePath);
+        Identifier imageLocation = YACLPlatform.rl(field.parent().id().getNamespace(), imagePath);
         if (Minecraft.getInstance().getResourceManager().getResource(imageLocation).isPresent()) {
             builder.webpImage(imageLocation);
         }

@@ -9,7 +9,7 @@ pluginManagement {
 }
 
 plugins {
-    id("dev.kikugie.stonecutter") version "0.7.6"
+    id("dev.kikugie.stonecutter") version "0.8.2"
 }
 
 stonecutter {
@@ -19,16 +19,12 @@ stonecutter {
     create(rootProject) {
         fun mc(mcVersion: String, name: String = mcVersion, loaders: Iterable<String>) {
             for (loader in loaders) {
-                vers("$name-$loader", mcVersion)
+                version("$name-$loader", mcVersion)
             }
         }
 
-        mc("1.21.9", loaders = listOf("fabric", "neoforge"))
-        mc("1.21.6", loaders = listOf("fabric", "neoforge"))
-        mc("1.21.5", loaders = listOf("fabric", "neoforge"))
-        mc("1.21.4", loaders = listOf("fabric", "neoforge"))
-        mc("1.21.3", loaders = listOf("fabric", "neoforge"))
-        mc("1.21.1", loaders = listOf("fabric", "neoforge"))
+        mc("26.1", loaders = listOf("fabric", "neoforge"))
+        mc("26.2", loaders = listOf("fabric"))
     }
 }
 rootProject.name = "YetAnotherConfigLib"

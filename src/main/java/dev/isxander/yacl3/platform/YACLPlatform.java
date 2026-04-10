@@ -10,24 +10,24 @@ import net.neoforged.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.FMLPaths;
 *//*?}*/
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import java.nio.file.Path;
 
 public final class YACLPlatform {
-    public static ResourceLocation parseRl(String rl) {
-        return ResourceLocation.parse(rl);
+    public static Identifier parseRl(String rl) {
+        return Identifier.parse(rl);
     }
 
-    public static ResourceLocation rl(String path) {
+    public static Identifier rl(String path) {
         return rl("yet_another_config_lib_v3", path);
     }
 
-    public static ResourceLocation mcRl(String path) {
+    public static Identifier mcRl(String path) {
         return rl("minecraft", path);
     }
 
-    public static ResourceLocation rl(String namespace, String path) {
-        return ResourceLocation.fromNamespaceAndPath(namespace, path);
+    public static Identifier rl(String namespace, String path) {
+        return Identifier.fromNamespaceAndPath(namespace, path);
     }
 
     public static Env getEnvironment() {
@@ -37,11 +37,7 @@ public final class YACLPlatform {
             case SERVER -> Env.SERVER;
         };
         /*?} elif forgelike {*/
-        /*//? if >=1.21.9 {
-        var dist = FMLEnvironment.getDist();
-        //?} else {
-        /^var dist = FMLEnvironment.dist;
-        ^///?}
+        /*var dist = FMLEnvironment.getDist();
         return switch (dist) {
             case CLIENT -> Env.CLIENT;
             case DEDICATED_SERVER -> Env.SERVER;
@@ -61,11 +57,7 @@ public final class YACLPlatform {
         //? if fabric {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
         //?} elif forgelike {
-        /*//? if >=1.21.9 {
-        return !FMLEnvironment.isProduction();
-        //?} else {
-        /^return !FMLEnvironment.production;
-        ^///?}
+        /*return !FMLEnvironment.isProduction();
         *///?}
     }
 }

@@ -4,26 +4,32 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.utils.Dimension;
-import dev.isxander.yacl3.gui.utils.WidgetUtils;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 import dev.isxander.yacl3.mixin.AbstractSelectionListAccessor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.navigation.ScreenDirection;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.TextAlignment;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> {
     private final YACLScreen yaclScreen;
@@ -84,15 +90,14 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         setScrollAmount(0);
+        repositionEntries();
     }
 
-    //? if >=1.21.9 {
     @Override
     protected int addEntry(Entry entry) {
         // instead of using super.defaultEntryHeight, use the height the entry wants to be - our entries set their height in the constructor
         return this.addEntry(entry, entry.getHeight());
     }
-    //?}
 
     private void refreshListEntries(ListOption<?> listOption, ConfigCategory category) {
         // find group separator for group
@@ -156,13 +161,13 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean bl) {
         for (Entry child : children()) {
-            if (child != getEntryAtPosition(mouseX, mouseY) && child instanceof OptionEntry optionEntry)
+            if (child != getEntryAtPosition(event.x(), event.y()) && child instanceof OptionEntry optionEntry)
                 optionEntry.widget.unfocus();
         }
 
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, bl);
     }
 
     @Override
@@ -178,40 +183,37 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        if (this.getFocused() != null && this.isDragging() && isValidMouseClick(button)) {
-            return WidgetUtils.mouseDragged(this.getFocused(), mouseX, mouseY, button, deltaX, deltaY);
+    public boolean mouseDragged(MouseButtonEvent event, double deltaX, double deltaY) {
+        if (this.getFocused() != null && this.isDragging() && isValidMouseClick(event.button())) {
+            GuiEventListener l = this.getFocused();
+            return l.mouseDragged(event, deltaX, deltaY);
         }
-        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        return super.mouseDragged(event, deltaX, deltaY);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyEvent keyEvent) {
         for (Entry child : children()) {
-            if (child.keyPressed(keyCode, scanCode, modifiers))
+            if (child.keyPressed(keyEvent))
                 return true;
         }
 
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(keyEvent);
     }
 
     @Override
-    public boolean charTyped(char chr, int modifiers) {
+    public boolean charTyped(CharacterEvent characterEvent) {
         for (Entry child : children()) {
-            if (child.charTyped(chr, modifiers))
+            if (child.charTyped(characterEvent))
                 return true;
         }
 
-        return super.charTyped(chr, modifiers);
+        return super.charTyped(characterEvent);
     }
 
     private List<Entry> superModifiableChildren() {
-        //? if >=1.21.9 {
         // noinspection unchecked
         return (List<Entry>) ((AbstractSelectionListAccessor) this).getChildren();
-        //?} else {
-        /*return this.children();
-        *///?}
     }
 
     public void addEntryAtIndex(int index, Entry entry) {
@@ -242,14 +244,17 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
     }
 
     @Override
-    protected void renderListBackground(GuiGraphics guiGraphics) {
+    protected void extractListBackground(@NonNull GuiGraphicsExtractor graphics) {
     }
 
-    /*? if <1.21.4 {*/
-    /*@Override
-     *//*?}*/
     protected boolean isValidMouseClick(int button) {
         return button == InputConstants.MOUSE_BUTTON_LEFT || button == InputConstants.MOUSE_BUTTON_RIGHT || button == InputConstants.MOUSE_BUTTON_MIDDLE;
+    }
+
+    @Override
+    protected Entry nextEntry(@NotNull ScreenDirection direction, @NotNull Predicate<Entry> predicate, Entry selected) {
+        // ensure we don't focus unviewable entries
+        return super.nextEntry(direction, entry -> entry.isViewable() && predicate.test(entry), selected);
     }
 
     public abstract class Entry extends YACLSelectionList.Entry<Entry> {
@@ -260,6 +265,11 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         public boolean updateSearchQuery(String searchQuery) {
+            boolean matches = searchQuery.isEmpty();
+            if (this.searchQueryMatches != matches) {
+                this.searchQueryMatches = matches;
+                refreshVisibilityState();
+            }
             return this.searchQueryMatches;
         }
 
@@ -273,6 +283,21 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
                 return 0;
             }
             return super.getHeight();
+        }
+
+        protected void refreshVisibilityState() {
+            if (isViewable()) {
+                onBecameViewable();
+            } else {
+                onBecameHidden();
+            }
+        }
+
+        protected void onBecameViewable() {
+        }
+
+        protected void onBecameHidden() {
+            this.setHeight(0);
         }
     }
 
@@ -312,7 +337,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         @Override
-        public void renderContent(GuiGraphics graphics, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void extractContent(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
             if (!this.isViewable()) {
                 return;
             }
@@ -321,11 +346,11 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
 
             widget.setDimension(widget.getDimension().withY(this.getY()));
 
-            widget.render(graphics, mouseX, mouseY, deltaTicks);
+            widget.extractRenderState(graphics, mouseX, mouseY, a);
 
             if (resetButton != null) {
                 resetButton.setY(this.getY());
-                resetButton.render(graphics, mouseX, mouseY, deltaTicks);
+                resetButton.extractRenderState(graphics, mouseX, mouseY, a);
             }
 
             if (isMouseOver(mouseX, mouseY)) {
@@ -339,26 +364,34 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         @Override
-        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-            return WidgetUtils.keyPressed(widget, keyCode, scanCode, modifiers);
+        public boolean keyPressed(@NonNull KeyEvent event) {
+            return widget.keyPressed(event);
         }
 
         @Override
-        public boolean charTyped(char chr, int modifiers) {
-            return WidgetUtils.charTyped(widget, chr, modifiers);
+        public boolean charTyped(@NonNull CharacterEvent event) {
+            return widget.charTyped(event);
         }
 
         @Override
         public boolean updateSearchQuery(String searchQuery) {
-            return this.searchQueryMatches = searchQuery.isEmpty()
+            this.searchQueryMatches = searchQuery.isEmpty()
                     || groupName.contains(searchQuery)
                     || widget.matchesSearch(searchQuery);
+            refreshVisibilityState();
+            return this.searchQueryMatches;
         }
 
         @Override
         public boolean isViewable() {
             return super.isViewable()
                     && (groupSeparatorEntry == null || groupSeparatorEntry.isExpanded());
+        }
+
+        @Override
+        protected void onBecameViewable() {
+            super.onBecameViewable();
+            updateHeight();
         }
 
         private void updateHeight() {
@@ -415,7 +448,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         @Override
-        public void renderContent(GuiGraphics graphics, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void extractContent(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
             if (!this.isViewable()) {
                 return;
             }
@@ -426,13 +459,9 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
 
             expandMinimizeButton.setY(buttonY);
             expandMinimizeButton.setX(this.getX());
-            expandMinimizeButton.render(graphics, mouseX, mouseY, deltaTicks);
+            expandMinimizeButton.extractRenderState(graphics, mouseX, mouseY, a);
 
-            //? if >=1.21.9 {
-            wrappedName.render(graphics, MultiLineLabel.Align.CENTER, this.getX() + this.getWidth() / 2, this.getY() + getYPadding(), font.lineHeight, false, -1);
-            //?} else {
-            /*wrappedName.renderCentered(graphics, this.getX() + this.getWidth() / 2, this.getY() + getYPadding());
-             *///?}
+            wrappedName.visitLines(TextAlignment.CENTER, this.getX() + this.getWidth() / 2, this.getY() + getYPadding(), font.lineHeight, graphics.textRenderer());
 
             if (isMouseOver(mouseX, mouseY)) {
                 setHoverDescription(DescriptionWithName.of(group.name(), group.description()));
@@ -449,6 +478,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
 
             this.groupExpanded = expanded;
             updateExpandMinimizeText();
+            childEntries.forEach(Entry::refreshVisibilityState);
             repositionEntries();
         }
 
@@ -516,7 +546,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
             super(group, screen);
             this.listOption = group;
 
-            this.resetListButton = new TextScaledButtonWidget(screen, getRowRight() - 20, -50, 20, 20, 2f, Component.literal("\u21BB"), button -> {
+            this.resetListButton = new TextScaledButtonWidget(screen, getRowRight() - 20, -50, 20, 20, 1f, Component.literal("\u21BB"), button -> {
                 group.requestSetDefault();
             });
             group.addListener((opt, val) -> this.resetListButton.active = !opt.isPendingValueDefault() && opt.available());
@@ -533,22 +563,22 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         @Override
-        public void renderContent(GuiGraphics graphics, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void extractContent(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
             if (!this.isViewable()) {
                 return;
             }
 
             updateExpandMinimizeText(); // update every render because option could become available/unavailable at any time
 
-            super.renderContent(graphics, mouseX, mouseY, hovered, deltaTicks);
+            super.extractContent(graphics, mouseX, mouseY, hovered, a);
 
             int buttonY = expandMinimizeButton.getY();
 
             resetListButton.setY(buttonY);
             addListButton.setY(buttonY);
 
-            resetListButton.render(graphics, mouseX, mouseY, deltaTicks);
-            addListButton.render(graphics, mouseX, mouseY, deltaTicks);
+            resetListButton.extractRenderState(graphics, mouseX, mouseY, a);
+            addListButton.extractRenderState(graphics, mouseX, mouseY, a);
         }
 
         private void minimizeIfUnavailable() {
@@ -589,8 +619,12 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         @Override
-        public void renderContent(GuiGraphics graphics, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
-            graphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable("yacl.list.empty").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), this.getX() + this.getWidth() / 2, this.getY(), -1);
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
+            if (!this.isViewable()) {
+                return;
+            }
+
+            graphics.centeredText(Minecraft.getInstance().font, Component.translatable("yacl.list.empty").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC), this.getX() + this.getWidth() / 2, this.getY(), -1);
         }
 
         @Override
@@ -601,6 +635,18 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         @Override
         public boolean isViewable() {
             return parent.isExpanded() && super.isViewable();
+        }
+
+        @Override
+        protected void onBecameViewable() {
+            super.onBecameViewable();
+            setHeight(11);
+        }
+
+        @Override
+        protected void onBecameHidden() {
+            super.onBecameHidden();
+            setHeight(0);
         }
 
         @Override

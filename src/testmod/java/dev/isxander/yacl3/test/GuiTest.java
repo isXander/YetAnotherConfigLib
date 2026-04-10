@@ -14,23 +14,22 @@ import dev.isxander.yacl3.gui.controllers.string.number.DoubleFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.FloatFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.IntegerFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.LongFieldController;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.impl.SelfContainedBinding;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
-import net.minecraft.client.GraphicsStatus;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.Color;
-import java.nio.file.Path;
+import java.net.URI;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -42,26 +41,26 @@ public class GuiTest {
                                 .name(Component.literal("Suites"))
                                 .option(ButtonOption.createBuilder()
                                         .name(Component.literal("Full Test Suite"))
-                                        .action((screen, opt) -> Minecraft.getInstance().setScreen(getFullTestSuite(screen)))
+                                        .action((screen, opt) -> GuiUtils.setScreen(getFullTestSuite(screen)))
                                         .build())
                                 .option(ButtonOption.createBuilder()
                                         .name(Component.literal("Auto-gen test"))
                                         .action((screen, opt) -> {
                                             AutogenConfigTest.INSTANCE.load();
-                                            Minecraft.getInstance().setScreen(AutogenConfigTest.INSTANCE.generateGui().generateScreen(screen));
+                                            GuiUtils.setScreen(AutogenConfigTest.INSTANCE.generateGui().generateScreen(screen));
                                         })
                                         .build())
                                 .option(ButtonOption.createBuilder()
                                         .name(Component.literal("Kotlin DSL Test"))
                                         .action((screen, opt) -> {
-                                            Minecraft.getInstance().setScreen(CodecConfigKt.INSTANCE.generateConfigScreen(screen));
+                                            GuiUtils.setScreen(CodecConfigKt.INSTANCE.generateConfigScreen(screen));
                                         })
                                         .build())
                                 .group(OptionGroup.createBuilder()
                                         .name(Component.literal("Wiki"))
                                         .option(ButtonOption.createBuilder()
                                                 .name(Component.literal("Get Started"))
-                                                .action((screen, opt) -> Minecraft.getInstance().setScreen(getWikiGetStarted(screen)))
+                                                .action((screen, opt) -> GuiUtils.setScreen(getWikiGetStarted(screen)))
                                                 .build())
                                         .build())
                                 .build())
@@ -79,6 +78,7 @@ public class GuiTest {
                                 .name(Component.literal("Control Examples"))
                                 .tooltip(Component.literal("Example Category Description"))
                                 .group(OptionGroup.createBuilder()
+                                        .collapsed(true)
                                         .name(Component.literal("Boolean Controllers"))
                                         .option(Util.make(() -> {
                                             var opt = Option.<Boolean>createBuilder()
@@ -89,6 +89,7 @@ public class GuiTest {
                                                                     .append(Component.literal("b").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("b")))))
                                                                     .append(Component.literal("c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("c")))))
                                                                     .append(Component.literal("e").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("e")))))
+                                                                    .append(Component.literal("click me").withStyle(style -> style.withClickEvent(new ClickEvent.OpenUrl(URI.create("https://isxander.dev")))))
                                                             )
                                                             .webpImage(imageSample("sample1.webp"))
                                                             .build())
@@ -318,11 +319,6 @@ public class GuiTest {
                                                 .binding(Binding.minecraft(Minecraft.getInstance().options.autoJump()))
                                                 .customController(TickBoxController::new)
                                                 .build())
-                                        .option(Option.<GraphicsStatus>createBuilder()
-                                                .name(Component.literal("Minecraft Graphics Mode"))
-                                                .binding(Binding.minecraft(Minecraft.getInstance().options.graphicsMode()))
-                                                .customController(opt -> new EnumController<>(opt, GraphicsStatus.class))
-                                                .build())
                                         .build())
                                 .build())
                         .category(ConfigCategory.createBuilder()
@@ -466,6 +462,7 @@ public class GuiTest {
                                         .build())
                                 .build())
                         .category(sharedStateCategory())
+				        .category(instantStateManager(defaults, config))
                         .category(ConfigCategory.createBuilder()
                                 .name(Component.literal("Category Test"))
                                 .option(LabelOption.create(Component.literal("This is a test category!")))
@@ -507,11 +504,7 @@ public class GuiTest {
     }
 
     private static HoverEvent createTextHoverEvent(Component text) {
-        //? if >=1.21.5 {
         return new HoverEvent.ShowText(text);
-        //?} else {
-        /*return new HoverEvent(HoverEvent.Action.SHOW_TEXT, text);
-        *///?}
     }
 
     private static ConfigCategory sharedStateCategory() {
@@ -571,7 +564,20 @@ public class GuiTest {
         return builder.build();
     }
 
-    private static ResourceLocation imageSample(String name) {
+	private static ConfigCategory instantStateManager(ConfigTest defaults, ConfigTest config) {
+		ConfigCategory.Builder builder = ConfigCategory.createBuilder()
+				.name(Component.literal("InstantStateManager Test"));
+
+		builder.option(Option.<Boolean>createBuilder()
+				.name(Component.literal("Instant Boolean"))
+				.stateManager(StateManager.createInstant(Binding.generic(defaults.instantBoolean, () -> config.instantBoolean, (bl) -> config.instantBoolean = bl)))
+				.controller(BooleanControllerBuilder::create)
+				.build());
+
+		return builder.build();
+	}
+
+    private static Identifier imageSample(String name) {
         return YACLPlatform.rl("yacl_test", "textures/images/" + name);
     }
 
