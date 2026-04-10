@@ -14,12 +14,12 @@ import dev.isxander.yacl3.gui.controllers.string.number.DoubleFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.FloatFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.IntegerFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.LongFieldController;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.impl.SelfContainedBinding;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.ChatFormatting;
 import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -30,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.awt.Color;
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -42,26 +41,26 @@ public class GuiTest {
                                 .name(Component.literal("Suites"))
                                 .option(ButtonOption.createBuilder()
                                         .name(Component.literal("Full Test Suite"))
-                                        .action((screen, opt) -> Minecraft.getInstance().setScreen(getFullTestSuite(screen)))
+                                        .action((screen, opt) -> GuiUtils.setScreen(getFullTestSuite(screen)))
                                         .build())
                                 .option(ButtonOption.createBuilder()
                                         .name(Component.literal("Auto-gen test"))
                                         .action((screen, opt) -> {
                                             AutogenConfigTest.INSTANCE.load();
-                                            Minecraft.getInstance().setScreen(AutogenConfigTest.INSTANCE.generateGui().generateScreen(screen));
+                                            GuiUtils.setScreen(AutogenConfigTest.INSTANCE.generateGui().generateScreen(screen));
                                         })
                                         .build())
                                 .option(ButtonOption.createBuilder()
                                         .name(Component.literal("Kotlin DSL Test"))
                                         .action((screen, opt) -> {
-                                            Minecraft.getInstance().setScreen(CodecConfigKt.INSTANCE.generateConfigScreen(screen));
+                                            GuiUtils.setScreen(CodecConfigKt.INSTANCE.generateConfigScreen(screen));
                                         })
                                         .build())
                                 .group(OptionGroup.createBuilder()
                                         .name(Component.literal("Wiki"))
                                         .option(ButtonOption.createBuilder()
                                                 .name(Component.literal("Get Started"))
-                                                .action((screen, opt) -> Minecraft.getInstance().setScreen(getWikiGetStarted(screen)))
+                                                .action((screen, opt) -> GuiUtils.setScreen(getWikiGetStarted(screen)))
                                                 .build())
                                         .build())
                                 .build())

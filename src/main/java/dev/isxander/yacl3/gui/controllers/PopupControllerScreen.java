@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.gui.controllers;
 
 import dev.isxander.yacl3.gui.YACLScreen;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 
@@ -90,7 +91,7 @@ public class PopupControllerScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.minecraft.screen = backgroundYaclScreen;
+        GuiUtils.setScreen(backgroundYaclScreen, true);
         this.controllerPopup.close();
     }
 

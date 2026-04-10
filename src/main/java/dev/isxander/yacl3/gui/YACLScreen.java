@@ -13,7 +13,6 @@ import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -110,12 +109,12 @@ public class YACLScreen extends Screen {
             optionListWidget = categoryTab.optionList.getType();
         }
         if(optionListWidget != null) {
-            this.minecraft.setScreen(new PopupControllerScreen(this, controllerPopupWidget));
+            GuiUtils.setScreen(new PopupControllerScreen(this, controllerPopupWidget));
         }
     }
 
     public void clearPopupControllerWidget() {
-        if(Minecraft.getInstance().screen instanceof PopupControllerScreen popupControllerScreen) {
+        if (GuiUtils.getCurrentScreen() instanceof PopupControllerScreen popupControllerScreen) {
             popupControllerScreen.onClose();
         }
         popupControllerVisible = false;
@@ -247,7 +246,7 @@ public class YACLScreen extends Screen {
 
     @Override
     public void onClose() {
-        minecraft.setScreen(parent);
+        GuiUtils.setScreen(parent);
     }
 
     public static void renderMultilineTooltip(GuiGraphicsExtractor graphics, Font font, MultiLineLabel text, int centerX, int yAbove, int yBelow, int screenWidth, int screenHeight) {
@@ -469,7 +468,7 @@ public class YACLScreen extends Screen {
 
         @Override
         public void doLayout(ScreenRectangle screenRectangle) {
-            screen.minecraft.setScreen(category.screen().apply(screen.minecraft, screen));
+            GuiUtils.setScreen(category.screen().apply(screen.minecraft, screen));
         }
 
         @Override

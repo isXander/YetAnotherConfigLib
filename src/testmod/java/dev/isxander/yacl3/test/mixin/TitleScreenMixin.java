@@ -1,5 +1,6 @@
 package dev.isxander.yacl3.test.mixin;
 
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.test.GuiTest;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -19,7 +20,7 @@ public abstract class TitleScreenMixin extends Screen {
     @Inject(method = "init", at = @At("RETURN"))
     private void addButton(CallbackInfo ci) {
         addRenderableWidget(Button.builder(Component.literal("YetAnotherConfigLib Test"), button -> {
-            minecraft.setScreen(GuiTest.getModConfigScreenFactory(minecraft.screen));
+            GuiUtils.setScreen(GuiTest.getModConfigScreenFactory(GuiUtils.getCurrentScreen()));
         }).width(150).build());
     }
 }
