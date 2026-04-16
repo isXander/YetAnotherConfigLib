@@ -10,6 +10,7 @@ import dev.isxander.yacl3.config.v2.impl.autogen.OptionAccessImpl;
 import dev.isxander.yacl3.config.v2.impl.autogen.YACLAutoGenException;
 import dev.isxander.yacl3.impl.utils.YACLConstants;
 import dev.isxander.yacl3.platform.YACLPlatform;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.Validate;
@@ -134,8 +135,14 @@ public class ConfigClassHandlerImpl<T> implements ConfigClassHandler<T> {
                 OptionAddable group = groups.groups().computeIfAbsent(autoGen.group().orElse(""), k -> {
                     if (k.isEmpty())
                         return groups.category();
-                    return OptionGroup.createBuilder()
-                            .name(Component.translatable("yacl3.config.%s.category.%s.group.%s".formatted(id().toString(), autoGen.category(), k)));
+                    String groupKey = "yacl3.config.%s.category.%s.group.%s".formatted(id().toString(), autoGen.category(), k);
+                    OptionGroup.Builder groupBuilder = OptionGroup.createBuilder()
+                            .name(Component.translatable(groupKey));
+                    String descriptionKey = groupKey + ".desc";
+                    if (Language.getInstance().has(descriptionKey)) {
+                        groupBuilder.description(OptionDescription.of(Component.translatable(descriptionKey)));
+                    }
+                    return groupBuilder;
                 });
 
                 Option<?> option;
