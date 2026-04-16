@@ -1,14 +1,10 @@
 {
   "yacl.control.boolean.true": "Verdadeiro",
   "yacl.control.boolean.false": "Falso",
-
   "yacl.control.action.execute": "EXECUTAR",
-
   "yacl.control.color.color_picker_title": "Seletor de Cores",
   "yacl.control.dropdown.dropdown_widget_title": "Seletor Suspenso",
-
   "yacl.control.text.blank": "<em branco>",
-
   "yacl.gui.save": "Salvar Mudanças",
   "yacl.gui.save.tooltip": "Faz as mudanças serem permanentes.",
   "yacl.gui.finished.tooltip": "Fecha o GUI.",
@@ -20,16 +16,13 @@
   "yacl.gui.fail_apply.tooltip": "Houve um erro e as mudanças não puderam ser aplicadas.",
   "yacl.gui.save_before_exit": "Salve antes de sair!",
   "yacl.gui.save_before_exit.tooltip": "Salve ou cancele para sair do GUI.",
-
   "yacl.list.move_up": "Subir",
   "yacl.list.move_down": "Descer",
   "yacl.list.remove": "Remover",
   "yacl.list.add_top": "Nova entrada",
   "yacl.list.empty": "Lista está vazia",
-
   "yacl.restart.title": "A configuração requer reinicialização!",
   "yacl.restart.message": "Uma ou mais opções exigem que você reinicie o jogo para aplicar as alterações.",
   "yacl.restart.yes": "Fechar Minecraft",
   "yacl.restart.no": "Ignorar"
-
 }
