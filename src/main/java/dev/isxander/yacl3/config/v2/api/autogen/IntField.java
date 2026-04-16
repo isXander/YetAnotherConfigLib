@@ -37,5 +37,5 @@ public @interface IntField {
      * The format used to display the integer.
      * This is the syntax used in {@link String#format(String, Object...)}.
      */
-    String format() default "%.0f";
+    String format() default "%d";
 }

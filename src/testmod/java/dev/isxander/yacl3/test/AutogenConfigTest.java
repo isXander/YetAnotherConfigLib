@@ -32,7 +32,7 @@ public class AutogenConfigTest {
             .build();
 
     @AutoGen(category = "test", group = "master_test")
-    @MasterTickBox({ "testTickBox", "testBoolean", "testInt", "testDouble", "testFloat", "testLong", "testIntField", "testDoubleField", "testFloatField", "testLongField", "testEnum", "testColor", "testString", "testDropdown", "testItem" })
+    @MasterTickBox({ "testTickBox", "testBoolean", "testInt", "testDouble", "testFloat", "testLong", "testLongFormatted", "testIntField", "testDoubleField", "testFloatField", "testLongField", "testEnum", "testColor", "testString", "testDropdown", "testItem" })
     @SerialEntry(comment = "This option disables all the other options in this group")
     public boolean masterOption = true;
 
@@ -63,6 +63,10 @@ public class AutogenConfigTest {
     @AutoGen(category = "test", group = "master_test")
     @LongSlider(min = 0, max = 10, step = 2)
     @SerialEntry public long testLong = 0;
+
+    @AutoGen(category = "test", group = "master_test")
+    @LongSlider(min = 0, max = 1000, step = 10, format = "%dms")
+    @SerialEntry public long testLongFormatted = 500;
 
     @AutoGen(category = "test", group = "master_test")
     @IntField(min = 0, max = 10)
