@@ -3,9 +3,12 @@ package dev.isxander.yacl3.api;
 import dev.isxander.yacl3.impl.ImmutableStateManager;
 import dev.isxander.yacl3.impl.InstantStateManager;
 import dev.isxander.yacl3.impl.SimpleStateManager;
+import dev.isxander.yacl3.impl.XMappedStateManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface StateManager<T> {
@@ -86,6 +89,21 @@ public interface StateManager<T> {
     boolean isDefault();
 
     void addListener(StateListener<T> stateListener);
+
+    /**
+     * Maps the state of this state manager to another type.
+     * This is useful for applications when you need to share the same backing
+     * state against Options of different types.
+     *
+     * @param to convert the backing state to the new type
+     * @param from convert the new type back to the backing state (for sets).
+     *             Can be null if the new type is not nullable, which will just ignore the set request
+     * @return the mapped state manager
+     * @param <U> the new type
+     */
+    default <U> StateManager<U> xmap(Function<T, U> to, Function<U, @Nullable T> from) {
+        return new XMappedStateManager<>(this, to, from);
+    }
 
     enum ResetAction {
         BY_OPTION,
