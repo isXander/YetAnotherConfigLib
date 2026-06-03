@@ -10,10 +10,13 @@ import dev.isxander.yacl3.gui.utils.KeyUtils;
 import dev.isxander.yacl3.gui.utils.UndoRedoHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.IMEPreeditOverlay;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.PreeditEvent;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
 import java.util.function.Consumer;
@@ -36,6 +39,8 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     protected float caretTicks;
 
     private final Component emptyText;
+
+    private @Nullable IMEPreeditOverlay preeditOverlay;
 
     public StringControllerElement(IStringController<?> control, YACLScreen screen, Dimension<Integer> dim, boolean instantApply) {
         super(control, screen, dim);
@@ -103,6 +108,14 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         } else if (this.hovered) {
             graphics.requestCursor(isAvailable() ? com.mojang.blaze3d.platform.cursor.CursorTypes.POINTING_HAND : com.mojang.blaze3d.platform.cursor.CursorTypes.NOT_ALLOWED);
         }
+
+        if (preeditOverlay != null && inputFieldFocused) {
+            String text = getValueText().getString();
+            int preeditTextX = getDimension().xLimit() - textRenderer.width(getValueText()) + renderOffset - getXPadding();
+            int preeditCaretX = preeditTextX + textRenderer.width(text.substring(0, Math.min(caretPos, text.length())));
+            preeditOverlay.updateInputPosition(preeditCaretX, getTextY());
+            graphics.setPreeditOverlay(preeditOverlay);
+        }
     }
 
     private boolean isHoveredInputField(double mouseX, double mouseY) {
@@ -112,7 +125,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     @Override
     public boolean mouseClicked(@NonNull MouseButtonEvent event, boolean doubleClick) {
         if (isAvailable() && getDimension().isPointInside((int) event.x(), (int) event.y())) {
-            inputFieldFocused = true;
+            setInputEditing(true);
 
             if (!isHoveredInputField(event.x(), event.y())) {
                 caretPos = getDefaultCaretPos();
@@ -322,13 +335,28 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         }
     }
 
+    public boolean canConsumeInput() {
+        return inputFieldFocused && isAvailable();
+    }
+
     @Override
     public boolean charTyped(@NonNull CharacterEvent event) {
-        if (!inputFieldFocused)
+        if (!canConsumeInput())
             return false;
 
         write(event.codepointAsString());
         updateUndoHistory();
+        return true;
+    }
+
+    @Override
+    public boolean preeditUpdated(@Nullable PreeditEvent event) {
+        if (!canConsumeInput())
+            return false;
+
+        preeditOverlay = event != null
+                ? new IMEPreeditOverlay(event, textRenderer, textRenderer.lineHeight + 1)
+                : null;
         return true;
     }
 
@@ -431,15 +459,25 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     @Override
     public void setFocused(boolean focused) {
         super.setFocused(focused);
-        inputFieldFocused = focused;
+        setInputEditing(focused);
     }
 
     @Override
     public void unfocus() {
+        setInputEditing(false);
         super.unfocus();
-        inputFieldFocused = false;
         renderOffset = 0;
         if (!instantApply) updateControl();
+    }
+
+    private void setInputEditing(boolean editing) {
+        if (inputFieldFocused == editing)
+            return;
+
+        inputFieldFocused = editing;
+        client.onTextInputFocusChange(this, editing);
+        if (!editing)
+            preeditOverlay = null;
     }
 
     @Override
