@@ -293,7 +293,7 @@ public class GuiTest {
                                                         () -> config.formattingOption,
                                                         (value) -> config.formattingOption = value
                                                 )
-                                                .controller(option -> EnumDropdownControllerBuilder.create(option).formatValue(formatting -> Component.literal(StringUtils.capitalize(formatting.getName()).replaceAll("_", " "))))
+                                                .controller(option -> EnumDropdownControllerBuilder.create(option).formatValue(formatting -> Component.literal(StringUtils.capitalize(/*? if >=26.2 {*/formatting.name()/*?} else {*//*formatting.getName()*//*?}*/).replaceAll("_", " "))))
                                                 .build())
                                         .build())
                                 .group(OptionGroup.createBuilder()

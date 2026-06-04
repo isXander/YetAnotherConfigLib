@@ -81,7 +81,7 @@ modstitch {
         prop("deps.fabricLoader", required = true) { fabricLoaderVersion = it }
 
         configureLoom {
-            runConfigs.all {
+            runConfigs.configureEach {
                 ideConfigGenerated(false)
             }
             runs {
@@ -152,6 +152,14 @@ stonecutter {
         string {
             direction = eval(current.version, ">=1.21.11")
             replace("import net.minecraft.Util;", "import net.minecraft.util.Util;")
+        }
+    }
+}
+
+repositories {
+    maven("https://prmaven.neoforged.net/NeoForge/pr3198") {
+        content {
+            includeModule("net.neoforged", "neoforge")
         }
     }
 }

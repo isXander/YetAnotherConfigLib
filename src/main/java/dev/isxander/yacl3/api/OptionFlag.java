@@ -16,9 +16,20 @@ public interface OptionFlag extends Consumer<Minecraft> {
     OptionFlag GAME_RESTART = client -> GuiUtils.setScreen(new RequireRestartScreen(GuiUtils.getCurrentScreen()));
 
     /** Reloads chunks upon applying (F3+A) */
-    OptionFlag RELOAD_CHUNKS = client -> client.levelRenderer.allChanged();
+    OptionFlag RELOAD_CHUNKS =
+            //? if >=26.2 {
+            client -> client.levelExtractor.allChanged();
+            //? } else {
+            /*client -> client.levelRenderer.allChanged();
+            *///?}
 
-    OptionFlag WORLD_RENDER_UPDATE = client -> client.levelRenderer.needsUpdate();
+    @Deprecated
+    OptionFlag WORLD_RENDER_UPDATE =
+            //? if >=26.2 {
+            RELOAD_CHUNKS;
+            //?} else {
+            /*client -> client.levelRenderer.needsUpdate();
+            *///?}
 
     OptionFlag ASSET_RELOAD = Minecraft::delayTextureReload;
 }

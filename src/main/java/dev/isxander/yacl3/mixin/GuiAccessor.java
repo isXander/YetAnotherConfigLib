@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(Gui.class)
 public interface GuiAccessor {
     //? >=26.2 {
-    /*@Accessor("screen")
+    @Accessor("screen")
     void yacl$setScreen(Screen screen);
-    *///? }
+    //? }
 }

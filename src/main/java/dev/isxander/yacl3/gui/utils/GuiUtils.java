@@ -52,16 +52,16 @@ public class GuiUtils {
     public static void setScreen(Screen screen, boolean ignoreVanilla) {
         if (ignoreVanilla) {
             //? >=26.2 {
-            /*((GuiAccessor) Minecraft.getInstance().gui).yacl$setScreen(screen);
-             *///? } else {
-            Minecraft.getInstance().screen = screen;
-            //? }
+            ((GuiAccessor) Minecraft.getInstance().gui).yacl$setScreen(screen);
+             //? } else {
+            /*Minecraft.getInstance().screen = screen;
+            *///? }
         } else {
             //? >=26.2 {
-            /*Minecraft.getInstance().gui.setScreen(screen);
-             *///? } else {
-            Minecraft.getInstance().setScreen(screen);
-            //? }
+            Minecraft.getInstance().gui.setScreen(screen);
+             //? } else {
+            /*Minecraft.getInstance().setScreen(screen);
+            *///? }
         }
     }
 
@@ -71,9 +71,9 @@ public class GuiUtils {
 
     public static Screen getCurrentScreen() {
         //? >=26.2 {
-        /*return Minecraft.getInstance().gui.screen();
-        *///? } else {
-        return Minecraft.getInstance().screen;
-        //? }
+        return Minecraft.getInstance().gui.screen();
+        //? } else {
+        /*return Minecraft.getInstance().screen;
+        *///? }
     }
 }
