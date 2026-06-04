@@ -1,12 +1,12 @@
-# YetAnotherConfigLib 3.9.3
+# YetAnotherConfigLib 3.9.4
 
-### 3.9.3 targets
+### 3.9.4 targets
 
-|               | Fabric | NeoForge | Forge |
-|---------------|--------|----------|-------|
-| 26.1          | ✅      | ✅        | ❌     |
-| 26.2-snapshot | ✅      | ❌        | ❌     |
+|      | Fabric | NeoForge | Forge |
+|------|--------|----------|-------|
+| 26.1 | ✅      | ✅        | ❌     |
+| 26.2 | ✅      | ✅        | ❌     |
 
 ### Changes
 
-- Add support for 26.2-snapshot
+- Port to 26.2 prereleases
