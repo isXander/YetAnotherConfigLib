@@ -4,14 +4,14 @@ import dev.isxander.yacl3.gui.image.YACLImageReloadListener;
 
 /*? if fabric {*/
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.server.packs.PackType;
 
 public class PlatformEntrypoint implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         YACLConfig.HANDLER.load();
-        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new YACLImageReloadListener());
+        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(YACLImageReloadListener.getId(), new YACLImageReloadListener());
     }
 }
 /*?} elif neoforge {*/
@@ -24,8 +24,7 @@ public class PlatformEntrypoint {
     public PlatformEntrypoint(IEventBus modEventBus) {
         YACLConfig.HANDLER.load();
         modEventBus.addListener(AddClientReloadListenersEvent.class, event -> {
-            var listener = new YACLImageReloadListener();
-            event.addListener(listener.getId(), listener);
+            event.addListener(YACLImageReloadListener.getId(), new YACLImageReloadListener());
         });
     }
 }

@@ -18,12 +18,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-public class YACLImageReloadListener
-        implements PreparableReloadListener
-        /*? if fabric {*/,
-        net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener
-        /*?}*/
-{
+public class YACLImageReloadListener implements PreparableReloadListener {
     @Override
     public @NotNull CompletableFuture<Void> reload(
             SharedState sharedState,
@@ -102,16 +97,9 @@ public class YACLImageReloadListener
     private record SupplierPreparation(Identifier location, ImageRendererFactory.ImageSupplier supplier) {
     }
 
-    public Identifier getId() {
+    public static Identifier getId() {
         return YACLPlatform.rl("image_reload_listener");
     }
-
-    /*? if fabric {*/
-    @Override
-    public Identifier getFabricId() {
-        return this.getId();
-    }
-    /*?}*/
 
     public static class CompletableFutureCollector<X, T extends CompletableFuture<X>> implements Collector<T, List<T>, CompletableFuture<List<X>>> {
         private CompletableFutureCollector() {
