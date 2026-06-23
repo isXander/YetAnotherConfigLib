@@ -181,10 +181,10 @@ dependencies {
 
     fun modDependency(
         id: String,
-        artifactGetter: (String) -> String,
+        artifactGetter: (String) -> Any,
         requiredByDependants: Boolean = false,
         supportsRuntime: Boolean = true,
-        extra: (Boolean) -> Unit = {}
+        extra: (runtime: Boolean) -> Unit = {}
     ) {
         prop("deps.$id") { modVersion ->
             val noRuntime = prop("deps.$id.noRuntime") { it.toBoolean() } == true
@@ -203,7 +203,9 @@ dependencies {
     }
 
     if (isFabric) {
-        modDependency("fabricApi", { "net.fabricmc.fabric-api:fabric-api:$it" }, requiredByDependants = true)
+        modDependency("fabricApi", { platform("net.fabricmc.fabric-api:fabric-api-bom:$it") }, requiredByDependants = true) { runtime ->
+            modstitchModApi("net.fabricmc.fabric-api:fabric-resource-loader-v1")
+        }
 
         modDependency("fabricLangKotlin", { "net.fabricmc:fabric-language-kotlin:${it}" })
     }

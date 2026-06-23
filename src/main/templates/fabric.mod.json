@@ -18,8 +18,7 @@
   "depends": {
     "fabricloader": ">=0.18.0",
     "minecraft": "${mc}",
-    "java": ">=17",
-    "fabric-api": ">=${fapi}"
+    "fabric-resource-loader-v1": "*"
   },
   "entrypoints": {
     "client": [
