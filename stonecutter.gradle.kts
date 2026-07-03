@@ -9,7 +9,6 @@ plugins {
 
     id("me.modmuss50.mod-publish-plugin") version "0.8.4" apply false
     id("org.ajoberstar.grgit") version "5.0.+" apply false
-    id("com.gradleup.nmcp.aggregation") version "1.4.3"
 
     id("dev.isxander.secrets") version "0.1.0"
 }
@@ -57,19 +56,3 @@ tasks.register("clean") {
     group = "build"
     delete(layout.buildDirectory.dir("finalJars"))
 }
-
-
-nmcpAggregation {
-    centralPortal {
-        username = secrets.gradleProperty("mcentral.username")
-        password = secrets.gradleProperty("mcentral.password")
-
-        publicationName = "yet-another-config-lib:$version"
-    }
-}
-dependencies {
-    allprojects {
-        nmcpAggregation(project(path))
-    }
-}
-

@@ -10,7 +10,6 @@ plugins {
     id("me.modmuss50.mod-publish-plugin")
     `maven-publish`
     signing
-    id("com.gradleup.nmcp")
     id("dev.isxander.secrets")
 
     id("org.ajoberstar.grgit")
@@ -360,6 +359,13 @@ publishing {
     }
     repositories {
         mavenLocal()
+
+        maven(url = "https://beta.maven.isxander.dev/releases") {
+            credentials {
+                username = secrets.gradleProperty("maven.username").orNull
+                password = secrets.gradleProperty("maven.password").orNull
+            }
+        }
     }
 }
 
