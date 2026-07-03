@@ -361,6 +361,7 @@ publishing {
         mavenLocal()
 
         maven(url = "https://beta.maven.isxander.dev/releases") {
+            name = "Xander"
             credentials {
                 username = secrets.gradleProperty("maven.username").orNull
                 password = secrets.gradleProperty("maven.password").orNull
