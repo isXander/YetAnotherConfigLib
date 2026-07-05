@@ -1,1 +1,16 @@
-{}
+{
+  "yacl.control.boolean.true": "Đúng",
+  "yacl.control.boolean.false": "Sai",
+  "yacl.control.action.execute": "CHẠY",
+  "yacl.control.color.color_picker_title": "Bảng chọn màu",
+  "yacl.control.dropdown.dropdown_widget_title": "Menu chọn sổ xuống",
+  "yacl.control.text.blank": "<blank>",
+  "yacl.gui.save": "Lưu thay đổi",
+  "yacl.gui.save.tooltip": "Lưu vĩnh viễn các thay đổi đã thực hiện.",
+  "yacl.gui.finished.tooltip": "Đóng giao diện.",
+  "yacl.gui.cancel.tooltip": "Bỏ các thay đổi đang chờ lưu và đóng giao diện.",
+  "yacl.gui.reset.tooltip": "Thiết lập lại tất cả tuỳ chọn về mặc định (có thể hoàn tác).",
+  "yacl.gui.undo": "Hoàn tác",
+  "yacl.gui.undo.tooltip": "Khôi phục tất cả tuỳ chọn về giá trị trước khi sửa đổi.",
+  "yacl.gui.fail_apply": "Không thể áp dụng"
+}
