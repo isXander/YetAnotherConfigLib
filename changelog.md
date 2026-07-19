@@ -1,14 +1,13 @@
-# YetAnotherConfigLib 3.9.5
+# YetAnotherConfigLib 3.9.6
 
-### 3.9.5 targets
+### 3.9.6 targets
 
 |               | Fabric | NeoForge | Forge |
 |---------------|--------|----------|-------|
-| 26.1          | ✅      | ✅        | ❌     |
-| 26.2          | ✅      | ✅        | ❌     |
-| 26.3-snapshot | ✅      | ❌        | ❌     |
+| 26.1          | ✅     | ✅       | ❌    |
+| 26.2          | ✅     | ✅       | ❌    |
+| 26.3-snapshot | ✅     | ❌       | ❌    |
 
 ### Changes
 
-- Port to 26.3 snapshot 1
-- Migrate to Fabric Resource Loader v1 (from deprecated v0)
+- Port to 26.3 snapshot 4
