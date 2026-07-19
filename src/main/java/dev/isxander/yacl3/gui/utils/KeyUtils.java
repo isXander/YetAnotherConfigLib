@@ -6,15 +6,21 @@ import net.minecraft.client.Minecraft;
 public final class KeyUtils {
 
     public static boolean hasShiftDown() {
-        var window = Minecraft.getInstance().getWindow();
-        return InputConstants.isKeyDown(window, InputConstants.KEY_LSHIFT) ||
-               InputConstants.isKeyDown(window, InputConstants.KEY_RSHIFT);
+        return isKeyDown(InputConstants.KEY_LSHIFT) ||
+               isKeyDown(InputConstants.KEY_RSHIFT);
     }
 
     public static boolean hasControlDown() {
-        var window = Minecraft.getInstance().getWindow();
-        return InputConstants.isKeyDown(window, InputConstants.KEY_LCONTROL) ||
-               InputConstants.isKeyDown(window, InputConstants.KEY_RCONTROL);
+        return isKeyDown(InputConstants.KEY_LCONTROL) ||
+               isKeyDown(InputConstants.KEY_RCONTROL);
+    }
+
+    public static boolean isKeyDown(int key) {
+        //? if >=26.3 {
+        /*return InputConstants.isKeyDown(key);
+        *///?} else {
+        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), key);
+        //?}
     }
 
     private KeyUtils() {
