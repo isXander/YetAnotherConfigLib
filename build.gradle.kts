@@ -318,6 +318,9 @@ publishMods {
 
         announcementTitle = "Download $mcVersion for ${loader.replaceFirstChar { it.uppercase() }} from CurseForge"
 
+        clientRequired = true
+        serverRequired = false
+
         if (isFabric) {
             requires { slug.set("fabric-api") }
         }
@@ -360,7 +363,7 @@ publishing {
     repositories {
         mavenLocal()
 
-        maven(url = "https://beta.maven.isxander.dev/releases") {
+        maven(url = "https://maven.isxander.dev/releases") {
             name = "Xander"
             credentials {
                 username = secrets.gradleProperty("maven.username").orNull
