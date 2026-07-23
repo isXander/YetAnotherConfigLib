@@ -1,14 +1,10 @@
 {
   "yacl.control.boolean.true": "是",
   "yacl.control.boolean.false": "否",
-
   "yacl.control.action.execute": "執行",
-
   "yacl.control.color.color_picker_title": "顏色選擇器",
   "yacl.control.dropdown.dropdown_widget_title": "下拉式選單",
-
   "yacl.control.text.blank": "<空白>",
-
   "yacl.gui.save": "儲存變更",
   "yacl.gui.save.tooltip": "使變更永久生效。",
   "yacl.gui.finished.tooltip": "關閉介面。",
@@ -20,13 +16,11 @@
   "yacl.gui.fail_apply.tooltip": "發生錯誤，無法套用變更。",
   "yacl.gui.save_before_exit": "離開前儲存！",
   "yacl.gui.save_before_exit.tooltip": "儲存或取消以離開介面。",
-
   "yacl.list.move_up": "上移",
   "yacl.list.move_down": "下移",
   "yacl.list.remove": "移除",
   "yacl.list.add_top": "新增項目",
   "yacl.list.empty": "清單是空的",
-
   "yacl.restart.title": "設定需要重新啟動！",
   "yacl.restart.message": "一或多個選項需要您重新啟動遊戲才能套用變更。",
   "yacl.restart.yes": "關閉 Minecraft",
