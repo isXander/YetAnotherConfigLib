@@ -310,7 +310,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
 
         public final AbstractWidget widget;
 
-        private final TextScaledButtonWidget resetButton;
+        private final TooltipButtonWidget resetButton;
 
         private final String categoryName;
         private final String groupName;
@@ -325,7 +325,7 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
             this.groupName = group.name().getString().toLowerCase();
             if (option.canResetToDefault() && this.widget.canReset()) {
                 this.widget.setDimension(this.widget.getDimension().expanded(-20, 0));
-                this.resetButton = new TextScaledButtonWidget(yaclScreen, widget.getDimension().xLimit(), -50, 20, 20, 2f, Component.literal("\u21BB"), button -> {
+                this.resetButton = new TooltipButtonWidget(yaclScreen, widget.getDimension().xLimit(), -50, 20, 20, Component.literal("\u27F2"), null, button -> {
                     option.requestSetDefault();
                 });
                 option.addListener((opt, val) -> this.resetButton.active = !opt.isPendingValueDefault() && opt.available());
@@ -539,14 +539,14 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
 
     public class ListGroupSeparatorEntry extends GroupSeparatorEntry {
         private final ListOption<?> listOption;
-        private final TextScaledButtonWidget resetListButton;
+        private final TooltipButtonWidget resetListButton;
         private final TooltipButtonWidget addListButton;
 
         private ListGroupSeparatorEntry(ListOption<?> group, Screen screen) {
             super(group, screen);
             this.listOption = group;
 
-            this.resetListButton = new TextScaledButtonWidget(screen, getRowRight() - 20, -50, 20, 20, 1f, Component.literal("\u21BB"), button -> {
+            this.resetListButton = new TooltipButtonWidget(screen, getRowRight() - 20, -50, 20, 20, Component.literal("\u27F2"), null, button -> {
                 group.requestSetDefault();
             });
             group.addListener((opt, val) -> this.resetListButton.active = !opt.isPendingValueDefault() && opt.available());

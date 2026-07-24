@@ -1,0 +1,13 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "yet_another_config_lib_v3:font/reset.png",
+      "ascent": 7,
+      "height": 8,
+      "chars": [
+        "\u27F2"
+      ]
+    }
+  ]
+}
