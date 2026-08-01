@@ -90,7 +90,13 @@ public class GuiTest {
                                                                     .append(Component.literal("b").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("b")))))
                                                                     .append(Component.literal("c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("c")))))
                                                                     .append(Component.literal("e").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("e")))))
-                                                                    .append(Component.literal("click me").withStyle(style -> style.withClickEvent(new ClickEvent.OpenUrl(URI.create("https://isxander.dev")))))
+                                                                    .append(Component.literal("click me").withStyle(style -> style.withClickEvent(
+                                                                            //? if >=1.21.5 {
+                                                                            new ClickEvent.OpenUrl(URI.create("https://isxander.dev"))
+                                                                            //?} else {
+                                                                            /*new ClickEvent(ClickEvent.Action.OPEN_URL, "https://isxander.dev")
+                                                                            *///?}
+                                                                    )))
                                                             )
                                                             .webpImage(imageSample("sample1.webp"))
                                                             .build())
