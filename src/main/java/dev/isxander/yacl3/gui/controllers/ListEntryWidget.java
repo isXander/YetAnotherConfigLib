@@ -25,7 +25,7 @@ public class ListEntryWidget extends AbstractWidget implements ContainerEventHan
 
     private final String optionNameString;
 
-    private GuiEventListener focused;
+    @Nullable private GuiEventListener focused;
     private boolean dragging;
 
     public ListEntryWidget(YACLScreen screen, ListOptionEntry<?> listOptionEntry, AbstractWidget entryWidget) {
