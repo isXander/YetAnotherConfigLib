@@ -87,7 +87,7 @@ public class ListEntryWidget extends AbstractWidget implements ContainerEventHan
 
     @Override
     public void unfocus() {
-        entryWidget.unfocus();
+        setFocused(null);
     }
 
     @Override
@@ -123,7 +123,15 @@ public class ListEntryWidget extends AbstractWidget implements ContainerEventHan
 
     @Override
     public void setFocused(@Nullable GuiEventListener focused) {
-        this.focused = focused;
+        if (this.focused != focused) {
+            if (this.focused != null)
+                this.focused.setFocused(false);
+
+            if (focused != null)
+                focused.setFocused(true);
+
+            this.focused = focused;
+        }
     }
 
     //? if >=1.21.11 {

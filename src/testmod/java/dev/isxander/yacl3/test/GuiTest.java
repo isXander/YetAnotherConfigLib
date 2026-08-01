@@ -90,7 +90,13 @@ public class GuiTest {
                                                                     .append(Component.literal("b").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("b")))))
                                                                     .append(Component.literal("c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c c").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("c")))))
                                                                     .append(Component.literal("e").withStyle(style -> style.withHoverEvent(createTextHoverEvent(Component.literal("e")))))
-                                                                    .append(Component.literal("click me").withStyle(style -> style.withClickEvent(new ClickEvent.OpenUrl(URI.create("https://isxander.dev")))))
+                                                                    .append(Component.literal("click me").withStyle(style -> style.withClickEvent(
+                                                                            //? if >=1.21.5 {
+                                                                            new ClickEvent.OpenUrl(URI.create("https://isxander.dev"))
+                                                                            //?} else {
+                                                                            /*new ClickEvent(ClickEvent.Action.OPEN_URL, "https://isxander.dev")
+                                                                            *///?}
+                                                                    )))
                                                             )
                                                             .webpImage(imageSample("sample1.webp"))
                                                             .build())
@@ -324,6 +330,16 @@ public class GuiTest {
                                 .build())
                         .category(ConfigCategory.createBuilder()
                                 .name(Component.literal("List Test"))
+                                .group(ListOption.<Color>createBuilder()
+                                        .name(Component.literal("Color List"))
+                                        .binding(
+                                                defaults.colorList,
+                                                () -> config.colorList,
+                                                val -> config.colorList = val
+                                        )
+                                        .controller(ColorControllerBuilder::create)
+                                        .initial(Color.white)
+                                        .build())
                                 .group(ListOption.<String>createBuilder()
                                         .name(Component.literal("String List"))
                                         .binding(
