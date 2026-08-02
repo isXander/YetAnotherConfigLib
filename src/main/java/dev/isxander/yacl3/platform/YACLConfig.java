@@ -10,6 +10,7 @@ public class YACLConfig {
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
                     .setPath(YACLPlatform.getConfigDir().resolve("yacl.json5"))
                     .setJson5(true)
+                    .setStoreColorsAsHex(true)
                     .build())
             .build();
 
