@@ -94,5 +94,15 @@ public interface GsonConfigSerializerBuilder<T> {
      */
     GsonConfigSerializerBuilder<T> setJson5(boolean json5);
 
+    /**
+     * If disabled, writes colors to the json in decimal ({@code -1610612736}).
+     * If enabled with JSON5 ({@link #setJson5(boolean)}), writes colors to the json as hexadecimal literals ({@code 0xA0000000}).
+     * If enabled without JSON5, writes colors to the json as hexadecimal strings ({@code "0xA0000000"}).
+     *
+     * @param hexColor whether to store color in hexadecimal instead of decimal
+     * @return this builder
+     */
+    GsonConfigSerializerBuilder<T> setStoreColorsAsHex(boolean hexColor);
+
     ConfigSerializer<T> build();
 }
