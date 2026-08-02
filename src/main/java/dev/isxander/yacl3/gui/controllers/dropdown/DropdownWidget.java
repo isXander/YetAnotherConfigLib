@@ -6,6 +6,7 @@ import dev.isxander.yacl3.api.utils.MutableDimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.ControllerPopupWidget;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
+import dev.isxander.yacl3.platform.YACLConfig;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -60,22 +61,14 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
 
 		// Background
 		//graphics.setColor(0.25f, 0.25f, 0.25f, 1.0f);
-		GuiUtils.blitGuiTexColor(
-                graphics,
-				Screen.MENU_BACKGROUND,
-				dropdownDim.x(), dropdownDim.y(),
-				0.0f, 0.0f,
-				dropdownDim.width(), dropdownDim.height(),
-				32, 32,
-                0xFF3F3F3F
-		);
+        graphics.fill(dropdownDim.x(), dropdownDim.y(), dropdownDim.xLimit(), dropdownDim.yLimit(), YACLConfig.HANDLER.instance().dropdownColor.getRGB());
 		//graphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 		graphics./*? if >=1.21.9 && <1.21.11 {*//*submitOutline*//*?} else {*/renderOutline/*?}*/(dropdownDim.x(), dropdownDim.y(), dropdownDim.width(), dropdownDim.height(), -1);
 
 		// Highlight the currently selected element
 		//graphics.setColor(0.0f, 0.0f, 0.0f, 0.5f);
 		int y = dropdownDim.y() + 2 + entryHeight() * selectedVisibleIndex();
-		graphics.fill(dropdownDim.x(), y, dropdownDim.xLimit(), y + entryHeight(), 0x7F000000);
+		graphics.fill(dropdownDim.x(), y, dropdownDim.xLimit(), y + entryHeight(), YACLConfig.HANDLER.instance().dropdownSelectionColor.getRGB());
 		//graphics.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 		graphics./*? if >=1.21.9 && <1.21.11 {*//*submitOutline*//*?} else {*/renderOutline/*?}*/(dropdownDim.x(), y, dropdownDim.width(), entryHeight(), -1);
 
