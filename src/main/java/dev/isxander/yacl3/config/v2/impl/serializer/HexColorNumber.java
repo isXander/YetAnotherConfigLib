@@ -1,7 +1,10 @@
 package dev.isxander.yacl3.config.v2.impl.serializer;
 
+import java.util.HexFormat;
+
 public class HexColorNumber extends Number {
-    private final int value;
+    private static final HexFormat HEX_FORMAT = HexFormat.of().withPrefix("0x").withUpperCase();
+    protected final int value;
 
     public HexColorNumber(int value) {
         this.value = value;
@@ -41,6 +44,6 @@ public class HexColorNumber extends Number {
 
     @Override
     public String toString() {
-        return String.format("0x%08X", value);
+        return HEX_FORMAT.toHexDigits(value);
     }
 }
