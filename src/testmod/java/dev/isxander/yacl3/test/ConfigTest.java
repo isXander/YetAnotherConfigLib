@@ -15,6 +15,7 @@ public class ConfigTest {
     public static final ConfigClassHandler<ConfigTest> GSON = ConfigClassHandler.createBuilder(ConfigTest.class)
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
                     .setPath(YACLPlatform.getConfigDir().resolve("yacl-test.json"))
+                    .setStoreColorsAsHex(true)
                     .build())
             .build();
 
