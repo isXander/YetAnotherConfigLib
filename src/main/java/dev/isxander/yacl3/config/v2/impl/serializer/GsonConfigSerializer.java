@@ -54,7 +54,13 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
 
         try (StringWriter stringWriter = new StringWriter()) {
             JsonWriter jsonWriter = json5 ? JsonWriter.json5(stringWriter) : JsonWriter.json(stringWriter);
-            GsonWriter gsonWriter = hexColor ? new HexColorGsonWriter(jsonWriter, json5) : new GsonWriter(jsonWriter);
+            GsonWriter gsonWriter;
+            if (!hexColor)
+                gsonWriter = new GsonWriter(jsonWriter);
+            else if (json5)
+                gsonWriter = new HexColorLiteralGsonWriter(jsonWriter);
+            else
+                gsonWriter = new HexColorStringGsonWriter(jsonWriter);
 
             jsonWriter.beginObject();
 
