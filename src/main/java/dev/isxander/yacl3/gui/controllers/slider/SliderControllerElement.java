@@ -63,7 +63,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
 
     @Override
     public boolean mouseClicked(@NonNull MouseButtonEvent event, boolean doubleClick) {
-        if (!isAvailable() || event.button() != 0 || !isHoveredSliderBounds(event.x(), event.y()))
+        if (!isAvailable() || event.button() != InputConstants.MOUSE_BUTTON_LEFT || !isHoveredSliderBounds(event.x(), event.y()))
             return false;
 
         mouseDown = true;
@@ -78,7 +78,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
 
     @Override
     public boolean mouseDragged(@NonNull MouseButtonEvent event, double dx, double dy) {
-        if (!isAvailable() || event.button() != 0 || !mouseDown)
+        if (!isAvailable() || event.button() != InputConstants.MOUSE_BUTTON_LEFT || !mouseDown)
             return false;
 
         setValueFromMouse(event.x());
