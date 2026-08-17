@@ -36,13 +36,12 @@ public class CyclingControllerElement extends ControllerWidget<ICyclingControlle
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-        if (!isMouseOver(event.x(), event.y()) || (event.button() != 0 && event.button() != 1) || !isAvailable())
+    public boolean mouseClicked(@NonNull MouseButtonEvent event, boolean doubleClick) {
+        if (!isMouseOver(event.x(), event.y()) || (event.button() != InputConstants.MOUSE_BUTTON_LEFT && event.button() != InputConstants.MOUSE_BUTTON_RIGHT) || !isAvailable())
             return false;
 
         playDownSound();
-        cycleValue(event.button() == 1 || event.hasShiftDown() || event.hasControlDown() ? -1 : 1);
-
+        cycleValue(event.button() == InputConstants.MOUSE_BUTTON_RIGHT || event.hasShiftDown() || event.hasControlDown() ? -1 : 1);
         return true;
     }
 
