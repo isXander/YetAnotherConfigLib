@@ -1,27 +1,28 @@
 modLoader = "javafml"
 loaderVersion = "${loaderVersion}"
-#issueTrackerURL = ""
+issueTrackerURL = "https://github.com/${github}/issues"
 license = "${mod_license}"
 
 [[mods]]
 modId = "${mod_id}"
 version = "${mod_version}"
 displayName = "${mod_name}"
+displayURL = "https://isxander.dev"
 authors = "${mod_author}"
 description = '''
 ${mod_description}
 '''
-logoFile = "yacl-128x.png"
+iconFile = "yacl-128x.png"
 
 [["dependencies.${mod_id}"]]
 modId = "forge"
-mandatory = true
+type = "required"
 ordering = "NONE"
 side = "BOTH"
 
 [["dependencies.${mod_id}"]]
 modId = "minecraft"
-mandatory = true
+type = "required"
 versionRange = "${mc}"
 ordering = "NONE"
 side = "BOTH"
