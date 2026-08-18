@@ -21,6 +21,7 @@ import net.minecraft.client.gui.TextAlignment;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.PreeditEvent;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -211,6 +212,16 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         return super.charTyped(characterEvent);
     }
 
+    @Override
+    public boolean preeditUpdated(@Nullable PreeditEvent event) {
+        for (Entry child : children()) {
+            if (child.preeditUpdated(event))
+                return true;
+        }
+
+        return super.preeditUpdated(event);
+    }
+
     private List<Entry> superModifiableChildren() {
         // noinspection unchecked
         return (List<Entry>) ((AbstractSelectionListAccessor) this).getChildren();
@@ -299,6 +310,10 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         protected void onBecameHidden() {
             this.setHeight(0);
         }
+
+        public boolean preeditUpdated(@Nullable PreeditEvent event) {
+            return false;
+        }
     }
 
     public class OptionEntry extends Entry {
@@ -371,6 +386,11 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         @Override
         public boolean charTyped(@NonNull CharacterEvent event) {
             return widget.charTyped(event);
+        }
+
+        @Override
+        public boolean preeditUpdated(@Nullable PreeditEvent event) {
+            return widget.preeditUpdated(event);
         }
 
         @Override

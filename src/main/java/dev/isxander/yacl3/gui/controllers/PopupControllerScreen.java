@@ -8,6 +8,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.PreeditEvent;
+import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
 public class PopupControllerScreen extends Screen {
@@ -76,6 +78,11 @@ public class PopupControllerScreen extends Screen {
     @Override
     public boolean charTyped(@NonNull CharacterEvent characterEvent) {
         return controllerPopup.charTyped(characterEvent);
+    }
+
+    @Override
+    public boolean preeditUpdated(@Nullable PreeditEvent event) {
+        return controllerPopup.preeditUpdated(event);
     }
 
     @Override

@@ -14,6 +14,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.PreeditEvent;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
@@ -158,5 +159,12 @@ public class ListEntryWidget extends AbstractWidget implements ContainerEventHan
     @Override
     public boolean charTyped(CharacterEvent characterEvent) {
         return ContainerEventHandler.super.charTyped(characterEvent);
+    }
+
+    @Override
+    public boolean preeditUpdated(@Nullable PreeditEvent event) {
+        if (entryWidget.preeditUpdated(event))
+            return true;
+        return ContainerEventHandler.super.preeditUpdated(event);
     }
 }
