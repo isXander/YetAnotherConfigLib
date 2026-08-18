@@ -1,12 +1,13 @@
 modLoader = "javafml"
 loaderVersion = "${loaderVersion}"
-#issueTrackerURL = ""
+issueTrackerURL = "https://github.com/${github}/issues"
 license = "${mod_license}"
 
 [[mods]]
 modId = "${mod_id}"
 version = "${mod_version}"
 displayName = "${mod_name}"
+displayURL = "https://isxander.dev"
 authors = "${mod_author}"
 description = '''
 ${mod_description}
