@@ -4,6 +4,7 @@ import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.ControllerPopupWidget;
+import dev.isxander.yacl3.platform.YACLConfig;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
@@ -58,24 +59,12 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
 		if (dropdownLength() == 0) return;
 
 		// Background
-        int x = dropdownDim.x();
-        int y1 = dropdownDim.y();
-        int textureWidth = dropdownDim.width();
-        int textureHeight = dropdownDim.height();
-        graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                Screen.MENU_BACKGROUND,
-                x, y1,
-                0.0f, 0.0f,
-                textureWidth, textureHeight,
-                32, 32,
-                0xFF3F3F3F
-        );
+        graphics.fill(dropdownDim.x(), dropdownDim.y(), dropdownDim.xLimit(), dropdownDim.yLimit(), YACLConfig.HANDLER.instance().dropdownColor.getRGB());
 		graphics.outline(dropdownDim.x(), dropdownDim.y(), dropdownDim.width(), dropdownDim.height(), -1);
 
 		// Highlight the currently selected element
 		int y = dropdownDim.y() + 2 + entryHeight() * selectedVisibleIndex();
-		graphics.fill(dropdownDim.x(), y, dropdownDim.xLimit(), y + entryHeight(), 0x7F000000);
+		graphics.fill(dropdownDim.x(), y, dropdownDim.xLimit(), y + entryHeight(), YACLConfig.HANDLER.instance().dropdownSelectionColor.getRGB());
 		graphics.outline(dropdownDim.x(), y, dropdownDim.width(), entryHeight(), -1);
 
 		// Render all visible elements
