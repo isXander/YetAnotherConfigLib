@@ -74,12 +74,12 @@ public record LabelController(Option<Component> option) implements Controller<Co
 
             int y = getDimension().y();
             ActiveTextCollector textCollector = graphics.textRenderer(GuiGraphicsExtractor.HoveredTextEffects.TOOLTIP_AND_CURSOR);
-            Style textStyle = Style.EMPTY.withColor(option().available() ? -1 : 0xFFA0A0A0);
+            Style fallbackStyle = Style.EMPTY.withColor(option().available() ? -1 : 0xFFA0A0A0);
             for (FormattedCharSequence text : wrappedText) {
                 textCollector.accept(
                         getDimension().x() + getXPadding(),
                         y + getYPadding(),
-                        GuiUtils.overrideStyle(text, textStyle)
+                        GuiUtils.applyFallbackStyle(text, fallbackStyle)
                 );
                 y += textRenderer.lineHeight;
             }

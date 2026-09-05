@@ -45,8 +45,8 @@ public class GuiUtils {
         return string;
     }
 
-    public static FormattedCharSequence overrideStyle(FormattedCharSequence seq, Style style) {
-        return output -> seq.accept((c, s, t) -> output.accept(c, style, t));
+    public static FormattedCharSequence applyFallbackStyle(FormattedCharSequence seq, Style fallback) {
+        return output -> seq.accept((c, s, t) -> output.accept(c, s.applyTo(fallback), t));
     }
 
     public static void setScreen(Screen screen, boolean ignoreVanilla) {
