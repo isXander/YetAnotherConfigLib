@@ -17,10 +17,10 @@ public final class KeyUtils {
 
     public static boolean isKeyDown(int key) {
         //? if >=26.3 {
-        /*return InputConstants.isKeyDown(key);
-        *///?} else {
-        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), key);
-        //?}
+        return InputConstants.isKeyDown(key);
+        //?} else {
+        /*return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), key);
+        *///?}
     }
 
     private KeyUtils() {

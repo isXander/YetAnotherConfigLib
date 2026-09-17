@@ -92,8 +92,6 @@ modstitch {
                     runDir("../../run")
                 }
             }
-
-            mixin.useLegacyMixinAp = false
         }
     }
 
