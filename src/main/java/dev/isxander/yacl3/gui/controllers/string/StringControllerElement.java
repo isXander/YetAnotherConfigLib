@@ -9,6 +9,7 @@ import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.gui.utils.KeyUtils;
 import dev.isxander.yacl3.gui.utils.UndoRedoHelper;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
@@ -113,6 +114,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     public boolean mouseClicked(@NonNull MouseButtonEvent event, boolean doubleClick) {
         if (isAvailable() && getDimension().isPointInside((int) event.x(), (int) event.y())) {
             inputFieldFocused = true;
+            updateTextInputFocus(true);
 
             if (!isHoveredInputField(event.x(), event.y())) {
                 caretPos = getDefaultCaretPos();
@@ -432,6 +434,7 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     public void setFocused(boolean focused) {
         super.setFocused(focused);
         inputFieldFocused = focused;
+        updateTextInputFocus(focused);
     }
 
     @Override
@@ -440,6 +443,13 @@ public class StringControllerElement extends ControllerWidget<IStringController<
         inputFieldFocused = false;
         renderOffset = 0;
         if (!instantApply) updateControl();
+        updateTextInputFocus(false);
+    }
+
+    private void updateTextInputFocus(boolean focused) {
+        //? if >=26.3 {
+        Minecraft.getInstance().onTextInputFocusChange(this, focused);
+        //?}
     }
 
     @Override

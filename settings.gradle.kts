@@ -9,7 +9,7 @@ pluginManagement {
 }
 
 plugins {
-    id("dev.kikugie.stonecutter") version "0.8.2"
+    id("dev.kikugie.stonecutter") version "0.9.8"
 }
 
 stonecutter {
@@ -25,7 +25,7 @@ stonecutter {
 
         mc("26.1", loaders = listOf("fabric", "neoforge"))
         mc("26.2", loaders = listOf("fabric", "neoforge"))
-        mc("26.3", loaders = listOf("fabric"))
+        mc("26.3", loaders = listOf("fabric", "neoforge"))
     }
 }
 rootProject.name = "YetAnotherConfigLib"
