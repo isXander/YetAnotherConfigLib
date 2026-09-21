@@ -92,8 +92,6 @@ modstitch {
                     runDir("../../run")
                 }
             }
-
-            mixin.useLegacyMixinAp = false
         }
     }
 
@@ -159,6 +157,16 @@ repositories {
     maven("https://prmaven.neoforged.net/NeoForge/pr3198") {
         content {
             includeModule("net.neoforged", "neoforge")
+        }
+    }
+}
+
+// MDG 2.0.137 (via Modstitch 0.8.4) defaults to NFRT 2.0.18, which cannot build 26.3 see [neoforged/NeoForge#3490](https://github.com/neoforged/NeoForge/issues/3490)
+// Remove once Modstitch updates to MDG 2.0.138 or later, which defaults to NFRT 2.0.31
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "net.neoforged" && requested.name == "neoform-runtime") {
+            useVersion("2.0.31")
         }
     }
 }
