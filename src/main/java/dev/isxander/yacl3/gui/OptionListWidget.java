@@ -365,6 +365,9 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
 
         @Override
         public boolean keyPressed(@NonNull KeyEvent event) {
+            if (resetButton != null && resetButton.isFocused()) {
+                return resetButton.keyPressed(event);
+            }
             return widget.keyPressed(event);
         }
 
