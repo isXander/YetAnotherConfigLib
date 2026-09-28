@@ -28,6 +28,7 @@ public class AutogenConfigTest {
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
                     .setPath(YACLPlatform.getConfigDir().resolve("yacl-test-v2.json5"))
                     .setJson5(true)
+                    .setStoreColorsAsHex(true)
                     .build())
             .build();
 

@@ -38,12 +38,14 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
     private final Gson gson;
     private final Path path;
     private final boolean json5;
+    private final boolean hexColor;
 
-    private GsonConfigSerializer(ConfigClassHandler<T> config, Path path, Gson gson, boolean json5) {
+    private GsonConfigSerializer(ConfigClassHandler<T> config, Path path, Gson gson, boolean json5, boolean hexColor) {
         super(config);
         this.gson = gson;
         this.path = path;
         this.json5 = json5;
+        this.hexColor = hexColor;
     }
 
     @Override
@@ -52,7 +54,13 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
 
         try (StringWriter stringWriter = new StringWriter()) {
             JsonWriter jsonWriter = json5 ? JsonWriter.json5(stringWriter) : JsonWriter.json(stringWriter);
-            GsonWriter gsonWriter = new GsonWriter(jsonWriter);
+            GsonWriter gsonWriter;
+            if (!hexColor)
+                gsonWriter = new GsonWriter(jsonWriter);
+            else if (json5)
+                gsonWriter = new HexColorLiteralGsonWriter(jsonWriter);
+            else
+                gsonWriter = new HexColorStringGsonWriter(jsonWriter);
 
             jsonWriter.beginObject();
 
@@ -192,12 +200,21 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
     public static class ColorTypeAdapter implements JsonSerializer<Color>, JsonDeserializer<Color> {
         @Override
         public Color deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-            return new Color(jsonElement.getAsInt(), true);
+            String value = jsonElement.getAsString();
+
+            int argb;
+            if (value.startsWith("0x") || value.startsWith("0X"))
+                // Parse JSON5 hex literal or hex string
+                argb = (int) Long.parseLong(value.substring(2), 16);
+            else
+                argb = jsonElement.getAsInt();
+
+            return new Color(argb, true);
         }
 
         @Override
         public JsonElement serialize(Color color, Type type, JsonSerializationContext jsonSerializationContext) {
-            return new JsonPrimitive(color.getRGB());
+            return new JsonPrimitive(new HexColorNumber(color.getRGB()));
         }
     }
 
@@ -218,6 +235,7 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
         private final ConfigClassHandler<T> config;
         private Path path;
         private boolean json5;
+        private boolean hexColor;
         private UnaryOperator<GsonBuilder> gsonBuilder = builder -> builder
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .serializeNulls()
@@ -262,8 +280,14 @@ public class GsonConfigSerializer<T> extends ConfigSerializer<T> {
         }
 
         @Override
+        public GsonConfigSerializerBuilder<T> setStoreColorsAsHex(boolean hexColor) {
+            this.hexColor = hexColor;
+            return this;
+        }
+
+        @Override
         public GsonConfigSerializer<T> build() {
-            return new GsonConfigSerializer<>(config, path, gsonBuilder.apply(new GsonBuilder()).create(), json5);
+            return new GsonConfigSerializer<>(config, path, gsonBuilder.apply(new GsonBuilder()).create(), json5, hexColor);
         }
     }
 }
