@@ -1,6 +1,7 @@
 package dev.isxander.yacl3.api;
 
 import dev.isxander.yacl3.gui.YACLScreen;
+import dev.isxander.yacl3.gui.tab.TabExt;
 import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 
@@ -12,5 +13,5 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
  * Part of the GUI API: could change with minecraft updates and is not stable
  */
 public interface CustomTabProvider {
-    Tab createTab(YACLScreen screen, ScreenRectangle tabArea);
+    TabExt createTab(YACLScreen screen, ScreenRectangle tabArea);
 }

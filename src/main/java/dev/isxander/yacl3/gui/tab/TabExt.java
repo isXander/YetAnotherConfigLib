@@ -11,6 +11,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
 public interface TabExt extends Tab {
+    Component getTabTitle();
+
     @Nullable Tooltip getTooltip();
 
     default void tick() {}

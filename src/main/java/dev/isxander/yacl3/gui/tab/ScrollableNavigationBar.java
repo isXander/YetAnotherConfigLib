@@ -31,11 +31,11 @@ public class ScrollableNavigationBar
 
     private final TabNavigationBarAccessor accessor;
 
-    public ScrollableNavigationBar(int width, TabManager tabManager, Iterable<? extends Tab> tabs) {
+    public ScrollableNavigationBar(int width, TabManager tabManager, Iterable<? extends TabExt> tabs) {
         //? if >=26.2 {
         var tabsList = ImmutableList.<Tab>copyOf(tabs);
         var tabButtonsList = ImmutableList.copyOf(tabsList.stream()
-                .<TabButton>map(tab -> new MenuTabButton(tabManager, tab, 0, 24))
+                .<TabButton>map(tab -> new MenuTabButton(tabManager, tab, 0, 24, ((TabExt) tab).getTabTitle()))
                 .toList());
         super(0, 0, width, 24, tabManager, tabButtonsList, tabsList);
         //?} else {
@@ -180,7 +180,7 @@ public class ScrollableNavigationBar
 
     public void updateTabNames() {
         for (TabButton tabButton : accessor.yacl$getTabButtons()) {
-            tabButton.setMessage(tabButton.tab().getTabTitle());
+            tabButton.setMessage(((TabExt) tabButton.tab()).getTabTitle());
         }
     }
 
