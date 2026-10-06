@@ -45,7 +45,7 @@ public abstract class NumberFieldController<T extends Number> implements ISlider
     public void setFromString(String value) {
         try {
             String transformed = transformInput(value);
-            setPendingValue(Mth.clamp(NUMBER_FORMAT.parse(transformed).doubleValue(), min(), max()));
+            setPendingValue(Math.clamp(NUMBER_FORMAT.parse(transformed).doubleValue(), min(), max()));
         } catch (ParseException ignore) {
             YACLConstants.LOGGER.warn("Failed to parse number: {}", value);
         }

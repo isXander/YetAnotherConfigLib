@@ -10,7 +10,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2f;
@@ -45,8 +44,12 @@ public record BaseRenderState(
 
     private static TextureSetup textureSetup(@Nullable Identifier textureId) {
         if (textureId != null) {
-            AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(textureId);
-            return TextureSetup.singleTexture(texture.getTextureView(), texture.getSampler());
+            var texture = Minecraft.getInstance().getTextureManager().getTexture(textureId);
+            //? if >=26.4 {
+            return TextureSetup.singleTexture(texture.textureView(), texture.sampler());
+            //?} else {
+            /*return TextureSetup.singleTexture(texture.getTextureView(), texture.getSampler());
+            *///?}
         }
         return TextureSetup.noTexture();
     }

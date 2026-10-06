@@ -152,7 +152,7 @@ public class ScrollableNavigationBar
         Layout layout = /*? if >=26.2 {*/ this.layout; /*?} else {*/ /*accessor.yacl$getLayout(); *//*?}*/
 
         layout.setX(layout.getX() + this.scrollOffset);
-        this.scrollOffset = Mth.clamp(scrollOffset, 0, maxScrollOffset);
+        this.scrollOffset = Math.clamp(scrollOffset, 0, maxScrollOffset);
         layout.setX(layout.getX() - this.scrollOffset);
     }
 

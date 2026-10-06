@@ -193,7 +193,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         }
 
         if (hueSliderDown) {
-            hueThumbX = (int) Mth.clamp(mouseX, hueGradientDim.x(), hueGradientDim.xLimit());
+            hueThumbX = (int) Math.clamp(mouseX, hueGradientDim.x(), hueGradientDim.xLimit());
         }
 
         return hueSliderDown;
@@ -212,7 +212,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         }
 
         if (satLightGradientDown) {
-            satLightThumbX = (int) Mth.clamp(mouseX, saturationLightDim.x(), saturationLightDim.xLimit());
+            satLightThumbX = (int) Math.clamp(mouseX, saturationLightDim.x(), saturationLightDim.xLimit());
         }
 
         return satLightGradientDown;
@@ -232,7 +232,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         }
 
         if (alphaSliderDown) {
-            alphaThumbX = (int) Mth.clamp(mouseX, alphaGradientDim.x(), alphaGradientDim.xLimit());
+            alphaThumbX = (int) Math.clamp(mouseX, alphaGradientDim.x(), alphaGradientDim.xLimit());
         }
 
         return alphaSliderDown;
@@ -356,7 +356,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         int max = hueGradientDim.xLimit();
         int value = (int) (min + hueGradientDim.width() * this.hue);
 
-        return Mth.clamp(value, min, max);
+        return Math.clamp(value, min, max);
     }
 
     protected int getSatLightThumbX() {
@@ -364,7 +364,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         int max = saturationLightDim.xLimit();
         int value = (int) (min + (saturationLightDim.width() * this.saturation));
 
-        return Mth.clamp(value, min, max);
+        return Math.clamp(value, min, max);
     }
 
     protected int getSatLightThumbY() {
@@ -372,7 +372,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         int max = saturationLightDim.yLimit();
         int value = (int) (min + (saturationLightDim.height() * (1.0f - this.light)));
 
-        return Mth.clamp(value, min, max);
+        return Math.clamp(value, min, max);
     }
 
     protected int getAlphaThumbX() {
@@ -380,7 +380,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         int max = alphaGradientDim.xLimit();
         int value = max - (alphaGradientDim.width() * this.alpha / 255);
 
-        return Mth.clamp(value, min, max);
+        return Math.clamp(value, min, max);
     }
 
     public void setHueFromMouse(double mouseX) {
@@ -393,7 +393,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         } else {
             float newHue = (float) (mouseX - hueGradientDim.x()) / hueGradientDim.width();
 
-            this.hue = Mth.clamp(newHue, 0f, 1f);
+            this.hue = Math.clamp(newHue, 0f, 1f);
         }
 
         setColorControllerFromHSL();
@@ -407,7 +407,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         } else {
             float newSat = (float) (mouseX - saturationLightDim.x()) / saturationLightDim.width();
 
-            this.saturation = Mth.clamp(newSat, 0f, 1.0f);
+            this.saturation = Math.clamp(newSat, 0f, 1.0f);
         }
 
         if(mouseY < saturationLightDim.y()) {
@@ -417,7 +417,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         } else {
             float newLight = (float) (mouseY - saturationLightDim.y()) / saturationLightDim.height();
 
-            this.light = Mth.clamp(1f - newLight, 0f, 1.0f);
+            this.light = Math.clamp(1f - newLight, 0f, 1.0f);
         }
 
         setColorControllerFromHSL();
@@ -432,7 +432,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         } else {
             int newAlpha = (int) ((mouseX - alphaGradientDim.xLimit()) / alphaGradientDim.width() * -255);
 
-            this.alpha = Mth.clamp(newAlpha, 0, 255);
+            this.alpha = Math.clamp(newAlpha, 0, 255);
         }
 
         setColorControllerFromHSL();

@@ -7,18 +7,27 @@ import dev.isxander.yacl3.gui.image.ImageRendererFactory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.Identifier;
 
 import java.io.FileInputStream;
 import java.nio.file.Path;
 
+//? if >=26.4 {
+import net.minecraft.client.renderer.texture.TextureResources;
+//?} else {
+/*import net.minecraft.client.renderer.texture.DynamicTexture;
+*///?}
+
 public class DynamicTextureImage implements ImageRenderer {
     protected static final TextureManager textureManager = Minecraft.getInstance().getTextureManager();
 
     protected NativeImage image;
-    protected DynamicTexture texture;
+    //? if >=26.4 {
+    protected TextureResources texture;
+    //?} else {
+    /*protected DynamicTexture texture;
+    *///?}
     protected final Identifier uniqueLocation;
     protected final int width, height;
     protected final boolean textureFiltering;
@@ -27,7 +36,11 @@ public class DynamicTextureImage implements ImageRenderer {
         RenderSystem.assertOnRenderThread();
 
         this.image = image;
-        this.texture = new DynamicTexture(location::toString, image);
+        //? if >=26.4 {
+        this.texture = TextureResources.from2dImage(location::toString, image);
+        //?} else {
+        /*this.texture = new DynamicTexture(location::toString, image);
+        *///?}
         this.textureFiltering = textureFiltering;
         this.uniqueLocation = location;
         textureManager.register(this.uniqueLocation, this.texture);

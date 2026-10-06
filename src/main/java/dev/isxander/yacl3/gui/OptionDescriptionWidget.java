@@ -127,7 +127,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontal, double vertical) {
         if (isMouseOver(mouseX, mouseY)) {
-            targetScrollAmount = Mth.clamp(targetScrollAmount - (int) vertical * 10, 0, maxScrollAmount);
+            targetScrollAmount = Math.clamp(targetScrollAmount - (int) vertical * 10, 0, maxScrollAmount);
             lastInteractionTime = currentTimeMS();
             return true;
         }
@@ -142,9 +142,9 @@ public class OptionDescriptionWidget extends AbstractWidget {
         if (isFocused()) {
             switch (keyCode) {
                 case InputConstants.KEY_UP ->
-                        targetScrollAmount = Mth.clamp(targetScrollAmount - 10, 0, maxScrollAmount);
+                        targetScrollAmount = Math.clamp(targetScrollAmount - 10, 0, maxScrollAmount);
                 case InputConstants.KEY_DOWN ->
-                        targetScrollAmount = Mth.clamp(targetScrollAmount + 10, 0, maxScrollAmount);
+                        targetScrollAmount = Math.clamp(targetScrollAmount + 10, 0, maxScrollAmount);
                 default -> {
                     return false;
                 }
@@ -176,7 +176,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
                 }
             }
 
-            targetScrollAmount = Mth.clamp(targetScrollAmount + pxPerTick, 0, maxScrollAmount);
+            targetScrollAmount = Math.clamp(targetScrollAmount + pxPerTick, 0, maxScrollAmount);
         }
     }
 

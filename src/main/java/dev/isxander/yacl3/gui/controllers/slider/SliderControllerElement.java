@@ -86,7 +86,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     public void incrementValue(double amount) {
-        control.setPendingValue(Mth.clamp(control.pendingValue() + interval * amount, min, max));
+        control.setPendingValue(Math.clamp(control.pendingValue() + interval * amount, min, max));
         calculateInterpolation();
     }
 
@@ -136,7 +136,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     protected double roundToInterval(double value) {
-        return Mth.clamp(min + (interval * Math.round(value / interval)), min, max); // extremely imprecise, requires clamping
+        return Math.clamp(min + (interval * Math.round(value / interval)), min, max); // extremely imprecise, requires clamping
     }
 
     @Override
@@ -145,7 +145,7 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     protected void calculateInterpolation() {
-        interpolation = Mth.clamp((float) ((control.pendingValue() - control.min()) * 1 / control.range()), 0f, 1f);
+        interpolation = Math.clamp((float) ((control.pendingValue() - control.min()) * 1 / control.range()), 0f, 1f);
     }
 
     @Override
