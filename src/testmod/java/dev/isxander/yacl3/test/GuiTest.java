@@ -323,6 +323,16 @@ public class GuiTest {
                                 .build())
                         .category(ConfigCategory.createBuilder()
                                 .name(Component.literal("List Test"))
+                                .group(ListOption.<Color>createBuilder()
+                                        .name(Component.literal("Color List"))
+                                        .binding(
+                                                defaults.colorList,
+                                                () -> config.colorList,
+                                                val -> config.colorList = val
+                                        )
+                                        .controller(ColorControllerBuilder::create)
+                                        .initial(Color.white)
+                                        .build())
                                 .group(ListOption.<String>createBuilder()
                                         .name(Component.literal("String List"))
                                         .binding(

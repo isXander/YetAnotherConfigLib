@@ -66,6 +66,8 @@ public class ConfigTest {
     public ChatFormatting formattingOption = ChatFormatting.RED;
 
     @SerialEntry
+    public List<Color> colorList = List.of(Color.red, Color.green, Color.blue);
+    @SerialEntry
     public List<String> stringList = List.of("This is quite cool.", "You can add multiple items!", "And it is integrated so well into Option groups!");
     @SerialEntry
     public List<Integer> intList = List.of(1, 2, 3);

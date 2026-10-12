@@ -29,7 +29,7 @@ public class ListEntryWidget extends AbstractWidget implements ContainerEventHan
 
     private final String optionNameString;
 
-    private GuiEventListener focused;
+    @Nullable private GuiEventListener focused;
     private boolean dragging;
 
     public ListEntryWidget(YACLScreen screen, ListOptionEntry<?> listOptionEntry, AbstractWidget entryWidget) {
@@ -91,7 +91,7 @@ public class ListEntryWidget extends AbstractWidget implements ContainerEventHan
 
     @Override
     public void unfocus() {
-        entryWidget.unfocus();
+        setFocused(null);
     }
 
     @Override
@@ -127,8 +127,19 @@ public class ListEntryWidget extends AbstractWidget implements ContainerEventHan
 
     @Override
     public void setFocused(@Nullable GuiEventListener focused) {
-        this.focused = focused;
+        if (this.focused != focused) {
+            if (this.focused != null)
+                this.focused.setFocused(false);
+
+            if (focused != null)
+                focused.setFocused(true);
+
+            this.focused = focused;
+        }
     }
+
+    @Override
+    public void setFocused(boolean focused) {}
 
     @Override
     public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean doubleClick) {
