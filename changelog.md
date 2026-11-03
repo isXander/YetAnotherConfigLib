@@ -1,6 +1,6 @@
-# YetAnotherConfigLib 3.9.9
+# YetAnotherConfigLib 3.9.10
 
-### 3.9.9 targets
+### 3.9.10 targets
 
 |      | Fabric | NeoForge | Forge |
 |------|--------|----------|-------|
@@ -11,4 +11,4 @@
 
 ### Changes
 
-- Port to 26.4-snapshot-3
+- Port to 26.4-snapshot-7
