@@ -35,7 +35,7 @@ public class ScrollableNavigationBar
         //? if >=26.2 {
         var tabsList = ImmutableList.<Tab>copyOf(tabs);
         var tabButtonsList = ImmutableList.copyOf(tabsList.stream()
-                .<TabButton>map(tab -> new MenuTabButton(tabManager, tab, 0, 24, ((TabExt) tab).getTabTitle()))
+                .<TabButton>map(tab -> new MenuTabButton(tabManager, tab, 0, 24/*? if >=26.4 {*/, ((TabExt) tab).getTabTitle()/*?}*/))
                 .toList());
         super(0, 0, width, 24, tabManager, tabButtonsList, tabsList);
         //?} else {
@@ -90,7 +90,7 @@ public class ScrollableNavigationBar
 
     @Override
     //? if >=26.2 {
-    public void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+    public void extractWidgetRenderState(GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
     //?} else {
     /*public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
     *///?}
@@ -98,7 +98,7 @@ public class ScrollableNavigationBar
         // render option list BELOW the navbar without need to scissor
 
         //? if >=26.2 {
-        super.extractWidgetRenderState(graphics, mouseX, mouseY, a);
+        super.extractWidgetRenderState(graphics/*? if <26.4 {*//*, mouseX, mouseY, a*//*?}*/);
         //?} else {
         /*super.extractRenderState(graphics, mouseX, mouseY, a);
         *///?}

@@ -114,14 +114,18 @@ public record ColorController(Option<Color> option, boolean allowAlpha) implemen
         }
 
         @Override
-        protected void extractValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        protected void extractValueText(GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
+            //? if >=26.4 {
+            int mouseX = graphics.mouseX();
+            int mouseY = graphics.mouseY();
+            //?}
             hovered = isMouseOver(mouseX, mouseY);
 
             if (isHovered()) {
                 colorPreviewDim.move(-inputFieldBounds.width() - 8, -2);
                 colorPreviewDim.expand(4, 4);
                 previewOutlineFadeTicks++;
-                super.extractValueText(graphics, mouseX, mouseY, a);
+                super.extractValueText(graphics/*? if <26.4 {*//*, mouseX, mouseY, a*//*?}*/);
             }
 
             int previewColor = colorController.option().pendingValue().getRGB();

@@ -69,7 +69,11 @@ public record LabelController(Option<Component> option) implements Controller<Co
         }
 
         @Override
-        public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        public void extractRenderState(GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
+            //? if >=26.4 {
+            int mouseX = graphics.mouseX();
+            int mouseY = graphics.mouseY();
+            //?}
             updateText();
 
             int y = getDimension().y();

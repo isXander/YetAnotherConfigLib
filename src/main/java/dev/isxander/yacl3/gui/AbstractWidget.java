@@ -10,11 +10,6 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-//? if >=26.4 {
-import net.minecraft.client.gui.GuiPipeline;
-//?} else {
-/*import net.minecraft.client.renderer.RenderPipelines;
-*///?}
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.sounds.SoundEvents;
 

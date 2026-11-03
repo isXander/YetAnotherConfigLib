@@ -52,7 +52,9 @@ public class OptionDescriptionWidget extends AbstractWidget {
     }
 
     @Override
-    public void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+    public void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
+        //? if >=26.4
+        float a = graphics.partialTicks();
         if (description == null) return;
 
         currentScrollAmount = Mth.lerp(a * 0.5f, currentScrollAmount, targetScrollAmount);
@@ -100,7 +102,7 @@ public class OptionDescriptionWidget extends AbstractWidget {
 
         maxScrollAmount = Math.max(0, y + (int)currentScrollAmount - getY() - getHeight());
 
-        if (isHoveredOrFocused()) {
+        if (/*? if >=26.4 {*/(isHovered() || isFocused())/*?} else {*//*isHoveredOrFocused()*//*?}*/) {
             lastInteractionTime = currentTimeMS();
         }
 

@@ -55,7 +55,7 @@ public record TickBoxController(Option<Boolean> option) implements Controller<Bo
         }
 
         @Override
-        protected void extractValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        protected void extractValueText(GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
             int outlineSize = 10;
             int outlineX1 = getDimension().xLimit() - getXPadding() - outlineSize;
             int outlineY1 = getDimension().centerY() - outlineSize / 2;

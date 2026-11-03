@@ -17,8 +17,8 @@ public class LowProfileButtonWidget extends Button.Plain {
     }
 
     @Override
-    protected void extractContents(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
-        if (isHoveredOrFocused() && isActive()) {
+    protected void extractContents(@NonNull GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
+        if (/*? if >=26.4 {*/(isHovered() || isFocused())/*?} else {*//*isHoveredOrFocused()*//*?}*/ && isActive()) {
             this.extractDefaultSprite(graphics);
         }
         this.extractDefaultLabel(graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE));

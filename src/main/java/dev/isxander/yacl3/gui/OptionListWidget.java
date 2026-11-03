@@ -337,7 +337,14 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         @Override
-        public void extractContent(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
+        public void extractContent(
+                @NonNull GuiGraphicsExtractor graphics,
+                //? if >=26.4 {
+                boolean hovered
+                //?} else {
+                /*int mouseX, int mouseY, boolean hovered, float a
+                *///?}
+        ) {
             if (!this.isViewable()) {
                 return;
             }
@@ -346,14 +353,14 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
 
             widget.setDimension(widget.getDimension().withY(this.getY()));
 
-            widget.extractRenderState(graphics, mouseX, mouseY, a);
+            widget.extractRenderState(graphics/*? if <26.4 {*//*, mouseX, mouseY, a*//*?}*/);
 
             if (resetButton != null) {
                 resetButton.setY(this.getY());
-                resetButton.extractRenderState(graphics, mouseX, mouseY, a);
+                resetButton.extractRenderState(graphics/*? if <26.4 {*//*, mouseX, mouseY, a*//*?}*/);
             }
 
-            if (isMouseOver(mouseX, mouseY)) {
+            if (hovered) {
                 setHoverDescription(DescriptionWithName.of(option.name(), option.description()));
             }
         }

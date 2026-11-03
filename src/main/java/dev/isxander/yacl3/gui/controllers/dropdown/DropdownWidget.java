@@ -54,7 +54,7 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
 	}
 
 	@Override
-	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+	public void extractRenderState(GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
 		if (dropdownLength() == 0) return;
 
 		// Background

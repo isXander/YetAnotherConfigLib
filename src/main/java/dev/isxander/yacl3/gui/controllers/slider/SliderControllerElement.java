@@ -29,14 +29,18 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
-        super.extractRenderState(graphics, mouseX, mouseY, a);
+    public void extractRenderState(GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
+        super.extractRenderState(graphics/*? if <26.4 {*//*, mouseX, mouseY, a*//*?}*/);
 
         calculateInterpolation();
     }
 
     @Override
-    protected void extractHoveredControl(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+    protected void extractHoveredControl(GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
+        //? if >=26.4 {
+        int mouseX = graphics.mouseX();
+        int mouseY = graphics.mouseY();
+        //?}
         // track
         graphics.fill(sliderBounds.x(), sliderBounds.centerY() - 1, sliderBounds.xLimit(), sliderBounds.centerY(), -1);
         // track shadow
@@ -53,11 +57,11 @@ public class SliderControllerElement extends ControllerWidget<ISliderController<
     }
 
     @Override
-    protected void extractValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+    protected void extractValueText(GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
         graphics.pose().pushMatrix();
         if (isHovered())
             graphics.pose().translate(-(sliderBounds.width() + 6 + getThumbWidth() / 2f), 0);
-        super.extractValueText(graphics, mouseX, mouseY, a);
+        super.extractValueText(graphics/*? if <26.4 {*//*, mouseX, mouseY, a*//*?}*/);
         graphics.pose().popMatrix();
     }
 

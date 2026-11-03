@@ -18,7 +18,7 @@ import net.minecraft.client.gui.GuiPipeline;
  *///?}
 
 public record BaseRenderState(
-        GuiPipeline pipeline,
+        /*? if >=26.4 {*/GuiPipeline/*?} else {*//*RenderPipeline*//*?}*/ pipeline,
         TextureSetup textureSetup,
         Matrix3x2f pose,
         @Nullable ScreenRectangle bounds,

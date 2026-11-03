@@ -142,10 +142,10 @@ public abstract class AbstractDropdownControllerElement<T, U> extends StringCont
 	}
 
 	@Override
-	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+	public void extractRenderState(GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
 		if (matchingValues == null) matchingValues = computeMatchingValues();
 
-		super.extractRenderState(graphics, mouseX, mouseY, a);
+		super.extractRenderState(graphics/*? if <26.4 {*//*, mouseX, mouseY, a*//*?}*/);
 	}
 
 	void extractDropdownEntry(GuiGraphicsExtractor graphics, Dimension<Integer> entryDimension, int index) {

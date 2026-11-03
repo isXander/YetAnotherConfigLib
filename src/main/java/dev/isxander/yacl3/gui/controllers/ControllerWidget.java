@@ -37,7 +37,11 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+    public void extractRenderState(GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
+        //? if >=26.4 {
+        int mouseX = graphics.mouseX();
+        int mouseY = graphics.mouseY();
+        //?}
         hovered = isMouseOver(mouseX, mouseY);
 
         Component name = control.option().changed() ? modifiedOptionName : control.option().name();
@@ -47,17 +51,17 @@ public abstract class ControllerWidget<T extends Controller<?>> extends Abstract
         graphics.text(textRenderer, shortenedName, getDimension().x() + getXPadding(), getTextY(), getValueColor(), true);
 
 
-        extractValueText(graphics, mouseX, mouseY, a);
+        extractValueText(graphics/*? if <26.4 {*//*, mouseX, mouseY, a*//*?}*/);
         if (isHovered()) {
-            extractHoveredControl(graphics, mouseX, mouseY, a);
+            extractHoveredControl(graphics/*? if <26.4 {*//*, mouseX, mouseY, a*//*?}*/);
         }
     }
 
-    protected void extractHoveredControl(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+    protected void extractHoveredControl(GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
 
     }
 
-    protected void extractValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+    protected void extractValueText(GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
         Component valueText = getValueText();
         graphics.text(textRenderer, valueText, getDimension().xLimit() - textRenderer.width(valueText) - getXPadding(), getTextY(), getValueColor(), true);
     }

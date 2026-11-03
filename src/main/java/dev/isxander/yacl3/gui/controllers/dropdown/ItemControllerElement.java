@@ -26,10 +26,10 @@ public class ItemControllerElement extends AbstractDropdownControllerElement<Ite
 	}
 
 	@Override
-	protected void extractValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+	protected void extractValueText(GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
 		var oldDimension = getDimension();
 		setDimension(getDimension().withWidth(getDimension().width() - getDecorationPadding()));
-		super.extractValueText(graphics, mouseX, mouseY, a);
+		super.extractValueText(graphics/*? if <26.4 {*//*, mouseX, mouseY, a*//*?}*/);
 		setDimension(oldDimension);
 		if (currentItem != null) {
             extractFakeItem(

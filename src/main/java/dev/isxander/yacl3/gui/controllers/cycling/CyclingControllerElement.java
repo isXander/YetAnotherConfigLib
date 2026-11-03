@@ -17,8 +17,8 @@ public class CyclingControllerElement extends ControllerWidget<ICyclingControlle
     }
 
     @Override
-    protected void extractValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
-        super.extractValueText(graphics, mouseX, mouseY, a);
+    protected void extractValueText(GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
+        super.extractValueText(graphics/*? if <26.4 {*//*, mouseX, mouseY, a*//*?}*/);
 
         if (this.hovered) {
             graphics.requestCursor(isAvailable() ? CursorTypes.POINTING_HAND : CursorTypes.NOT_ALLOWED);

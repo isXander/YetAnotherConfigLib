@@ -54,12 +54,17 @@ public class StringControllerElement extends ControllerWidget<IStringController<
     }
 
     @Override
-    protected void extractHoveredControl(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+    protected void extractHoveredControl(GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
 
     }
 
     @Override
-    protected void extractValueText(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+    protected void extractValueText(GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
+        //? if >=26.4 {
+        int mouseX = graphics.mouseX();
+        int mouseY = graphics.mouseY();
+        float a = graphics.partialTicks();
+        //?}
         Component valueText = getValueText();
         if (!isHovered()) valueText = Component.literal(GuiUtils.shortenString(valueText.getString(), textRenderer, getMaxUnwrapLength(), "...")).setStyle(valueText.getStyle());
 

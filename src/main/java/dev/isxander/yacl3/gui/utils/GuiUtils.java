@@ -14,8 +14,11 @@ import net.minecraft.util.FormattedCharSequence;
 
 //? if >=26.4 {
 import net.minecraft.client.gui.GuiPipeline;
-//?} else {
+//?} elif =26.3 {
 /*import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+import net.minecraft.client.renderer.RenderPipelines;
+*///?} else {
+/*import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.renderer.RenderPipelines;
 *///?}
 

@@ -78,7 +78,11 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
     }
 
     @Override
-    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+    public void extractRenderState(GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
+        //? if >=26.4 {
+        int mouseX = graphics.mouseX();
+        int mouseY = graphics.mouseY();
+        //?}
         updateHSL();
 
         int thumbWidth = 4;

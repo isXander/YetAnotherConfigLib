@@ -69,7 +69,7 @@ public class ListEntryWidget extends AbstractWidget implements ContainerEventHan
     }
 
     @Override
-    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics/*? if <26.4 {*//*, int mouseX, int mouseY, float a*//*?}*/) {
         updateButtonStates(); // update every render in case option becomes available/unavailable
 
         removeButton.setY(getDimension().y());
@@ -77,10 +77,10 @@ public class ListEntryWidget extends AbstractWidget implements ContainerEventHan
         moveDownButton.setY(getDimension().y());
         entryWidget.setDimension(entryWidget.getDimension().withY(getDimension().y()));
 
-        removeButton.extractRenderState(graphics, mouseX, mouseY, a);
-        moveUpButton.extractRenderState(graphics, mouseX, mouseY, a);
-        moveDownButton.extractRenderState(graphics, mouseX, mouseY, a);
-        entryWidget.extractRenderState(graphics, mouseX, mouseY, a);
+        removeButton.extractRenderState(graphics/*? if <26.4 {*//*, mouseX, mouseY, a*//*?}*/);
+        moveUpButton.extractRenderState(graphics/*? if <26.4 {*//*, mouseX, mouseY, a*//*?}*/);
+        moveDownButton.extractRenderState(graphics/*? if <26.4 {*//*, mouseX, mouseY, a*//*?}*/);
+        entryWidget.extractRenderState(graphics/*? if <26.4 {*//*, mouseX, mouseY, a*//*?}*/);
     }
 
     protected void updateButtonStates() {
