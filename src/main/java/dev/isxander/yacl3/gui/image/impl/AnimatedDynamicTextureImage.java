@@ -4,12 +4,12 @@ import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi;
 import dev.isxander.yacl3.gui.image.ImageRendererFactory;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -63,7 +63,7 @@ public class AnimatedDynamicTextureImage extends DynamicTextureImage {
         graphics.pose().scale(ratio, ratio);
 
         graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
+                GuiUtils.guiTexturedPipeline(),
                 uniqueLocation,
                 0, 0,
                 (float) (frameWidth * currentCol), (float) (frameHeight * currentRow),

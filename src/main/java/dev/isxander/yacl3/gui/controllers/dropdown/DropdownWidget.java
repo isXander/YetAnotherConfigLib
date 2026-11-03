@@ -4,11 +4,11 @@ import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.ControllerPopupWidget;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.NonNull;
 
@@ -63,7 +63,7 @@ public class DropdownWidget<T> extends ControllerPopupWidget<AbstractDropdownCon
         int textureWidth = dropdownDim.width();
         int textureHeight = dropdownDim.height();
         graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
+                GuiUtils.guiTexturedPipeline(),
                 Screen.MENU_BACKGROUND,
                 x, y1,
                 0.0f, 0.0f,

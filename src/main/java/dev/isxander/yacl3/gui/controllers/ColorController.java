@@ -9,10 +9,10 @@ import dev.isxander.yacl3.gui.AbstractWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.string.IStringController;
 import dev.isxander.yacl3.gui.controllers.string.StringControllerElement;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.platform.YACLConfig;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.util.ARGB;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -130,7 +130,7 @@ public record ColorController(Option<Color> option, boolean allowAlpha) implemen
                 int y = colorPreviewDim.y();
                 int width = colorPreviewDim.width();
                 graphics.blitSprite(
-                        RenderPipelines.GUI_TEXTURED,
+                        GuiUtils.guiTexturedPipeline(),
                         ColorPickerWidget.TRANSPARENT_SPRITE,
                         x, y,
                         width, colorPreviewDim.height()

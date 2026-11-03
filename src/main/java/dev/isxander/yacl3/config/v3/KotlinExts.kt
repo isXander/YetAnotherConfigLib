@@ -9,7 +9,7 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 @ApiStatus.Experimental
-fun <T> EntryAddable.register(
+fun <T : Any> EntryAddable.register(
     default: T,
     codec: Codec<T>
 ) = PropertyDelegateProvider<EntryAddable, ReadOnlyProperty<EntryAddable, ConfigEntry<T>>> { thisRef, property ->

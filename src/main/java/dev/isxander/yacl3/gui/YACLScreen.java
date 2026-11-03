@@ -26,7 +26,6 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -134,8 +133,8 @@ public class YACLScreen extends Screen {
     }
 
     @Override
-    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.extractBackground(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractBackground(GuiGraphicsExtractor guiGraphics/*? if <26.4 {*//*, int mouseX, int mouseY, float partialTick*//*?}*/) {
+        super.extractBackground(guiGraphics/*? if <26.4 {*//*, mouseX, mouseY, partialTick*//*?}*/);
 
         if (tabManager.getCurrentTab() instanceof TabExt tab) {
             tab.renderBackground(guiGraphics);
@@ -440,7 +439,7 @@ public class YACLScreen extends Screen {
         public void renderBackground(GuiGraphicsExtractor graphics) {
             // right pane darker bg
             graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
+                    GuiUtils.guiTexturedPipeline(),
                     DARKER_BG,
                     rightPaneDim.left(), rightPaneDim.top(),
                     (float) (rightPaneDim.right() + 2), (float) (rightPaneDim.bottom() + 2),
@@ -451,7 +450,7 @@ public class YACLScreen extends Screen {
             // top separator for right pane
             graphics.pose().pushMatrix();
             graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
+                    GuiUtils.guiTexturedPipeline(),
                     CreateWorldScreen.HEADER_SEPARATOR,
                     rightPaneDim.left() - 1, rightPaneDim.top() - 2,
                     0.0F, 0.0F,
@@ -465,7 +464,7 @@ public class YACLScreen extends Screen {
             graphics.pose().translate(rightPaneDim.left(), rightPaneDim.top() - 1);
             graphics.pose().rotate((float) Math.toRadians(90));
             graphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
+                    GuiUtils.guiTexturedPipeline(),
                     CreateWorldScreen.FOOTER_SEPARATOR,
                     0, 0,
                     0f, 0f,

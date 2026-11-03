@@ -1,21 +1,24 @@
 package dev.isxander.yacl3.gui.render;
 
-//? if =26.3 {
-/*import com.mojang.renderpearl.api.pipeline.RenderPipeline;
-*///?} else {
-import com.mojang.blaze3d.pipeline.RenderPipeline;
-//?}
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3x2f;
 
+//? if >=26.4 {
+import net.minecraft.client.gui.GuiPipeline;
+//?} elif =26.3 {
+/*import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+ *///?} else {
+/*import com.mojang.blaze3d.pipeline.RenderPipeline;
+ *///?}
+
 public record BaseRenderState(
-        RenderPipeline pipeline,
+        GuiPipeline pipeline,
         TextureSetup textureSetup,
         Matrix3x2f pose,
         @Nullable ScreenRectangle bounds,
@@ -26,7 +29,9 @@ public record BaseRenderState(
         ScreenRectangle bounds = boundsFromMaxPoints(x0, y0, x1, y1, graphics.pose(), scissorArea);
 
         return new BaseRenderState(
-                texture != null ? RenderPipelines.GUI_TEXTURED : RenderPipelines.GUI,
+                texture != null
+                        ? GuiUtils.guiTexturedPipeline()
+                        : GuiUtils.guiDefaultPipeline(),
                 textureSetup(texture),
                 new Matrix3x2f(graphics.pose()),
                 bounds, scissorArea
@@ -35,7 +40,9 @@ public record BaseRenderState(
 
     public static BaseRenderState create(GuiGraphicsExtractor graphics, @Nullable Identifier texture) {
         return new BaseRenderState(
-                texture != null ? RenderPipelines.GUI_TEXTURED : RenderPipelines.GUI,
+                texture != null
+                        ? GuiUtils.guiTexturedPipeline()
+                        : GuiUtils.guiDefaultPipeline(),
                 textureSetup(texture),
                 new Matrix3x2f(graphics.pose()),
                 null, GuiRenderStateSink.peekScissorStack(graphics)

@@ -2,8 +2,8 @@ package dev.isxander.yacl3.gui.image.impl;
 
 import dev.isxander.yacl3.gui.image.ImageRenderer;
 import dev.isxander.yacl3.gui.image.ImageRendererFactory;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 
 public class ResourceTextureImage implements ImageRenderer {
@@ -32,7 +32,7 @@ public class ResourceTextureImage implements ImageRenderer {
         graphics.pose().scale(ratio, ratio);
 
         graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
+                GuiUtils.guiTexturedPipeline(),
                 location,
                 0, 0,
                 this.u, this.v,

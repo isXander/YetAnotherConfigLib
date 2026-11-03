@@ -4,9 +4,9 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.isxander.yacl3.gui.image.ImageRenderer;
 import dev.isxander.yacl3.gui.image.ImageRendererFactory;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.Identifier;
 
@@ -60,7 +60,7 @@ public class DynamicTextureImage implements ImageRenderer {
         graphics.pose().scale(ratio, ratio);
 
         graphics.blit(
-                RenderPipelines.GUI_TEXTURED,
+                GuiUtils.guiTexturedPipeline(),
                 uniqueLocation,
                 0, 0,
                 (float) 0, (float) 0,

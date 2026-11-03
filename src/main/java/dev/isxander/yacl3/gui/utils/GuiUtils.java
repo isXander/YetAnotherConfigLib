@@ -12,6 +12,13 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 
+//? if >=26.4 {
+import net.minecraft.client.gui.GuiPipeline;
+//?} else {
+/*import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+import net.minecraft.client.renderer.RenderPipelines;
+*///?}
+
 public class GuiUtils {
 
     public static final WidgetSprites BUTTON_SPRITES = new WidgetSprites(
@@ -76,4 +83,22 @@ public class GuiUtils {
         /*return Minecraft.getInstance().screen;
         *///? }
     }
+
+    //? if >=26.4 {
+    public static GuiPipeline guiDefaultPipeline() {
+        return GuiPipeline.DEFAULT;
+    }
+
+    public static GuiPipeline guiTexturedPipeline() {
+        return GuiPipeline.TEXTURED;
+    }
+    //?} else {
+    /*public static RenderPipeline guiDefaultPipeline() {
+        return RenderPipelines.GUI;
+    }
+
+    public static RenderPipeline guiTexturedPipeline() {
+        return RenderPipelines.GUI_TEXTURED;
+    }
+    *///?}
 }

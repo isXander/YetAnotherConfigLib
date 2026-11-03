@@ -451,7 +451,14 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         @Override
-        public void extractContent(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
+        public void extractContent(
+                @NonNull GuiGraphicsExtractor graphics,
+                //? if >=26.4 {
+                boolean hovered
+                //?} else {
+                /*int mouseX, int mouseY, boolean hovered, float a
+                *///?}
+        ) {
             if (!this.isViewable()) {
                 return;
             }
@@ -462,11 +469,15 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
 
             expandMinimizeButton.setY(buttonY);
             expandMinimizeButton.setX(this.getX());
-            expandMinimizeButton.extractRenderState(graphics, mouseX, mouseY, a);
+            expandMinimizeButton.extractRenderState(
+                    graphics
+                    //? if <26.4
+                    //,mouseX, mouseY, a
+            );
 
             wrappedName.visitLines(TextAlignment.CENTER, this.getX() + this.getWidth() / 2, this.getY() + getYPadding(), font.lineHeight, graphics.textRenderer());
 
-            if (isMouseOver(mouseX, mouseY)) {
+            if (hovered) {
                 setHoverDescription(DescriptionWithName.of(group.name(), group.description()));
             }
         }
@@ -566,22 +577,33 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         @Override
-        public void extractContent(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
+        public void extractContent(
+                @NonNull GuiGraphicsExtractor graphics,
+                //? if >=26.4 {
+                boolean hovered
+                //?} else {
+                /*int mouseX, int mouseY, boolean hovered, float a
+                 *///?}
+        ) {
             if (!this.isViewable()) {
                 return;
             }
 
             updateExpandMinimizeText(); // update every render because option could become available/unavailable at any time
 
-            super.extractContent(graphics, mouseX, mouseY, hovered, a);
+            //? if >=26.4 {
+            super.extractContent(graphics, hovered);
+            //?} else {
+            /*super.extractContent(graphics, mouseX, mouseY, hovered, a);
+            *///?}
 
             int buttonY = expandMinimizeButton.getY();
 
             resetListButton.setY(buttonY);
             addListButton.setY(buttonY);
 
-            resetListButton.extractRenderState(graphics, mouseX, mouseY, a);
-            addListButton.extractRenderState(graphics, mouseX, mouseY, a);
+            resetListButton.extractRenderState(graphics /*? if <26.4 {*//*,mouseX, mouseY, a*//*?}*/);
+            addListButton.extractRenderState(graphics /*? if <26.4 {*//*,mouseX, mouseY, a*//*?}*/);
         }
 
         private void minimizeIfUnavailable() {
@@ -622,7 +644,14 @@ public class OptionListWidget extends YACLSelectionList<OptionListWidget.Entry> 
         }
 
         @Override
-        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
+        public void extractContent(
+                @NonNull GuiGraphicsExtractor graphics,
+                //? if >=26.4 {
+                boolean hovered
+                //?} else {
+                /*int mouseX, int mouseY, boolean hovered, float a
+                 *///?}
+        ) {
             if (!this.isViewable()) {
                 return;
             }

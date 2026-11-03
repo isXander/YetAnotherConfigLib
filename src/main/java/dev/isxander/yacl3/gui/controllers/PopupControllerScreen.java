@@ -2,6 +2,7 @@ package dev.isxander.yacl3.gui.controllers;
 
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
+import net.minecraft.client.InputType;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 
@@ -32,21 +33,42 @@ public class PopupControllerScreen extends Screen {
     }
 
     @Override
-    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
-        controllerPopup.extractBackground(graphics, mouseX, mouseY, a);
-        this.backgroundYaclScreen.extractRenderState(graphics, -1, -1, a); // mouseX/Y set to -1 to prevent hovering outlines
+    public void extractRenderState(
+            @NonNull GuiGraphicsExtractor graphics
+            //? if <26.4
+            //,int mouseX, int mouseY, float a
+    ) {
+        //? if >=26.4 {
+        controllerPopup.extractBackground(graphics, graphics.mouseX(), graphics.mouseY(), graphics.partialTicks());
+
+        // set input type to keyboard to prevent hovering outlines
+        var prevInputType = minecraft.getLastInputType();
+        minecraft.setLastInputType(InputType.KEYBOARD_ARROW);
+        this.backgroundYaclScreen.extractRenderState(graphics);
+        minecraft.setLastInputType(prevInputType);
+
+        super.extractRenderState(graphics);
+        //?} else {
+        /*controllerPopup.extractBackground(graphics, mouseX, mouseY, a);
+
+        // mouseX/Y set to -1 to prevent hovering outline
+        this.backgroundYaclScreen.extractRenderState(graphics, -1, -1, a);
 
         super.extractRenderState(graphics, mouseX, mouseY, a);
+        *///?}
     }
 
     @Override
     public void extractBackground(
-            GuiGraphicsExtractor guiGraphics,
-            int mouseX,
-            int mouseY,
-            float partialTick
+            GuiGraphicsExtractor guiGraphics
+            //? if <26.4
+            //,int mouseX, int mouseY, float partialTick
     ) {
-        this.backgroundYaclScreen.extractBackground(guiGraphics, mouseX, mouseY, partialTick);
+        this.backgroundYaclScreen.extractBackground(
+                guiGraphics
+                //? if <26.4
+                //,mouseX, mouseY, partialTick
+        );
     }
 
 

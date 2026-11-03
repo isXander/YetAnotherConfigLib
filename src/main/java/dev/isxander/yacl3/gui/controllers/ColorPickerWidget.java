@@ -5,11 +5,11 @@ import dev.isxander.yacl3.api.utils.Dimension;
 import dev.isxander.yacl3.api.utils.MutableDimension;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.render.ColorGradientRenderState;
+import dev.isxander.yacl3.gui.utils.GuiUtils;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
@@ -91,7 +91,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
         int y1 = colorPickerDim.y() - 5;
         int width1 = colorPickerDim.width() + 10;
         graphics.blitSprite(
-                RenderPipelines.GUI_TEXTURED,
+                GuiUtils.guiTexturedPipeline(),
                 COLOR_PICKER_SPRITE,
                 x1, y1,
                 width1, colorPickerDim.height() + 10
@@ -106,7 +106,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
             int y = previewColorDim.y();
             int width = previewColorDim.width();
             graphics.blitSprite(
-                    RenderPipelines.GUI_TEXTURED,
+                    GuiUtils.guiTexturedPipeline(),
                     TRANSPARENT_SPRITE,
                     x, y,
                     width, previewColorDim.height()
@@ -150,7 +150,7 @@ public class ColorPickerWidget extends ControllerPopupWidget<ColorController> {
             int y = alphaGradientDim.y();
             int width = alphaGradientDim.width();
             graphics.blitSprite(
-                    RenderPipelines.GUI_TEXTURED,
+                    GuiUtils.guiTexturedPipeline(),
                     TRANSPARENT_SPRITE,
                     x, y,
                     width, sliderHeight

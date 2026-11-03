@@ -1,10 +1,5 @@
 package dev.isxander.yacl3.gui.render;
 
-//? if =26.3 {
-/*import com.mojang.renderpearl.api.pipeline.RenderPipeline;
-*///?} else {
-import com.mojang.blaze3d.pipeline.RenderPipeline;
- //?}
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
@@ -12,6 +7,14 @@ import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+//? if >=26.4 {
+import net.minecraft.client.gui.GuiPipeline;
+//?} elif =26.3 {
+/*import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+ *///?} else {
+/*import com.mojang.blaze3d.pipeline.RenderPipeline;
+ *///?}
 
 public interface YACLGuiElementRenderState extends GuiElementRenderState {
 
@@ -26,7 +29,7 @@ public interface YACLGuiElementRenderState extends GuiElementRenderState {
     void buildVertices(VertexConsumer vertexConsumer, float z);
 
     @Override
-    default @NotNull RenderPipeline pipeline() {
+    default @NotNull /*? if >=26.4 {*/GuiPipeline/*?} else {*//*RenderPipeline*//*?}*/ pipeline() {
         return baseState().pipeline();
     }
 
