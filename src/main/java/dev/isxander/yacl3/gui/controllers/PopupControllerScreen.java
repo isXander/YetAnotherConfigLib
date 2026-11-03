@@ -2,7 +2,6 @@ package dev.isxander.yacl3.gui.controllers;
 
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.utils.GuiUtils;
-import net.minecraft.client.InputType;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 
@@ -42,10 +41,7 @@ public class PopupControllerScreen extends Screen {
         controllerPopup.extractBackground(graphics, graphics.mouseX(), graphics.mouseY(), graphics.partialTicks());
 
         // set input type to keyboard to prevent hovering outlines
-        var prevInputType = minecraft.getLastInputType();
-        minecraft.setLastInputType(InputType.KEYBOARD_ARROW);
-        this.backgroundYaclScreen.extractRenderState(graphics);
-        minecraft.setLastInputType(prevInputType);
+        graphics.extractWithoutMouse(() -> this.backgroundYaclScreen.extractRenderState(graphics));
 
         super.extractRenderState(graphics);
         //?} else {
