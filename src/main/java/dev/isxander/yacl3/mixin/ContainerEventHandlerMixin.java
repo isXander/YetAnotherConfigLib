@@ -1,5 +1,6 @@
 package dev.isxander.yacl3.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.gui.components.events.ContainerEventHandler;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,7 +12,6 @@ import net.minecraft.client.gui.navigation.ScreenDirection;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.List;
 
@@ -21,16 +21,16 @@ public interface ContainerEventHandlerMixin {
      // through the YACL options screen. This can also apply to vanilla as navigating left or right
      // should never result in focusing the always-at-the-top tab bar.
      // Without this, navigating right from the option list focuses the tab bar, not the action buttons/description.
-    @Redirect(
+    @ModifyExpressionValue(
             method = {"nextFocusPathVaguelyInDirection", "nextFocusPathInDirection"},
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/components/events/ContainerEventHandler;children()Ljava/util/List;"
             )
     )
-    default List<?> modifyFocusCandidates(ContainerEventHandler instance, @Local(argsOnly = true) ScreenDirection direction) {
+    default List<?> modifyFocusCandidates(List<?> original, @Local(argsOnly = true) ScreenDirection direction) {
         if (direction.getAxis() == ScreenAxis.HORIZONTAL)
-            return instance.children().stream().filter(child -> !(child instanceof TabNavigationBar)).toList();
-        return instance.children();
+            return original.stream().filter(child -> !(child instanceof TabNavigationBar)).toList();
+        return original;
     }
 }
